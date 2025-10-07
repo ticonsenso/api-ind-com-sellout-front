@@ -109,11 +109,11 @@ const ListUsers = () => {
       color: "info",
       onClick: (row) => handleEditUser(row),
     },
-    {
-      label: "Empresa",
-      color: "setting",
-      onClick: (row) => handleOpenConfiguracion(row),
-    },
+    // {
+    //   label: "Empresa",
+    //   color: "setting",
+    //   onClick: (row) => handleOpenConfiguracion(row),
+    // },
   ];
 
   const handleOpenConfiguracion = (row) => {
