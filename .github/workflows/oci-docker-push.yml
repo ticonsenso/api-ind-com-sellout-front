@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      PROJECT_NAME: app-con-comisiones-backend
+      PROJECT_NAME: ${GITHUB_REPOSITORY##*/}
       OCI_USER: idv8iz9jzccy/oci_ti_integraciones
       OCI_REGION: iad.ocir.io
 
