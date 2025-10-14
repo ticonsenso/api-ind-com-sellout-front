@@ -1,0 +1,43 @@
+name: Build and Push to OCIR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    env:
+      PROJECT_NAME: app-con-comisiones-backend
+      OCI_USER: idv8iz9jzccy/oci_ti_integraciones
+      OCI_REGION: iad.ocir.io
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Set COMMIT_ID and CI_JOB_ID
+        id: vars
+        run: |
+          echo "COMMIT_ID=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          printf -v CI_JOB_ID "%04d" "${{ github.run_number }}"
+          echo "CI_JOB_ID=$CI_JOB_ID" >> $GITHUB_ENV
+
+      - name: Show variables
+        run: |
+          echo "COMMIT_ID=$COMMIT_ID"
+          echo "CI_JOB_ID=$CI_JOB_ID"
+
+      - name: Build Docker image
+        run: |
+          IMAGE_TAG=$OCI_REGION/idv8iz9jzccy/$PROJECT_NAME:$COMMIT_ID-$CI_JOB_ID
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          docker build -t $IMAGE_TAG .
+
+      - name: Login to OCIR
+        run: echo "${{ secrets.OCI_AUTH_TOKEN }}" | docker login $OCI_REGION -u "$OCI_USER" --password-stdin
+
+      - name: Push Docker image to OCIR
+        run: docker push ${{ env.IMAGE_TAG }}
