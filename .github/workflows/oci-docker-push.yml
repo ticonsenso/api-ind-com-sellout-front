@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      PROJECT_NAME: ${GITHUB_REPOSITORY##*/}
+      PROJECT_NAME: ${{ github.event.repository.name }}
       OCI_USER: idv8iz9jzccy/oci_ti_integraciones
       OCI_REGION: iad.ocir.io
 
@@ -32,7 +32,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          IMAGE_TAG=$OCI_REGION/idv8iz9jzccy/$PROJECT_NAME:$COMMIT_ID-$CI_JOB_ID
+          IMAGE_TAG=$OCI_REGION/idv8iz9jzccy/${{ github.event.repository.name }}:$COMMIT_ID-$CI_JOB_ID
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           docker build -t $IMAGE_TAG .
 
