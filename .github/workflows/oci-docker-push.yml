@@ -32,7 +32,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          IMAGE_TAG=$OCI_REGION/idv8iz9jzccy/${{ github.event.repository.name }}:$COMMIT_ID-$CI_JOB_ID
+          IMAGE_TAG=registryconsensokb.azurecr.io/${{ github.event.repository.name }}:$COMMIT_ID-$CI_JOB_ID
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           docker build -t $IMAGE_TAG .
 
