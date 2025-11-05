@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      PROJECT_NAME: ${{ github.event.repository.name }}
+      PROJECT_NAME: api-ind-com-sellout-front
       OCI_USER: idv8iz9jzccy/oci_ti_integraciones
       OCI_REGION: iad.ocir.io
 
@@ -30,14 +30,15 @@ jobs:
           echo "COMMIT_ID=$COMMIT_ID"
           echo "CI_JOB_ID=$CI_JOB_ID"
 
+
       - name: Build Docker image
         run: |
-          IMAGE_TAG=registryconsensokb.azurecr.io/${{ github.event.repository.name }}:$COMMIT_ID-$CI_JOB_ID
+          IMAGE_TAG=$OCI_REGION/idv8iz9jzccy/$PROJECT_NAME:$COMMIT_ID-$CI_JOB_ID
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           docker build -t $IMAGE_TAG .
 
-      - name: Login to AZURE
-        run: echo "${{ secrets.OCI_AUTH_TOKEN }}" | docker login -u swintegracionestoken -p ${{secrets.TOKEN_AZURE}} registryconsensokb.azurecr.io
+      - name: Login to OCIR
+        run: echo "${{ secrets.OCI_AUTH_TOKEN }}" | docker login $OCI_REGION -u "$OCI_USER" --password-stdin
 
       - name: Push Docker image to OCIR
         run: docker push ${{ env.IMAGE_TAG }}
