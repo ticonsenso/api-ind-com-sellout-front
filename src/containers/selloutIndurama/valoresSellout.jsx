@@ -1,4 +1,3 @@
-import React from "react";
 import AtomCard from "../../atoms/AtomCard";
 import AtomTableForm from "../../atoms/AtomTableForm";
 import { useEffect, useCallback } from "react";
@@ -18,16 +17,12 @@ import {
 } from "../../redux/selloutDatosSlic";
 import { useDispatch, useSelector } from "react-redux";
 import { useDialog } from "../../context/DialogDeleteContext";
-import AtomSwitch from "../../atoms/AtomSwitch";
-import { SaveAlt as SaveAltIcon } from "@mui/icons-material";
-import ExcelJS from "exceljs";
-import { Box, Typography, IconButton, Tooltip } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { limitGeneral } from "../constantes";
 import AtomTableInformationExtraccion from "../../atoms/AtomTableInformationExtraccion";
 import { columnsValoresSellout, camposValoresSellout } from "./constantes";
 import IconoFlotante from "../../atoms/IconActionPage";
 import { exportarExcel } from "../../redux/configSelloutSlice";
-import * as XLSX from "xlsx";
 
 const excelWorker = new Worker(
   new URL("../../workers/excelWorker.js", import.meta.url),
@@ -243,7 +238,7 @@ const ValoresSellout = () => {
         setLoading(false);
       };
     } catch (error) {
-      showSnackbar("Error al procesar el archivo.");
+      showSnackbar(error || "Error al procesar el archivo.");
       setLoading(false);
     }
   };
@@ -266,8 +261,8 @@ const ValoresSellout = () => {
         await handleGuardarEntidad({
           data: chunk,
           dispatchFunction: subirExcelValoresSellout,
-          onSuccessCallback: () => {},
-          onResetForm: () => {},
+          onSuccessCallback: () => { },
+          onResetForm: () => { },
         });
       } catch (error) {
         showSnackbar(`Error al subir el chunk ${index + 1}: ${error}`);

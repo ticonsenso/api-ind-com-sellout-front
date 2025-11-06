@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import AtomCard from "../../../atoms/AtomCard";
 import AtomTableForm from "../../../atoms/AtomTableForm";
 import AtomDialogForm from "../../../atoms/AtomDialogForm";
@@ -13,11 +13,8 @@ import {
 import { columnsConfiguracion } from "../constantes";
 import { useDialog } from "../../../context/DialogDeleteContext";
 import { useSnackbar } from "../../../context/SnacbarContext";
-import ExcelJS from "exceljs";
-import { saveAs } from "file-saver";
 import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
 import { usePermission } from "../../../context/PermisosComtext";
-import { obtenerOptionsEmpresas } from "../../../redux/empresasSlice";
 
 const ConfiguracionExtraccion = () => {
   const hasPermission = usePermission();
@@ -79,7 +76,7 @@ const ConfiguracionExtraccion = () => {
           showSnackbar(response.payload.message);
         }
       },
-      onCancel: () => {},
+      onCancel: () => { },
     });
   };
 

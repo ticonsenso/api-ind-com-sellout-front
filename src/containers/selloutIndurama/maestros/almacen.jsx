@@ -1,4 +1,3 @@
-import React from "react";
 import AtomCard from "../../../atoms/AtomCard";
 import AtomTableForm from "../../../atoms/AtomTableForm";
 import { useEffect, useCallback } from "react";
@@ -331,7 +330,7 @@ const MasterAlmacen = () => {
       message:
         "Usted va a realizar la descarga del archivo excel de maestros almacenes",
       onConfirm: exportExcel,
-      onCancel: () => {},
+      onCancel: () => { },
     });
   };
 

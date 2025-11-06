@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ButtonAppBar from "./buttonAppBar.jsx";
 import MenuIndex from "./menuPrincipal.jsx";
 import FooterGeneral from "./footer.jsx";
@@ -23,12 +23,10 @@ import componentMap from "./componentMap.jsx";
 function Index() {
   const dispatch = useDispatch();
 
-  const menuAbierto = useSelector((state) => state.navigator.menuAbierto);
   const token = useSelector((state) => state.auth.auth.token) || null;
   const rolesUsuario =
     useSelector((state) => state.auth.auth.rolesUsuario) || [];
   const rolSelected = useSelector((state) => state.auth.auth.rolSelected);
-  const drawerWidth = 240;
   const obtenerToken = async () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("token")) {
@@ -67,9 +65,8 @@ function Index() {
   const eliminarTokenUrl = () => {
     const params = new URLSearchParams(window.location.search);
     params.delete("token");
-    const nuevaUrl = `${window.location.pathname}${
-      params.toString() ? "?" + params.toString() : ""
-    }`;
+    const nuevaUrl = `${window.location.pathname}${params.toString() ? "?" + params.toString() : ""
+      }`;
     window.history.replaceState({}, "", nuevaUrl);
   };
 
