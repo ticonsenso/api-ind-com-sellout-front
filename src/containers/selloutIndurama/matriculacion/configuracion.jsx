@@ -1,4 +1,3 @@
-import React from "react";
 import AtomCard from "../../../atoms/AtomCard";
 import AtomTableForm from "../../../atoms/AtomTableForm";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,12 +18,7 @@ import { useDialog } from "../../../context/DialogDeleteContext";
 import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
 import { usePermission } from "../../../context/PermisosComtext";
 import { limitGeneral } from "../../constantes";
-import AtomSwitch from "../../../atoms/AtomSwitch";
-import ExcelJS from "exceljs";
-import IconoFlotante from "../../../atoms/IconActionPage";
 import AtomDatePicker from "../../../atoms/AtomDatePicker";
-import AtomSelect from "../../../atoms/AtomSelect";
-import {meses} from "../constantes";
 import { Box } from "@mui/material";
 
 const formatDate = (fechaISO) => {
@@ -33,25 +27,6 @@ const formatDate = (fechaISO) => {
   const mes = String(fecha.getUTCMonth() + 1).padStart(2, "0");
   const anio = fecha.getUTCFullYear();
   return `${anio}-${mes}-${dia}`;
-};
-
-const restarUnMes = (fechaStr) => {
-  if (!fechaStr) return undefined;
-
-  const fecha = new Date(fechaStr);
-  const anio = fecha.getFullYear();
-  const mes = fecha.getMonth();
-  const dia = fecha.getDate();
-
-  const fechaTemporal = new Date(anio, mes - 1, 1);
-  const ultimoDiaMesAnterior = new Date(anio, mes, 0).getDate();
-  fechaTemporal.setDate(Math.min(dia, ultimoDiaMesAnterior));
-
-  const yyyy = fechaTemporal.getFullYear();
-  const mm = String(fechaTemporal.getMonth() + 1).padStart(2, "0");
-  const dd = String(fechaTemporal.getDate()).padStart(2, "0");
-
-  return `${yyyy}-${mm}-${dd}`;
 };
 
 const sumarUnMes = (fechaStr) => {
@@ -295,10 +270,10 @@ const ConfiguracionMatriculacion = () => {
             showSnackbar(response.payload.message);
           }
         } catch (error) {
-          showSnackbar("Error al eliminar la matriculacion");
+          showSnackbar(error || "Error al eliminar la matriculacion");
         }
       },
-      onCancel: () => {},
+      onCancel: () => { },
     });
   };
 

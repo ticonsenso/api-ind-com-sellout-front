@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import AtomTextField from "../../../atoms/AtomTextField";
 import AccordionSection from "../../../atoms/AtomAccordion";
@@ -55,7 +55,6 @@ import AtomAutocompleteLabel from "../../../atoms/AtomAutocomplete";
 import AtomTitleForm from "../../../atoms/AtomTitleForm";
 import AtomTableForm from "../../../atoms/AtomTableForm";
 import AtomDatePicker from "../../../atoms/AtomDatePicker";
-import { formatMeridiem } from "@mui/x-date-pickers/internals";
 
 function debounce(func, delay) {
   let timer;
@@ -197,7 +196,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
           showSnackbar(response.payload.message);
         }
       },
-      onCancel: () => {},
+      onCancel: () => { },
     });
   };
 

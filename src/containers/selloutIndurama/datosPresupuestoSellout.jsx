@@ -1,4 +1,3 @@
-import React from "react";
 import AtomCard from "../../atoms/AtomCard";
 import AtomTableForm from "../../atoms/AtomTableForm";
 import { useEffect, useCallback } from "react";
@@ -313,8 +312,8 @@ const DatosPresupuestoSellout = () => {
         await handleGuardarEntidad({
           data: chunk,
           dispatchFunction: subirExcelPresupuestoSellout,
-          onSuccessCallback: () => {},
-          onResetForm: () => {},
+          onSuccessCallback: () => { },
+          onResetForm: () => { },
         });
       } catch (error) {
         showSnackbar(`Error al subir el chunk ${index + 1}: ${error}`);

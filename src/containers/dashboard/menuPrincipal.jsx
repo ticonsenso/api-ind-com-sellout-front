@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, IconButton, Collapse } from "@mui/material";
+import { Box, Collapse } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import InicioIcon from "../../assets/inicio.svg";
 import UsuariosIcon from "../../assets/usuarios.svg";
 import Logo from "../../assets/logoComplete.svg";
-import { setToken, actionLogoutReducer } from "../../redux/authSlice.js";
+import { actionLogoutReducer } from "../../redux/authSlice.js";
 import { ArrowForwardIos as ArrowForwardIosIcon } from "@mui/icons-material";
 import * as Icons from "@mui/icons-material";
 
@@ -230,7 +230,7 @@ const MenuIndex = () => {
             >
               <ListItemIcon sx={{ color: "#F39400" }}>
                 {item.icon?.startsWith("mui:") &&
-                Icons[item.icon.replace("mui:", "")] ? (
+                  Icons[item.icon.replace("mui:", "")] ? (
                   React.createElement(Icons[item.icon.replace("mui:", "")])
                 ) : item.icon?.startsWith("svg:") &&
                   iconMapping[item.icon.replace("svg:", "")] ? (

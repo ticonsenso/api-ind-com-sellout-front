@@ -1,4 +1,3 @@
-import React from "react";
 import AtomCard from "../../atoms/AtomCard";
 import AtomTableForm from "../../atoms/AtomTableForm";
 import { useEffect } from "react";
@@ -9,11 +8,9 @@ import { useSnackbar } from "../../context/SnacbarContext";
 import AtomCircularProgress from "../../atoms/AtomCircularProgress";
 import AtomDatePicker from "../../atoms/AtomDatePicker";
 import {
-  AutoFixHigh as AutoFixHighIcon,
   Search as SearchIcon,
   CheckCircle as CheckCircleIcon,
   Sync as SyncIcon,
-  AddCircle as AddCircleIcon,
 } from "@mui/icons-material";
 import {
   obtenerConsolidatedSellout,

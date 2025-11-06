@@ -1,4 +1,3 @@
-import React from "react";
 import AppBar from "@mui/material/AppBar";
 import {
   Box,
@@ -6,7 +5,6 @@ import {
   Typography,
   IconButton,
   Avatar,
-  Badge,
   Divider,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";

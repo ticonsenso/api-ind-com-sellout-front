@@ -258,7 +258,7 @@ const ExtraccionDatos = () => {
       julio: 7,
       agosto: 8,
       septiembre: 9,
-      setiembre: 9, 
+      setiembre: 9,
       noviembre: 11,
       diciembre: 12,
     };
@@ -339,7 +339,7 @@ const ExtraccionDatos = () => {
 
     const hasNegative =
       configuracion?.hasNegativeValue?.toString().trim().toLowerCase() ===
-        "true" || configuracion?.hasNegativeValue?.toString().trim() === "1";
+      "true" || configuracion?.hasNegativeValue?.toString().trim() === "1";
 
     for (let fila = filaInicio; fila <= filaFin; fila++) {
       const registro = {};
@@ -764,28 +764,22 @@ const ExtraccionDatos = () => {
         }
       }
     }
-    // if (resultado.descriptionDistributor === undefined) {
-    //   avisoCritico("⚠️ No se pudo detectar la columna de Descripción de Producto");
-    // }
-    
+
     return resultado;
   };
 
   const validarDescripcion = (desc) => {
     const descripcion = desc.trim().toLowerCase();
     if (descripcion.length < 2) {
-      // avisoCritico("⚠️ La descripción del producto es demasiado corta, verificar descripción en columna: " + (columnaNumber || "No encontrada"));
       return false;
     }
     if (!/[a-z]/.test(descripcion)) {
-            // avisoCritico("⚠️ La descripción no es valida, verificar datos en columna: " + (columnaNumber || "No encontrada"));
       return false;
     }
 
     for (const palabra of PALABRAS_INVALIDAS) {
       const regex = new RegExp(`\\b${palabra.toLowerCase()}\\b`);
       if (regex.test(descripcion)) {
-        // avisoCritico("⚠️ La descripción contiene palabras inválidas, verificar datos en columna: " + (columnaNumber || "No encontrada"));
         return false;
       }
     }
@@ -799,7 +793,6 @@ const ExtraccionDatos = () => {
     let fecha = null;
 
     if (typeof valorCelda === "number") {
-      // Redondear el número serial de Excel para evitar errores de coma flotante
       const serial = Math.round(valorCelda); // ← Esto es clave
 
       if (serial < 1 || serial > 2958465) return null;
@@ -810,7 +803,6 @@ const ExtraccionDatos = () => {
     } else if (typeof valorCelda === "string") {
       const texto = valorCelda.trim();
 
-      // Caso: número serial como string (ej: "45796")
       const matchSerial = texto.match(/^\+?0*(\d{4,7})(\.\d+)?$/);
       if (matchSerial) {
         const serial = Math.round(parseFloat(matchSerial[1])); // Redondear también si es string
@@ -887,13 +879,13 @@ const ExtraccionDatos = () => {
   };
 
   const avisoCritico = (mensaje) => {
-  showSnackbar(`⚠️ ${mensaje}`);
-  setData([]);
-  setCeldas([]);
-  setDetallesData([]);
-  setLoading(false);
-  throw new Error(mensaje); 
-};
+    showSnackbar(`⚠️ ${mensaje}`);
+    setData([]);
+    setCeldas([]);
+    setDetallesData([]);
+    setLoading(false);
+    throw new Error(mensaje);
+  };
 
 
   const handleExtraccionStandar = async (event) => {
@@ -949,7 +941,7 @@ const ExtraccionDatos = () => {
         ...camposDetectados.filter((key) => !ordenColumnas.includes(key)),
       ];
       if (registrosFiltrados.length === 0) {
-avisoCritico("⚠️ No se encontraron registros del mes seleccionado. Verifica las fechas del archivo si coincide con la fecha de cálculo seleccionada."
+        avisoCritico("⚠️ No se encontraron registros del mes seleccionado. Verifica las fechas del archivo si coincide con la fecha de cálculo seleccionada."
         );
         setData([]);
         setCeldas([]);
@@ -1089,7 +1081,7 @@ avisoCritico("⚠️ No se encontraron registros del mes seleccionado. Verifica 
     const mapeo = detectarColumnasAutomaticamente(encabezados);
     console.log("mapeo", mapeo);
     const tieneColumnaCantidad = mapeo.unitsSoldDistributor !== undefined;
-      const columnaNumber = Number(mapeo.descriptionDistributor) + 1;
+    const columnaNumber = Number(mapeo.descriptionDistributor) + 1;
     for (const fila of rows) {
       const rawDescripcion =
         extraerTextoCelda(fila[mapeo.descriptionDistributor] || "") || "";
@@ -1137,7 +1129,7 @@ avisoCritico("⚠️ No se encontraron registros del mes seleccionado. Verifica 
 
       const codeStoreDistributor =
         configuracion?.codeStoreDistributor ||
-        mapeo.codeStoreDistributor !== undefined
+          mapeo.codeStoreDistributor !== undefined
           ? extraerTextoCelda(fila[mapeo.codeStoreDistributor])
           : hojaName;
 
@@ -1153,9 +1145,10 @@ avisoCritico("⚠️ No se encontraron registros del mes seleccionado. Verifica 
       registros.push(...repartirValoresNumerico(registroBase));
     }
     if (registros.length === 0) {
-          if (registros.map((r) => r.descriptionDistributor).every((desc) => !desc || desc.trim() === "")) {
-          avisoCritico(`Por favor verificar la descripcion en la hoja: ${hojaName}, columna: ` + (columnaNumber  || "No encontrada"));  
-    }}
+      if (registros.map((r) => r.descriptionDistributor).every((desc) => !desc || desc.trim() === "")) {
+        avisoCritico(`Por favor verificar la descripcion en la hoja: ${hojaName}, columna: ` + (columnaNumber || "No encontrada"));
+      }
+    }
     return registros;
   };
 
@@ -1620,9 +1613,9 @@ avisoCritico("⚠️ No se encontraron registros del mes seleccionado. Verifica 
                             backgroundColor: "#ffe6e6",
                             flexDirection: "row-reverse",
                             "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded":
-                              {
-                                transform: "rotate(180deg)",
-                              },
+                            {
+                              transform: "rotate(180deg)",
+                            },
                             "& .MuiAccordionSummary-content": {
                               justifyContent: "center",
                             },

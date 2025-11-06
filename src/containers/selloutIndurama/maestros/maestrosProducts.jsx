@@ -1,4 +1,3 @@
-import React from "react";
 import AtomCard from "../../../atoms/AtomCard";
 import AtomTableForm from "../../../atoms/AtomTableForm";
 import { useEffect } from "react";
@@ -93,74 +92,11 @@ const MasterProducts = () => {
     setPageExtra(1);
   };
 
-  const handleOpenUploadExcel = () => {
-    setOpenUploadExcel(true);
-  };
-
   const handleCloseUploadExcel = () => {
     setOpenUploadExcel(false);
     setDatosExcel([]);
     setPage(1);
     setLimit(limitGeneral);
-  };
-
-  const handleExcelUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    try {
-      const workbook = new ExcelJS.Workbook();
-      const arrayBuffer = await file.arrayBuffer();
-      await workbook.xlsx.load(arrayBuffer);
-
-      const worksheet = workbook.worksheets.find((ws) => ws.name === "mt prod");
-      if (!worksheet) {
-        showSnackbar("La hoja 'mt prod' no fue encontrada en el archivo");
-        return;
-      }
-
-      const headerRow = worksheet.getRow(1);
-      const headers = headerRow.values.slice(1);
-
-      const expectedHeaders = columnsMaestrosProducts.map((col) => col.label);
-      const missingHeaders = expectedHeaders.filter(
-        (h) => !headers.includes(h)
-      );
-
-      if (missingHeaders.length > 0) {
-        showSnackbar(
-          `Faltan columnas en el Excel: ${missingHeaders.join(", ")}`
-        );
-        return;
-      }
-
-      const data = [];
-      worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-        if (rowNumber === 1) return;
-
-        const rowValues = row.values.slice(1);
-        const item = {};
-
-        columnsMaestrosProducts.forEach(({ field, label }) => {
-          const colIndex = headers.indexOf(label);
-          item[field] = colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
-        });
-
-        item.status = true;
-        data.push(item);
-      });
-
-      if (data.length === 0) {
-        showSnackbar("No se encontraron datos válidos en el archivo.");
-        return;
-      }
-
-      setDatosExcel(data);
-      showSnackbar("Archivo cargado correctamente.");
-      setOpenUploadExcel(true); // <-- aquí SÍ se abre el diálogo
-    } catch (error) {
-      showSnackbar("Error leyendo el archivo Excel.");
-    }
   };
 
   const handleOpenCreateMaestrosProducts = () => {
@@ -301,7 +237,6 @@ const MasterProducts = () => {
       borderBottomRightRadius: 0,
       mb: 2,
       color: "#5c5c5c",
-      // borderBottom: "1px solid #cddfff",
     },
     titleMes: {
       fontSize: 14,
@@ -417,7 +352,7 @@ const MasterProducts = () => {
         if (response.meta.requestStatus !== "fulfilled") {
           throw new Error(
             response.payload.message ||
-              "Ocurrió un error al subir un bloque de productos"
+            "Ocurrió un error al subir un bloque de productos"
           );
         }
       }
@@ -460,7 +395,7 @@ const MasterProducts = () => {
       message:
         "Usted va a realizar la descarga del archivo excel de maestros productos",
       onConfirm: exportExcel,
-      onCancel: () => {},
+      onCancel: () => { },
     });
   };
 
