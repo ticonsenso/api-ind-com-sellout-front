@@ -1366,22 +1366,6 @@ const ExtraccionDatos = () => {
                   title="Mas opciones"
                   iconName="MoreVert"
                 />
-                {data.length > 0 && (
-                  <Box
-                    sx={{
-                      position: "fixed",
-                      right: 40,
-                      top: 170,
-                      zIndex: 1000,
-                    }}
-                  >
-                    <AtomButtonPrimary
-                      onClick={handleOpenDialogoConfirmacion}
-                      label="Guardar"
-                      disabled={loading}
-                    />
-                  </Box>
-                )}
                 <Menu
                   anchorEl={anchorEl}
                   open={open}
@@ -1423,15 +1407,17 @@ const ExtraccionDatos = () => {
 
                 <Grid
                   container
-                  spacing={1.5}
+                  spacing={1}
                   justifyContent="left"
-                  mb={2}
-                  mt={-2}
+                  mb={1}
+                  mt={0}
                 >
                   <Grid size={3}>
                     <AtomDatePicker
                       id="calculateDate"
                       required={true}
+                      color="#fff"
+                      height="45px"
                       mode="month"
                       label="Fecha de cálculo"
                       value={calculateDate || null}
@@ -1457,6 +1443,8 @@ const ExtraccionDatos = () => {
                         <Grid size={3}>
                           <AtomAutocompleteLabel
                             id="matriculacionId"
+                            color="#fff"
+                            height="45px"
                             label="Matriculación"
                             required={true}
                             inputValue={searchMatriculacion}
@@ -1489,7 +1477,10 @@ const ExtraccionDatos = () => {
                           <AtomAutocompleteLabel
                             id="configuracionId"
                             required={true}
-                            label="Configuracion de extracción"
+                            color="#fff"
+                            placeholder="Seleccionar..."
+                            height="45px"
+                            label="Configuración"
                             value={configuracionId}
                             options={optionsConfiguracionSellout}
                             onChange={(event, newValue) => {
@@ -1508,6 +1499,8 @@ const ExtraccionDatos = () => {
                           <Grid size={3}>
                             <AtomTextField
                               id="distributor"
+                              color="#fff"
+                              height="45px"
                               headerTitle="Distribuidor"
                               onBlur={handleChangeDistributorData}
                               value={configuracion?.distributor || ""}
@@ -1522,6 +1515,8 @@ const ExtraccionDatos = () => {
                           <Grid size={3}>
                             <AtomTextField
                               id="codeStoreDistributor"
+                              color="#fff"
+                              height="45px"
                               headerTitle="Almacén Distribuidor"
                               value={configuracion?.codeStoreDistributor || ""}
                               onChange={(e) => {
@@ -1537,6 +1532,8 @@ const ExtraccionDatos = () => {
                             <Grid size={campo.size} key={campo.id}>
                               <AtomTextField
                                 id={campo.id}
+                                color="#fff"
+                                height="45px"
                                 headerTitle={campo.headerTitle}
                                 required={campo.required}
                                 type={campo.type}
@@ -1554,10 +1551,12 @@ const ExtraccionDatos = () => {
                               />
                             </Grid>
                           ))}
-                          <Grid size={2.5} mt={0.5}>
+                          <Grid size={1.5} mt={0.5}>
                             <AtomSwitch
                               id="extraerTodos"
-                              title="Extraer todas"
+                              color="#fff"
+                              height="45px"
+                              title="Todas"
                               tooltip="Define si se extraen todas las hojas"
                               checked={configuracion.extraerTodos || false}
                               onChange={(e) =>
@@ -1571,10 +1570,12 @@ const ExtraccionDatos = () => {
                         </>
                       )}
                       {configuracionId && (
-                        <Grid size={3.5}>
+                        <Grid size={3}>
                           <AtomTextFielInputForm
                             id="documento"
-                            headerTitle="Seleccionar Documento"
+                            color="#fff"
+                            height="45px"
+                            headerTitle="Seleccionar Excel"
                             placeholder="Seleccionar"
                             value={documento}
                             fullWidth
@@ -1582,6 +1583,17 @@ const ExtraccionDatos = () => {
                             nameEndIcon={UploadFileIcon}
                             onClickEndIcon={handleIconClick}
                             onChange={handleIconClick}
+                          />
+                        </Grid>
+                      )}
+                      {data.length > 0 && (
+                        <Grid size={1.5} mt={2.6}>
+                          <AtomButtonPrimary
+                            height="44px"
+
+                            onClick={handleOpenDialogoConfirmacion}
+                            label="Guardar"
+                            disabled={loading}
                           />
                         </Grid>
                       )}

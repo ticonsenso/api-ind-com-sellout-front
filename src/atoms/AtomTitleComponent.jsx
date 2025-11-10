@@ -54,8 +54,8 @@ const AtomTitleComponent = ({
         <Typography
           sx={{
             fontSize: "20px",
-            color: "textSecondary.main",
-            fontWeight: 600,
+            color: "#9c9c9cff",
+            fontWeight: 700,
             textAlign: "left",
           }}
         >
@@ -66,11 +66,11 @@ const AtomTitleComponent = ({
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            fontSize: "14px",
+            fontSize: "13px",
+            mt: -0.5,
             color: "primary.main",
             fontWeight: 400,
             textAlign: "left",
-            mb: 2.5,
           }}
         >
           {" "}

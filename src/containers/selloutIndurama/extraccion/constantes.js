@@ -188,7 +188,7 @@ export const PALABRAS_INVALIDAS = [
 export const CAMPOS_CONFIG_ESTANDAR = [
   {
     id: "hojaInicio",
-    headerTitle: "Hoja inicio",
+    headerTitle: "Inicio",
     type: "number",
     multiline: false,
     rows: 1,
@@ -197,12 +197,12 @@ export const CAMPOS_CONFIG_ESTANDAR = [
   },
   {
     id: "hojaFin",
-    headerTitle: "Hoja fin",
+    headerTitle: "Fin",
     type: "number",
     multiline: false,
     rows: 1,
     size: 1.5,
-    placeholder: "Fin extracción",
+    placeholder: "Fin Extracción",
   },
 ];
 

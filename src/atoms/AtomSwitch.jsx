@@ -1,31 +1,40 @@
 import { Box, Typography, Tooltip, Switch } from '@mui/material';
 import PropTypes from 'prop-types';
-const AtomSwitch = ({ title, tooltip, checked, onChange }) => {
+
+const AtomSwitch = ({
+    title,
+    tooltip,
+    checked,
+    color = "#f5f5f5",
+    height = "52px",
+    onChange }) => {
+
     return (
         <Tooltip title={tooltip}>
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                // border: '1px solid #D8D8D8',
-                borderRadius: 2,
-                backgroundColor: '#F5F5F5',
-                padding: 1,
-                mb: 1,
-                mt: 2,
-            }}>
-            <Typography
+            <Box
                 sx={{
-                    fontSize: 15,
-                    color: '#727176',
-                    fontWeight: 400,
-                }}>{title}</Typography>
-            <Switch
-                color="info"
-                checked={checked}
-                onChange={onChange}
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: 2,
+                    backgroundColor: color,
+                    height: height,
+                    mb: 1,
+                    gap: 1,
+                    mt: 2.1,
+                }}>
+                <Typography
+                    sx={{
+                        fontSize: 15,
+                        color: '#727176',
+                        fontWeight: 400,
+                    }}>{title}</Typography>
+                <Switch
+                    size='small'
+                    color="info"
+                    checked={checked}
+                    onChange={onChange}
                 />
             </Box>
         </Tooltip>

@@ -238,7 +238,7 @@ const TabRoles = () => {
       children={
         <>
           <AtomCard
-            title="Lista de roles"
+            // title="Lista de roles"
             border={true}
             nameButton={namePermission ? "Crear" : ""}
             onClick={handleOpenRole}
@@ -327,7 +327,7 @@ const TabRoles = () => {
                     options={optionsPermisos}
                     disableCloseOnSelect
                     getOptionLabel={(option) => option.label}
-                    onChange={() => {}}
+                    onChange={() => { }}
                     renderOption={(props, option) => {
                       const estaAsignado = asignarPermiso.some(
                         (p) => p.id === option.id

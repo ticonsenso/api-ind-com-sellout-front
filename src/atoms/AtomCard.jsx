@@ -11,7 +11,6 @@ const AtomCard = (props) => {
   const {
     title,
     children,
-    border = false,
     nameButton = "Crear",
     onClick,
     valueSearch,
@@ -24,14 +23,14 @@ const AtomCard = (props) => {
   return (
     <Grid
       container
-      spacing={2}
+      spacing={0}
       sx={{
         display: "flex",
         alignItems: "center",
         flexDirection: "row",
-        backgroundColor: "white",
         borderRadius: 5,
-        padding: 2,
+        padding: 1,
+        justifyContent: "right",
       }}
     >
       <Grid size={4}>
@@ -41,6 +40,7 @@ const AtomCard = (props) => {
             fontSize: "18px",
             display: "flex",
             fontWeight: 600,
+            paddingLeft: 2,
             justifyContent: "left",
             textAlign: "left",
             color: "textSecondary.main",
@@ -63,23 +63,20 @@ const AtomCard = (props) => {
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
-                          onClick={() => onSearch(value)}
-                          aria-label="buscar"
                         >
                           <SearchIcon />
                         </IconButton>
                       </InputAdornment>
                     ),
                     style: {
-                      backgroundColor: "#f5f5f5",
+                      backgroundColor: "#ffffffff",
                       borderRadius: "8px",
                       fontSize: "15px",
-                      height: "52px",
+                      height: "42px",
                     },
                   },
                 }}
                 sx={{
-                  fontFamily: "Visby Round CF, Arial, sans-serif,bold",
                   fontSize: "14px",
                   width: "100%",
                   maxWidth: "500px",
@@ -137,9 +134,7 @@ const AtomCard = (props) => {
       <Grid
         size={12}
         sx={{
-          padding: border ? 1 : 0,
           borderRadius: 4,
-          border: border ? "1px solid #E6EDFF" : "none",
         }}
       >
         {children}

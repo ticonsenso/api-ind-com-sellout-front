@@ -13,7 +13,6 @@ import {
   obtenerUsuarios,
   updateEditUser,
   updateUser,
-  updateUserCompany,
 } from "../../redux/userSlice";
 import { useSnackbar } from "../../context/SnacbarContext";
 import { Autocomplete, Checkbox, TextField, Button } from "@mui/material";
@@ -26,7 +25,6 @@ import {
 import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import { usePermission } from "../../context/PermisosComtext";
 import { columnsUsuarios } from "./constantes";
-import { obtenerOptionsEmpresas } from "../../redux/empresasSlice";
 import AtomSelect from "../../atoms/AtomSelect";
 
 const ListUsers = () => {
@@ -34,16 +32,6 @@ const ListUsers = () => {
   const hasPermission = usePermission();
   const namePermission = hasPermission("ACCIONES USUARIO");
   const dispatch = useDispatch();
-  const dataOptionsEmpresas =
-    useSelector((state) => state.empresa?.optionsEmpresas) || [];
-  const optionsEmpresas =
-    [
-      ...dataOptionsEmpresas,
-      {
-        id: null,
-        label: "Sin empresa",
-      },
-    ] || [];
   const dataUsers = useSelector((state) => state.users.users);
   const users = dataUsers.map((user) => ({
     ...user,
@@ -61,8 +49,6 @@ const ListUsers = () => {
   const [openRoles, setOpenRoles] = useState(false);
   const [userId, setUserId] = useState(null);
   const [editUser, setEditUser] = useState(false);
-  const [companyId, setCompanyId] = useState(null);
-  const [openConfiguration, setOpenConfiguration] = useState(false);
 
   const validForm = () => {
     const newErrors = {};
@@ -87,12 +73,6 @@ const ListUsers = () => {
     setEditUser(false);
   };
 
-  const handleCloseConfiguration = () => {
-    setOpenConfiguration(false);
-    dispatch(clearUserObject());
-    setEditUser(false);
-  };
-
   const onChange = (id, value) => {
     setErrors((prevErrors) => ({ ...prevErrors, [id]: false }));
     dispatch(updateUserObject({ key: id, value: value }));
@@ -109,18 +89,8 @@ const ListUsers = () => {
       color: "info",
       onClick: (row) => handleEditUser(row),
     },
-    // {
-    //   label: "Empresa",
-    //   color: "setting",
-    //   onClick: (row) => handleOpenConfiguracion(row),
-    // },
   ];
 
-  const handleOpenConfiguracion = (row) => {
-    setUserId(row.id);
-    setCompanyId(row.companyId);
-    setOpenConfiguration(true);
-  };
 
   const handleOpenRoles = (row) => {
     setUserId(row.id);
@@ -203,7 +173,6 @@ const ListUsers = () => {
 
   useEffect(() => {
     buscarRoles();
-    buscarEmpresas();
   }, []);
 
   const onChangeAsignarRol = (id, value) => {
@@ -212,31 +181,13 @@ const ListUsers = () => {
     dispatch(updateAsignarRol(value));
   };
 
-  const buscarEmpresas = async () => {
-    dispatch(obtenerOptionsEmpresas());
-  };
-
-  const guardarCompany = async () => {
-    const data = {
-      companyId: companyId,
-      userId: userId,
-    };
-    const response = await dispatch(updateUserCompany(data));
-    if (!response.error) {
-      showSnackbar("Empresa asignada correctamente");
-      handleCloseConfiguration();
-      buscarUsuarios();
-    } else {
-      showSnackbar(response.payload.message);
-    }
-  };
 
   return (
     <AtomContainerGeneral
       children={
         <>
           <AtomCard
-            title="Lista de usuarios"
+            // title="Lista de usuarios"s
             onClick={handleOpenUser}
             nameButton={""}
             border={true}
@@ -325,41 +276,6 @@ const ListUsers = () => {
                       Asignar roles
                     </Button>
                   </Grid> */}
-                </Grid>
-              </Box>
-            }
-          />
-          <AtomDialogForm
-            maxWidth="md"
-            openDialog={openConfiguration}
-            buttonCancel={true}
-            handleCloseDialog={handleCloseConfiguration}
-            titleCrear="Asignar empresa"
-            dialogContentComponent={
-              <Box sx={{ width: "80%" }}>
-                <Grid container spacing={2} justifyContent="center">
-                  <Grid size={9} sx={{ mt: 2 }}>
-                    <AtomSelect
-                      required={true}
-                      options={optionsEmpresas}
-                      onChange={(e) => {
-                        setCompanyId(e.target.value);
-                      }}
-                      value={companyId}
-                      headerTitle={"Seleccionar Empresa"}
-                    />
-                  </Grid>
-                  <Grid size={3} sx={{ mt: 4.4 }}>
-                    <Button
-                      variant="contained"
-                      sx={{ height: "53px" }}
-                      color="success"
-                      startIcon={<AddIcon />}
-                      onClick={guardarCompany}
-                    >
-                      Guardar
-                    </Button>
-                  </Grid>
                 </Grid>
               </Box>
             }

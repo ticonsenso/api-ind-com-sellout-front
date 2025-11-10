@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { handleMenu } from "../../redux/navigatorSlice.js";
 import { useNavigate } from "react-router-dom";
 import InicioIcon from "../../assets/inicio.svg";
-import UsuariosIcon from "../../assets/usuarios.svg";
 import Logo from "../../assets/logoComplete.svg";
 import { actionLogoutReducer } from "../../redux/authSlice.js";
 import { ArrowForwardIos as ArrowForwardIosIcon } from "@mui/icons-material";
@@ -23,46 +22,16 @@ const iconMapping = {
   InicioIcon,
 
 };
-import {
-  obtenerOptionsEmpresas,
-  setIdEmpresaSeleccionada,
-} from "../../redux/empresasSlice";
+
 
 const MenuIndex = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const userEmpresa =
-    useSelector((state) => state.auth.auth.userEmpresa) || false;
-  const optionsEmpresas =
-    useSelector((state) => state.empresa?.optionsEmpresas) || [];
-  const empresaSeleccionada =
-    useSelector((state) => state.empresa?.empresaSeleccionada) || {};
-  const idEmpresaUser =
-    useSelector((state) => state.auth.auth.idEmpresaSeleccionada) || null;
-
-  useEffect(() => {
-    if (optionsEmpresas.length === 0) {
-      dispatch(obtenerOptionsEmpresas());
-    }
-  }, [optionsEmpresas]);
-
   const state = useSelector((state) => state.navigator.state);
   const initialStateMenu = useSelector(
     (state) => state.navigator.initialStateMenu
   );
   const selectedItem = useSelector((state) => state.navigator.selectMenu);
-  const findParentMenu = (menuItems, selectedName) => {
-    for (let parent of menuItems) {
-      if (
-        parent.subMenu &&
-        parent.subMenu.some((sub) => sub.name === selectedName)
-      ) {
-        return parent;
-      }
-    }
-    return null;
-  };
   const userPermissions = useSelector((state) => state.auth.auth.permisos);
   const token = useSelector((state) => state.auth.auth.token);
   const [expandedMenus, setExpandedMenus] = useState({});
@@ -73,12 +42,6 @@ const MenuIndex = () => {
       [name]: !prev[name],
     }));
   };
-
-  useEffect(() => {
-    if (idEmpresaUser && optionsEmpresas.length > 0) {
-      dispatch(setIdEmpresaSeleccionada(idEmpresaUser));
-    }
-  }, [idEmpresaUser, optionsEmpresas]);
 
   const filterMenuByPermissions = (menuItems) => {
     return menuItems
@@ -91,57 +54,14 @@ const MenuIndex = () => {
           ? filterMenuByPermissions(item.subMenu)
           : [];
 
-        if (userEmpresa) {
-          const isIndurama = empresaSeleccionada?.label === "INDURAMA";
-          const isMarcimex = empresaSeleccionada?.label === "MARCIMEX";
-
-          if (item.name === "Indurama") {
-            if (isMarcimex) return null;
-            if (isIndurama) {
-              filteredSubMenu =
-                item.subMenu?.filter(
-                  (sub) =>
-                    sub.name === "Consolidado" &&
-                    userPermissions?.some(
-                      (perm) => perm.name === sub.name_server
-                    )
-                ) || [];
-              return filteredSubMenu.length > 0
-                ? { ...item, subMenu: filteredSubMenu }
-                : null;
-            }
-          }
-
-          if (item.name === "Marcimex") {
-            if (isIndurama) return null;
-            if (isMarcimex) {
-              filteredSubMenu =
-                item.subMenu?.filter((sub) =>
-                  userPermissions?.some((perm) => perm.name === sub.name_server)
-                ) || [];
-              return filteredSubMenu.length > 0
-                ? { ...item, subMenu: filteredSubMenu }
-                : null;
-            }
-          }
-
-          if (hasPermission || filteredSubMenu.length > 0) {
-            return {
-              ...item,
-              subMenu: filteredSubMenu,
-            };
-          }
-
-          return null;
-        } else {
-          if (hasPermission || filteredSubMenu.length > 0) {
-            return {
-              ...item,
-              subMenu: filteredSubMenu,
-            };
-          }
-          return null;
+        if (hasPermission || filteredSubMenu.length > 0) {
+          return {
+            ...item,
+            subMenu: filteredSubMenu,
+          };
         }
+
+        return null;
       })
       .filter(Boolean);
   };
@@ -316,7 +236,11 @@ const MenuIndex = () => {
   );
 
   return (
-    <Drawer anchor={"left"} open={state} onClose={() => dispatch(handleMenu())}>
+    <Drawer
+      anchor={"left"}
+      open={state}
+      onClose={() => dispatch(handleMenu())}
+    >
       {list()}
     </Drawer>
   );

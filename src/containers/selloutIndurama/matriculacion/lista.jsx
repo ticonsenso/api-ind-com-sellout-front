@@ -1,4 +1,3 @@
-import React from "react";
 import AtomCard from "../../../atoms/AtomCard";
 import AtomTableForm from "../../../atoms/AtomTableForm";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,6 +34,7 @@ import {
   Add as AddIcon,
 } from "@mui/icons-material";
 import { formatDate } from "../../constantes";
+import { setCalculateDate } from "../../../redux/configSelloutSlice";
 
 const columns = [
   {
@@ -79,8 +79,6 @@ const Matriculacion = ({ calculateDate }) => {
   );
   const [openMatriculacion, setOpenMatriculacion] = useState(false);
   const [search, setSearch] = useState("");
-  const [calculateMonthMatriculacion, setCalculateMonthMatriculacion] =
-    useState(calculateDate);
   const [copyMonth, setCopyMonth] = useState(null);
   const [
     openCreateMatriculacionBeforeMonth,
@@ -251,7 +249,7 @@ const Matriculacion = ({ calculateDate }) => {
           showSnackbar(error || "Error al eliminar la matriculacion");
         }
       },
-      onCancel: () => {},
+      onCancel: () => { },
     });
   };
 
@@ -352,7 +350,7 @@ const Matriculacion = ({ calculateDate }) => {
         "Usted va a realizar la descarga del archivo excel de matriculaciones con fecha: " +
         formatDate(calculateDate),
       onConfirm: exportExcel,
-      onCancel: () => {},
+      onCancel: () => { },
     });
   };
 
@@ -726,7 +724,7 @@ const Matriculacion = ({ calculateDate }) => {
                 }}
               >
                 ⚠️ Se van a crear matriculaciones para la fecha:{" "}
-                {calculateMonthMatriculacion}, copia de matriculaciones del mes
+                {calculateDate}, copia de matriculaciones del mes
                 de: {copyMonth || "No seleccionado"}
               </Typography>
             </Grid>
@@ -736,8 +734,8 @@ const Matriculacion = ({ calculateDate }) => {
                 mode="month"
                 required={true}
                 label="Mes de matriculación"
-                value={calculateMonthMatriculacion}
-                onChange={(e) => setCalculateMonthMatriculacion(e)}
+                value={calculateDate}
+                onChange={(e) => dispatch(setCalculateDate(e))}
               />
             </Grid>
             <Grid size={6}>

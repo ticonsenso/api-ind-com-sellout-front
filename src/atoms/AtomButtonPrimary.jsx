@@ -1,18 +1,21 @@
 import React from "react";
 import { Button } from "@mui/material";
 
-function AtomButtonPrimary({ label, onClick, mt, icon, nameIcon, disabled }) {
+function AtomButtonPrimary({
+  label, onClick, mt, icon, nameIcon, disabled,
+  height = "48px",
+}) {
   return (
     <Button
-      variant="contained"
       fullWidth
       disabled={disabled}
       sx={{
-        height: "48px",
+        height: height,
         mt: mt,
         width: "100%",
         fontSize: "14px",
-        fontWeight: 300,
+        color: "white",
+        fontWeight: 400,
         overflow: "hidden",
         backgroundColor: "#0072CE",
         textTransform: "none",

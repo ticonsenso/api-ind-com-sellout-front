@@ -19,6 +19,7 @@ const AtomDatePicker = ({
   required = false,
   mode = "date",
   color = "#f5f5f5",
+  height = "52px",
   disabled = false,
 }) => {
   const isMonthMode = mode === "month";
@@ -64,43 +65,31 @@ const AtomDatePicker = ({
                   ? "Seleccionar mes"
                   : "Seleccionar fecha",
                 sx: {
-                  backgroundColor: color,
-                  border: error ? "1px solid red" : "none",
-                  borderRadius: "8px",
-                  fontSize: "13px",
-                  height: "52px",
                   "& .MuiOutlinedInput-root": {
-                    height: "52px",
+                    // Contenedor principal del input
+                    height: height,
                     borderRadius: "8px",
+                    backgroundColor: color,
+                    padding: 0,
                     "& fieldset": {
-                      border: "none",
-                    },
-                    "&:hover fieldset": {
-                      border: "none",
-                    },
-                    "&.Mui-focused fieldset": {
-                      border: "none",
+                      // El borde
+                      borderColor: error ? "#f44336" : "transparent",
+                      borderRadius: "8px",
                     },
                   },
-                },
-              },
-              popper: {
-                modifiers: [
-                  {
-                    name: "preventOverflow",
-                    options: {
-                      boundary: "viewport",
-                    },
+                  "& .MuiInputBase-input": {
+                    // El elemento input real
+                    padding: "0 14px",
+                    height: "100%",
+                    boxSizing: "border-box",
                   },
-                ],
-                sx: {
-                  overflow: "auto",
-                  maxHeight: "50vh",
+                  "& .MuiInputAdornment-root": {
+                    // El ícono del calendario
+                    marginRight: "8px",
+                  },
                 },
               },
             }}
-            error={error}
-            helperText={helperText}
           />
         </Box>
       </LocalizationProvider>

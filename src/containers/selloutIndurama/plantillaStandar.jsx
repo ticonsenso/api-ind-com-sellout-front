@@ -631,6 +631,8 @@ const PlantillaStandar = () => {
                       <AtomDatePicker
                         required={true}
                         mode="month"
+                        color="#ffffff"
+                        height="45px"
                         label="Fecha cálculo"
                         value={date}
                         onChange={(value) => setDate(value)}
@@ -638,6 +640,8 @@ const PlantillaStandar = () => {
                     </Grid>
                     <Grid size={3}>
                       <AtomSelect
+                        color="#ffffff"
+                        height="45px"
                         headerTitle="Seleccionar filtro"
                         options={optionsFiltros}
                         placeholder="Seleccionar..."
@@ -658,7 +662,7 @@ const PlantillaStandar = () => {
                             setLimit(limitGeneral);
                             setSearch(e.target.value);
                           }}
-                          placeholder="Buscar por:"
+                          placeholder="Buscar..."
                           slotProps={{
                             input: {
                               endAdornment: (
@@ -669,10 +673,10 @@ const PlantillaStandar = () => {
                                 </InputAdornment>
                               ),
                               style: {
-                                backgroundColor: "#f5f5f5",
+                                backgroundColor: "#ffffffff",
                                 borderRadius: "8px",
                                 fontSize: "15px",
-                                height: "50px",
+                                height: "45px",
                               },
                             },
                           }}
@@ -702,6 +706,7 @@ const PlantillaStandar = () => {
                     <Grid size={2} mt={2.8}>
                       <AtomButtonPrimary
                         label="Sincronizar"
+                        height="45px"
                         icon={<SyncIcon />}
                         onClick={handleOpenDialogoSincronizar}
                       />

@@ -130,9 +130,9 @@ const AtomTableForm = (props) => {
       minWidth: "80px",
       position: "sticky",
       top: 0,
-      backgroundColor: "#f5f5f5",
+      backgroundColor: "#ffffffff",
       textTransform: "uppercase",
-      color: "#6f6f6f",
+      color: "#424242e0",
       lineHeight: "23px",
       // textAlign: "center",
     },
@@ -142,11 +142,12 @@ const AtomTableForm = (props) => {
       sx={{
         borderRadius: "15px",
         height: "auto",
-        maxHeight: "62vh",
+        // maxHeight: "62vh",
         overflow: "auto",
         border: "none",
         borderTop: "1px solid #EDEDED",
         boxShadow: 2,
+        mt: 1,
       }}
     >
       <Table>
@@ -158,7 +159,7 @@ const AtomTableForm = (props) => {
                   zIndex: 1,
                   position: "sticky",
                   top: 0,
-                  backgroundColor: "#f5f5f5",
+                  backgroundColor: "#ffffffff",
                   fontWeight: 600,
                   fontSize: "14px",
                   color: "#6f6f6f",
@@ -174,7 +175,6 @@ const AtomTableForm = (props) => {
                   position: "sticky",
                   top: 0,
                   minWidth: "20px",
-                  backgroundColor: "#f5f5f5",
                   width: "15px",
                 }}
               ></TableCell>
@@ -187,8 +187,8 @@ const AtomTableForm = (props) => {
                   ...styleTable.cell,
                   textAlign:
                     column?.type === "dinero" ||
-                    column?.type === "porcentaje" ||
-                    column?.type === "number"
+                      column?.type === "porcentaje" ||
+                      column?.type === "number"
                       ? "right"
                       : "left",
                 }}
@@ -242,14 +242,16 @@ const AtomTableForm = (props) => {
                         align={column?.align || "left"}
                         sx={{
                           fontSize: "12px",
+                          backgroundColor: "#f9f9f9b4",
+                          color: "#595959ff",
                           fontWeight: "400",
                           maxWidth: "100px",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           textAlign:
                             column?.type === "dinero" ||
-                            column?.type === "porcentaje" ||
-                            column?.type === "number"
+                              column?.type === "porcentaje" ||
+                              column?.type === "number"
                               ? "right"
                               : "left",
                           whiteSpace: "normal",
@@ -280,13 +282,14 @@ const AtomTableForm = (props) => {
                       </TableCell>
                     ))}
                     {actions?.length > 0 && (
-                      <TableCell align="center">
+                      <TableCell align="center" sx={{ backgroundColor: "#f9f9f9", }}>
                         <Box
                           sx={{
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
                             gap: "7px",
+                            backgroundColor: "#f9f9f9",
                           }}
                         >
                           {actions?.map((action, actionIndex) => {
@@ -357,14 +360,14 @@ const AtomTableForm = (props) => {
                                       colorKey === "success"
                                         ? "#c8f7cd"
                                         : colorKey === "info"
-                                        ? "#c2ebf3"
-                                        : colorKey === "error"
-                                        ? "#ffb1af"
-                                        : colorKey === "setting"
-                                        ? "#c9cbff"
-                                        : colorKey === "warning"
-                                        ? "#ffe9b3"
-                                        : "#e0e0e0",
+                                          ? "#c2ebf3"
+                                          : colorKey === "error"
+                                            ? "#ffb1af"
+                                            : colorKey === "setting"
+                                              ? "#c9cbff"
+                                              : colorKey === "warning"
+                                                ? "#ffe9b3"
+                                                : "#e0e0e0",
                                   },
                                 }}
                               >

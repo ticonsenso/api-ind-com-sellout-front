@@ -15,6 +15,8 @@ const AtomAutocompleteLabel = ({
   disabled = false,
   error = false,
   helperText = "",
+  color = "#f5f5f5",
+  height = "52px",
   name,
   ...rest
 }) => {
@@ -68,17 +70,28 @@ const AtomAutocompleteLabel = ({
             error={error}
             helperText={helperText}
             sx={{
-              backgroundColor: "#f5f5f5",
-              borderRadius: "8px",
               fontSize: "13px",
-              height: "52px",
               "& .MuiOutlinedInput-root": {
+                paddingTop: 0,
+                paddingBottom: 0,
+                height: height,
+                borderRadius: "8px",
+                backgroundColor: color,
                 "& fieldset": {
                   borderColor: error ? "#f44336" : "transparent",
+                  borderRadius: "8px",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: error ? "#f44336" : "blue",
                 },
               },
               "& .MuiInputLabel-root": {
                 color: "#757575",
+              },
+              "& .MuiInputBase-input": {
+                padding: "0px 14px",
+                height: "100%",
+                boxSizing: "border-box",
               },
             }}
           />
@@ -86,12 +99,7 @@ const AtomAutocompleteLabel = ({
         sx={{
           mt: 0.5,
           borderRadius: "8px",
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              borderColor: error ? "#f44336" : "transparent",
-              borderRadius: "8px",
-            },
-          },
+          height: height,
         }}
       />
     </>

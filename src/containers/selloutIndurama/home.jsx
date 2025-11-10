@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Typography, styled, Avatar, Paper } from "@mui/material";
 
 import {
@@ -109,22 +108,23 @@ const SelloutIndurama = () => {
     },
   }));
 
-  const NumeroCirculo = styled(Avatar)(({ theme, bgcolor }) => ({
+  const NumeroCirculo = styled(Avatar)(({ bgcolor }) => ({
     backgroundColor: bgcolor,
-    width: 50,
-    height: 50,
+    width: 70,
+    height: 70,
     fontWeight: "bold",
-    marginBottom: 5,
+    fontSize: 30,
+    marginBottom: 7,
   }));
 
-  const PasoCard = styled(Paper)(({ theme, bgcolor }) => ({
+  const PasoCard = styled(Paper)(({ bgcolor }) => ({
     backgroundColor: bgcolor,
     color: "white",
     padding: 10,
     textAlign: "center",
     width: 200,
     height: 200,
-    borderRadius: 16,
+    borderRadius: 15,
     position: "relative",
     zIndex: 1,
   }));
@@ -134,7 +134,6 @@ const SelloutIndurama = () => {
       sx={{
         width: "100%",
         height: "100%",
-        backgroundColor: "white",
         overflow: "auto",
       }}
     >
@@ -144,16 +143,16 @@ const SelloutIndurama = () => {
             <Grid
               sx={{
                 borderBottom:
-                  index % 2 === 0 ? `10px solid ${paso.color}` : "none",
+                  index % 2 === 0 ? `20px solid ${paso.color}` : "none",
                 borderTop:
-                  index % 2 !== 0 ? `10px solid ${paso.color}` : "none",
-                paddingLeft: 8,
-                pb: 5,
-                paddingRight: 8,
+                  index % 2 !== 0 ? `20px solid ${paso.color}` : "none",
                 pt: 2,
-                mt: 2,
+                pl: 8,
+                pr: 8,
+                pb: 7,
+                mt: 1,
                 borderRadius: 50,
-                backgroundColor: "#f5f5f5",
+                backgroundColor: "#ffffffff",
               }}
               item
               key={index}
@@ -190,12 +189,13 @@ const SelloutIndurama = () => {
             textAlign: "center",
             mt: 5,
             backgroundColor: "#ffeeee",
-            color: "red",
+            color: "#810303ff",
             fontWeight: "400",
             fontSize: "13px",
             margin: "2",
             padding: "10px",
             borderRadius: "5px",
+            border: "1px solid red",
           }}
         >
           No tienes permisos para acceder a los componentes de Sellout.

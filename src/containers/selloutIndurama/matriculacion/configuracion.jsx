@@ -294,7 +294,6 @@ const ConfiguracionMatriculacion = () => {
                 top: 80,
                 right: 80,
                 zIndex: 1000,
-                backgroundColor: "#f5f5f5",
               }}
             ></Box>
             <AtomCard

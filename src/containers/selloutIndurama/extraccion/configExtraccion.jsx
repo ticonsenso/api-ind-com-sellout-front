@@ -18,7 +18,7 @@ import { usePermission } from "../../../context/PermisosComtext";
 
 const ConfiguracionExtraccion = () => {
   const hasPermission = usePermission();
-  const namePermission = hasPermission("ACCIONES EXTRACCION");
+  const namePermission = hasPermission("ACCIONES CONFIGURACION EXTRACCION");
   const { showDialog } = useDialog();
   const { showSnackbar } = useSnackbar();
   const dispatch = useDispatch();
@@ -112,7 +112,6 @@ const ConfiguracionExtraccion = () => {
 
   return (
     <AtomCard
-      title="Configuraciones sellout de extracción"
       nameButton={namePermission ? "Crear" : ""}
       valueSearch={search}
       onChange={(e) => setSearch(e.target.value)}

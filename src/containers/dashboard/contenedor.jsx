@@ -92,9 +92,6 @@ function Index() {
             nameButton={menuSelect.nameButton}
             menuSellout={menuSelect.menuSellout}
             nameInfo={menuSelect.nameInfo}
-            onClick={() => {
-              navigate(menuSelect.redirect);
-            }}
           />
         </Box>
       )}

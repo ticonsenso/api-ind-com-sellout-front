@@ -16,6 +16,7 @@ const styles = {
     marginLeft: 3,
     marginRight: 3,
     flexShrink: 0,
+    height: "70px",
   },
   contentBox: {
     flex: 1,
@@ -25,8 +26,8 @@ const styles = {
     borderRadius: 4,
     backgroundColor: "#F5F6F7",
     overflow: "hidden",
-    ml: 3,
-    mr: 3,
+    ml: 1,
+    mr: 1,
     mb: 1,
     mt: 0,
   },

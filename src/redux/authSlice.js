@@ -66,7 +66,7 @@ const extraReducers = (builder) => {
         state.rolesUsuario = [];
       }
     })
-    .addCase(getRolesUsuarioLogin.rejected, (state, action) => {
+    .addCase(getRolesUsuarioLogin.rejected, (state) => {
       state.rolesUsuario = [];
     });
 };

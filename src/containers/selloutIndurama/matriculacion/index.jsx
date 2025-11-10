@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import ConfiguracionMatriculacion from "./configuracion";
 import ListaLogsMatriculacion from "./listaLogs";
 import TabGestionGeneral from "../../../atoms/AtomContentTab";
@@ -21,11 +20,11 @@ const TabGestionMatriculacion = () => {
   const tabs = [
     ...(namePermission
       ? [
-          {
-            label: "Configuración de cierre",
-            component: <ConfiguracionMatriculacion key="configuracion" />,
-          },
-        ]
+        {
+          label: "Configuración de cierre",
+          component: <ConfiguracionMatriculacion key="configuracion" />,
+        },
+      ]
       : []),
     {
       label: "Matriculación por mes",
@@ -45,6 +44,7 @@ const TabGestionMatriculacion = () => {
               mode="month"
               label="Fecha de búsqueda"
               color="#ffffff"
+              height="43px"
               value={calculateDate}
               onChange={(e) => {
                 dispatch(setCalculateDate(e));
@@ -73,9 +73,9 @@ const TabGestionMatriculacion = () => {
               mode="month"
               label="Fecha de búsqueda"
               color="#ffffff"
+              height="43px"
               value={calculateDate}
               onChange={(e) => {
-                dispatch(setCalculateDate(e));
                 dispatch(setCalculateDate(e));
               }}
             />

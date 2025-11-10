@@ -55,12 +55,12 @@ class ApiService {
       });
       return response.data;
     } catch (error) {
-    //   if (error.response?.status === 403) {
-    //     window.location.reload();
-    //     localStorage.setItem('logout', true);
-    //   } else {
-        throw error.response?.data || 'Error desconocido';
-    //   }
+      //   if (error.response?.status === 403) {
+      //     window.location.reload();
+      //     localStorage.setItem('logout', true);
+      //   } else {
+      throw error.response?.data || 'Error desconocido';
+      //   }
     } finally {
       this.resetConfig();
     }

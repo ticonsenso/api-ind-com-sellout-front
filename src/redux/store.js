@@ -13,10 +13,7 @@ import storage from "redux-persist/lib/storage";
 import authReducer from "./authSlice";
 import userReducer from "./userSlice";
 import empresasReducer from "./empresasSlice";
-import configuracionComisionesReducer from "./configuracionComisionesSlice";
 import extraccionReducer from "./extraccionSlice";
-import calculoComisionesReducer from "./calculoComisiones";
-import estadisticasSlice from "./estadisticasSlice.js";
 import sizeStoreReducer from "./sizeStoreSlice";
 import configSelloutReducer from "./configSelloutSlice";
 import selloutDatosReducer from "./selloutDatosSlic";
@@ -38,10 +35,7 @@ export const store = configureStore({
     navigator: navigatorSlice,
     users: userReducer,
     empresa: empresasReducer,
-    configuracionComisiones: configuracionComisionesReducer,
     extraccion: extraccionReducer,
-    calculoComisiones: calculoComisionesReducer,
-    estadisticas: estadisticasSlice,
     sizeStore: sizeStoreReducer,
     configSellout: configSelloutReducer,
     selloutDatos: selloutDatosReducer,

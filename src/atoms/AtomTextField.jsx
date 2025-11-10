@@ -28,6 +28,8 @@ const AtomTextFielInputForm = (props) => {
     onBlur,
     onDragOver,
     onDrop,
+    color = "#f5f5f5",
+    height = "52px",
   } = props;
 
   const handleUserChange = (e) => {
@@ -113,61 +115,69 @@ const AtomTextFielInputForm = (props) => {
             e.dataTransfer.clearData();
           }
         }}
-        slotProps={{
-          input: {
-            startAdornment: icon && IconComponent && (
-              <InputAdornment position="start">
-                <IconComponent />
-              </InputAdornment>
-            ),
-            endAdornment: endIcon && EndIconComponent && (
-              <InputAdornment
-                position="end"
-                sx={{
-                  cursor: "pointer",
-                  backgroundColor: "details.main",
-                  color: "white",
-                  borderRadius: "20px",
-                  padding: "2px",
-                  transition: "background-color 0.3s ease",
-                  "&:hover": {
-                    backgroundColor: "details.main",
-                    scale: 1.1,
-                    transition: "scale 0.3s ease",
-                  },
-                }}
-              >
-                <Tooltip title={tooltip}>
-                  <EndIconComponent
-                    onClick={onClickEndIcon}
-                    sx={{ color: "white", fontSize: "20px", padding: "3px" }}
-                  />
-                </Tooltip>
-              </InputAdornment>
-            ),
-            style: {
-              backgroundColor: "#f5f5f5",
-              borderRadius: "8px",
-              fontSize: "14px",
-              fontWeight: 400,
-            },
-          },
-        }}
         sx={{
           fontSize: "14px",
           flexGrow: 1,
           mb: 1,
           "& .MuiOutlinedInput-root": {
+            // Contenedor principal del input
+            height: multiline ? "auto" : height,
+            borderRadius: "8px",
+            backgroundColor: color,
+            padding: 0,
             "& fieldset": {
-              borderColor: "transparent",
+              // El borde
+              borderColor: error ? "#f44336" : "transparent",
+              borderRadius: "8px",
             },
             "&:hover fieldset": {
-              borderColor: "gray",
+              borderColor: error ? "#f44336" : "transparent",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: error ? "#f44336" : "blue",
+            },
+            "& .MuiInputBase-input": {
+              // El elemento input real
+              padding: multiline ? "8px 14px" : "0 14px",
+              height: multiline ? "auto" : "100%",
+              boxSizing: "border-box",
             },
           },
           "& .MuiInputLabel-root": {
             color: "#757575",
           },
+        }}
+        InputProps={{
+          startAdornment: icon && IconComponent && (
+            <InputAdornment position="start">
+              <IconComponent />
+            </InputAdornment>
+          ),
+          endAdornment: endIcon && EndIconComponent && (
+            <InputAdornment
+              position="end"
+              onClick={onClickEndIcon}
+              sx={{
+                cursor: "pointer",
+                backgroundColor: "details.main",
+                color: "white",
+                borderRadius: "20px",
+                padding: "2px",
+                transition: "background-color 0.3s ease",
+                "&:hover": {
+                  backgroundColor: "details.main",
+                  scale: 1.1,
+                  transition: "scale 0.3s ease",
+                },
+              }}
+            >
+              <Tooltip title={tooltip}>
+                <EndIconComponent
+                  sx={{ color: "white", fontSize: "20px", padding: "3px" }}
+                />
+              </Tooltip>
+            </InputAdornment>
+          ),
         }}
       />
     </Box>
@@ -190,7 +200,7 @@ AtomTextFielInputForm.propTypes = {
   required: PropTypes.bool,
   helperText: PropTypes.string,
   multiline: PropTypes.bool,
-  acceptsPositiveDecimal: PropTypes.bool, // Nueva propiedad para permitir decimales
+  acceptsPositiveDecimal: PropTypes.bool,
 };
 
 export default AtomTextFielInputForm;
