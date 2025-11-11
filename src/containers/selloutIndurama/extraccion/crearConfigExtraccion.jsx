@@ -45,6 +45,7 @@ import {
   setDataColumnsSearch,
   createColumnArraySellout,
   obtenerMatriculacion,
+  setIdEmpresaIndurama,
 } from "../../../redux/configSelloutSlice";
 import { optionsMappingToField } from "./constantes";
 import {
@@ -78,6 +79,14 @@ const CrearConfiguracionExtraccion = ({ config }) => {
         ?.label || "",
   }));
 
+  const optionsEmpresas = useSelector(
+    (state) => state.empresa.optionsEmpresas || []
+  );
+
+
+
+  console.log("optionsEmpresas", optionsEmpresas);
+
   const dataGeneral = useSelector(
     (state) => state.configSellout.dataColumnsSearch || []
   );
@@ -93,6 +102,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
   const configuracionExtraccionSelloutId = useSelector(
     (state) => state.configSellout.configuracionExtraccionSelloutId
   );
+  console.log("idEmpresa", idEmpresaIndurama);
 
   const optionsConfiguracionSellout = useSelector(
     (state) => state.configSellout.optionsConfiguracionSellout || []
@@ -132,6 +142,15 @@ const CrearConfiguracionExtraccion = ({ config }) => {
   useEffect(() => {
     dispatch(obtenerOptionsEmpresas());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (optionsEmpresas && idEmpresaIndurama == null) {
+      const empresaIndurama = optionsEmpresas.find(empresa => empresa.label === 'INDURAMA');
+      if (empresaIndurama) {
+        dispatch(setIdEmpresaIndurama(empresaIndurama.id));
+      }
+    }
+  }, [optionsEmpresas, idEmpresaIndurama]);
 
   const handleCreate = () => {
     if (

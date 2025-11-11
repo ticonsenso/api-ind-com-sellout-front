@@ -134,11 +134,12 @@ export const updateRole = createAsyncThunk(
   async (data, { getState, rejectWithValue }) => {
     const state = getState();
     const token = state.auth.auth.token;
+    const { id, ...rest } = data;
     try {
       return await apiService
-        .setUrl(apiConfig.roles.url + "/" + data.id)
+        .setUrl(apiConfig.roles.url + "/" + id)
         .setMethod("PUT")
-        .setData(data)
+        .setData(rest)
         .send(token);
     } catch (error) {
       return rejectWithValue(error);

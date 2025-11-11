@@ -2,10 +2,12 @@ export const columnsMaestrosStores = [
   {
     field: "distributor",
     label: "Distribuidor",
+    type: "string",
   },
   {
     field: "storeDistributor",
     label: "Almacen Distribuidor",
+    type: "string",
   },
   // {
   //   field: "searchStore",
@@ -14,10 +16,12 @@ export const columnsMaestrosStores = [
   {
     field: "codeStoreSic",
     label: "Cod. Almacen SIC",
+    type: "string",
   },
   {
     field: "status",
     label: "Estado",
+    type: "string",
   },
 ];
 
@@ -48,14 +52,17 @@ export const columnsMaestrosProducts = [
   {
     field: "distributor",
     label: "Distribuidor",
+    type: "string",
   },
   {
     field: "productStore",
     label: "Producto Almacen",
+    type: "string",
   },
   {
     field: "productDistributor",
     label: "Descripción Producto Almacen",
+    type: "string",
   },
   // {
   //   field: "searchProductStore",
@@ -64,6 +71,7 @@ export const columnsMaestrosProducts = [
   {
     field: "codeProductSic",
     label: "Cod. Producto SIC",
+    type: "string",
   },
   {
     field: "status",

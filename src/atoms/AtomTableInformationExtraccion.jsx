@@ -34,8 +34,10 @@ const AtomTableInformationExtraccion = ({
   const formatValueByType = (value, type) => {
     if (value === null || value === undefined || value === "") return "N/A";
 
+    if (type === "string") {
+      return value;
+    }
     const number = parseFloat(value);
-
     if (number) {
       return number.toLocaleString("es-EC", {
         minimumFractionDigits: 2,
@@ -78,6 +80,8 @@ const AtomTableInformationExtraccion = ({
                 fontWeight: 600,
                 position: "sticky",
                 top: 0,
+                height: "40px",
+                minHeight: "40px",
                 backgroundColor: "#f5f5f5",
                 color: "#6f6f6f",
                 width: "30px",
@@ -90,6 +94,7 @@ const AtomTableInformationExtraccion = ({
                 sx={{
                   fontSize: "14px",
                   fontWeight: 600,
+                  minHeight: "40px",
                   position: "sticky",
                   top: 0,
                   backgroundColor: "#f5f5f5",

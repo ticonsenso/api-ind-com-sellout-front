@@ -221,7 +221,7 @@ export const etiquetasColumnas = {
   codeStoreDistributor: "Almacén",
   codeProductDistributor: "Código producto",
   descriptionDistributor: "Detalle producto",
-  unitsSoldDistributor: "Cantidad",
+  unitsSoldDistributor: "Cant.",
 };
 
 export const columnsMatriculacion = [

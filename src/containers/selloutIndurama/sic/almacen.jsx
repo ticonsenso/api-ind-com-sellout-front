@@ -192,14 +192,14 @@ const AlmacenSic = () => {
         handleGuardarEntidad({
           data: storesSic,
           dispatchFunction: updateStoresSic,
-          onSuccessCallback: () => {},
+          onSuccessCallback: () => { },
           onResetForm: handleCloseCreateStoresSic,
         });
       } else {
         handleGuardarEntidad({
           data: storesSic,
           dispatchFunction: createStoresSic,
-          onSuccessCallback: () => {},
+          onSuccessCallback: () => { },
           onResetForm: handleCloseCreateStoresSic,
         });
       }
@@ -347,7 +347,7 @@ const AlmacenSic = () => {
       message:
         "Usted va a realizar la descarga del archivo excel de almacenes SIC",
       onConfirm: exportExcel,
-      onCancel: () => {},
+      onCancel: () => { },
     });
   };
 
@@ -361,16 +361,16 @@ const AlmacenSic = () => {
               title="Descargar lista almacenes SIC"
               iconName="SaveAlt"
               color="#5ab9f6"
-              // right={77}
+              right={77}
             />
-            {/* <IconoFlotante
+            <IconoFlotante
               handleButtonClick={() =>
                 document.getElementById("input-excel-almacen-sic").click()
               }
               handleChangeFile={handleFileChange}
               title="Subir archivo excel almacenes SIC"
               id="input-excel-almacen-sic"
-            /> */}
+            />
             <AtomCard
               title="Almacenes SIC"
               nameButton=""

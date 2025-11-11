@@ -933,6 +933,7 @@ const ExtraccionDatos = () => {
         avisoCritico("⚠️ No se extrajeron registros del archivo");
       }
       const registrosFiltrados = filterByCurrentMonth(registros, calculateDate);
+      console.log("registrosFiltrados", registrosFiltrados);
       const camposDetectados = Object.keys(registrosFiltrados[0] || {});
       const ordenColumnas = Object.keys(etiquetasColumnas);
 
@@ -979,6 +980,7 @@ const ExtraccionDatos = () => {
         columnasOrdenadas.map((key) => ({
           label: etiquetasColumnas[key] || key,
           field: key,
+          type: "TEXT",
         }))
       );
     } catch (error) {

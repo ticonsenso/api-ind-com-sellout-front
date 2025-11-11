@@ -21,8 +21,8 @@ const AtomTableExtraccion = ({
   celdas = [],
   errors = {},
   showIndex = true,
-  setData = () => {},
-  setErrores = () => {},
+  setData = () => { },
+  setErrores = () => { },
 }) => {
   const [filasSeleccionadas, setFilasSeleccionadas] = useState([]);
   const [page, setPage] = useState(0);
@@ -110,6 +110,44 @@ const AtomTableExtraccion = ({
     return value;
   };
 
+  const styles = {
+    headerCell: {
+      fontWeight: 500,
+      fontSize: 14,
+      color: "#7f7f7fff",
+      height: "40px",
+      backgroundColor: "#ffffffff",
+      position: "sticky",
+      top: 0,
+      minWidth: "5px",
+      zIndex: 1,
+    },
+    textCell: {
+      backgroundColor: "#fafafaff",
+      fontWeight: 500,
+      textAlign: "left",
+      fontSize: "12px",
+      width: "10px",
+      color: "text.secondary",
+    },
+    textFinal: {
+      fontWeight: "700",
+      pt: 2,
+      pb: 2,
+      textAlign: "right",
+      color: "#1976d2",
+      fontSize: "14px",
+    },
+    indexCell: {
+      backgroundColor: "#ffffffff",
+      fontWeight: 500,
+      textAlign: "center",
+      fontSize: "12px",
+      color: "#3a82dfff",
+    },
+
+  };
+
   return (
     <TableContainer
       sx={{
@@ -124,16 +162,7 @@ const AtomTableExtraccion = ({
         <TableHead>
           <TableRow>
             <TableCell
-              sx={{
-                fontWeight: 600,
-                fontSize: 14,
-                color: "#6f6f6f",
-                height: "35px",
-                backgroundColor: "#F5F5F5",
-                position: "sticky",
-                top: 0,
-                zIndex: 1,
-              }}
+              sx={styles.headerCell}
             >
               <Box
                 sx={{
@@ -141,7 +170,7 @@ const AtomTableExtraccion = ({
                   flexDirection: "row",
                   padding: 0,
                   margin: 0,
-                  width: "40px",
+                  width: "30px",
                   justifyContent: "center",
                 }}
               >
@@ -158,7 +187,11 @@ const AtomTableExtraccion = ({
                 />
                 {filasSeleccionadas.length > 0 && (
                   <IconButton onClick={handleEliminarSeleccionadas}>
-                    <DeleteIcon color="error" sx={{ fontSize: "18px" }} />
+                    <DeleteIcon
+                      color="error"
+                      sx={{
+                        fontSize: "16px",
+                      }} />
                   </IconButton>
                 )}
               </Box>
@@ -166,35 +199,14 @@ const AtomTableExtraccion = ({
 
             {showIndex && (
               <TableCell
-                sx={{
-                  fontWeight: 600,
-                  fontSize: 14,
-                  color: "#6f6f6f",
-                  height: "35px",
-                  backgroundColor: "#F5F5F5",
-                  position: "sticky",
-                  top: 0,
-                  zIndex: 1,
-                  textAlign: "center",
-                }}
+                sx={styles.headerCell}
               ></TableCell>
             )}
 
             {celdas.map((col, index) => (
               <TableCell
                 key={index}
-                sx={{
-                  fontSize: "14px",
-                  fontWeight: 600,
-                  zIndex: 1,
-                  position: "sticky",
-                  top: 0,
-                  textAlign: col.type === "TEXT" ? "left" : "right",
-                  backgroundColor: "#f5f5f5",
-                  textTransform: "capitalize",
-                  color: "#6f6f6f",
-                  lineHeight: "23px",
-                }}
+                sx={styles.headerCell}
               >
                 {col.label || col.field || "N/A"}
               </TableCell>
@@ -210,7 +222,7 @@ const AtomTableExtraccion = ({
 
               return (
                 <TableRow key={globalIndex}>
-                  <TableCell padding="checkbox">
+                  <TableCell sx={styles.indexCell}>
                     <input
                       type="checkbox"
                       checked={filasSeleccionadas.includes(globalIndex)}
@@ -220,14 +232,7 @@ const AtomTableExtraccion = ({
 
                   {showIndex && (
                     <TableCell
-                      sx={{
-                        backgroundColor: "#f3f6ff",
-                        fontWeight: 500,
-                        textAlign: "left",
-                        fontSize: "12px",
-                        width: "30px",
-                        color: "text.secondary",
-                      }}
+                      sx={styles.indexCell}
                     >
                       {globalIndex + 1}
                     </TableCell>
@@ -238,16 +243,16 @@ const AtomTableExtraccion = ({
                     const hasError = errors[globalIndex]?.[campo];
                     const value = formatValueByType(row[campo], col.type);
 
-                    const maxWidth = col.maxWidth || "120px";
-                    const minWidth = col.minWidth || "20px";
+                    const maxWidth = col.maxWidth || "190px";
+                    const minWidth = col.minWidth || "5px";
 
                     return (
                       <TableCell
                         key={index}
                         style={{
-                          color: hasError ? "red" : "inherit",
-                          backgroundColor: hasError ? "#ffe6e6" : "inherit",
-                          fontSize: "13px",
+                          color: hasError ? "red" : "#414141ff",
+                          backgroundColor: hasError ? "#ffe6e6" : "#fafafaff",
+                          fontSize: "12px",
                           fontWeight: "400",
                           maxWidth: maxWidth,
                           minWidth: minWidth,
@@ -263,7 +268,7 @@ const AtomTableExtraccion = ({
                 </TableRow>
               );
             })}
-          {celdas.map((col, index) => {
+          {celdas.map((col) => {
             if (col.field === "unitsSoldDistributor") {
               const totalUnits = data.reduce((acc, row) => {
                 const val = parseFloat(row[col.field]) || 0;
@@ -272,18 +277,18 @@ const AtomTableExtraccion = ({
               return (
                 <TableRow
                   sx={{
-                    backgroundColor: "#e3f2fd",
+                    backgroundColor: "#ffffffff",
                     fontWeight: "bold",
                   }}
                 >
                   <TableCell
                     colSpan={celdas.length + 1}
-                    sx={{ fontWeight: "bold", textAlign: "right" }}
+                    sx={styles.textFinal}
                   >
                     TOTAL UNIDADES VENDIDAS:
                   </TableCell>
-                  <TableCell sx={{ fontWeight: "bold", textAlign: "left" }}>
-                    {totalUnits}
+                  <TableCell sx={styles.textFinal}>
+                    {formatValueByType(totalUnits, "number")}
                   </TableCell>
                 </TableRow>
               );

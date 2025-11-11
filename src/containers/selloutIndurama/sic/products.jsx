@@ -241,9 +241,79 @@ const ProductsSic = () => {
       message:
         "Usted va a realizar la descarga del archivo excel de productos SIC",
       onConfirm: exportExcel,
-      onCancel: () => {},
+      onCancel: () => { },
     });
   };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setLoading(true);
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(arrayBuffer);
+
+      const worksheet = workbook.worksheets.find(
+        (ws) => ws.name === "prod sic"
+      );
+      if (!worksheet) {
+        throw new Error("La hoja 'prod sic' no fue encontrada en el archivo");
+      }
+
+      const headerRow = worksheet.getRow(1);
+      const headers = headerRow.values.slice(1);
+
+      const expectedHeaders = columnsProductsSic
+        .filter((col) => col.field !== "status")
+        .map((col) => col.label);
+
+      const missingHeaders = expectedHeaders.filter(
+        (h) => !headers.includes(h)
+      );
+      if (missingHeaders.length > 0) {
+        throw new Error(
+          `Faltan columnas en el Excel: ${missingHeaders.join(", ")}`
+        );
+      }
+
+      const data = [];
+      worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+        if (rowNumber === 1) return; // saltar encabezado
+
+        const rowValues = row.values.slice(1);
+        const item = {};
+
+        columnsProductsSic.forEach(({ field, label }) => {
+          if (field === "status") {
+            item[field] = true; // asignar true por defecto
+          } else {
+            const colIndex = headers.indexOf(label);
+            item[field] = colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
+          }
+        });
+
+        data.push(item);
+      });
+
+      if (data.length === 0) {
+        throw new Error("No se encontraron datos válidos en el archivo.");
+      }
+
+      setDatosExcel(data);
+      setOpenUploadExcel(true);
+      showSnackbar("Archivo cargado correctamente.");
+    } catch (error) {
+      showSnackbar(error.message || "Error leyendo el archivo Excel.");
+    } finally {
+      setLoading(false);
+      event.target.value = null;
+    }
+  };
+
 
   return (
     <>
@@ -256,6 +326,14 @@ const ProductsSic = () => {
               iconName="SaveAlt"
               color="#5ab9f6"
               right={77}
+            />
+            <IconoFlotante
+              id="input-excel-product-sic"
+              handleButtonClick={() =>
+                document.getElementById("input-excel-product-sic").click()
+              }
+              handleChangeFile={handleFileChange}
+              title="Subir excel de productos SIC"
             />
 
             <AtomCard

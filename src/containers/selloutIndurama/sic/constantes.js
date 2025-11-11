@@ -169,54 +169,67 @@ export const columnsProductsSic = [
   {
     field: "idProductSic",
     label: "ID",
+    type: "string",
   },
   {
     field: "jdeCode",
     label: "Codigo JDE",
+    type: "string",
   },
   {
     field: "jdeName",
     label: "Nombre JDE",
+    type: "string",
   },
   {
     field: "companyLine",
     label: "Linea De Negocio",
+    type: "string",
   },
   {
     field: "designLine",
     label: "Linea Diseño",
+    type: "string",
   },
   {
     field: "brand",
     label: "Marca",
+    type: "string",
   },
   {
     field: "category",
     label: "Categoria",
+    type: "string",
   },
   {
     field: "subCategory",
     label: "Subcategoria",
+    type: "string",
   },
   {
     field: "marModelLm",
     label: "Mar Modelo Im",
+    type: "string",
   },
   {
     field: "equivalentProId",
     label: "Pro Id Equivalencia",
+    type: "string",
   },
   {
     field: "equivalent",
     label: "Equivalencia",
+    type: "string",
   },
   {
     field: "validity",
     label: "Vigencia",
+    type: "string",
   },
   {
     field: "discontinued",
     label: "Descontinuado",
+    type: "string",
   },
 ];
 
@@ -224,46 +237,57 @@ export const columnsStoresSic = [
   {
     field: "storeCode",
     label: "Cod Almacen",
+    type: "string",
   },
   {
     field: "storeName",
     label: "Nombre Almacen",
+    type: "string",
   },
   {
     field: "distributor2",
     label: "Distribuidor2",
+    type: "string",
   },
   {
     field: "distributorSap",
     label: "Distribuidor SAP",
+    type: "string",
   },
   {
     field: "endChannel",
     label: "Canal Final",
+    type: "string",
   },
   {
     field: "wholesaleRegion",
     label: "Region Mayoreo",
+    type: "string",
   },
   {
     field: "city",
     label: "Ciudad",
+    type: "string",
   },
   {
     field: "region",
     label: "Region",
+    type: "string",
   },
   {
     field: "category",
     label: "Categoria",
+    type: "string",
   },
   {
     field: "province",
     label: "Provincia",
+    type: "string",
   },
   {
     field: "zone",
     label: "Zona ok",
+    type: "string",
   },
   {
     field: "status",
