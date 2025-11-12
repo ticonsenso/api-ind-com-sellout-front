@@ -182,18 +182,23 @@ export const columnsProductsSic = [
     type: "string",
   },
   {
+    field: "imeName",
+    label: "Nombre IME",
+    type: "string",
+  },
+  {
+    field: "sapCode",
+    label: "Codigo SAP",
+    type: "string",
+  },
+  {
+    field: "sapName",
+    label: "Nombre Sap",
+    type: "string",
+  },
+  {
     field: "companyLine",
     label: "Linea De Negocio",
-    type: "string",
-  },
-  {
-    field: "designLine",
-    label: "Linea Diseño",
-    type: "string",
-  },
-  {
-    field: "brand",
-    label: "Marca",
     type: "string",
   },
   {
@@ -212,6 +217,36 @@ export const columnsProductsSic = [
     type: "string",
   },
   {
+    field: "model",
+    label: "Modelo",
+    type: "string",
+  },
+  {
+    field: "designLine",
+    label: "Linea Diseño",
+    type: "string",
+  },
+  {
+    field: "brand",
+    label: "Marca",
+    type: "string",
+  },
+  {
+    field: "discontinued",
+    label: "Descontinuado",
+    type: "string",
+  },
+  {
+    field: "status",
+    label: "Estado",
+    type: "string",
+  },
+  {
+    field: "sheetVisit",
+    label: "Hojas Vis",
+    type: "string",
+  },
+  {
     field: "equivalentProId",
     label: "Pro Id Equivalencia",
     type: "string",
@@ -227,10 +262,11 @@ export const columnsProductsSic = [
     type: "string",
   },
   {
-    field: "discontinued",
-    label: "Descontinuado",
+    field: "repeatedNumbers",
+    label: "Num repetidos",
     type: "string",
-  },
+  }
+
 ];
 
 export const columnsStoresSic = [
@@ -245,8 +281,48 @@ export const columnsStoresSic = [
     type: "string",
   },
   {
+    field: "storeAddress",
+    label: "Direccion Almacen",
+    type: "string",
+  },
+  {
+    field: "distributor",
+    label: "Distribuidor",
+    type: "string",
+  },
+  {
     field: "distributor2",
     label: "Distribuidor2",
+    type: "string",
+  },
+  {
+    field: "phone",
+    label: "Teléfono",
+    type: "string",
+  },
+  {
+    field: "agencyManager",
+    label: "Jefe Agencia",
+    type: "string",
+  },
+  {
+    field: "size",
+    label: "Tamanio",
+    type: "string",
+  },
+  {
+    field: "ubication",
+    label: "Ubicacion",
+    type: "string",
+  },
+  {
+    field: "sales",
+    label: "Ventas",
+    type: "string",
+  },
+  {
+    field: "channel",
+    label: "Canal Final",
     type: "string",
   },
   {
@@ -256,9 +332,15 @@ export const columnsStoresSic = [
   },
   {
     field: "endChannel",
-    label: "Canal Final",
+    label: "Canal Final 2",
     type: "string",
   },
+  {
+    field: "supervisor",
+    label: "Supervisor",
+    type: "string",
+  },
+
   {
     field: "wholesaleRegion",
     label: "Region Mayoreo",

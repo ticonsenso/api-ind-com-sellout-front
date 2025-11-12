@@ -722,7 +722,7 @@ const ExtraccionDatos = () => {
   };
 
   const detectHeader = (rows) => {
-    for (let i = 0; i < Math.min(50, rows.length); i++) {
+    for (let i = 0; i < Math.min(100, rows.length); i++) {
       const fila = rows[i];
       const cleanedRow = fila.map((celda) => extraerTextoCelda(celda));
       const nonEmptyCells = cleanedRow.filter((c) => c !== "");
@@ -933,7 +933,6 @@ const ExtraccionDatos = () => {
         avisoCritico("⚠️ No se extrajeron registros del archivo");
       }
       const registrosFiltrados = filterByCurrentMonth(registros, calculateDate);
-      console.log("registrosFiltrados", registrosFiltrados);
       const camposDetectados = Object.keys(registrosFiltrados[0] || {});
       const ordenColumnas = Object.keys(etiquetasColumnas);
 
@@ -1035,7 +1034,6 @@ const ExtraccionDatos = () => {
         consecutivasVacias = 0;
       }
 
-      // --- Recorte de columnas ---
       let consecutivasColVacias = 0;
       let ultimaColumnaConDato = fila.length - 1;
 

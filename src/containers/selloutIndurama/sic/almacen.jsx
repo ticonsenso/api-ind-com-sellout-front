@@ -280,6 +280,19 @@ const AlmacenSic = () => {
     try {
       const chunkSize = 2000;
 
+      const datosConvertidos = datosExcel.map((item) => {
+        const nuevoItem = {};
+        for (const [key, value] of Object.entries(item)) {
+          if (key === "sales" || key === "storeCode" || key === "status") {
+            nuevoItem[key] = value;
+          } else {
+            nuevoItem[key] =
+              value !== null && value !== undefined ? String(value) : "";
+          }
+        }
+        return nuevoItem;
+      });
+
       const splitInChunks = (array, size) => {
         const result = [];
         for (let i = 0; i < array.length; i += size) {
@@ -288,7 +301,7 @@ const AlmacenSic = () => {
         return result;
       };
 
-      const chunks = splitInChunks(datosExcel, chunkSize);
+      const chunks = splitInChunks(datosConvertidos, chunkSize);
 
       for (const [index, chunk] of chunks.entries()) {
         try {
@@ -301,16 +314,16 @@ const AlmacenSic = () => {
               index === chunks.length - 1 ? handleCloseUploadExcel : undefined,
           });
         } catch (error) {
-          showSnackbar(`Error al subir el chunk ${index + 1}:`);
+          showSnackbar(`${error}, carga ${index + 1}:`);
         }
       }
     } catch (error) {
-      setLoading(false);
       showSnackbar(error.message || "Error al guardar el archivo Excel.");
     } finally {
       setLoading(false);
     }
   };
+
 
   const debounceSearchAddress = useCallback(
     debounce((value) => {

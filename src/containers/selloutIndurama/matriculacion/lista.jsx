@@ -544,6 +544,7 @@ const Matriculacion = ({ calculateDate }) => {
               placeholder="Buscar por distribuidor o almacén"
               onChange={(e) => {
                 setSearch(e.target.value);
+                setPage(0);
                 debounceSearchMatriculacion(e.target.value);
               }}
               children={
