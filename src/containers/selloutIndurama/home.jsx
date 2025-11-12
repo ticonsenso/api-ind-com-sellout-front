@@ -42,18 +42,7 @@ const SelloutIndurama = () => {
       Icon: PublicIcon,
       permiso: "MAESTROS SELLOUT",
     },
-    {
-      id: 4,
-      menuSellout: true,
-      name: "SIC",
-      numero: "03",
-      titulo: "SIC",
-      nameInfo: "Lista",
-      descripcion: "Carga y gestión de productos y almacenes SIC.",
-      color: "#ef6c00",
-      Icon: EmojiObjectsIcon,
-      permiso: "SIC SELLOUT",
-    },
+
     {
       id: 5,
       menuSellout: true,
@@ -66,6 +55,18 @@ const SelloutIndurama = () => {
       Icon: SettingsIcon,
       nameInfo: "Lista",
       permiso: "EXTRACCION SELLOUT",
+    },
+    {
+      id: 4,
+      menuSellout: true,
+      name: "SIC",
+      numero: "03",
+      titulo: "SIC",
+      nameInfo: "Lista",
+      descripcion: "Carga y gestión de productos y almacenes SIC.",
+      color: "#ef6c00",
+      Icon: EmojiObjectsIcon,
+      permiso: "SIC SELLOUT",
     },
     {
       id: 5,
