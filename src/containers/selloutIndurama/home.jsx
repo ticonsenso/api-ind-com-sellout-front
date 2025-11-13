@@ -26,28 +26,15 @@ const SelloutIndurama = () => {
       titulo: "Matriculación",
       descripcion: "Carga y gestión de archivos a subir.",
       nameInfo: "Lista",
-      color: "#e8bb00",
+      color: "#e8ae00ff",
       Icon: AddToQueueIcon,
       permiso: "MATRICULACION SELLOUT",
     },
     {
-      id: 3,
-      menuSellout: true,
-      name: "MAESTROS",
-      numero: "02",
-      titulo: "MAESTROS",
-      nameInfo: "Lista",
-      descripcion: "Carga y gestión de productos y almacenes maestros.",
-      color: "#6a1b9a",
-      Icon: PublicIcon,
-      permiso: "MAESTROS SELLOUT",
-    },
-
-    {
       id: 5,
       menuSellout: true,
       name: "Configuración de Extracción",
-      numero: "04",
+      numero: "02",
       titulo: "CONFIGURACIÓN DE EXTRACCIÓN",
       descripcion:
         "Definición de configuraciones y columnas del archivo de extracción.",
@@ -57,10 +44,36 @@ const SelloutIndurama = () => {
       permiso: "EXTRACCION SELLOUT",
     },
     {
+      id: 5,
+      menuSellout: true,
+      name: "Extracción Sellout",
+      numero: "03",
+      titulo: "EXTRACCIÓN DE DATOS",
+      descripcion:
+        "Procesamiento del archivo de extracción para obtener registros.",
+      color: "#64a420ff",
+      Icon: MenuBookIcon,
+      permiso: "EXTRACCION SELLOUT",
+    },
+    {
+      id: 3,
+      menuSellout: true,
+      name: "MAESTROS",
+      numero: "04",
+      titulo: "MAESTROS",
+      nameInfo: "Lista",
+      descripcion: "Carga y gestión de productos y almacenes maestros.",
+      color: "#6a1b9a",
+      Icon: PublicIcon,
+      permiso: "MAESTROS SELLOUT",
+    },
+
+
+    {
       id: 4,
       menuSellout: true,
       name: "SIC",
-      numero: "03",
+      numero: "05",
       titulo: "SIC",
       nameInfo: "Lista",
       descripcion: "Carga y gestión de productos y almacenes SIC.",
@@ -68,18 +81,7 @@ const SelloutIndurama = () => {
       Icon: EmojiObjectsIcon,
       permiso: "SIC SELLOUT",
     },
-    {
-      id: 5,
-      menuSellout: true,
-      name: "Extracción Sellout",
-      numero: "05",
-      titulo: "EXTRACCIÓN DE DATOS",
-      descripcion:
-        "Procesamiento del archivo de extracción para obtener registros.",
-      color: "#7cb342",
-      Icon: MenuBookIcon,
-      permiso: "EXTRACCION SELLOUT",
-    },
+
     {
       id: 6,
       menuSellout: true,

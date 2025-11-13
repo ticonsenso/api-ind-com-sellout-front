@@ -20,8 +20,19 @@ import {
 } from "@mui/material";
 import Encabezado from "./encabezado.jsx";
 import componentMap from "./componentMap.jsx";
+import {
+  setIdEmpresaIndurama,
+} from "../../redux/configSelloutSlice.js";
+
 function Index() {
+
   const dispatch = useDispatch();
+  const optionsEmpresas = useSelector(
+    (state) => state.empresa.optionsEmpresas || []
+  );
+  const idEmpresaIndurama = useSelector(
+    (state) => state?.configSellout?.idEmpresaIndurama
+  );
 
   const token = useSelector((state) => state.auth.auth.token) || null;
   const rolesUsuario =
@@ -35,6 +46,15 @@ function Index() {
       eliminarTokenUrl();
     }
   };
+
+  useEffect(() => {
+    if (optionsEmpresas && idEmpresaIndurama == null) {
+      const empresaIndurama = optionsEmpresas.find(empresa => empresa.label === 'INDURAMA');
+      if (empresaIndurama) {
+        dispatch(setIdEmpresaIndurama(empresaIndurama.id));
+      }
+    }
+  }, [optionsEmpresas, idEmpresaIndurama]);
 
   const obtenerRolesUsuario = async (tokenData) => {
     const tokenFinal = tokenData || token;
@@ -81,6 +101,8 @@ function Index() {
   const renderComponent = () => {
     return componentMap[menuSelect.id] || <div>Componente no encontrado</div>;
   };
+
+
 
   return (
     <Box sx={styles.mainContainer}>

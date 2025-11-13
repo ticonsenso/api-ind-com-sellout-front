@@ -79,14 +79,6 @@ const CrearConfiguracionExtraccion = ({ config }) => {
         ?.label || "",
   }));
 
-  const optionsEmpresas = useSelector(
-    (state) => state.empresa.optionsEmpresas || []
-  );
-
-
-
-  console.log("optionsEmpresas", optionsEmpresas);
-
   const dataGeneral = useSelector(
     (state) => state.configSellout.dataColumnsSearch || []
   );
@@ -120,7 +112,6 @@ const CrearConfiguracionExtraccion = ({ config }) => {
     distributorCompanyName: config?.distributorCompanyName || "",
     sourceType: config?.sourceType || "FILE",
     sheetName: config?.sheetName || "",
-    companyId: idEmpresaIndurama,
     matriculationId: config?.matriculation?.id || null,
     calculateDate: config?.calculateDate || formatDate(new Date()),
   });
@@ -143,16 +134,10 @@ const CrearConfiguracionExtraccion = ({ config }) => {
     dispatch(obtenerOptionsEmpresas());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (optionsEmpresas && idEmpresaIndurama == null) {
-      const empresaIndurama = optionsEmpresas.find(empresa => empresa.label === 'INDURAMA');
-      if (empresaIndurama) {
-        dispatch(setIdEmpresaIndurama(empresaIndurama.id));
-      }
-    }
-  }, [optionsEmpresas, idEmpresaIndurama]);
+
 
   const handleCreate = () => {
+    console.log("configuracion", configuracion);
     if (
       !validateForm(
         configuracion,
@@ -172,7 +157,11 @@ const CrearConfiguracionExtraccion = ({ config }) => {
   };
 
   const handleCreateConfiguracion = async () => {
-    const response = await dispatch(createExtractionsConfig(configuracion));
+    const data = {
+      ...configuracion,
+      companyId: idEmpresaIndurama,
+    }
+    const response = await dispatch(createExtractionsConfig(data));
     if (response.meta.requestStatus === "fulfilled") {
       showSnackbar(response.payload.message);
     } else {

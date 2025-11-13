@@ -19,7 +19,6 @@ import {
   ListItemIcon,
 } from "@mui/material";
 import {
-  COLUMN_KEYWORDS,
   CAMPOS_CONFIG_ESTANDAR,
   PALABRAS_INVALIDAS,
   NOMBRES_CAMPOS,
@@ -93,6 +92,17 @@ const ExtraccionDatos = () => {
   const optionsMatriculacion = useSelector(
     (state) => state.configSellout?.optionsMatriculacion
   );
+
+  const dataDiccionario = useSelector(
+    (state) => state.diccionario.listaCategorias || []
+  );
+
+  const COLUMN_KEYWORDS = dataDiccionario.reduce((acc, categoria) => {
+    acc[categoria.name] = categoria.keywords.map(k => k.keyword);
+    return acc;
+  }, {});
+
+
 
   const [openCreateStores, setOpenCreateStores] = useState(false);
   const [maestrosStores, setMaestrosStores] = useState({

@@ -18,6 +18,7 @@ const AtomCard = (props) => {
     search,
     labelBuscador = "",
     placeholder = "Buscar...",
+    color = "#f5f5f5"
   } = props;
 
   return (
@@ -31,6 +32,7 @@ const AtomCard = (props) => {
         borderRadius: 5,
         padding: 1,
         justifyContent: "right",
+        backgroundColor: color,
       }}
     >
       <Grid size={4}>

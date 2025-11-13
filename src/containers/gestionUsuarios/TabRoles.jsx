@@ -87,7 +87,7 @@ const TabRoles = () => {
           showSnackbar("Registro eliminado exitosamente");
           buscarRoles();
         } else {
-          showSnackbar(response.payload.error);
+          showSnackbar(response.payload.message);
         }
       },
     });

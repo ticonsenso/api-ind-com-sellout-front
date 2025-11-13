@@ -236,11 +236,27 @@ const ConfiguracionMatriculacion = () => {
       label: "Editar",
       color: "info",
       onClick: (row) => handleEditMatriculacion(row),
+      visible: (row) => {
+        // 1. Obtiene el estado (e.g., "Cerrado ⛔" o "Abierto 🟢")
+        const esEstadoCerrado = row.status.includes("Cerrado");
+
+        // 2. Retorna true (visible) solo si NO está cerrado.
+        // Si está abierto, es editable, sin importar la antigüedad.
+        return !esEstadoCerrado;
+      },
     },
     {
       label: "Eliminar",
       color: "error",
       onClick: (row) => handleDeleteMatriculacion(row),
+      visible: (row) => {
+        // 1. Obtiene el estado (e.g., "Cerrado ⛔" o "Abierto 🟢")
+        const esEstadoCerrado = row.status.includes("Cerrado");
+
+        // 2. Retorna true (visible) solo si NO está cerrado.
+        // Si está abierto, es editable, sin importar la antigüedad.
+        return !esEstadoCerrado;
+      },
     },
   ];
 
@@ -283,19 +299,43 @@ const ConfiguracionMatriculacion = () => {
     setOpenMatriculacion(true);
   };
 
+  const isMonthPrevious = (monthISO) => {
+    if (!monthISO) return false;
+    const hoy = new Date();
+    const mesAnterior = new Date(hoy.getFullYear(), hoy.getMonth() - 1, 1);
+    const mesData = new Date(monthISO);
+    mesData.setDate(1);
+
+    const anioMesAnterior = mesAnterior.getFullYear() * 100 + mesAnterior.getMonth();
+    const anioMesData = mesData.getFullYear() * 100 + mesData.getMonth();
+
+    return anioMesData === anioMesAnterior;
+  };
+
+  const canBeEditedByDate = (monthISO) => {
+    if (!monthISO) return false;
+
+    const fechaData = new Date(monthISO);
+    fechaData.setDate(1); // Normaliza al día 1
+
+    const hoy = new Date();
+    const haceDosMeses = new Date(hoy.getFullYear(), hoy.getMonth() - 2, 1);
+
+    // La data debe ser igual o posterior a hace dos meses.
+    // Es decir, mes actual (0), mes anterior (-1) o el mes anterior a ese (-2).
+    // Si es menor (hace 3 meses o más), retorna false.
+
+    const anioMesData = fechaData.getFullYear() * 12 + fechaData.getMonth();
+    const anioMesLimite = haceDosMeses.getFullYear() * 12 + haceDosMeses.getMonth();
+
+    return anioMesData >= anioMesLimite;
+  };
+
   return (
     <>
       <AtomContainerGeneral
         children={
           <>
-            <Box
-              sx={{
-                position: "fixed",
-                top: 80,
-                right: 80,
-                zIndex: 1000,
-              }}
-            ></Box>
             <AtomCard
               title=""
               nameButton={namePermission ? "Crear" : ""}
@@ -307,6 +347,7 @@ const ConfiguracionMatriculacion = () => {
               valueSearch={search}
               onChange={(e) => {
                 setSearch(e.target.value);
+                setPage(1);
                 debounceSearchMatriculacion(e.target.value);
               }}
               children={

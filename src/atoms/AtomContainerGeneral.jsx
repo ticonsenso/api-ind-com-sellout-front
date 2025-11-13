@@ -1,7 +1,10 @@
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
 
-const AtomContainerGeneral = ({ children, encabezado }) => {
+const AtomContainerGeneral = ({
+  children,
+  color = "#f5f5f5",
+  encabezado }) => {
   return (
     <Grid
       sx={{
@@ -16,7 +19,7 @@ const AtomContainerGeneral = ({ children, encabezado }) => {
           height: "100%",
           width: "100%",
           overflow: "auto",
-          backgroundColor: "#f5f5f5",
+          backgroundColor: color,
         }}
       >
         {children}

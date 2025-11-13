@@ -1,9 +1,9 @@
-import React from "react";
 import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import { Box } from "@mui/material";
 import ExtraccionDatos from "./extraccion/extraccion";
 import TabGestionGeneral from "../../atoms/AtomContentTab";
 import ConfiguracionExtraccion from "./extraccion/configExtraccion";
+import ListaCategorias from "./diccionario/lista";
 
 const Config1 = () => {
   const tabs = [
@@ -14,6 +14,10 @@ const Config1 = () => {
     {
       label: "Configuración de extracción",
       component: <ConfiguracionExtraccion key="configuracion" />,
+    },
+    {
+      label: "Diccionario",
+      component: <ListaCategorias key="configuracion" />,
     },
   ];
 

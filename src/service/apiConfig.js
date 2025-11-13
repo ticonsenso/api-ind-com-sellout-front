@@ -171,4 +171,10 @@ export const apiConfig = {
   optionEstadisticasComisionesUrl: {
     url: ipServe + "api/comissions/config/employees/filters",
   },
+  listaCategoriasUrl: {
+    url: ipServe + "api/column-config/categories",
+  },
+  listaColumnsCategoriasUrl: {
+    url: ipServe + "api/column-config/keywords",
+  },
 };

@@ -299,7 +299,9 @@ const AtomTableForm = (props) => {
                             ) {
                               return null;
                             }
-
+                            if (action.visible && !action.visible(row)) {
+                              return null;
+                            }
                             const colorKey = action.color || "info";
                             const colorStyles =
                               coloresActions[colorKey] || coloresActions.info;

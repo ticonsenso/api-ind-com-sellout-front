@@ -17,6 +17,7 @@ import extraccionReducer from "./extraccionSlice";
 import sizeStoreReducer from "./sizeStoreSlice";
 import configSelloutReducer from "./configSelloutSlice";
 import selloutDatosReducer from "./selloutDatosSlic";
+import diccionarioReducer from "./diccionarioSlice.js";
 
 const persistConfig = {
   key: "auth",
@@ -39,6 +40,7 @@ export const store = configureStore({
     sizeStore: sizeStoreReducer,
     configSellout: configSelloutReducer,
     selloutDatos: selloutDatosReducer,
+    diccionario: diccionarioReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
