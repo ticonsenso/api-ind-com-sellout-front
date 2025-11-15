@@ -72,7 +72,7 @@ const initialStateMenu = [
     visible: true,
     name_server: "MAESTROS SELLOUT",
     menuSellout: true,
-    nameInfo: "Almacenes-Productos no homologados",
+    nameInfo: "Almacenes - Productos",
   },
   {
     id: 4,
@@ -114,7 +114,7 @@ const initialStateMenu = [
   {
     id: 9,
     name: "Base no Homologada",
-    icon: "mui:RestorePageIcon ",
+    icon: "mui:DatasetLinked",
     visible: true,
     name_server: "BASE NO HOMOLOGADA",
     menuSellout: false,

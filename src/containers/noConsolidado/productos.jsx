@@ -6,22 +6,40 @@ import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import { useState } from "react";
 import Grid from "@mui/material/Grid";
 import AtomCircularProgress from "../../atoms/AtomCircularProgress";
-import { columnsProductNoHomologado } from "./constantes";
+import { columnsProductNull, styleTableData } from "./constantes";
 import {
     obtenerConsolidatedSelloutUnique,
+    subirExcelMaestrosProducts,
+    exportarExcel
 } from "../../redux/configSelloutSlice";
-import { debounce, timeSearch } from "../constantes";
+import { debounce, timeSearch, formatDate } from "../constantes";
+import { DataGrid } from "@mui/x-data-grid";
+import { esES } from "@mui/x-data-grid/locales";
+import { useSnackbar } from "../../context/SnacbarContext";
+import {
+    Box,
+    Paper,
+} from "@mui/material";
+import { setCalculateDate } from "../../redux/configSelloutSlice";
+import AtomDatePicker from "../../atoms/AtomDatePicker";
+import AtomButtonPrimary from "../../atoms/AtomButtonPrimary";
+import IconoFlotante from "../../atoms/IconActionPage";
 
-const ProductosNoHomologados = ({ calculateDate }) => {
+const ProductosNoHomologados = () => {
     const dispatch = useDispatch();
     const totalLista = useSelector(
         (state) => state.diccionario.totalColumnsCategorias || 0
     );
+    const calculateDate = useSelector(
+        (state) => state?.configSellout?.calculateDate || formatDate(new Date())
+    );
+    const { showSnackbar } = useSnackbar();
     console.log(totalLista);
     const [openMatriculacion, setOpenMatriculacion] = useState(false);
     const [search, setSearch] = useState("");
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [resultadosActualizados, setResultadosActualizados] = useState(null);
 
     const debounceSearch = useCallback(
         debounce((value) => {
@@ -37,8 +55,14 @@ const ProductosNoHomologados = ({ calculateDate }) => {
                 obtenerConsolidatedSelloutUnique({
                     calculateDate: calculateDate,
                     codeProduct: true,
-                }))
-            setData(response.payload.items || []);
+                })
+            );
+            const items = response.payload.items || [];
+            const dataTransformada = items.map(item => ({
+                ...item,
+                codeProduct: item.codeProduct?.trim() === "" ? "OTROS" : item.codeProduct
+            }));
+            setData(dataTransformada);
         } finally {
             setLoading(false);
         }
@@ -52,17 +76,103 @@ const ProductosNoHomologados = ({ calculateDate }) => {
         setOpenMatriculacion(true);
     };
 
-    const actions = [
-        {
-            label: "Editar",
-            color: "info",
-            onClick: (row) => handleEdit(row),
-        },
-    ];
+    const handleGuardarExcel = async () => {
+        if (resultadosActualizados.length === 0) {
+            showSnackbar("No hay cambios para guardar");
+            return;
+        }
 
+        console.log("ENVIANDO:", resultadosActualizados);
+        setLoading(true);
+        const chunkSize = 2000;
 
-    const handleEdit = (row) => {
-        setOpenMatriculacion(true);
+        const splitInChunks = (array, size) => {
+            const result = [];
+            for (let i = 0; i < array.length; i += size) {
+                result.push(array.slice(i, i + size));
+            }
+            return result;
+        };
+
+        try {
+            const chunks = splitInChunks(resultadosActualizados, chunkSize);
+
+            for (const [index, chunk] of chunks.entries()) {
+                const response = await dispatch(subirExcelMaestrosProducts(chunk));
+
+                if (response.meta.requestStatus !== "fulfilled") {
+                    throw new Error(
+                        response.payload?.message || `Error al subir el chunk ${index + 1}`
+                    );
+                }
+            }
+
+            showSnackbar("Cambios guardados correctamente");
+            setResultadosActualizados(null);
+        } catch (error) {
+            showSnackbar(error.message || "Ocurrió un error al guardar");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleActualizarProducto = (newRow) => {
+        try {
+            const original = data.find((obj) => obj.id === newRow.id);
+
+            if (!original) return;
+
+            const valorOriginal = original.codeProduct;
+            const valorNuevo = newRow.codeProduct;
+
+            if (valorOriginal === valorNuevo) return;
+
+            const nuevoObjeto = {
+                id: newRow.id,
+                distributor: newRow.distributor,
+                productStore: newRow.codeProductDistributor,
+                productDistributor: newRow.descriptionDistributor,
+                codeProductSic: Number(valorNuevo) || 0,
+            };
+
+            setResultadosActualizados((prev) => {
+                const lista = prev || [];
+                const existe = lista.find((obj) => obj.id === nuevoObjeto.id);
+
+                if (existe) {
+                    return lista.map((obj) =>
+                        obj.id === nuevoObjeto.id ? nuevoObjeto : obj
+                    );
+                }
+
+                return [...lista, nuevoObjeto];
+            });
+        } catch (error) {
+            showSnackbar(error.message);
+        }
+    };
+
+    const exportExcel = async () => {
+        setLoading(true);
+        try {
+            const response = await dispatch(
+                exportarExcel({
+                    excel_name: "consolidated_data_stores",
+                    nombre: "Plantilla estándar",
+                    calculateDate: formatDate(calculateDate),
+                })
+            );
+            if (response.meta.requestStatus === "fulfilled") {
+                setLoading(false);
+                showSnackbar(
+                    response.payload.message || "Archivo descargado correctamente"
+                );
+            }
+        } catch (error) {
+            showSnackbar(error.message || "Error al descargar el archivo");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -70,6 +180,13 @@ const ProductosNoHomologados = ({ calculateDate }) => {
             <AtomContainerGeneral
                 children={
                     <>
+                        <IconoFlotante
+                            handleButtonClick={exportExcel}
+                            title="Descargar excel"
+                            iconName="SaveAlt"
+                            color="#5ab9f6"
+                            right={20}
+                        />
                         <AtomCard
                             title=""
                             nameButton={""}
@@ -77,7 +194,7 @@ const ProductosNoHomologados = ({ calculateDate }) => {
                             onClick={handleOpenMatriculacion}
                             labelBuscador="Búsqueda por nombre"
                             placeholder="Buscar por nombre"
-                            search={true}
+                            search={false}
                             valueSearch={search}
                             onChange={(e) => {
                                 setSearch(e.target.value);
@@ -85,32 +202,58 @@ const ProductosNoHomologados = ({ calculateDate }) => {
                             }}
                             children={
                                 <>
-                                    <Grid container spacing={2}>
-                                        {/* <Grid size={4}>
-                                            <AtomTextFielInputForm
-                                                headerTitle="Buscar por:"
-                                                placeholder="Identificación, código y nombre del colaborador"
-                                                value={search}
+                                    <Grid container spacing={2} sx={{ justifyContent: "center", display: "flex" }}>
+                                        <Grid size={3}>
+                                            <AtomDatePicker
+                                                id="calculateDate"
+                                                required={true}
+                                                mode="month"
+                                                label="Fecha de búsqueda"
+                                                color="#ffffff"
+                                                height="45px"
+                                                value={calculateDate}
                                                 onChange={(e) => {
-                                                    setSearch(e.target.value);
-                                                    debounceSearch(e.target.value);
+                                                    dispatch(setCalculateDate(e));
                                                 }}
                                             />
-                                        </Grid> */}
-                                        <Grid size={12}>
+                                        </Grid>
+                                        <Grid size={5}>
 
                                         </Grid>
-                                        <Grid size={12}>
+                                        <Grid size={1.5} mt={1.5}>
+                                            {resultadosActualizados != null && (
+                                                <AtomButtonPrimary
+                                                    label="Guardar"
+                                                    onClick={handleGuardarExcel}
+
+                                                />
+                                            )}
+                                        </Grid>
+
+                                        <Grid size={11} >
                                             {loading ? (
                                                 <AtomCircularProgress />
                                             ) : (
-                                                <AtomTableForm
-                                                    columns={columnsProductNoHomologado}
-                                                    data={data}
-                                                    actions={actions || []}
-                                                    pagination={false}
+                                                <Box sx={{ width: "100%", borderRadius: 3 }}>
+                                                    <DataGrid
+                                                        rows={data}
+                                                        columns={columnsProductNull}
+                                                        getRowHeight={() => "auto"}
+                                                        disableSelectionOnClick
+                                                        sx={styleTableData}
+                                                        processRowUpdate={(newRow) => {
+                                                            handleActualizarProducto(newRow);
+                                                            return newRow;
+                                                        }}
+                                                        localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+                                                        pagination
+                                                        pageSizeOptions={[10]}
+                                                        initialState={{
+                                                            pagination: { paginationModel: { pageSize: 10, page: 0 } },
+                                                        }}
+                                                    />
 
-                                                />
+                                                </Box>
                                             )}
                                         </Grid>
                                     </Grid>

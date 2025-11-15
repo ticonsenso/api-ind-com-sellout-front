@@ -44,15 +44,12 @@ import SelectorAnioForm from "../../atoms/AtomAnualInput";
 import AtomDialogForm from "../../atoms/AtomDialogForm";
 import {
   stylesPlantillaStandar,
-  columnsProductNull,
-  columnsStoreNull,
   camposPlantillaStandar,
   paramsValidatePlantillaStandar,
 } from "./constantes";
 import AtomTextField from "../../atoms/AtomTextField";
 import IconoFlotante from "../../atoms/IconActionPage";
-import { DataGrid } from "@mui/x-data-grid";
-import { esES } from "@mui/x-data-grid/locales";
+
 import AtomSwitch from "../../atoms/AtomSwitch";
 
 const formatDate = (fechaISO) => {
@@ -93,7 +90,6 @@ const PlantillaStandar = () => {
   });
   const [openDialogProduct, setOpenDialogProduct] = useState(false);
   const [openDialogoSincronizar, setOpenDialogoSincronizar] = useState(false);
-  const [openDialogProductNull, setOpenDialogProductNull] = useState(false);
   const [openDialogStoreNull, setOpenDialogStoreNull] = useState(false);
   const [dataSincronizar, setDataSincronizar] = useState({
     year: 2025,
@@ -179,58 +175,7 @@ const PlantillaStandar = () => {
     }
   };
 
-  const handleActualizarProducto = async (newRow) => {
-    if (newRow.codeProduct === "") {
-      return;
-    }
-    try {
-      const response = await dispatch(maestrosProductsSic(newRow.codeProduct));
-      if (response.meta.requestStatus === "rejected") {
-        showSnackbar(response.payload.message);
-      }
-      // if (response.meta.requestStatus === "fulfilled") {
-      const dataProducto = response?.payload || null;
 
-      const nuevaData = dataEditable.map((item) => {
-        if (item.id === newRow.id) {
-          const productModelActualizado = dataProducto.productModel || "";
-          return {
-            ...item,
-            codeProduct: newRow.codeProduct,
-            productModel: productModelActualizado,
-          };
-        }
-        return item;
-      });
-      setDataEditable(nuevaData);
-
-      const actualizado = nuevaData.find(
-        (item) => item.codeProduct === newRow.codeProduct
-      );
-
-      const nuevoObjeto = {
-        id: actualizado.id,
-        distributor: actualizado.distributor,
-        codeProductDistributor: actualizado.codeProductDistributor,
-        codeProduct: dataProducto.productSic || newRow.codeProduct,
-        descriptionDistributor: actualizado.descriptionDistributor,
-      };
-
-      setResultadosActualizados((prev) => {
-        const existe = prev.some(
-          (obj) =>
-            obj.codeProductSic === nuevoObjeto.codeProductSic &&
-            obj.searchProductStore === nuevoObjeto.searchProductStore
-        );
-        return existe ? prev : [...prev, nuevoObjeto];
-      });
-      // } else {
-      //   showSnackbar(response.payload.message);
-      // }
-    } catch (error) {
-      showSnackbar(error.message);
-    }
-  };
 
   const handleActualizarAlmacen = async (newRow) => {
     if (newRow.codeStore === "") {
@@ -279,20 +224,7 @@ const PlantillaStandar = () => {
     }
   };
 
-  const handleGuardarProductSic = async () => {
-    const response = await dispatch(
-      guardarProductSicBulk(resultadosActualizados)
-    );
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
-      setResultadosActualizados([]);
-      setOpenDialogProductNull(false);
-      clearFilters();
-      setFiltroBusqueda("");
-    } else {
-      showSnackbar(response.payload.message);
-    }
-  };
+
 
   const handleGuardarStoreSic = async () => {
     const response = await dispatch(
@@ -824,114 +756,6 @@ const PlantillaStandar = () => {
               </Grid>
             )}
           </>
-        }
-      />
-      <AtomDialogForm
-        openDialog={openDialogProductNull}
-        titleCrear={"Productos sin código"}
-        buttonCancel={true}
-        textButtonSubmit="Confirmar"
-        buttonSubmit={true}
-        handleSubmit={handleGuardarProductSic}
-        maxWidth="xl"
-        handleCloseDialog={() => {
-          setOpenDialogProductNull(false);
-          clearFilters();
-        }}
-        dialogContentComponent={
-          loading ? (
-            <AtomCircularProgress />
-          ) : (
-            <Box component={Paper} sx={{ width: "100%", borderRadius: 3 }}>
-              <DataGrid
-                rows={dataEditable}
-                columns={columnsProductNull}
-                getRowHeight={() => "auto"}
-                sx={{
-                  width: "100%",
-                  borderRadius: 3,
-                  "& .MuiDataGrid-columnHeader": {
-                    backgroundColor: "#f5f5f5",
-                    color: "#434343",
-                    fontWeight: 600,
-                  },
-                  "& .MuiDataGrid-columnHeader:hover": {
-                    backgroundColor: "#f5f5f5",
-                  },
-                  "& .MuiDataGrid-cell": {
-                    color: "#434343",
-                    fontSize: "12px",
-                    pt: 0.5,
-                    pb: 0.5,
-                  },
-                  "& .MuiDataGrid-cell:hover": {
-                    color: "#434343",
-                  },
-                }}
-                disableSelectionOnClick
-                // hideFooter
-                processRowUpdate={(newRow) => {
-                  handleActualizarProducto(newRow);
-                  return newRow;
-                }}
-                localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-              />
-            </Box>
-          )
-        }
-      />
-      <AtomDialogForm
-        openDialog={openDialogStoreNull}
-        titleCrear={"Almacenes sin código"}
-        buttonCancel={true}
-        textButtonSubmit="Confirmar"
-        buttonSubmit={true}
-        handleSubmit={handleGuardarStoreSic}
-        maxWidth="xl"
-        handleCloseDialog={() => {
-          setOpenDialogStoreNull(false);
-          clearFilters();
-        }}
-        dialogContentComponent={
-          loading ? (
-            <AtomCircularProgress />
-          ) : (
-            <Box component={Paper} sx={{ width: "100%", borderRadius: 3 }}>
-              <DataGrid
-                rows={dataEditable}
-                columns={columnsStoreNull}
-                getRowHeight={() => "auto"}
-                sx={{
-                  width: "100%",
-                  borderRadius: 3,
-                  "& .MuiDataGrid-columnHeader": {
-                    backgroundColor: "#f5f5f5",
-                    color: "#434343",
-                    fontWeight: 600,
-                  },
-                  "& .MuiDataGrid-columnHeader:hover": {
-                    backgroundColor: "#f5f5f5",
-                  },
-                  "& .MuiDataGrid-cell": {
-                    color: "#434343",
-                    fontSize: "12px",
-                    pt: 0.5,
-                    pb: 0.5,
-                  },
-                  "& .MuiDataGrid-cell:hover": {
-                    color: "#434343",
-                  },
-                }}
-                disableSelectionOnClick
-                // hideFooter
-                processRowUpdate={(newRow) => {
-                  handleActualizarAlmacen(newRow);
-                  return newRow;
-                }}
-                localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-              />
-            </Box>
-          )
         }
       />
       <AtomDialogForm

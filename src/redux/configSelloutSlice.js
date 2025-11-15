@@ -248,8 +248,8 @@ export const maestrosStoresSic = createAsyncThunk(
       return await apiService
         .setUrl(
           apiConfig.maestrosStoresUrl.url +
-            "/distribuidor-store-name/" +
-            storeSic
+          "/distribuidor-store-name/" +
+          storeSic
         )
         .setMethod("GET")
         .send(token);
@@ -753,10 +753,10 @@ export const sincronizarDatosConsolidated = createAsyncThunk(
       return await apiService
         .setUrl(
           apiConfig.consolidatedSelloutUrl.url +
-            "/sync/" +
-            data.year +
-            "/" +
-            data.month
+          "/sync/" +
+          data.year +
+          "/" +
+          data.month
         )
         .setMethod("PUT")
         .send(token);
