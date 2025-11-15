@@ -1,60 +1,37 @@
 export const menuSelloutPage = [
   {
     id: 2,
-    name: "Matriculación",
+    name: "Configuración de plantillas",
     icon: "mui:AddToQueue",
     visible: true,
     name_server: "MATRICULACION SELLOUT",
     menuSellout: true,
-    nameInfo: "Lista",
-  },
-  {
-    id: 3,
-    name: "Maestros",
-    icon: "mui:DataSaverOnOutlined",
-    visible: true,
-    name_server: "MAESTROS SELLOUT",
-    menuSellout: true,
-    nameInfo: "Lista de procesos",
-  },
-  {
-    id: 4,
-    name: "SIC",
-    visible: true,
-    name_server: "SIC SELLOUT",
-    menuSellout: true,
-    nameInfo: "Lista de procesos",
+    nameInfo: "Configuración de cierre",
   },
   {
     id: 5,
-    name: "Configuración de extracción",
+    name: "Carga de plantillas",
+    icon: "mui:MenuBook",
     visible: true,
     name_server: "EXTRACCION SELLOUT",
     menuSellout: true,
-    nameInfo: "Lista de procesos",
-  },
-  {
-    id: 5,
-    name: "Extracción Sellout",
-    visible: true,
-    name_server: "EXTRACCION SELLOUT",
-    menuSellout: true,
-    nameInfo: "Lista de procesos",
+    nameInfo: "Carga de archivos excel",
   },
   {
     id: 6,
-    name: "Base Consolidado",
+    name: "Base consolidada",
+    icon: "mui:DataSaverOnOutlined",
     visible: true,
     name_server: "PLANTILLA CONSOLIDADO SELLOUT",
     menuSellout: true,
-    nameInfo: "Lista de datos",
+    nameInfo: "Validación de datos",
   },
 ];
 
 const initialStateMenu = [
   {
     id: 0,
-    name: "Sellout - Indurama",
+    name: "Sellout Mercado",
     icon: "mui:Timeline",
     nameInfo: "Procesos",
     name_server: "SELLOUT INDURAMA",
@@ -72,12 +49,21 @@ const initialStateMenu = [
 
   {
     id: 2,
-    name: "Matriculación",
+    name: "Configuración de plantillas",
     icon: "mui:AddToQueue",
     visible: true,
     name_server: "MATRICULACION SELLOUT",
     menuSellout: true,
-    nameInfo: "Lista de matriculaciones",
+    nameInfo: "Configuración de cierre",
+  },
+  {
+    id: 5,
+    name: "Carga de plantillas",
+    icon: "mui:MenuBook",
+    visible: true,
+    name_server: "EXTRACCION SELLOUT",
+    menuSellout: true,
+    nameInfo: "Carga de archivos excel",
   },
   {
     id: 3,
@@ -86,7 +72,7 @@ const initialStateMenu = [
     visible: true,
     name_server: "MAESTROS SELLOUT",
     menuSellout: true,
-    nameInfo: "Lista",
+    nameInfo: "Almacenes-Productos no homologados",
   },
   {
     id: 4,
@@ -97,15 +83,7 @@ const initialStateMenu = [
     menuSellout: true,
     nameInfo: "Lista de procesos",
   },
-  {
-    id: 5,
-    name: "Extracción Sellout",
-    icon: "mui:MenuBook",
-    visible: true,
-    name_server: "EXTRACCION SELLOUT",
-    menuSellout: true,
-    nameInfo: "Lista de procesos",
-  },
+
   {
     id: 6,
     name: "Base Consolidado",
@@ -134,13 +112,13 @@ const initialStateMenu = [
     nameInfo: "Lista de procesos",
   },
   {
-    id: 7,
+    id: 9,
     name: "Base no Homologada",
-    icon: "mui:CurrencyExchange",
+    icon: "mui:RestorePageIcon ",
     visible: true,
-    name_server: "",
+    name_server: "BASE NO HOMOLOGADA",
     menuSellout: false,
-    nameInfo: "Lista de procesos",
+    nameInfo: "No Homologados",
   },
 ];
 

@@ -7,6 +7,7 @@ import SelloutIndurama from "../selloutIndurama/home.jsx";
 import DatosPresupuestoSellout from "../selloutIndurama/datosPresupuestoSellout.jsx";
 import ValoresSellout from "../selloutIndurama/valoresSellout.jsx";
 import TabGestionMatriculacion from "../selloutIndurama/matriculacion/index.jsx";
+import NoConsolidado from "../noConsolidado/index.jsx";
 
 const componentMap = {
   //0: <HomePrincipal />,
@@ -19,6 +20,7 @@ const componentMap = {
   6: <PlantillaStandar />,
   7: <DatosPresupuestoSellout />,
   8: <ValoresSellout />,
+  9: <NoConsolidado />
 };
 
 export default componentMap;

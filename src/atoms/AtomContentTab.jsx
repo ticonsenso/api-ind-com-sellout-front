@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Box, Tab, Tabs } from "@mui/material";
 
-const TabGestionGeneral = ({ tabs }) => {
-  const [activeTab, setActiveTab] = useState(0);
+const TabGestionGeneral = ({ tabs, num = 0 }) => {
+  const [activeTab, setActiveTab] = useState(num);
 
   return (
     <>

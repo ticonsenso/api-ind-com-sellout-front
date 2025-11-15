@@ -144,7 +144,6 @@ const ListaCategorias = () => {
     };
 
     const handleOpenColumns = (row) => {
-        dispatch(setListaColumns(row.keywords));
         setIdCategoria(row.id);
         setOpenColumns(true);
     };

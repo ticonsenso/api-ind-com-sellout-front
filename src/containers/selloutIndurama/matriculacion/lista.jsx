@@ -438,7 +438,7 @@ const Matriculacion = ({ calculateDate }) => {
               }}
               title="Actualizar lista"
               iconName="Refresh"
-              right={350}
+              right={60}
               color="#63B6FF"
               top={95}
             />

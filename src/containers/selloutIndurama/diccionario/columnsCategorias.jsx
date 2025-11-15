@@ -47,17 +47,17 @@ const ColumnsCategorias = ({ id }) => {
     const dataDiccionario = useSelector(
         (state) => state.diccionario.listaCategorias || []
     );
+
     const data = useSelector(
         (state) => state.diccionario.listaColumnsCategorias || []);
-    console.log("data", data);
+
     const totalLista = useSelector(
         (state) => state.diccionario.totalColumnsCategorias || 0
     );
     console.log(totalLista);
     const [openMatriculacion, setOpenMatriculacion] = useState(false);
     const [search, setSearch] = useState("");
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(limitGeneral);
+
     const [edit, setEdit] = useState(false);
     const [loading, setLoading] = useState(false);
     const [matricula, setMatricula] = useState({
@@ -76,31 +76,20 @@ const ColumnsCategorias = ({ id }) => {
                 (k.keyword || "").trim().toLowerCase() === normalizado
             )
         );
-    };
-
-
-
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        setLimit(event.target.value);
-        setPage(1);
-    };
+    }
 
     const debounceSearch = useCallback(
         debounce((value) => {
-            buscarLista(value, page, limit);
+            buscarLista(value);
         }, 1000),
         []
     );
 
-    const buscarLista = async (value, page, limit) => {
+    const buscarLista = async (value) => {
         setLoading(true);
         try {
             await dispatch(
-                obtenerColumns({ name: value, page, limit })
+                obtenerColumns({ keyword: value, categoryId: id })
             );
         } finally {
             setLoading(false);
@@ -108,8 +97,8 @@ const ColumnsCategorias = ({ id }) => {
     };
 
     useEffect(() => {
-        buscarLista(search, page, limit);
-    }, [page, limit]);
+        buscarLista(search);
+    }, []);
 
     const handleSubmit = async () => {
         if (!matricula.keyword) {
@@ -185,6 +174,7 @@ const ColumnsCategorias = ({ id }) => {
     };
 
     const handleDelete = (row) => {
+        console.log(row, "row");
         showDialog({
             title: "Eliminar registro",
             message: "¿Estás seguro de que deseas eliminar este registro?",
@@ -251,14 +241,8 @@ const ColumnsCategorias = ({ id }) => {
                                                     columns={columns}
                                                     data={data}
                                                     actions={namePermission ? actions : []}
-                                                    pagination={true}
-                                                    page={page}
-                                                    limit={limit}
-                                                    count={totalLista}
-                                                    setPage={setPage}
-                                                    setLimit={setLimit}
-                                                    handleChangePage={handleChangePage}
-                                                    handleChangeRowsPerPage={handleChangeRowsPerPage}
+                                                    pagination={false}
+
                                                 />
                                             )}
                                         </Grid>

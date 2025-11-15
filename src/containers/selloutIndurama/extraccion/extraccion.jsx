@@ -72,9 +72,10 @@ import AtomTableForm from "../../../atoms/AtomTableForm";
 import AtomSearchTextfield from "../../../atoms/AtomSearchTextfield";
 import IconoFlotante from "../../../atoms/IconActionPage";
 pdfjsLib.GlobalWorkerOptions.workerSrc = "../../../public/pdfWorker.js";
-import { styles } from "./constantes";
+import { styles, normalizarTexto } from "./constantes";
 import { obtenerMatriculacionConfig } from "../../../redux/selloutDatosSlic";
 import { useDialog } from "../../../context/DialogDeleteContext";
+import { obtenerListaCategorias } from "../../../redux/diccionarioSlice"
 
 const formatDate = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -86,6 +87,7 @@ const formatDate = (fechaISO) => {
 
 const ExtraccionDatos = () => {
   const { showDialog } = useDialog();
+
   const dataMatriculacionRegistrados = useSelector(
     (state) => state.configSellout?.dataMatriculacionRegistrados
   );
@@ -98,11 +100,16 @@ const ExtraccionDatos = () => {
   );
 
   const COLUMN_KEYWORDS = dataDiccionario.reduce((acc, categoria) => {
-    acc[categoria.name] = categoria.keywords.map(k => k.keyword);
+    acc[categoria.name] = categoria.keywords.map(k =>
+      normalizarTexto(k.keyword)
+    );
     return acc;
   }, {});
 
 
+  useEffect(() => {
+    dispatch(obtenerListaCategorias());
+  }, []);
 
   const [openCreateStores, setOpenCreateStores] = useState(false);
   const [maestrosStores, setMaestrosStores] = useState({
@@ -187,8 +194,6 @@ const ExtraccionDatos = () => {
     (acc, row) => acc + Number(row.unitsSoldDistributor),
     0
   );
-
-  const [errorsConfiguracion, setErrorsConfiguracion] = useState({});
 
   const handleOpenDialogoConfirmacion = () => {
     setOpenDialogoConfirmacion(true);
@@ -747,19 +752,15 @@ const ExtraccionDatos = () => {
     return { header: null, rowIndex: -1 };
   };
 
+
+
+
   const detectarColumnasAutomaticamente = (fila) => {
     const resultado = {};
 
     const headers = fila.map((celda) =>
-      extraerTextoCelda(celda)
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, " ")
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
+      normalizarTexto(extraerTextoCelda(celda))
     );
-
-    console.log("headers", headers);
 
     for (const [tipo, keywords] of Object.entries(COLUMN_KEYWORDS)) {
       for (let i = 0; i < headers.length; i++) {
@@ -803,7 +804,7 @@ const ExtraccionDatos = () => {
     let fecha = null;
 
     if (typeof valorCelda === "number") {
-      const serial = Math.round(valorCelda); // ← Esto es clave
+      const serial = Math.round(valorCelda);
 
       if (serial < 1 || serial > 2958465) return null;
 
@@ -815,7 +816,7 @@ const ExtraccionDatos = () => {
 
       const matchSerial = texto.match(/^\+?0*(\d{4,7})(\.\d+)?$/);
       if (matchSerial) {
-        const serial = Math.round(parseFloat(matchSerial[1])); // Redondear también si es string
+        const serial = Math.round(parseFloat(matchSerial[1]));
 
         if (serial >= 1 && serial <= 2958465) {
           fecha = new Date((serial - 25569) * 86400 * 1000);
@@ -908,7 +909,7 @@ const ExtraccionDatos = () => {
       const workbook = XLSX.read(data, { type: "array" });
 
       const totalHojas = workbook.SheetNames.length;
-      const { hojaInicio, hojaFin, extraerTodos, distributor } = configuracion;
+      const { hojaInicio, hojaFin, extraerTodos } = configuracion;
 
       const sheetIndexes = getSheetIndexes({
         hojaInicio,
@@ -1551,7 +1552,6 @@ const ExtraccionDatos = () => {
                                 rows={campo.rows}
                                 value={configuracion[campo.id] || ""}
                                 placeholder={campo.placeholder}
-                                error={errorsConfiguracion[campo.id] || false}
                                 onChange={(e) =>
                                   setConfiguracion({
                                     ...configuracion,

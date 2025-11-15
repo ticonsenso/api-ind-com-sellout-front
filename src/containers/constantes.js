@@ -15,6 +15,7 @@ export const validateForm = (form, camposRequeridos, setErrors) => {
 
 export const pageGeneral = 1;
 export const limitGeneral = 10;
+export const timeSearch = 1500;
 export const pageOptions = [10, 50, 100];
 export const mensajeExtraccion =
   "Antes de guardar la extracción, confirme que los datos incluyen tanto la primera como la última fila de su archivo Excel.";

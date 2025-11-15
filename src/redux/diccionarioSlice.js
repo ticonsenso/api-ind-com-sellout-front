@@ -84,13 +84,14 @@ export const deleteCategorias = createAsyncThunk(
 //palabras
 export const obtenerColumns = createAsyncThunk(
     "diccionario/obtenerColumns",
-    async (_, { getState, rejectWithValue }) => {
+    async (data, { getState, rejectWithValue }) => {
         const state = getState();
         const token = state.auth.auth.token;
         try {
             return await apiService
                 .setUrl(apiConfig.listaColumnsCategoriasUrl.url + "/search")
                 .setMethod("POST")
+                .setData(data)
                 .send(token);
         } catch (error) {
             return rejectWithValue(error);
@@ -165,7 +166,18 @@ const extraReducers = (builder) => {
         })
         .addCase(obtenerListaCategorias.rejected, (state) => {
             state.listaCategorias = [];
-        });
+        })
+        .addCase(obtenerColumns.fulfilled, (state, action) => {
+            if (action.payload.items.length > 0) {
+                state.listaColumnsCategorias = action.payload.items;
+            } else {
+                state.listaColumnsCategorias = [];
+            }
+        })
+        .addCase(obtenerColumns.rejected, (state) => {
+            state.listaCategorias = [];
+        })
+        ;
 };
 
 const diccSlice = createSlice({

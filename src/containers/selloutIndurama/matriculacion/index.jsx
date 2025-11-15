@@ -17,6 +17,8 @@ const TabGestionMatriculacion = () => {
   const calculateDate = useSelector(
     (state) => state?.configSellout?.calculateDate || formatDate(new Date())
   );
+  const currentTab = useSelector(state => state.navigator?.currentTab || 0);
+
   const tabs = [
     ...(namePermission
       ? [
@@ -27,14 +29,14 @@ const TabGestionMatriculacion = () => {
       ]
       : []),
     {
-      label: "Matriculación por mes",
+      label: "Clientes a cargar",
       component: (
         <>
           <Box
             sx={{
               position: "fixed",
               top: 80,
-              right: 80,
+              right: 115,
               zIndex: 1000,
             }}
           >
@@ -56,14 +58,14 @@ const TabGestionMatriculacion = () => {
       ),
     },
     {
-      label: "Detalles de matriculación",
+      label: "Clientes cargados",
       component: (
         <>
           <Box
             sx={{
               position: "fixed",
               top: 80,
-              right: 80,
+              right: 70,
               zIndex: 1000,
             }}
           >
@@ -90,7 +92,8 @@ const TabGestionMatriculacion = () => {
     <AtomContainerGeneral
       children={
         <>
-          <TabGestionGeneral tabs={tabs} />
+
+          <TabGestionGeneral tabs={tabs} num={currentTab} />
         </>
       }
     />

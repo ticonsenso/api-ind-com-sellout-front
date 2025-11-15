@@ -36,7 +36,7 @@ const IconoFlotante = ({
               color: "white",
               backgroundColor: color,
               borderRadius: 10,
-              padding: 1,
+              padding: 0.5,
               "&:hover": {
                 backgroundColor: color,
                 transform: "scale(1.1)",

@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import initialStateMenu from "../containers/dashboard/data.js";
-import { useSelector } from "react-redux";
 const initialState = {
   state: false,
   initialStateMenu,
@@ -8,9 +7,11 @@ const initialState = {
   value: 0,
   menuAbierto: false,
   cerrarSesionAutomaticamente: false,
+  currentTab: 0,
 };
 
 const handleMenuClick = (state, item) => {
+  console.log(item);
   const payload = item.payload;
 
   if (!payload) {
@@ -18,6 +19,7 @@ const handleMenuClick = (state, item) => {
     return;
   }
   state.selectMenu = payload;
+  state.currentTab = payload.tab ?? 0;
   if (payload.subMenu && payload.subMenu.length > 0) {
     state.menuAbierto = true;
     state.state = true;

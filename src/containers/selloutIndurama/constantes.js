@@ -282,10 +282,6 @@ export const columnsPlantillaStandar = [
     label: "Cod. Producto",
   },
   {
-    field: "distributor",
-    label: "Distribuidor",
-  },
-  {
     field: "storeName",
     label: "Nombre Almacen",
   },
@@ -293,14 +289,10 @@ export const columnsPlantillaStandar = [
     field: "productModel",
     label: "Modelo Producto",
   },
-  {
-    field: "calculateDate",
-    label: "Fecha Calculo",
-  },
-  {
-    field: "status",
-    label: "Aplica Homologación",
-  },
+  // {
+  //   field: "calculateDate",
+  //   label: "Fecha Calculo",
+  // },
 ];
 
 export const stylesPlantillaStandar = {

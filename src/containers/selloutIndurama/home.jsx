@@ -8,6 +8,7 @@ import {
   Search as SearchIcon,
   AddToQueue as AddToQueueIcon,
 } from "@mui/icons-material";
+
 import Grid from "@mui/material/Grid";
 import { useDispatch } from "react-redux";
 import { handleMenu } from "../../redux/navigatorSlice";
@@ -21,95 +22,120 @@ const SelloutIndurama = () => {
     {
       id: 2,
       menuSellout: true,
-      name: "Matriculación",
+      name: "Configuración de plantillas",
       numero: "01",
-      titulo: "Matriculación",
-      descripcion: "Carga y gestión de archivos a subir.",
-      nameInfo: "Lista",
-      color: "#e8ae00ff",
+      titulo: "CONFIGURACIÓN DE PLANTILLAS",
+      descripcion: "Activación de configuración de cierre y clientes a cargar.",
+      nameInfo: "Configuración de mes de cierre",
+      color: "#d50040ff",
       Icon: AddToQueueIcon,
       permiso: "MATRICULACION SELLOUT",
+      subpasos: [
+        // {
+        //   id: 2,
+        //   titulo: "Configuración de Cierre",
+        //   permiso: "EXTRACCION SELLOUT",
+        //   menuSellout: true,
+        //   name: "Mes de cierre",
+        //   nameInfo: "Lista",
+        // },
+        {
+          id: 2,
+          titulo: "Lista de Clientes ",
+          permiso: "EXTRACCION SELLOUT",
+          menuSellout: true,
+          name: "Configuración de plantillas",
+          tab: 1,
+          nameInfo: 'Clientes a cargar',
+        },
+      ],
     },
+
     {
       id: 5,
-      menuSellout: true,
-      name: "Configuración de Extracción",
       numero: "02",
-      titulo: "CONFIGURACIÓN DE EXTRACCIÓN",
-      descripcion:
-        "Definición de configuraciones y columnas del archivo de extracción.",
-      color: "#0288d1",
-      Icon: SettingsIcon,
-      nameInfo: "Lista",
-      permiso: "EXTRACCION SELLOUT",
-    },
-    {
-      id: 5,
-      menuSellout: true,
-      name: "Extracción Sellout",
-      numero: "03",
-      titulo: "EXTRACCIÓN DE DATOS",
-      descripcion:
-        "Procesamiento del archivo de extracción para obtener registros.",
-      color: "#64a420ff",
+      titulo: "CARGA DE PLANTILLAS",
+      descripcion: "Procesamiento de los archivo excel.",
+      color: "#0669abff",
       Icon: MenuBookIcon,
       permiso: "EXTRACCION SELLOUT",
-    },
-    {
-      id: 3,
       menuSellout: true,
-      name: "MAESTROS",
-      numero: "04",
-      titulo: "MAESTROS",
-      nameInfo: "Lista",
-      descripcion: "Carga y gestión de productos y almacenes maestros.",
-      color: "#6a1b9a",
-      Icon: PublicIcon,
-      permiso: "MAESTROS SELLOUT",
+      name: "Carga de plantillas",
+      nameInfo: "Carga de archivos excel",
+      subpasos: [
+        {
+          id: 5,
+          name: "Configuración de Extracción",
+          permiso: "EXTRACCION SELLOUT",
+          menuSellout: true,
+          titulo: "Configuraciones de extracción",
+          nameInfo: "Crear configuraciones",
+          tab: 1,
+        },
+      ],
     },
-
-
-    {
-      id: 4,
-      menuSellout: true,
-      name: "SIC",
-      numero: "05",
-      titulo: "SIC",
-      nameInfo: "Lista",
-      descripcion: "Carga y gestión de productos y almacenes SIC.",
-      color: "#ef6c00",
-      Icon: EmojiObjectsIcon,
-      permiso: "SIC SELLOUT",
-    },
-
     {
       id: 6,
       menuSellout: true,
-      name: "Plantilla Consolidado",
-      numero: "06",
-      titulo: "PLANTILLA CONSOLIDADO",
+      numero: "03",
+      titulo: "VALIDACIÓN DE PLANTILLAS",
       descripcion:
-        "Representación de datos obtenidos en Plantilla Consolidado.",
-      nameInfo: "Lista",
+        "Representación de datos obtenidos en Base Consolidada.",
+      color: "#ef6c00",
       Icon: SearchIcon,
-      color: "#f51783",
       permiso: "PLANTILLA CONSOLIDADO SELLOUT",
+      subpasos: [
+        {
+          id: 9,
+          numero: "3.1",
+          titulo: "Base no Homologada",
+          name: "Base no Homologada",
+          descripcion: "Lista de productos y almacenes que no necesitan homologación.",
+          color: "#6a1b9a",
+          Icon: PublicIcon,
+          permiso: "MAESTROS SELLOUT",
+          menuSellout: true,
+          nameInfo: "Almacenes-Productos no homologados",
+        },
+        {
+          id: 4,
+          numero: "3.2",
+          titulo: "Maestros",
+          name: "Maestros",
+          descripcion: "Carga y gestión de productos y almacenes maestros.",
+          color: "#6a1b9a",
+          Icon: PublicIcon,
+          permiso: "MAESTROS SELLOUT",
+          menuSellout: true,
+          nameInfo: "Lista de almacenes y productos",
+
+        },
+      ]
+    },
+    {
+      id: 5,
+      numero: "04",
+      titulo: "SIC",
+      descripcion: "Carga y gestión de productos y almacenes SIC.",
+      color: "rgba(31, 151, 12, 1)",
+      Icon: EmojiObjectsIcon,
+      permiso: "SIC SELLOUT",
+      menuSellout: true,
     },
   ].filter((paso) => namePermission(paso.permiso));
 
-  const PasoContainer = styled(Box)(({ theme }) => ({
+  const PasoContainer = styled(Box)({
     position: "relative",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    height: "auto",
     textAlign: "center",
     cursor: "pointer",
     transition: "all 0.3s ease",
     "&:hover": {
       transform: "scale(1.05)",
     },
-  }));
+  });
 
   const NumeroCirculo = styled(Avatar)(({ bgcolor }) => ({
     backgroundColor: bgcolor,
@@ -126,24 +152,20 @@ const SelloutIndurama = () => {
     padding: 10,
     textAlign: "center",
     width: 200,
-    height: 200,
+    minHeight: 200,
     borderRadius: 15,
     position: "relative",
     zIndex: 1,
   }));
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-        overflow: "auto",
-      }}
-    >
-      {pasos?.length > 0 ? (
+    <Box sx={{ width: "100%", height: "100%", overflow: "auto" }}>
+      {pasos.length > 0 ? (
         <Grid container spacing={0} justifyContent="center" mt={5} mb={5}>
-          {pasos?.map((paso, index) => (
+          {pasos.map((paso, index) => (
             <Grid
+              key={index}
+              item
               sx={{
                 borderBottom:
                   index % 2 === 0 ? `20px solid ${paso.color}` : "none",
@@ -157,29 +179,51 @@ const SelloutIndurama = () => {
                 borderRadius: 50,
                 backgroundColor: "#ffffffff",
               }}
-              item
-              key={index}
             >
               <PasoContainer>
                 <NumeroCirculo bgcolor={paso.color}>
                   {paso.numero}
                 </NumeroCirculo>
+
                 <PasoCard
                   elevation={3}
                   bgcolor={paso.color}
-                  onClick={() => {
-                    dispatch(handleMenu(paso));
-                  }}
+                  onClick={() => dispatch(handleMenu(paso))}
                 >
                   <Box sx={{ mb: 1 }}>
                     <paso.Icon sx={{ fontSize: 52, color: "white" }} />
                   </Box>
-                  <Typography variant="subtitle1" sx={{ fontWeight: "600" }}>
+
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                     {paso.titulo}
                   </Typography>
+
                   <Typography variant="body2" sx={{ mt: 1 }}>
                     {paso.descripcion}
                   </Typography>
+
+                  {/* SUBPASOS COMO LISTA LIMPIA */}
+                  {paso.subpasos && (
+                    <Box sx={{ mt: 2, textAlign: "left", pl: 1 }}>
+                      {paso.subpasos.map((sub) => (
+                        <Typography
+                          key={sub.id}
+                          variant="body2"
+                          sx={{
+                            cursor: "pointer",
+                            mb: 0.3,
+                            "&:hover": { textDecoration: "underline" },
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            dispatch(handleMenu(sub));
+                          }}
+                        >
+                          • {sub.titulo}
+                        </Typography>
+                      ))}
+                    </Box>
+                  )}
                 </PasoCard>
               </PasoContainer>
             </Grid>
@@ -193,9 +237,8 @@ const SelloutIndurama = () => {
             mt: 5,
             backgroundColor: "#ffeeee",
             color: "#810303ff",
-            fontWeight: "400",
+            fontWeight: 400,
             fontSize: "13px",
-            margin: "2",
             padding: "10px",
             borderRadius: "5px",
             border: "1px solid red",

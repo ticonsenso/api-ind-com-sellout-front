@@ -1,11 +1,17 @@
+
 import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import { Box } from "@mui/material";
 import ExtraccionDatos from "./extraccion/extraccion";
 import TabGestionGeneral from "../../atoms/AtomContentTab";
 import ConfiguracionExtraccion from "./extraccion/configExtraccion";
 import ListaCategorias from "./diccionario/lista";
+import { useSelector, } from "react-redux";
 
 const Config1 = () => {
+
+  const currentTab = useSelector(state => state.navigator?.currentTab || 0);
+
+
   const tabs = [
     {
       label: "Extracción de datos",
@@ -25,7 +31,7 @@ const Config1 = () => {
     <AtomContainerGeneral
       children={
         <Box>
-          <TabGestionGeneral tabs={tabs} />
+          <TabGestionGeneral tabs={tabs} num={currentTab} />
         </Box>
       }
     />

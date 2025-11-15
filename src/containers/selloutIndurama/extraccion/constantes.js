@@ -28,6 +28,16 @@ export const PALABRAS_INVALIDAS = [
   "sucursal",
 ];
 
+export const normalizarTexto = (texto = "") => {
+  return texto
+    .toString()
+    .toLowerCase()
+    .normalize("NFD") // separa tildes
+    .replace(/[\u0300-\u036f]/g, "") // elimina tildes
+    .replace(/\s+/g, "") // elimina todos los espacios
+    .replace(/[^a-z0-9]/g, ""); // elimina símbolos
+};
+
 export const CAMPOS_CONFIG_ESTANDAR = [
   {
     id: "hojaInicio",

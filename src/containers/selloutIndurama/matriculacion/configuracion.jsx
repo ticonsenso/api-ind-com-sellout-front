@@ -92,10 +92,6 @@ const isClosed = (closingDate) => {
 
 const columns = [
   {
-    label: "Descripción",
-    field: "description",
-  },
-  {
     label: "Mes calculo",
     field: "monthFormatted",
   },
@@ -187,10 +183,6 @@ const ConfiguracionMatriculacion = () => {
   }, [page, limit]);
 
   const handleSubmit = async () => {
-    if (!matricula.description) {
-      showSnackbar("La descripción de la configuración es requerida");
-      return;
-    }
     if (matricula.id) {
       editMatriculacion();
     } else {
@@ -237,11 +229,7 @@ const ConfiguracionMatriculacion = () => {
       color: "info",
       onClick: (row) => handleEditMatriculacion(row),
       visible: (row) => {
-        // 1. Obtiene el estado (e.g., "Cerrado ⛔" o "Abierto 🟢")
         const esEstadoCerrado = row.status.includes("Cerrado");
-
-        // 2. Retorna true (visible) solo si NO está cerrado.
-        // Si está abierto, es editable, sin importar la antigüedad.
         return !esEstadoCerrado;
       },
     },
@@ -250,11 +238,7 @@ const ConfiguracionMatriculacion = () => {
       color: "error",
       onClick: (row) => handleDeleteMatriculacion(row),
       visible: (row) => {
-        // 1. Obtiene el estado (e.g., "Cerrado ⛔" o "Abierto 🟢")
         const esEstadoCerrado = row.status.includes("Cerrado");
-
-        // 2. Retorna true (visible) solo si NO está cerrado.
-        // Si está abierto, es editable, sin importar la antigüedad.
         return !esEstadoCerrado;
       },
     },
@@ -387,7 +371,7 @@ const ConfiguracionMatriculacion = () => {
         titleEditar="Editar Configuración de Cierre"
         dialogContentComponent={
           <Grid container spacing={2} sx={{ width: "90%" }}>
-            <Grid size={6}>
+            {/* <Grid size={6}>
               <AtomTextField
                 id="description"
                 required={true}
@@ -404,7 +388,7 @@ const ConfiguracionMatriculacion = () => {
                   errors.description ? "La descripción es requerida" : ""
                 }
               />
-            </Grid>
+            </Grid> */}
             <Grid size={6}>
               <AtomDatePicker
                 id="month"
