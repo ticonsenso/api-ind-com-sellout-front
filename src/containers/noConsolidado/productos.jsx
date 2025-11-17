@@ -10,7 +10,8 @@ import { columnsProductNull, styleTableData } from "./constantes";
 import {
     obtenerConsolidatedSelloutUnique,
     subirExcelMaestrosProducts,
-    exportarExcel
+    exportarExcel,
+    cargarExcel
 } from "../../redux/configSelloutSlice";
 import { debounce, timeSearch, formatDate } from "../constantes";
 import { DataGrid } from "@mui/x-data-grid";
@@ -157,8 +158,8 @@ const ProductosNoHomologados = () => {
         try {
             const response = await dispatch(
                 exportarExcel({
-                    excel_name: "consolidated_data_stores",
-                    nombre: "Plantilla estándar",
+                    excel_name: "noHomologadosProducts",
+                    nombre: "Productos_No_Homologados",
                     calculateDate: formatDate(calculateDate),
                 })
             );
@@ -175,6 +176,33 @@ const ProductosNoHomologados = () => {
         }
     };
 
+    const enviarArchivo = async (file) => {
+
+        try {
+            const response = await dispatch(
+                cargarExcel({
+                    type: "noHomologadosStore",
+                    file
+                })
+            );
+
+            if (response.meta.requestStatus !== 'fulfilled') {
+                throw response.payload || 'Error al subir el archivo.';
+            }
+            showSnackbar("Archivo cargado correctamente");
+            buscarLista(search);
+        } catch (error) {
+            setLoading(false);
+            console.error('Error al subir el archivo:', error);
+            showSnackbar("Error al cargar archivo");
+        }
+    };
+
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        enviarArchivo(file);
+    }
+
     return (
         <>
             <AtomContainerGeneral
@@ -185,7 +213,16 @@ const ProductosNoHomologados = () => {
                             title="Descargar excel"
                             iconName="SaveAlt"
                             color="#5ab9f6"
-                            right={20}
+                            right={70}
+                        />
+                        <IconoFlotante
+                            handleButtonClick={() =>
+                                document.getElementById("input-excel-productos").click()
+                            }
+                            handleChangeFile={handleFileChange}
+                            title="Subir archivo excel productos no homologados"
+                            id="input-excel-productos"
+                            iconName="DriveFolderUploadOutlined"
                         />
                         <AtomCard
                             title=""

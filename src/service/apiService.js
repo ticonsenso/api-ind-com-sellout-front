@@ -1,20 +1,26 @@
 import axios from 'axios';
+
 class ApiService {
   constructor() {
     this.defaultConfig = {
       method: 'GET',
       url: '',
       headers: {
-        'Content-Type': 'application/json',
+        // Se elimina 'Content-Type': 'application/json' de los valores por defecto
       },
-      data: undefined,
+      data: null,
       params: null,
+      timeout: 20000,
     };
+
     this.config = { ...this.defaultConfig };
   }
 
   resetConfig() {
-    this.config = { ...this.defaultConfig };
+    this.config = {
+      ...this.defaultConfig,
+      headers: { ...this.defaultConfig.headers },
+    };
   }
 
   setUrl(url) {
@@ -23,18 +29,26 @@ class ApiService {
   }
 
   setMethod(method) {
-    this.config.method = method;
+    this.config.method = method.toUpperCase();
     return this;
   }
 
   setHeaders(headers) {
-    this.config.headers = { ...this.config.headers, ...headers };
+    this.config.headers = {
+      ...this.config.headers,
+      ...headers,
+    };
     return this;
   }
 
   setData(data) {
-    if (data !== null) {
+    if (data !== undefined) {
       this.config.data = data;
+      if (data instanceof FormData) {
+        delete this.config.headers['Content-Type'];
+      } else {
+        this.config.headers['Content-Type'] = this.config.headers['Content-Type'] || 'application/json';
+      }
     }
     return this;
   }
@@ -46,21 +60,24 @@ class ApiService {
 
   async send(token = '') {
     try {
-      if (token) {
-        this.config.headers['Authorization'] = `Bearer ${token}`;
-      }
+      const finalHeaders = {
+        ...this.config.headers,
+        ...(token && { Authorization: `Bearer ${token}` }),
+      };
+
       const response = await axios({
         ...this.config,
-        params: this.config.params,
+        headers: finalHeaders,
       });
+
       return response.data;
     } catch (error) {
-      //   if (error.response?.status === 403) {
-      //     window.location.reload();
-      //     localStorage.setItem('logout', true);
-      //   } else {
-      throw error.response?.data || 'Error desconocido';
-      //   }
+      const errorData =
+        error.response?.data ||
+        error.message ||
+        'Error desconocido en la solicitud';
+
+      throw errorData;
     } finally {
       this.resetConfig();
     }

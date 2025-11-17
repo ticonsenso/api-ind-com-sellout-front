@@ -941,6 +941,28 @@ export const exportarExcel = createAsyncThunk(
   }
 );
 
+export const cargarExcel = createAsyncThunk(
+  "config/cargarExcel",
+  async (data, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = state.auth.auth.token;
+
+    try {
+      const formData = new FormData();
+      formData.append("file", data.file);
+      formData.append("type", data.type);
+      return await apiService
+        .setUrl(apiConfig.exportarExcelUrl.url + "import")
+        .setMethod("POST")
+        .setData(formData)
+        .send(token);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+
 const extraReducers = (builder) => {
   builder
     .addCase(obtenerMaestrosStores.fulfilled, (state, action) => {

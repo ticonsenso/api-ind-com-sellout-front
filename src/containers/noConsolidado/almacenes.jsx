@@ -10,7 +10,7 @@ import { columnsStoreNull, styleTableData } from "./constantes";
 import {
     obtenerConsolidatedSelloutUnique,
     subirExcelMaestrosStores,
-    exportarExcel,
+    exportarExcel, cargarExcel,
 } from "../../redux/configSelloutSlice";
 import { debounce, timeSearch, formatDate } from "../constantes";
 import { DataGrid } from "@mui/x-data-grid";
@@ -159,8 +159,8 @@ const AlmacenesNoHomologados = () => {
         try {
             const response = await dispatch(
                 exportarExcel({
-                    excel_name: "consolidated_data_stores",
-                    nombre: "Plantilla estándar",
+                    excel_name: "noHomologadosStores",
+                    nombre: "Almacenes_No_Homologados",
                     calculateDate: formatDate(calculateDate),
                 })
             );
@@ -177,6 +177,33 @@ const AlmacenesNoHomologados = () => {
         }
     };
 
+    const enviarArchivo = async (file) => {
+
+        try {
+            const response = await dispatch(
+                cargarExcel({
+                    type: "noHomologadosProducts",
+                    file
+                })
+            );
+
+            if (response.meta.requestStatus !== 'fulfilled') {
+                throw response.payload || 'Error al subir el archivo.';
+            }
+            showSnackbar("Archivo cargado correctamente");
+            buscarLista(search);
+        } catch (error) {
+            setLoading(false);
+            console.error('Error al subir el archivo:', error);
+            showSnackbar("Error al cargar archivo");
+        }
+    };
+
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        enviarArchivo(file);
+    }
+
     return (
         <>
             <AtomContainerGeneral
@@ -187,7 +214,16 @@ const AlmacenesNoHomologados = () => {
                             title="Descargar excel"
                             iconName="SaveAlt"
                             color="#5ab9f6"
-                            right={20}
+                            right={70}
+                        />
+                        <IconoFlotante
+                            handleButtonClick={() =>
+                                document.getElementById("input-excel-almacenes").click()
+                            }
+                            handleChangeFile={handleFileChange}
+                            title="Subir archivo excel almacenes no homologados"
+                            id="input-excel-almacenes"
+                            iconName="DriveFolderUploadOutlined"
                         />
                         <AtomCard
                             title=""
