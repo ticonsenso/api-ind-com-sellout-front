@@ -25,6 +25,9 @@ import { setCalculateDate } from "../../redux/configSelloutSlice";
 import AtomDatePicker from "../../atoms/AtomDatePicker";
 import AtomButtonPrimary from "../../atoms/AtomButtonPrimary";
 import IconoFlotante from "../../atoms/IconActionPage";
+import {
+    obtenerMatriculacionConfig,
+} from "../../redux/selloutDatosSlic";
 
 const ProductosNoHomologados = () => {
     const dispatch = useDispatch();
@@ -33,6 +36,30 @@ const ProductosNoHomologados = () => {
     );
     const calculateDate = useSelector(
         (state) => state?.configSellout?.calculateDate || formatDate(new Date())
+    );
+    const isMonthClosed = (calculateDate, closingDate) => {
+        if (!calculateDate || !closingDate) return false;
+
+        const calc = new Date(calculateDate);
+        const cierre = new Date(closingDate);
+
+        // Normalizar ambos al primer día del mes
+        calc.setDate(1);
+        cierre.setDate(1);
+
+        // Si calculateDate está después del mes de cierre -> CERRADO
+        return calc > cierre;
+    };
+
+    const dataMatriculacionConfig = useSelector(
+        (state) => state.selloutDatos.dataMatriculacionConfig
+    );
+
+    const matriculacion = dataMatriculacionConfig?.[0];
+
+    const matriculacionCerrada = isMonthClosed(
+        calculateDate,
+        matriculacion?.closingDate
     );
     const { showSnackbar } = useSnackbar();
     console.log(totalLista);
@@ -69,8 +96,16 @@ const ProductosNoHomologados = () => {
         }
     };
 
+    const buscarMatriculacion = async () => {
+        await dispatch(
+            obtenerMatriculacionConfig({ search: "", page: 1, limit: 100 })
+        );
+    };
+
+
     useEffect(() => {
         buscarLista(search);
+        buscarMatriculacion();
     }, [calculateDate]);
 
     const handleOpenMatriculacion = () => {
@@ -274,7 +309,10 @@ const ProductosNoHomologados = () => {
                                                 <Box sx={{ width: "100%", borderRadius: 3 }}>
                                                     <DataGrid
                                                         rows={data}
-                                                        columns={columnsProductNull}
+                                                        columns={columnsProductNull.map(col => ({
+                                                            ...col,
+                                                            editable: !matriculacionCerrada
+                                                        }))}
                                                         getRowHeight={() => "auto"}
                                                         disableSelectionOnClick
                                                         sx={styleTableData}

@@ -25,7 +25,6 @@ import {
 import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import { usePermission } from "../../context/PermisosComtext";
 import { columnsUsuarios } from "./constantes";
-import AtomSelect from "../../atoms/AtomSelect";
 
 const ListUsers = () => {
   const { showSnackbar } = useSnackbar();

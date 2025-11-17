@@ -5,7 +5,7 @@ import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import { useState } from "react";
 import Grid from "@mui/material/Grid";
 import AtomCircularProgress from "../../atoms/AtomCircularProgress";
-import { columnsStoreNull, styleTableData } from "./constantes";
+import { styleTableData } from "./constantes";
 import {
     obtenerConsolidatedSelloutUnique,
     subirExcelMaestrosStores,
@@ -23,6 +23,10 @@ import AtomButtonPrimary from "../../atoms/AtomButtonPrimary";
 import { setCalculateDate } from "../../redux/configSelloutSlice";
 import AtomDatePicker from "../../atoms/AtomDatePicker";
 import IconoFlotante from "../../atoms/IconActionPage";
+import {
+    obtenerMatriculacionConfig,
+} from "../../redux/selloutDatosSlic";
+
 
 const AlmacenesNoHomologados = () => {
     const dispatch = useDispatch();
@@ -32,6 +36,34 @@ const AlmacenesNoHomologados = () => {
     const calculateDate = useSelector(
         (state) => state?.configSellout?.calculateDate || formatDate(new Date())
     );
+    const isMonthClosed = (calculateDate, closingDate) => {
+        if (!calculateDate || !closingDate) return false;
+
+        const calc = new Date(calculateDate);
+        const cierre = new Date(closingDate);
+
+        // Normalizar ambos al primer día del mes
+        calc.setDate(1);
+        cierre.setDate(1);
+
+        // Si calculateDate está después del mes de cierre -> CERRADO
+        return calc > cierre;
+    };
+
+    const dataMatriculacionConfig = useSelector(
+        (state) => state.selloutDatos.dataMatriculacionConfig
+    );
+
+    const matriculacion = dataMatriculacionConfig?.[0];
+
+    const matriculacionCerrada = isMonthClosed(
+        calculateDate,
+        matriculacion?.closingDate
+    );
+
+
+    console.log(dataMatriculacionConfig);
+
     const { showSnackbar } = useSnackbar();
     console.log(totalLista);
     const [openMatriculacion, setOpenMatriculacion] = useState(false);
@@ -67,12 +99,53 @@ const AlmacenesNoHomologados = () => {
         }
     };
 
+
+    const columnsStoreNull = [
+        {
+            field: "distributor",
+            headerName: "Distribuidor",
+            width: 200,
+            flex: 1,
+            editable: false,
+        },
+        {
+            field: "codeStoreDistributor",
+            headerName: "Almacén Distribuidor",
+            width: 200,
+            flex: 1,
+            editable: false,
+        },
+        {
+            field: "codeStore",
+            headerName: "Cod. Almacen SIC",
+            width: 200,
+            flex: 1,
+            editable: true,
+        },
+        // {
+        //     field: "storeName",
+        //     headerName: "Nombre Almacen",
+        //     width: 200,
+        //     flex: 1,
+        //     editable: false,
+        // },
+    ];
+
+
+
     useEffect(() => {
         buscarLista(search);
+        buscarMatriculacion();
     }, [calculateDate]);
 
     const handleOpenMatriculacion = () => {
         setOpenMatriculacion(true);
+    };
+
+    const buscarMatriculacion = async () => {
+        await dispatch(
+            obtenerMatriculacionConfig({ search: "", page: 1, limit: 100 })
+        );
     };
 
     const handleGuardarExcel = async () => {
@@ -202,23 +275,27 @@ const AlmacenesNoHomologados = () => {
         <>
             <AtomContainerGeneral
                 children={
-                    <>
-                        <IconoFlotante
-                            handleButtonClick={exportExcel}
-                            title="Descargar excel"
-                            iconName="SaveAlt"
-                            color="#5ab9f6"
-                            right={70}
-                        />
-                        <IconoFlotante
-                            handleButtonClick={() =>
-                                document.getElementById("input-excel-almacenes").click()
-                            }
-                            handleChangeFile={handleFileChange}
-                            title="Subir archivo excel almacenes no homologados"
-                            id="input-excel-almacenes"
-                            iconName="DriveFolderUploadOutlined"
-                        />
+                    <>{!matriculacionCerrada && (
+                        <>
+                            <IconoFlotante
+                                handleButtonClick={exportExcel}
+                                title="Descargar excel"
+                                iconName="SaveAlt"
+                                color="#5ab9f6"
+                                right={70}
+                            />
+                            <IconoFlotante
+                                handleButtonClick={() =>
+                                    document.getElementById("input-excel-almacenes").click()
+                                }
+                                handleChangeFile={handleFileChange}
+                                title="Subir archivo excel almacenes no homologados"
+                                id="input-excel-almacenes"
+                                iconName="DriveFolderUploadOutlined"
+                            />
+                        </>
+                    )}
+
                         <AtomCard
                             title=""
                             nameButton={""}
@@ -272,7 +349,10 @@ const AlmacenesNoHomologados = () => {
                                                 <Box component={Paper} sx={{ width: "100%", borderRadius: 3 }}>
                                                     <DataGrid
                                                         rows={data}
-                                                        columns={columnsStoreNull}
+                                                        columns={columnsStoreNull.map(col => ({
+                                                            ...col,
+                                                            editable: !matriculacionCerrada
+                                                        }))}
                                                         getRowHeight={() => "auto"}
                                                         sx={styleTableData}
                                                         disableSelectionOnClick

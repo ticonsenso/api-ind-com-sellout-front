@@ -1,8 +1,8 @@
 export const columnsUsuarios = [
-  {
-    label: "Empresa",
-    field: "company",
-  },
+  // {
+  //   label: "Empresa",
+  //   field: "company",
+  // },
   {
     label: "Identificación",
     field: "dni",

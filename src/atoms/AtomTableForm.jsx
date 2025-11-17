@@ -89,7 +89,7 @@ const AtomTableForm = (props) => {
   };
 
   const formatValueByType = (value, type) => {
-    if (value === null || value === undefined || value === "") return "N/A";
+    if (value === null || value === undefined || value === "") return "-";
 
     const number = parseFloat(value);
 

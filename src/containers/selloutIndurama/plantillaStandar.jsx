@@ -176,10 +176,12 @@ const PlantillaStandar = () => {
       showSnackbar("Complete los campos requeridos");
       return;
     }
-    handleEditarConsolidado();
-    // } else {
-    //   handleCrearConsolidado();
-    // }
+    if (dataConsolidado.id) {
+      handleEditarConsolidado();
+
+    } else {
+      handleCrearConsolidado();
+    }
   };
 
 
@@ -371,14 +373,14 @@ const PlantillaStandar = () => {
   }, [search, page, limit, filtroBusqueda, date]);
 
   const optionsFiltros = [
-    {
-      id: "codeProduct",
-      label: "Código de producto",
-    },
-    {
-      id: "codeStore",
-      label: "Código de almacén",
-    },
+    // {
+    //   id: "codeProduct",
+    //   label: "Código de producto",
+    // },
+    // {
+    //   id: "codeStore",
+    //   label: "Código de almacén",
+    // },
     {
       id: "authorizedDistributor",
       label: "Distribuidor autorizado",
@@ -567,7 +569,7 @@ const PlantillaStandar = () => {
                   <Grid
                     container
                     spacing={2}
-                    sx={{ justifyContent: "flex-end" }}
+                    sx={{ justifyContent: "center" }}
                   >
                     <Grid size={3}>
                       <AtomDatePicker
@@ -595,7 +597,7 @@ const PlantillaStandar = () => {
                     </Grid>
 
                     <Grid size={4} mt={2.8}>
-                      <Tooltip title="Buscar por distribuidor, código de producto, código de almacén y descripción distribuidor">
+                      <Tooltip title="Buscar por distribuidor y descripción distribuidor">
                         <TextField
                           variant="outlined"
                           value={search}
@@ -645,14 +647,14 @@ const PlantillaStandar = () => {
                         />
                       </Tooltip>
                     </Grid>
-                    <Grid size={2} mt={2.8}>
+                    {/* <Grid size={2} mt={2.8}>
                       <AtomButtonPrimary
                         label="Sincronizar"
                         height="45px"
                         icon={<SyncIcon />}
                         onClick={handleOpenDialogoSincronizar}
                       />
-                    </Grid>
+                    </Grid> */}
                   </Grid>
 
                   {loading ? (
@@ -663,7 +665,7 @@ const PlantillaStandar = () => {
                       data={dataConsolidatedSellout}
                       showIcons={true}
                       pagination={true}
-                      actions={actions}
+                      // actions={actions}
                       page={page}
                       limit={limit}
                       count={totalConsolidatedSellout}
@@ -823,34 +825,41 @@ const PlantillaStandar = () => {
                 helperText={errors.saleDate && "Campo requerido"}
               />
             </Grid>
-            <Grid size={6}>
-              <AtomSwitch
-                id="codeStore"
-                title="No se visita"
-                tooltip="Define si el almacén se visita"
-                checked={dataConsolidado.codeStoreStatus}
-                onChange={(e) =>
-                  setDataConsolidado({
-                    ...dataConsolidado,
-                    codeStoreStatus: e.target.checked,
-                  })
-                }
-              />
-            </Grid>
-            <Grid size={6}>
-              <AtomSwitch
-                id="codeProduct"
-                title="Código de producto: OTROS"
-                tooltip="Codigo de producto: OTROS"
-                checked={dataConsolidado.codeProductStatus}
-                onChange={(e) =>
-                  setDataConsolidado({
-                    ...dataConsolidado,
-                    codeProductStatus: e.target.checked,
-                  })
-                }
-              />
-            </Grid>
+            {dataConsolidado.id && (
+              <>
+
+                <Grid size={6}>
+                  <AtomSwitch
+                    id="codeStore"
+                    title="No se visita"
+                    tooltip="Define si el almacén se visita"
+                    checked={dataConsolidado.codeStoreStatus}
+                    onChange={(e) =>
+                      setDataConsolidado({
+                        ...dataConsolidado,
+                        codeStoreStatus: e.target.checked,
+                      })
+                    }
+                  />
+                </Grid>
+                <Grid size={6}>
+                  <AtomSwitch
+                    id="codeProduct"
+                    title="Código de producto: OTROS"
+                    tooltip="Codigo de producto: OTROS"
+                    checked={dataConsolidado.codeProductStatus}
+                    onChange={(e) =>
+                      setDataConsolidado({
+                        ...dataConsolidado,
+                        codeProductStatus: e.target.checked,
+                      })
+                    }
+                  />
+                </Grid>
+              </>
+            )
+            }
+
           </Grid>
         }
       />
