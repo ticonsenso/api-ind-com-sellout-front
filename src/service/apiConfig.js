@@ -135,6 +135,9 @@ export const apiConfig = {
   consolidatedSelloutUrl: {
     url: ipServe + "api/sellout/consolidated/store",
   },
+  consolidatedSellouUpdatetUrl: {
+    url: ipServe + "api/sellout/consolidated",
+  },
   matriculacionUrl: {
     url: ipServe + "api/matriculation/templates",
   },

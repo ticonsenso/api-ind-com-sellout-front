@@ -1,5 +1,4 @@
 import AtomCard from "../../atoms/AtomCard";
-import AtomTableForm from "../../atoms/AtomTableForm";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useCallback } from "react";
 import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
@@ -48,8 +47,6 @@ const AlmacenesNoHomologados = () => {
         [calculateDate]
     );
 
-    console.log("resultadosActualizados", resultadosActualizados);
-
     const buscarLista = async () => {
         setLoading(true);
         try {
@@ -83,8 +80,6 @@ const AlmacenesNoHomologados = () => {
             showSnackbar("No hay cambios para guardar");
             return;
         }
-
-        console.log("ENVIANDO:", resultadosActualizados);
         setLoading(true);
         const chunkSize = 2000;
 
@@ -108,13 +103,12 @@ const AlmacenesNoHomologados = () => {
                     );
                 }
             }
-
             showSnackbar("Cambios guardados correctamente");
             setResultadosActualizados(null);
         } catch (error) {
             showSnackbar(error.message || "Ocurrió un error al guardar");
         } finally {
-            setLoading(false);
+            buscarLista(search);
         }
     };
 
@@ -127,7 +121,6 @@ const AlmacenesNoHomologados = () => {
             const valorOriginal = original.codeStore;
             const valorNuevo = newRow.codeStore;
 
-            // No registrar si no hubo cambio REAL
             if (valorOriginal === valorNuevo) return;
 
             const nuevoObjeto = {
@@ -138,7 +131,7 @@ const AlmacenesNoHomologados = () => {
             };
 
             setResultadosActualizados((prev) => {
-                const lista = prev || []; // evitar error por null
+                const lista = prev || [];
                 const existe = lista.find((obj) => obj.id === nuevoObjeto.id);
 
                 if (existe) {
@@ -183,6 +176,7 @@ const AlmacenesNoHomologados = () => {
             const response = await dispatch(
                 cargarExcel({
                     type: "noHomologadosProducts",
+                    date: calculateDate,
                     file
                 })
             );
@@ -241,20 +235,7 @@ const AlmacenesNoHomologados = () => {
                             children={
                                 <>
                                     <Grid container spacing={2} sx={{ justifyContent: "center", display: "flex" }}>
-                                        {/* <Grid size={4}>
-                                            <AtomTextFielInputForm
-                                                headerTitle="Buscar por:"
-                                                placeholder="Identificación, código y nombre del colaborador"
-                                                value={search}
-                                                onChange={(e) => {
-                                                    setSearch(e.target.value);
-                                                    debounceSearch(e.target.value);
-                                                }}
-                                            />
-                                        </Grid> */}
-
                                         <Grid size={3}>
-
                                             <AtomDatePicker
                                                 id="calculateDate"
                                                 required={true}
@@ -295,13 +276,12 @@ const AlmacenesNoHomologados = () => {
                                                         getRowHeight={() => "auto"}
                                                         sx={styleTableData}
                                                         disableSelectionOnClick
-                                                        // hideFooter
                                                         processRowUpdate={(newRow) => {
                                                             handleActualizarProducto(newRow);
                                                             return newRow;
                                                         }}
                                                         pagination
-                                                        pageSizeOptions={[10]}
+                                                        pageSizeOptions={[10, 50, 100]}
                                                         initialState={{
                                                             pagination: { paginationModel: { pageSize: 10, page: 0 } },
                                                         }}

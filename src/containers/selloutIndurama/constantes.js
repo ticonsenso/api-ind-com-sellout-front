@@ -205,18 +205,18 @@ export const camposParam = [
 ];
 
 export const mesesNum = [
-  { nombre: "enero", numero: 1 },
-  { nombre: "febrero", numero: 2 },
-  { nombre: "marzo", numero: 3 },
-  { nombre: "abril", numero: 4 },
-  { nombre: "mayo", numero: 5 },
-  { nombre: "junio", numero: 6 },
-  { nombre: "julio", numero: 7 },
-  { nombre: "agosto", numero: 8 },
-  { nombre: "septiembre", numero: 9 },
-  { nombre: "octubre", numero: 10 },
-  { nombre: "noviembre", numero: 11 },
-  { nombre: "diciembre", numero: 12 },
+  { label: "enero", id: 1 },
+  { label: "febrero", id: 2 },
+  { label: "marzo", id: 3 },
+  { label: "abril", id: 4 },
+  { label: "mayo", id: 5 },
+  { label: "junio", id: 6 },
+  { label: "julio", id: 7 },
+  { label: "agosto", id: 8 },
+  { label: "septiembre", id: 9 },
+  { label: "octubre", id: 10 },
+  { label: "noviembre", id: 11 },
+  { label: "diciembre", id: 12 },
 ];
 
 export const paramsValidateConfiguracion = ["name", "sourceType"];

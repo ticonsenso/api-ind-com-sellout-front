@@ -94,13 +94,12 @@ const CrearConfiguracionExtraccion = ({ config }) => {
   const configuracionExtraccionSelloutId = useSelector(
     (state) => state.configSellout.configuracionExtraccionSelloutId
   );
-  console.log("idEmpresa", idEmpresaIndurama);
 
   const optionsConfiguracionSellout = useSelector(
     (state) => state.configSellout.optionsConfiguracionSellout || []
   );
   const [initialStep, setInitialStep] = useState(0);
-  const [searchMatriculacion, setSearchMatriculacion] = useState("");
+  const [searchMatriculacion, setSearchMatriculacion] = useState();
   const [configuracionId, setConfiguracionId] = useState("");
   const [errorsParam, setErrorsParam] = useState({});
   const [mostrarFormulario, setMostrarFormulario] = useState(true);
@@ -137,7 +136,6 @@ const CrearConfiguracionExtraccion = ({ config }) => {
 
 
   const handleCreate = () => {
-    console.log("configuracion", configuracion);
     if (
       !validateForm(
         configuracion,
@@ -368,6 +366,8 @@ const CrearConfiguracionExtraccion = ({ config }) => {
   const obtenerListaMatriculacion = async (value) => {
     dispatch(
       obtenerMatriculacion({
+        page: 1,
+        limit: 200,
         search: value,
         calculateMonth: configuracion?.calculateDate,
       })
@@ -406,7 +406,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
             <Grid size={4}>
               <AtomDatePicker
                 id="calculateMonth"
-                label="Fecha de matriculación"
+                label="Fecha de carga"
                 mode="month"
                 value={configuracion?.calculateDate}
                 onChange={(e) => {
@@ -422,7 +422,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
                 id="matriculationId"
                 label="Matriculación"
                 options={busquedaMatriculacion || []}
-                inputValue={searchMatriculacion}
+                inputValue={searchMatriculacion || ""}
                 onInputChange={(event, newInputValue) => {
                   setSearchMatriculacion(newInputValue);
                 }}
@@ -440,6 +440,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
                     distributorCompanyName: newValue?.distributor || "",
                     name: newValue?.label || "",
                   });
+                  setSearchMatriculacion("");
                 }}
               />
             </Grid>

@@ -86,7 +86,7 @@ const initialStateMenu = [
 
   {
     id: 6,
-    name: "Base Consolidado",
+    name: "Base Consolidada",
     icon: "mui:FilePresentOutlined",
     visible: true,
     name_server: "PLANTILLA CONSOLIDADO SELLOUT",

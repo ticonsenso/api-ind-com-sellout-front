@@ -655,6 +655,25 @@ export const sendSellout = createAsyncThunk(
 );
 
 //consolidatedSellout
+
+export const updateArraySellout = createAsyncThunk(
+  "configSellout/updateArraySellout",
+  async (data, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = state.auth.auth.token;
+    const { id, ...rest } = data;
+    try {
+      return await apiService
+        .setUrl(apiConfig.consolidatedSelloutUrl.url + "/" + id)
+        .setMethod("PUT")
+        .setData(rest)
+        .send(token);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 export const guardarConsolidatedSellout = createAsyncThunk(
   "configSellout/guardarConsolidatedSellout",
   async (data, { getState, rejectWithValue }) => {

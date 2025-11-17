@@ -1430,7 +1430,7 @@ const ExtraccionDatos = () => {
                       color="#fff"
                       height="45px"
                       mode="month"
-                      label="Fecha de cálculo"
+                      label="Fecha de carga"
                       value={calculateDate || null}
                       onChange={(e) => {
                         setCalculateDate(e);

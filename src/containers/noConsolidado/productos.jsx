@@ -83,7 +83,6 @@ const ProductosNoHomologados = () => {
             return;
         }
 
-        console.log("ENVIANDO:", resultadosActualizados);
         setLoading(true);
         const chunkSize = 2000;
 
@@ -113,7 +112,7 @@ const ProductosNoHomologados = () => {
         } catch (error) {
             showSnackbar(error.message || "Ocurrió un error al guardar");
         } finally {
-            setLoading(false);
+            buscarLista(search);
         }
     };
 
@@ -182,6 +181,7 @@ const ProductosNoHomologados = () => {
             const response = await dispatch(
                 cargarExcel({
                     type: "noHomologadosStore",
+                    date: calculateDate,
                     file
                 })
             );
@@ -284,7 +284,7 @@ const ProductosNoHomologados = () => {
                                                         }}
                                                         localeText={esES.components.MuiDataGrid.defaultProps.localeText}
                                                         pagination
-                                                        pageSizeOptions={[10]}
+                                                        pageSizeOptions={[10, 50, 100]}
                                                         initialState={{
                                                             pagination: { paginationModel: { pageSize: 10, page: 0 } },
                                                         }}

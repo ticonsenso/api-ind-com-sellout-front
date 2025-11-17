@@ -78,11 +78,13 @@ const SelloutIndurama = () => {
       id: 6,
       menuSellout: true,
       numero: "03",
+      name: "Base Consolidada",
       titulo: "VALIDACIÓN DE PLANTILLAS",
       descripcion:
         "Representación de datos obtenidos en Base Consolidada.",
       color: "#ef6c00",
       Icon: SearchIcon,
+      nameInfo: "Lista de datos",
       permiso: "PLANTILLA CONSOLIDADO SELLOUT",
       subpasos: [
         {

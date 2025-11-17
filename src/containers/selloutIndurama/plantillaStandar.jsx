@@ -23,6 +23,7 @@ import {
   obtenerConsolidatedSelloutUnique,
   guardarConsolidatedSellout,
   editStatusConsolidatedSellout,
+  updateArraySellout,
 } from "../../redux/configSelloutSlice";
 import { columnsPlantillaStandar } from "./constantes";
 import { useDispatch, useSelector } from "react-redux";
@@ -51,6 +52,7 @@ import AtomTextField from "../../atoms/AtomTextField";
 import IconoFlotante from "../../atoms/IconActionPage";
 
 import AtomSwitch from "../../atoms/AtomSwitch";
+import { data } from "react-router-dom";
 
 const formatDate = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -132,16 +134,22 @@ const PlantillaStandar = () => {
   };
 
   const handleEditarConsolidado = async () => {
-    const status = {
-      id: dataConsolidado.id,
-      status: dataConsolidado.status,
+    const { codeStoreStatus, codeProductStatus, ...rest } = dataConsolidado;
+    const newCodeProduct = codeProductStatus === true ? null : dataConsolidado.codeProduct;
+    const newCodeStore = codeStoreStatus === true ? null : dataConsolidado.codeStore;
+    const data = {
+      ...rest,
+      codeProduct: newCodeProduct,
+      codeStore: newCodeStore,
     };
-    const response = await dispatch(editStatusConsolidatedSellout(status));
+    const response = await dispatch(updateArraySellout(data));
     if (response.meta.requestStatus === "fulfilled") {
       showSnackbar(response.payload.message);
       handleCloseDialogProduct();
       buscarConsolidado();
-      dispatch(getConsolidatedAlert({ calculateDate: date }));
+      dispatch(getConsolidatedAlert({
+        calculateDate: date
+      }));
     } else {
       showSnackbar(response.payload.message);
     }
@@ -168,11 +176,10 @@ const PlantillaStandar = () => {
       showSnackbar("Complete los campos requeridos");
       return;
     }
-    if (editState) {
-      handleEditarConsolidado();
-    } else {
-      handleCrearConsolidado();
-    }
+    handleEditarConsolidado();
+    // } else {
+    //   handleCrearConsolidado();
+    // }
   };
 
 
@@ -283,7 +290,6 @@ const PlantillaStandar = () => {
 
   const handleOpenDialogProductNull = async () => {
     setLoading(true);
-    setOpenDialogProductNull(true);
     const response = await dispatch(
       obtenerConsolidatedSelloutUnique({
         calculateDate: date,
@@ -426,8 +432,12 @@ const PlantillaStandar = () => {
   };
 
   const handleEditState = (row) => {
-    setDataConsolidado(row);
-    setEditState(true);
+    const data = {
+      ...row,
+      codeProductStatus: row.codeProduct === null ? true : false,
+      codeStoreStatus: row.codeStore === null ? true : false,
+    }
+    setDataConsolidado(data);
     setOpenDialogProduct(true);
   };
 
@@ -468,7 +478,7 @@ const PlantillaStandar = () => {
               iconName="AutoFixHigh"
               color="#da161e"
             />
-            <Box mb={1} mt={-1}>
+            {/* <Box mb={1} mt={-1}>
               {dataConsolidatedAlert &&
                 !isAlertVacia(dataConsolidatedAlert) && (
                   <AtomAlert
@@ -538,7 +548,7 @@ const PlantillaStandar = () => {
                     }
                   />
                 )}
-            </Box>
+            </Box> */}
 
             <AtomCard
               title=""
@@ -565,7 +575,7 @@ const PlantillaStandar = () => {
                         mode="month"
                         color="#ffffff"
                         height="45px"
-                        label="Fecha cálculo"
+                        label="Fecha de carga"
                         value={date}
                         onChange={(value) => setDate(value)}
                       />
@@ -815,14 +825,28 @@ const PlantillaStandar = () => {
             </Grid>
             <Grid size={6}>
               <AtomSwitch
-                id="status"
-                title="Aplica homologación"
-                tooltip="Define si el registro aplica homologación"
-                checked={dataConsolidado.status}
+                id="codeStore"
+                title="No se visita"
+                tooltip="Define si el almacén se visita"
+                checked={dataConsolidado.codeStoreStatus}
                 onChange={(e) =>
                   setDataConsolidado({
                     ...dataConsolidado,
-                    status: e.target.checked,
+                    codeStoreStatus: e.target.checked,
+                  })
+                }
+              />
+            </Grid>
+            <Grid size={6}>
+              <AtomSwitch
+                id="codeProduct"
+                title="Código de producto: OTROS"
+                tooltip="Codigo de producto: OTROS"
+                checked={dataConsolidado.codeProductStatus}
+                onChange={(e) =>
+                  setDataConsolidado({
+                    ...dataConsolidado,
+                    codeProductStatus: e.target.checked,
                   })
                 }
               />
