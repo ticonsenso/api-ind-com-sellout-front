@@ -331,11 +331,11 @@ const ExtraccionDatos = () => {
     configuracionId,
     columnasConfig,
     defaultDistributorId,
+    hasNegativeValue,
     calculateDate
   ) => {
     const registros = [];
-
-    let sheetName = configuracionId?.sheetName;
+    let sheetName = configuracionId?.sheetName.trimEnd();
     if (!sheetName || !workbook.Sheets[sheetName]) {
       sheetName = workbook.SheetNames[0];
     }
@@ -351,10 +351,6 @@ const ExtraccionDatos = () => {
       letra: col.columnLetter,
       tipo: col.dataType,
     }));
-
-    const hasNegative =
-      configuracion?.hasNegativeValue?.toString().trim().toLowerCase() ===
-      "true" || configuracion?.hasNegativeValue?.toString().trim() === "1";
 
     for (let fila = filaInicio; fila <= filaFin; fila++) {
       const registro = {};
@@ -421,7 +417,7 @@ const ExtraccionDatos = () => {
       if (tieneColumnaCantidad) {
         cantidad = parseFloat(registro.unitsSoldDistributor);
         if (!isNaN(cantidad) && cantidad !== 0) {
-          registro.unitsSoldDistributor = hasNegative
+          registro.unitsSoldDistributor = hasNegativeValue
             ? Math.abs(cantidad)
             : cantidad;
         } else {
@@ -456,6 +452,8 @@ const ExtraccionDatos = () => {
     }
     setLoading(true);
     const nombreSinExtension = file.name.replace(/\.[^/.]+$/, "");
+    const hasNegativeValue = configuracion.hasNegativeValue;
+
     setDocumento(nombreSinExtension);
     try {
       const data = await file.arrayBuffer();
@@ -471,13 +469,18 @@ const ExtraccionDatos = () => {
         configuracionId,
         columns,
         configuracionId?.distributor,
+        hasNegativeValue,
         calculateDate
       );
+
+      console.log("-----", calculateDate);
 
       const registrosFiltrados = filterByCurrentMonth(
         registrosExtraidos,
         calculateDate
       );
+
+      console.log("-----", calculateDate, registrosFiltrados);
       if (registrosFiltrados.length === 0) {
         showSnackbar(
           "⚠️ No se encontraron registros del mes seleccionado. Verifica las fechas del archivo si coincide con la fecha de cálculo seleccionada."
@@ -1009,7 +1012,7 @@ const ExtraccionDatos = () => {
       if (!registro.saleDate) return false;
 
       const saleDateStr = registro.saleDate.slice(0, 7);
-
+      console.log(saleDateStr, mesCalculo);
       return saleDateStr === mesCalculo;
     });
   };
