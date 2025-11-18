@@ -1370,12 +1370,13 @@ const ExtraccionDatos = () => {
                   title="Limpiar datos"
                   iconName="AutoFixHigh"
                   color="#b91818"
-                  right={80}
+                  right={70}
                 />
                 <IconoFlotante
-                  handleButtonClick={handleMenuOpen}
-                  title="Mas opciones"
-                  iconName="MoreVert"
+                  handleButtonClick={downloadEmptyExcel}
+                  title="Descargar Formato Estandar"
+                  iconName="SaveAlt"
+                  color="#5ab9f6"
                 />
                 <Menu
                   anchorEl={anchorEl}

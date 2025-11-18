@@ -115,13 +115,15 @@ const SelloutIndurama = () => {
       ]
     },
     {
-      id: 5,
+      id: 4,
       numero: "04",
       titulo: "SIC",
       descripcion: "Carga y gestión de productos y almacenes SIC.",
       color: "rgba(31, 151, 12, 1)",
       Icon: EmojiObjectsIcon,
       permiso: "SIC SELLOUT",
+      name: "SIC",
+      nameInfo: "Almacenes - Productos SIC",
       menuSellout: true,
     },
   ].filter((paso) => namePermission(paso.permiso));

@@ -26,6 +26,15 @@ export const menuSelloutPage = [
     menuSellout: true,
     nameInfo: "Validación de datos",
   },
+  {
+    id: 4,
+    name: "SIC",
+    icon: "mui:GridView",
+    visible: true,
+    name_server: "SIC SELLOUT",
+    menuSellout: true,
+    nameInfo: "Almacenes - Productos SIC",
+  },
 ];
 
 const initialStateMenu = [
@@ -81,7 +90,7 @@ const initialStateMenu = [
     visible: true,
     name_server: "SIC SELLOUT",
     menuSellout: true,
-    nameInfo: "Lista de procesos",
+    nameInfo: "Almacenes - Productos SIC",
   },
 
   {
