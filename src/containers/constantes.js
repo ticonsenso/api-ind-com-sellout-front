@@ -76,3 +76,20 @@ export function debounce(func, delay) {
     timer = setTimeout(() => func(...args), delay);
   };
 }
+
+//funcion para fecha de cierre 
+export const isMonthClosed = (closingDate) => {
+  if (!closingDate) {
+    return "cerrado";
+  }
+  const hoy = new Date();
+  const cierre = new Date(closingDate);
+
+  hoy.setHours(0, 0, 0, 0);
+  cierre.setHours(0, 0, 0, 0);
+
+  const cierreMasUno = new Date(cierre);
+  cierreMasUno.setDate(cierreMasUno.getDate() + 2);
+
+  return hoy >= cierreMasUno ? "cerrado" : "abierto";
+};

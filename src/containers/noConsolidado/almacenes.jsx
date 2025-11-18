@@ -11,7 +11,7 @@ import {
     subirExcelMaestrosStores,
     exportarExcel, cargarExcel,
 } from "../../redux/configSelloutSlice";
-import { debounce, timeSearch, formatDate } from "../constantes";
+import { debounce, timeSearch, formatDate, isMonthClosed } from "../constantes";
 import { DataGrid } from "@mui/x-data-grid";
 import { esES } from "@mui/x-data-grid/locales";
 import { useSnackbar } from "../../context/SnacbarContext";
@@ -27,7 +27,6 @@ import {
     obtenerMatriculacionConfig,
 } from "../../redux/selloutDatosSlic";
 
-
 const AlmacenesNoHomologados = () => {
     const dispatch = useDispatch();
     const totalLista = useSelector(
@@ -36,33 +35,16 @@ const AlmacenesNoHomologados = () => {
     const calculateDate = useSelector(
         (state) => state?.configSellout?.calculateDate || formatDate(new Date())
     );
-    const isMonthClosed = (calculateDate, closingDate) => {
-        if (!calculateDate || !closingDate) return false;
-
-        const calc = new Date(calculateDate);
-        const cierre = new Date(closingDate);
-
-        // Normalizar ambos al primer día del mes
-        calc.setDate(1);
-        cierre.setDate(1);
-
-        // Si calculateDate está después del mes de cierre -> CERRADO
-        return calc > cierre;
-    };
-
     const dataMatriculacionConfig = useSelector(
         (state) => state.selloutDatos.dataMatriculacionConfig
     );
-
-    const matriculacion = dataMatriculacionConfig?.[0];
-
-    const matriculacionCerrada = isMonthClosed(
-        calculateDate,
-        matriculacion?.closingDate
+    const monthToCompare = calculateDate;
+    const matriculacionConfigrada = dataMatriculacionConfig?.find(
+        (config) => config.month === monthToCompare
     );
-
-
-    console.log(dataMatriculacionConfig);
+    const matriculacionCerrada = isMonthClosed(
+        matriculacionConfigrada?.closingDate
+    );
 
     const { showSnackbar } = useSnackbar();
     console.log(totalLista);
@@ -122,13 +104,6 @@ const AlmacenesNoHomologados = () => {
             flex: 1,
             editable: true,
         },
-        // {
-        //     field: "storeName",
-        //     headerName: "Nombre Almacen",
-        //     width: 200,
-        //     flex: 1,
-        //     editable: false,
-        // },
     ];
 
 
@@ -275,7 +250,7 @@ const AlmacenesNoHomologados = () => {
         <>
             <AtomContainerGeneral
                 children={
-                    <>{!matriculacionCerrada && (
+                    <>{matriculacionCerrada === "abierto" && (
                         <>
                             <IconoFlotante
                                 handleButtonClick={exportExcel}
@@ -351,7 +326,7 @@ const AlmacenesNoHomologados = () => {
                                                         rows={data}
                                                         columns={columnsStoreNull.map(col => ({
                                                             ...col,
-                                                            editable: !matriculacionCerrada
+                                                            editable: matriculacionCerrada === "abierto" ? true : false
                                                         }))}
                                                         getRowHeight={() => "auto"}
                                                         sx={styleTableData}
@@ -383,4 +358,3 @@ const AlmacenesNoHomologados = () => {
 };
 
 export default AlmacenesNoHomologados;
-

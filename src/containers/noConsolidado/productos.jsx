@@ -13,7 +13,7 @@ import {
     exportarExcel,
     cargarExcel
 } from "../../redux/configSelloutSlice";
-import { debounce, timeSearch, formatDate } from "../constantes";
+import { debounce, timeSearch, formatDate, isMonthClosed } from "../constantes";
 import { DataGrid } from "@mui/x-data-grid";
 import { esES } from "@mui/x-data-grid/locales";
 import { useSnackbar } from "../../context/SnacbarContext";
@@ -37,32 +37,18 @@ const ProductosNoHomologados = () => {
     const calculateDate = useSelector(
         (state) => state?.configSellout?.calculateDate || formatDate(new Date())
     );
-    const isMonthClosed = (calculateDate, closingDate) => {
-        if (!calculateDate || !closingDate) return false;
-
-        const calc = new Date(calculateDate);
-        const cierre = new Date(closingDate);
-
-        // Normalizar ambos al primer día del mes
-        calc.setDate(1);
-        cierre.setDate(1);
-
-        // Si calculateDate está después del mes de cierre -> CERRADO
-        return calc > cierre;
-    };
 
     const dataMatriculacionConfig = useSelector(
         (state) => state.selloutDatos.dataMatriculacionConfig
     );
-
-    const matriculacion = dataMatriculacionConfig?.[0];
-
+    const monthToCompare = calculateDate;
+    const matriculacionConfigrada = dataMatriculacionConfig?.find(
+        (config) => config.month === monthToCompare
+    );
     const matriculacionCerrada = isMonthClosed(
-        calculateDate,
-        matriculacion?.closingDate
+        matriculacionConfigrada?.closingDate
     );
     const { showSnackbar } = useSnackbar();
-    console.log(totalLista);
     const [openMatriculacion, setOpenMatriculacion] = useState(false);
     const [search, setSearch] = useState("");
     const [data, setData] = useState([]);
@@ -243,22 +229,27 @@ const ProductosNoHomologados = () => {
             <AtomContainerGeneral
                 children={
                     <>
-                        <IconoFlotante
-                            handleButtonClick={exportExcel}
-                            title="Descargar excel"
-                            iconName="SaveAlt"
-                            color="#5ab9f6"
-                            right={70}
-                        />
-                        <IconoFlotante
-                            handleButtonClick={() =>
-                                document.getElementById("input-excel-productos").click()
-                            }
-                            handleChangeFile={handleFileChange}
-                            title="Subir archivo excel productos no homologados"
-                            id="input-excel-productos"
-                            iconName="DriveFolderUploadOutlined"
-                        />
+                        {matriculacionCerrada === "abierto" && (
+                            <>
+                                <IconoFlotante
+                                    handleButtonClick={exportExcel}
+                                    title="Descargar excel"
+                                    iconName="SaveAlt"
+                                    color="#5ab9f6"
+                                    right={70}
+                                />
+                                <IconoFlotante
+                                    handleButtonClick={() =>
+                                        document.getElementById("input-excel-productos").click()
+                                    }
+                                    handleChangeFile={handleFileChange}
+                                    title="Subir archivo excel productos no homologados"
+                                    id="input-excel-productos"
+                                    iconName="DriveFolderUploadOutlined"
+                                />
+                            </>
+                        )}
+
                         <AtomCard
                             title=""
                             nameButton={""}
@@ -311,7 +302,7 @@ const ProductosNoHomologados = () => {
                                                         rows={data}
                                                         columns={columnsProductNull.map(col => ({
                                                             ...col,
-                                                            editable: !matriculacionCerrada
+                                                            editable: matriculacionCerrada === "abierto" ? true : false
                                                         }))}
                                                         getRowHeight={() => "auto"}
                                                         disableSelectionOnClick
