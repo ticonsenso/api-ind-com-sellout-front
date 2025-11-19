@@ -10,6 +10,7 @@ import {
   createMatriculacionBulk,
   createMatriculationBeforeMonth,
   exportarExcel,
+  deleteMasivaMatriculacion
 } from "../../../redux/configSelloutSlice";
 import AtomDialogForm from "../../../atoms/AtomDialogForm";
 import AtomTextField from "../../../atoms/AtomTextField";
@@ -78,6 +79,8 @@ const Matriculacion = ({ calculateDate }) => {
     (state) => state?.configSellout?.totalMatriculacion || 0
   );
   const [openMatriculacion, setOpenMatriculacion] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  console.log("selectedIds", selectedIds);
   const [search, setSearch] = useState("");
   const [copyMonth, setCopyMonth] = useState(null);
   const [
@@ -212,11 +215,6 @@ const Matriculacion = ({ calculateDate }) => {
       color: "info",
       onClick: (row) => handleEditMatriculacion(row),
     },
-    {
-      label: "Eliminar",
-      color: "error",
-      onClick: (row) => handleDeleteMatriculacion(row),
-    },
   ];
 
   const handleCloseMatriculacion = () => {
@@ -231,14 +229,37 @@ const Matriculacion = ({ calculateDate }) => {
     setEdit(false);
   };
 
-  const handleDeleteMatriculacion = (row) => {
+  // const handleDeleteMatriculacion = (row) => {
+  //   showDialog({
+  //     title: "Eliminar Matriculacion",
+  //     message:
+  //       "¿Estás seguro de que deseas eliminar esta matriculación, todos los datos asociados a esta serán eliminados?",
+  //     onConfirm: async () => {
+  //       try {
+  //         const response = await dispatch(deleteMatriculacion(row.id));
+  //         if (response.meta.requestStatus === "fulfilled") {
+  //           showSnackbar(response.payload.message);
+  //           buscarMatriculacion(search, calculateDate);
+  //         } else {
+  //           showSnackbar(response.payload.message);
+  //         }
+  //       } catch (error) {
+  //         showSnackbar(error || "Error al eliminar la matriculacion");
+  //       }
+  //     },
+  //     onCancel: () => { },
+  //   });
+  // };
+
+  const handleDeleteSelected = () => {
     showDialog({
-      title: "Eliminar Matriculacion",
+      title: "Confirmación masiva de Matriculacion",
       message:
-        "¿Estás seguro de que deseas eliminar esta matriculación, todos los datos asociados a esta serán eliminados?",
+        "¿Estás seguro de que deseas eliminar los registros, todos los datos seleccionados serán eliminados?",
       onConfirm: async () => {
         try {
-          const response = await dispatch(deleteMatriculacion(row.id));
+          const ids = selectedIds;
+          const response = await dispatch(deleteMasivaMatriculacion({ ids }));
           if (response.meta.requestStatus === "fulfilled") {
             showSnackbar(response.payload.message);
             buscarMatriculacion(search, calculateDate);
@@ -246,7 +267,7 @@ const Matriculacion = ({ calculateDate }) => {
             showSnackbar(response.payload.message);
           }
         } catch (error) {
-          showSnackbar(error || "Error al eliminar la matriculacion");
+          showSnackbar(error || "Error al eliminar los registros");
         }
       },
       onCancel: () => { },
@@ -560,6 +581,13 @@ const Matriculacion = ({ calculateDate }) => {
                       page={page}
                       limit={limit}
                       count={totalMatriculacion}
+                      selectable={true}
+                      selectedRows={selectedIds}
+                      onSelectionChange={(ids) => {
+                        console.log("IDs seleccionados:", ids);
+                        setSelectedIds(ids);
+                      }}
+                      onDeleteSelected={handleDeleteSelected}
                       setPage={setPage}
                       setLimit={setLimit}
                       handleChangePage={handleChangePage}

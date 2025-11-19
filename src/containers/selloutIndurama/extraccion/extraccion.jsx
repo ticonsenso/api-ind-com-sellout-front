@@ -76,6 +76,7 @@ import { styles, normalizarTexto } from "./constantes";
 import { obtenerMatriculacionConfig } from "../../../redux/selloutDatosSlic";
 import { useDialog } from "../../../context/DialogDeleteContext";
 import { obtenerListaCategorias } from "../../../redux/diccionarioSlice"
+import { setCalculateDate } from "../../../redux/configSelloutSlice";
 
 const formatDate = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -87,6 +88,10 @@ const formatDate = (fechaISO) => {
 
 const ExtraccionDatos = () => {
   const { showDialog } = useDialog();
+
+  const calculateDate = useSelector(
+    (state) => state?.configSellout?.calculateDate || formatDate(new Date())
+  );
 
   const dataMatriculacionRegistrados = useSelector(
     (state) => state.configSellout?.dataMatriculacionRegistrados
@@ -171,7 +176,6 @@ const ExtraccionDatos = () => {
   const [loading, setLoading] = useState(false);
   const [dataResponse, setDataResponse] = useState({});
   const [dialogInformation, setDialogInformation] = useState(false);
-  const [calculateDate, setCalculateDate] = useState(formatDate(new Date()));
   const [errorsCalculateDate, setErrorsCalculateDate] = useState({});
   const [search, setSearch] = useState("");
   const [detallesData, setDetallesData] = useState([]);
@@ -217,7 +221,7 @@ const ExtraccionDatos = () => {
     if (!year || !month || !day)
       throw new Error(`Fecha inválida: ${fechaInput}`);
 
-    const ultimoDia = new Date(year, month, 0); // month base 1, día 0 del siguiente mes
+    const ultimoDia = new Date(year, month, 0);
 
     const yyyy = ultimoDia.getFullYear();
     const mm = String(ultimoDia.getMonth() + 1).padStart(2, "0");
@@ -299,7 +303,7 @@ const ExtraccionDatos = () => {
     const fecha = new Date(anio, mes - 1, dia);
     if (isNaN(fecha.getTime())) return null;
 
-    return fecha.toISOString().split("T")[0]; // formato: YYYY-MM-DD
+    return fecha.toISOString().split("T")[0];
   };
 
   const repartirValoresNumerico = (registroOriginal) => {
@@ -387,7 +391,7 @@ const ExtraccionDatos = () => {
         registro.codeProductDistributor = registro.descriptionDistributor;
       }
       if (!registro.saleDate) {
-        const diaTexto = registro.saleDay ?? null;
+        const diaTexto = registro.saleDay ?? "01";
         const mesTexto = registro.saleMonth ?? null;
         const anioTexto = registro.saleYear ?? null;
 
@@ -414,16 +418,22 @@ const ExtraccionDatos = () => {
 
       let cantidad = 1;
       const tieneColumnaCantidad = registro.unitsSoldDistributor !== undefined;
+
       if (tieneColumnaCantidad) {
-        cantidad = parseFloat(registro.unitsSoldDistributor);
-        if (!isNaN(cantidad) && cantidad !== 0) {
-          registro.unitsSoldDistributor = hasNegativeValue
-            ? Math.abs(cantidad)
-            : cantidad;
+        const valor = registro.unitsSoldDistributor;
+        const cantidadNumerica = parseFloat(valor);
+
+        if (!isNaN(cantidadNumerica) && cantidadNumerica !== 0) {
+          cantidad = hasNegativeValue
+            ? Math.abs(cantidadNumerica)
+            : cantidadNumerica;
+
+          registro.unitsSoldDistributor = cantidad;
         } else {
-          registro.unitsSoldDistributor = 1;
+          continue;
         }
       }
+
 
       registro.distributor =
         defaultDistributorId ||
@@ -510,9 +520,9 @@ const ExtraccionDatos = () => {
 
       let detallesData = Object.values(agrupados);
 
-      if (detallesData.length < 2) {
-        detallesData = [];
-      }
+      // if (detallesData.length < 2) {
+      //   detallesData = [];
+      // }
 
       setDetallesData(detallesData);
       setData(registrosFiltrados);
@@ -586,6 +596,7 @@ const ExtraccionDatos = () => {
     setLoading(true);
 
     const chunkSize = 2000;
+
     const splitInChunks = (array, size) => {
       const result = [];
       for (let i = 0; i < array.length; i += size) {
@@ -619,6 +630,7 @@ const ExtraccionDatos = () => {
           })),
         };
 
+        // Payload base (común a todos los chunks)
         const payload = {
           extractionDate: new Date().toISOString(),
           dataContent,
@@ -630,8 +642,13 @@ const ExtraccionDatos = () => {
           uploadCount: index + 1,
           uploadTotal: chunks.length,
           matriculationId: matriculacionData?.id,
-          matriculationLogs: detallesData,
         };
+
+        if (index === 0) {
+          payload.matriculationLogs = detallesData;
+        } else {
+          payload.matriculationLogs = null;
+        }
 
         const response = await dispatch(sendSellout(payload));
 
@@ -650,7 +667,8 @@ const ExtraccionDatos = () => {
           }
         } else {
           showSnackbar(
-            response.payload.message || `Error al guardar el chunk ${index + 1}`
+            response.payload.message ||
+            `Error al guardar el chunk ${index + 1}`
           );
         }
       }
@@ -660,6 +678,8 @@ const ExtraccionDatos = () => {
       setLoading(false);
     }
   };
+
+
 
   const limpiarErrores = () => {
     setDataResponse({});
@@ -886,7 +906,7 @@ const ExtraccionDatos = () => {
     }
 
     if (fecha instanceof Date && !isNaN(fecha.getTime())) {
-      return fecha.toISOString().split("T")[0]; // Formato YYYY-MM-DD
+      return fecha.toISOString().split("T")[0];
     }
 
     return null;
@@ -981,10 +1001,6 @@ const ExtraccionDatos = () => {
       }, {});
 
       let detallesData = Object.values(agrupados);
-
-      if (detallesData.length < 2) {
-        detallesData = [];
-      }
 
       setDetallesData(detallesData);
 
@@ -1093,7 +1109,6 @@ const ExtraccionDatos = () => {
   const processRows = (rows, encabezados, hojaName, defaultDistributorId) => {
     const registros = [];
     const mapeo = detectarColumnasAutomaticamente(encabezados);
-    console.log("mapeo", mapeo);
     const tieneColumnaCantidad = mapeo.unitsSoldDistributor !== undefined;
     const columnaNumber = Number(mapeo.descriptionDistributor) + 1;
     for (const fila of rows) {
@@ -1437,15 +1452,8 @@ const ExtraccionDatos = () => {
                       label="Fecha de carga"
                       value={calculateDate || null}
                       onChange={(e) => {
-                        setCalculateDate(e);
-                        setErrorsCalculateDate({});
+                        dispatch(setCalculateDate(e));
                       }}
-                      error={errorsCalculateDate.dateStart}
-                      helperText={
-                        errorsCalculateDate.dateStart
-                          ? "La fecha de cálculo es requerida"
-                          : ""
-                      }
                     />
                   </Grid>
                   {mostrarAlerta && mensajeAlerta ? (

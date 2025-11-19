@@ -93,3 +93,17 @@ export const isMonthClosed = (closingDate) => {
 
   return hoy >= cierreMasUno ? "cerrado" : "abierto";
 };
+
+export const getPreviousMonthStart = () => {
+  const today = new Date();
+
+  today.setMonth(today.getMonth() - 1);
+
+  today.setDate(1);
+
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = "01";
+
+  return `${year}-${month}-${day}`;
+};

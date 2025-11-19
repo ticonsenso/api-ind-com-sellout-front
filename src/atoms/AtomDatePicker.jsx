@@ -66,25 +66,21 @@ const AtomDatePicker = ({
                   : "Seleccionar fecha",
                 sx: {
                   "& .MuiOutlinedInput-root": {
-                    // Contenedor principal del input
                     height: height,
                     borderRadius: "8px",
                     backgroundColor: color,
                     padding: 0,
                     "& fieldset": {
-                      // El borde
                       borderColor: error ? "#f44336" : "transparent",
                       borderRadius: "8px",
                     },
                   },
                   "& .MuiInputBase-input": {
-                    // El elemento input real
                     padding: "0 14px",
                     height: "100%",
                     boxSizing: "border-box",
                   },
                   "& .MuiInputAdornment-root": {
-                    // El ícono del calendario
                     marginRight: "8px",
                   },
                 },

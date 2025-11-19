@@ -45,9 +45,33 @@ const AtomTableForm = (props) => {
     showRowNumber,
     detailsColumns,
     showIcons = false,
+    selectable = false,
+    selectedRows = [],
+    onSelectionChange = () => { },
+    onDeleteSelected
   } = props;
 
   const [expandedRow, setExpandedRow] = useState(null);
+  console.log();
+  const handleSelectRow = (id) => {
+    let newSelection;
+
+    if (selectedRows.includes(id)) {
+      newSelection = selectedRows.filter((rowId) => rowId !== id);
+    } else {
+      newSelection = [...selectedRows, id];
+    }
+
+    onSelectionChange(newSelection); // enviamos los IDs al padre
+  };
+
+  const handleSelectAll = () => {
+    if (selectedRows.length === data.length) {
+      onSelectionChange([]); // desmarcar todo
+    } else {
+      onSelectionChange(data.map((row) => row.id)); // seleccionar todos
+    }
+  };
 
   const rowsPerPageOptions =
     count > limitGeneral && count <= 100
@@ -122,61 +146,90 @@ const AtomTableForm = (props) => {
     setExpandedRow((prevIndex) => (prevIndex === index ? null : index));
   };
 
-  const styleTable = {
-    cell: {
-      fontSize: "13px",
-      fontWeight: 500,
+  const styles = {
+    table: {
+      borderRadius: "15px",
+      height: "auto",
+      // maxHeight: "62vh",
+      overflow: "auto",
+      border: "none",
+      borderTop: "1px solid #EDEDED",
+      boxShadow: 2,
+      mt: 1,
+    },
+    tableCellHeader: {
       zIndex: 1,
-      minWidth: "80px",
       position: "sticky",
       top: 0,
       backgroundColor: "#ffffffff",
-      textTransform: "uppercase",
-      color: "#424242e0",
-      lineHeight: "23px",
-      // textAlign: "center",
+      fontWeight: 600,
+      fontSize: "14px",
+      color: "#6f6f6f",
+      minWidth: "10",
     },
+    cellContainer: {
+      fontSize: "12px",
+      backgroundColor: "#f9f9f9b4",
+      color: "#595959ff",
+      fontWeight: "400",
+      maxWidth: "250px",
+      minWidth: "10px",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "normal",
+      wordBreak: "break-word"
+    }
   };
   return (
     <TableContainer
-      sx={{
-        borderRadius: "15px",
-        height: "auto",
-        // maxHeight: "62vh",
-        overflow: "auto",
-        border: "none",
-        borderTop: "1px solid #EDEDED",
-        boxShadow: 2,
-        mt: 1,
-      }}
+      sx={styles.table}
     >
       <Table>
         <TableHead>
           <TableRow>
+            {selectable && (
+              <TableCell
+                sx={{ ...styles.tableCellHeader, width: 47 }}
+              >
+
+                <input
+                  type="checkbox"
+                  checked={selectedRows.length === data.length && data.length > 0}
+                  onChange={handleSelectAll}
+                />
+                {selectedRows.length > 0 && (
+                  <IconButton
+                    onClick={() => onDeleteSelected?.(selectedRows)}
+                    size="small"
+                    color="error"
+                    sx={{
+                      padding: 0,
+                      marginLeft: "5px",
+                      marginRight: 0,
+                      backgroundColor: "#fff",
+                    }}
+                  >
+                    <DeleteForeverIcon fontSize="small" sx={{
+                      "&:hover": {
+                        scale: 1.2,
+                      },
+                    }} />
+                  </IconButton>
+
+                )}
+
+              </TableCell>
+            )}
+
             {showRowNumber && (
               <TableCell
-                sx={{
-                  zIndex: 1,
-                  position: "sticky",
-                  top: 0,
-                  backgroundColor: "#ffffffff",
-                  fontWeight: 600,
-                  fontSize: "14px",
-                  color: "#6f6f6f",
-                  width: "40px",
-                }}
+                sx={styles.tableCellHeader}
               ></TableCell>
             )}
 
             {detailsColumns?.length > 0 && (
               <TableCell
-                sx={{
-                  zIndex: 1,
-                  position: "sticky",
-                  top: 0,
-                  minWidth: "20px",
-                  width: "15px",
-                }}
+                sx={styles.tableCellHeader}
               ></TableCell>
             )}
             {columns?.map((column, index) => (
@@ -184,7 +237,7 @@ const AtomTableForm = (props) => {
                 key={index}
                 align={column?.align || "left"}
                 sx={{
-                  ...styleTable.cell,
+                  ...styles.tableCellHeader,
                   textAlign:
                     column?.type === "dinero" ||
                       column?.type === "porcentaje" ||
@@ -198,10 +251,7 @@ const AtomTableForm = (props) => {
             ))}
             {actions?.length > 0 && (
               <TableCell
-                align="center"
-                sx={{
-                  ...styleTable.cell,
-                }}
+                sx={styles.tableCellHeader}
               >
                 Acciones
               </TableCell>
@@ -214,9 +264,20 @@ const AtomTableForm = (props) => {
               {data?.map((row, rowIndex) => (
                 <React.Fragment key={row.id || rowIndex}>
                   <TableRow>
+                    {selectable && (
+                      <TableCell
+                        sx={styles.cellContainer}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(row.id)}
+                          onChange={() => handleSelectRow(row.id)}
+                        />
+                      </TableCell>
+                    )}
                     {showRowNumber && <TableCell>{rowIndex + 1}</TableCell>}
                     {detailsColumns?.length > 0 && (
-                      <TableCell>
+                      <TableCell sx={styles.cellContainer}>
                         <IconButton
                           onClick={() =>
                             row.details && toggleRowExpansion(rowIndex)
@@ -284,13 +345,7 @@ const AtomTableForm = (props) => {
                     {actions?.length > 0 && (
                       <TableCell align="center" sx={{ backgroundColor: "#f9f9f9", }}>
                         <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            gap: "7px",
-                            backgroundColor: "#f9f9f9",
-                          }}
+                          sx={styles.cellContainer}
                         >
                           {actions?.map((action, actionIndex) => {
                             if (

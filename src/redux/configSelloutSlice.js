@@ -802,6 +802,24 @@ export const obtenerMatriculacion = createAsyncThunk(
     }
   }
 );
+
+export const deleteMasivaMatriculacion = createAsyncThunk(
+  "configSellout/deleteMasivaMatriculacion",
+  async (data, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = state.auth.auth.token;
+    try {
+      return await apiService
+        .setUrl(apiConfig.matriculacionUrl.url + "/delete-all")
+        .setMethod("POST")
+        .setData(data)
+        .send(token);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 export const obtenerMatriculacionRegistrados = createAsyncThunk(
   "configSellout/obtenerMatriculacionRegistrados",
   async (data, { getState, rejectWithValue }) => {
