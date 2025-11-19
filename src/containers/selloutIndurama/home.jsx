@@ -14,9 +14,15 @@ import { useDispatch } from "react-redux";
 import { handleMenu } from "../../redux/navigatorSlice";
 import { usePermission } from "../../context/PermisosComtext";
 
+import { setCalculateDate } from "../../redux/configSelloutSlice";
+import { getPreviousMonthStart } from "../constantes";
+
 const SelloutIndurama = () => {
   const dispatch = useDispatch();
   const namePermission = usePermission();
+
+  const calculateDate = getPreviousMonthStart();
+  dispatch(setCalculateDate(calculateDate));
 
   const pasos = [
     {

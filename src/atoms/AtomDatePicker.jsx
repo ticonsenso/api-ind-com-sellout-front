@@ -23,6 +23,37 @@ const AtomDatePicker = ({
   disabled = false,
 }) => {
   const isMonthMode = mode === "month";
+  const isYearMode = mode === "year";
+
+  const getViews = () => {
+    if (isMonthMode) {
+      return ["year", "month"];
+    }
+    if (isYearMode) {
+      return ["year"];
+    }
+    return ["year", "month", "day"];
+  };
+
+  const getFormat = () => {
+    if (isMonthMode) {
+      return "MMMM YYYY";
+    }
+    if (isYearMode) {
+      return "YYYY";
+    }
+    return "DD/MM/YYYY";
+  };
+
+  const getPlaceholder = () => {
+    if (isMonthMode) {
+      return "Seleccionar mes";
+    }
+    if (isYearMode) {
+      return "Seleccionar año";
+    }
+    return "Seleccionar fecha";
+  };
 
   return (
     <Box>
@@ -43,27 +74,30 @@ const AtomDatePicker = ({
           <DatePicker
             id={id}
             value={value ? dayjs(value) : null}
-            views={isMonthMode ? ["year", "month"] : ["year", "month", "day"]}
+            views={getViews()}
             disabled={disabled}
             onChange={(newValue) => {
               if (newValue && dayjs(newValue).isValid()) {
-                const formattedDate = isMonthMode
-                  ? dayjs(newValue).startOf("month").format("YYYY-MM-DD")
-                  : dayjs(newValue).format("YYYY-MM-DD");
+                let formattedDate;
+                if (isYearMode) {
+                  formattedDate = dayjs(newValue).startOf("year").format("YYYY-MM-DD");
+                } else if (isMonthMode) {
+                  formattedDate = dayjs(newValue).startOf("month").format("YYYY-MM-DD");
+                } else {
+                  formattedDate = dayjs(newValue).format("YYYY-MM-DD");
+                }
                 onChange(formattedDate);
               } else {
                 onChange("");
               }
             }}
-            format={isMonthMode ? "MMMM YYYY" : "DD/MM/YYYY"}
+            format={getFormat()}
             slotProps={{
               textField: {
                 error: error,
                 helperText: error ? helperText : "",
                 fullWidth: true,
-                placeholder: isMonthMode
-                  ? "Seleccionar mes"
-                  : "Seleccionar fecha",
+                placeholder: getPlaceholder(),
                 sx: {
                   "& .MuiOutlinedInput-root": {
                     height: height,

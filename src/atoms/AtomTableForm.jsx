@@ -345,7 +345,13 @@ const AtomTableForm = (props) => {
                     {actions?.length > 0 && (
                       <TableCell align="center" sx={{ backgroundColor: "#f9f9f9", }}>
                         <Box
-                          sx={styles.cellContainer}
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            gap: "7px",
+                            backgroundColor: "#f9f9f9",
+                          }}
                         >
                           {actions?.map((action, actionIndex) => {
                             if (

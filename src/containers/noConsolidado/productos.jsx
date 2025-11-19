@@ -84,7 +84,7 @@ const ProductosNoHomologados = () => {
 
     const buscarMatriculacion = async () => {
         await dispatch(
-            obtenerMatriculacionConfig({ search: "", page: 1, limit: 100 })
+            obtenerMatriculacionConfig({ search: "", page: 1, limit: 1000 })
         );
     };
 

@@ -50,9 +50,8 @@ import {
 } from "./constantes";
 import AtomTextField from "../../atoms/AtomTextField";
 import IconoFlotante from "../../atoms/IconActionPage";
-
+import { setCalculateDate } from "../../redux/configSelloutSlice";
 import AtomSwitch from "../../atoms/AtomSwitch";
-import { data } from "react-router-dom";
 
 const formatDate = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -68,6 +67,9 @@ const PlantillaStandar = () => {
   const dataConsolidatedSellout = useSelector(
     (state) => state?.configSellout?.dataConsolidatedSellout || []
   );
+  const calculateDate = useSelector(
+    (state) => state?.configSellout?.calculateDate || formatDate(new Date())
+  );
   const dataConsolidatedAlert = useSelector(
     (state) => state?.configSellout?.dataConsolidatedAlert || null
   );
@@ -79,11 +81,10 @@ const PlantillaStandar = () => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(pageGeneral);
   const [limit, setLimit] = useState(limitGeneral);
-  const [date, setDate] = useState(new Date());
   const [errors, setErrors] = useState({});
   const [editState, setEditState] = useState(false);
   const [dataConsolidado, setDataConsolidado] = useState({
-    saleDate: new Date(),
+    saleDate: calculateDate,
     distributor: "",
     codeStoreDistributor: "",
     codeProductDistributor: "",
@@ -148,7 +149,7 @@ const PlantillaStandar = () => {
       handleCloseDialogProduct();
       buscarConsolidado();
       dispatch(getConsolidatedAlert({
-        calculateDate: date
+        calculateDate: calculateDate,
       }));
     } else {
       showSnackbar(response.payload.message);
@@ -159,7 +160,7 @@ const PlantillaStandar = () => {
     const dataFinal = {
       ...dataConsolidado,
       saleDate: formatDate(dataConsolidado.saleDate),
-      calculateDate: formatDate(new Date()),
+      calculateDate,
     };
     const response = await dispatch(guardarConsolidatedSellout(dataFinal));
     if (response.meta.requestStatus === "fulfilled") {
@@ -264,7 +265,7 @@ const PlantillaStandar = () => {
     setOpenDialogStoreNull(true);
     const response = await dispatch(
       obtenerConsolidatedSelloutUnique({
-        calculateDate: date,
+        calculateDate,
         codeStore: true,
       })
     );
@@ -294,7 +295,7 @@ const PlantillaStandar = () => {
     setLoading(true);
     const response = await dispatch(
       obtenerConsolidatedSelloutUnique({
-        calculateDate: date,
+        calculateDate: calculateDate,
         codeProduct: true,
       })
     );
@@ -357,7 +358,7 @@ const PlantillaStandar = () => {
         search,
         page,
         limit,
-        calculateDate: formatDate(date),
+        calculateDate: calculateDate,
         ...(filtroBusqueda ? { [filtroBusqueda]: true } : {}),
       };
 
@@ -369,8 +370,8 @@ const PlantillaStandar = () => {
 
   useEffect(() => {
     buscarConsolidado();
-    dispatch(getConsolidatedAlert({ calculateDate: date }));
-  }, [search, page, limit, filtroBusqueda, date]);
+    dispatch(getConsolidatedAlert({ calculateDate }));
+  }, [search, page, limit, filtroBusqueda, calculateDate]);
 
   const optionsFiltros = [
     // {
@@ -578,8 +579,8 @@ const PlantillaStandar = () => {
                         color="#ffffff"
                         height="45px"
                         label="Fecha de carga"
-                        value={date}
-                        onChange={(value) => setDate(value)}
+                        value={calculateDate}
+                        onChange={(value) => dispatch(setCalculateDate(value))}
                       />
                     </Grid>
                     <Grid size={3}>

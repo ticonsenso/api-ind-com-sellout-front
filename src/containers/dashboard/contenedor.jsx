@@ -23,12 +23,9 @@ import componentMap from "./componentMap.jsx";
 import {
   setIdEmpresaIndurama,
 } from "../../redux/configSelloutSlice.js";
-import { setCalculateDate } from "../../redux/configSelloutSlice";
-import { getPreviousMonthStart } from "../constantes";
 function Index() {
   const dispatch = useDispatch();
-  const calculateDate = getPreviousMonthStart();
-  dispatch(setCalculateDate(calculateDate));
+
   const optionsEmpresas = useSelector(
     (state) => state.empresa.optionsEmpresas || []
   );
