@@ -446,6 +446,8 @@ const ExtraccionDatos = () => {
         registro?.codeStoreDistributor ||
         configuracionId?.codeStoreDistributor ||
         sheetName;
+      registro.unitsSoldDistributor = cantidad;
+
 
       if (filaVacia) continue;
       registros.push(...repartirValoresNumerico(registro));
@@ -489,6 +491,8 @@ const ExtraccionDatos = () => {
         registrosExtraidos,
         calculateDate
       );
+
+
 
       console.log("-----", calculateDate, registrosFiltrados);
       if (registrosFiltrados.length === 0) {
