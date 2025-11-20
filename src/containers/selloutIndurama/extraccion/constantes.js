@@ -3,7 +3,7 @@ export const PALABRAS_INVALIDAS = [
   "cliente",
   "subtotal",
   "iva",
-  "total",
+  // "total",
   "datos",
   "producto",
   "vendedor",

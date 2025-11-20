@@ -595,7 +595,7 @@ const ExtraccionDatos = () => {
   const handleGuardar = async () => {
     setLoading(true);
 
-    const chunkSize = 2000;
+    const chunkSize = 1500;
 
     const splitInChunks = (array, size) => {
       const result = [];
