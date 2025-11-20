@@ -418,7 +418,7 @@ const PlantillaStandar = () => {
         exportarExcel({
           excel_name: "consolidated_data_stores",
           nombre: "Plantilla estándar",
-          calculateDate: formatDate(date),
+          calculateDate: formatDate(calculateDate),
         })
       );
       if (response.meta.requestStatus === "fulfilled") {
