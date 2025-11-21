@@ -33,7 +33,7 @@ import {
   CheckCircle as CheckCircleIcon,
   Cancel as CancelIcon,
 } from "@mui/icons-material";
-import { formatDate } from "../../constantes";
+import { formatDate, formatIsoToDate } from "../../constantes";
 
 const ListaLogsMatriculacion = ({ calculateDate }) => {
   const hasPermission = usePermission();
@@ -48,11 +48,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
     ...item,
     calculateDate: formatDate(item?.calculateDate || null),
   }));
-  const totalMatriculacionRegistrados = useSelector(
-    (state) => state.configSellout?.totalMatriculacionRegistrados
-  );
-  const [searchRegistrados, setSearchRegistrados] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
+
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -70,23 +66,14 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
   const buscarMatriculacionRegistrados = async () => {
     setLoading(true);
     try {
-      const response = await dispatch(
+      dispatch(
         obtenerMatriculacionRegistrados({
           calculateDate,
         })
       );
-      setFilteredData(response.payload || []);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleChangeSearchRegistrados = (e) => {
-    setSearchRegistrados(e.target.value);
-    const filtered = dataMatriculacionRegistrados.filter((item) =>
-      item.templateName.toLowerCase().includes(e.target.value.toLowerCase())
-    );
-    setFilteredData(filtered || []);
   };
 
   useEffect(() => {
@@ -100,7 +87,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
         "Usted va a realizar la descarga del archivo excel de matriculaciones con fecha: " +
         formatDate(calculateDate),
       onConfirm: exportExcel,
-      onCancel: () => {},
+      onCancel: () => { },
     });
   };
 
@@ -159,6 +146,16 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
       <AtomContainerGeneral
         children={
           <>
+            <IconoFlotante
+              handleButtonClick={() => {
+                buscarMatriculacionRegistrados();
+              }}
+              title="Actualizar lista"
+              iconName="Refresh"
+              right={60}
+              // color="#63B6FF"
+              top={95}
+            />
             {namePermission && (
               <IconoFlotante
                 handleButtonClick={confirmarExportarExcel}
@@ -172,14 +169,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
             <AtomCard
               title=""
               nameButton={""}
-              border={true}
-              // search={true}
-              // valueSearch={searchRegistrados}
-              labelBuscador=""
-              placeholder="Buscar por nombre de matriculación"
-              onChange={(e) => {
-                handleChangeSearchRegistrados(e);
-              }}
+              search={false}
               children={
                 <>
                   {loading ? (
@@ -187,7 +177,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
                   ) : (
                     <AtomTableForm
                       columns={columnsMatriculacion}
-                      data={filteredData || []}
+                      data={dataMatriculacionRegistrados || []}
                       pagination={false}
                       actions={actions}
                       page={page}

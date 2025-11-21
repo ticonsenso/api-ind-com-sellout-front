@@ -34,7 +34,7 @@ import {
   SaveAlt as SaveAltIcon,
   Add as AddIcon,
 } from "@mui/icons-material";
-import { formatDate } from "../../constantes";
+import { formatDate, isMonthClosed, debounce } from "../../constantes";
 import { setCalculateDate } from "../../../redux/configSelloutSlice";
 
 const columns = [
@@ -56,13 +56,6 @@ const columns = [
   },
 ];
 
-function debounce(func, delay) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => func(...args), delay);
-  };
-}
 
 const Matriculacion = ({ calculateDate }) => {
   const hasPermission = usePermission();
@@ -78,9 +71,18 @@ const Matriculacion = ({ calculateDate }) => {
   const totalMatriculacion = useSelector(
     (state) => state?.configSellout?.totalMatriculacion || 0
   );
+  const dataMatriculacionConfig = useSelector(
+    (state) => state.selloutDatos.dataMatriculacionConfig
+  );
+  const monthToCompare = calculateDate;
+  const matriculacionConfigrada = dataMatriculacionConfig?.find(
+    (config) => config.month === monthToCompare
+  );
+  const matriculacionCerrada = isMonthClosed(
+    matriculacionConfigrada?.closingDate
+  );
   const [openMatriculacion, setOpenMatriculacion] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
-  console.log("selectedIds", selectedIds);
   const [search, setSearch] = useState("");
   const [copyMonth, setCopyMonth] = useState(null);
   const [
@@ -453,110 +455,114 @@ const Matriculacion = ({ calculateDate }) => {
       <AtomContainerGeneral
         children={
           <>
-            <IconoFlotante
-              handleButtonClick={() => {
-                buscarMatriculacion(search, calculateDate);
-              }}
-              title="Actualizar lista"
-              iconName="Refresh"
-              right={60}
-              color="#63B6FF"
-              top={95}
-            />
-            {namePermission && (
+            {matriculacionCerrada === "abierto" && (
               <>
                 <IconoFlotante
-                  handleButtonClick={handleMenuOpen}
-                  title="Mas opciones"
-                  iconName="MoreVert"
-                  right={20}
+                  handleButtonClick={() => {
+                    buscarMatriculacion(search, calculateDate);
+                  }}
+                  title="Actualizar lista"
+                  iconName="Refresh"
+                  right={60}
+                  color="#63B6FF"
                   top={95}
                 />
+                {namePermission && (
+                  <>
+                    <IconoFlotante
+                      handleButtonClick={handleMenuOpen}
+                      title="Mas opciones"
+                      iconName="MoreVert"
+                      right={20}
+                      top={95}
+                    />
 
-                <Menu
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleMenuClose}
-                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                  transformOrigin={{ vertical: "top", horizontal: "right" }}
-                >
-                  <MenuItem
-                    sx={{
-                      gap: 1,
-                    }}
-                    onClick={() =>
-                      document
-                        .getElementById("input-excel-matriculacion")
-                        .click()
-                    }
-                  >
-                    <ListItemIcon>
-                      <DriveFolderUploadOutlinedIcon
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleMenuClose}
+                      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                      transformOrigin={{ vertical: "top", horizontal: "right" }}
+                    >
+                      <MenuItem
                         sx={{
-                          color: "white",
-                          backgroundColor: "details.main",
-                          borderRadius: "50%",
-                          padding: "3px",
+                          gap: 1,
                         }}
-                      />
-                    </ListItemIcon>
-                    <Typography variant="inherit">
-                      Subir Excel matriculaciones
-                    </Typography>
-                  </MenuItem>
-                  <MenuItem
-                    sx={{
-                      gap: 1,
-                    }}
-                    onClick={confirmarExportarExcel}
-                  >
-                    <ListItemIcon>
-                      <SaveAltIcon
+                        onClick={() =>
+                          document
+                            .getElementById("input-excel-matriculacion")
+                            .click()
+                        }
+                      >
+                        <ListItemIcon>
+                          <DriveFolderUploadOutlinedIcon
+                            sx={{
+                              color: "white",
+                              backgroundColor: "details.main",
+                              borderRadius: "50%",
+                              padding: "3px",
+                            }}
+                          />
+                        </ListItemIcon>
+                        <Typography variant="inherit">
+                          Subir Excel matriculaciones
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
                         sx={{
-                          color: "white",
-                          backgroundColor: "#5ab9f6",
-                          borderRadius: "50%",
-                          padding: "3px",
+                          gap: 1,
                         }}
-                      />
-                    </ListItemIcon>
-                    <Typography variant="inherit">
-                      Descargar lista matriculaciones
-                    </Typography>
-                  </MenuItem>
-                  <MenuItem
-                    sx={{
-                      gap: 1,
-                    }}
-                    onClick={() => setOpenCreateMatriculacionBeforeMonth(true)}
-                  >
-                    <ListItemIcon>
-                      <AddIcon
+                        onClick={confirmarExportarExcel}
+                      >
+                        <ListItemIcon>
+                          <SaveAltIcon
+                            sx={{
+                              color: "white",
+                              backgroundColor: "#5ab9f6",
+                              borderRadius: "50%",
+                              padding: "3px",
+                            }}
+                          />
+                        </ListItemIcon>
+                        <Typography variant="inherit">
+                          Descargar lista matriculaciones
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
                         sx={{
-                          color: "white",
-                          backgroundColor: "success.main",
-                          borderRadius: "50%",
-                          padding: "3px",
+                          gap: 1,
                         }}
-                      />
-                    </ListItemIcon>
-                    <Typography variant="inherit">
-                      Crear matriculaciones por mes
-                    </Typography>
-                  </MenuItem>
-                </Menu>
-                <input
-                  id="input-excel-matriculacion"
-                  type="file"
-                  accept=".xlsx, .xls"
-                  onChange={handleFileChange}
-                  style={{ display: "none" }}
-                />
+                        onClick={() => setOpenCreateMatriculacionBeforeMonth(true)}
+                      >
+                        <ListItemIcon>
+                          <AddIcon
+                            sx={{
+                              color: "white",
+                              backgroundColor: "success.main",
+                              borderRadius: "50%",
+                              padding: "3px",
+                            }}
+                          />
+                        </ListItemIcon>
+                        <Typography variant="inherit">
+                          Crear matriculaciones por mes
+                        </Typography>
+                      </MenuItem>
+                    </Menu>
+                    <input
+                      id="input-excel-matriculacion"
+                      type="file"
+                      accept=".xlsx, .xls"
+                      onChange={handleFileChange}
+                      style={{ display: "none" }}
+                    />
+                  </>
+                )}
               </>
             )}
             <AtomCard
               title=""
-              nameButton={namePermission ? "Crear" : ""}
+              nameButton={matriculacionCerrada === "abierto" && namePermission ? "Crear" : ""}
               border={true}
               onClick={handleOpenMatriculacion}
               search={true}
@@ -576,7 +582,12 @@ const Matriculacion = ({ calculateDate }) => {
                     <AtomTableForm
                       columns={columns}
                       data={dataMatriculacion}
-                      actions={namePermission ? actions : []}
+                      actions={
+                        matriculacionCerrada === "abierto" && namePermission
+                          ? actions
+                          : []
+                      }
+
                       pagination={true}
                       page={page}
                       limit={limit}
@@ -584,7 +595,6 @@ const Matriculacion = ({ calculateDate }) => {
                       selectable={true}
                       selectedRows={selectedIds}
                       onSelectionChange={(ids) => {
-                        console.log("IDs seleccionados:", ids);
                         setSelectedIds(ids);
                       }}
                       onDeleteSelected={handleDeleteSelected}

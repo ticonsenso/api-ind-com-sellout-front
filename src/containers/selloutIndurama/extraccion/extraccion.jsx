@@ -485,19 +485,14 @@ const ExtraccionDatos = () => {
         calculateDate
       );
 
-      console.log("-----", calculateDate);
-
       const registrosFiltrados = filterByCurrentMonth(
         registrosExtraidos,
         calculateDate
       );
 
-
-
-      console.log("-----", calculateDate, registrosFiltrados);
       if (registrosFiltrados.length === 0) {
         showSnackbar(
-          "⚠️ No se encontraron registros del mes seleccionado. Verifica las fechas del archivo si coincide con la fecha de cálculo seleccionada."
+          "⚠️ Error al obtener los datos del detalle del producto, validar la información cargada o la configuración de extracción"
         );
         setData([]);
         setCeldas([]);
@@ -523,10 +518,6 @@ const ExtraccionDatos = () => {
       }, {});
 
       let detallesData = Object.values(agrupados);
-
-      // if (detallesData.length < 2) {
-      //   detallesData = [];
-      // }
 
       setDetallesData(detallesData);
       setData(registrosFiltrados);
@@ -599,85 +590,61 @@ const ExtraccionDatos = () => {
   const handleGuardar = async () => {
     setLoading(true);
 
-    const chunkSize = 1500;
-
-    const splitInChunks = (array, size) => {
-      const result = [];
-      for (let i = 0; i < array.length; i += size) {
-        result.push(array.slice(i, i + size));
-      }
-      return result;
-    };
-
     try {
       const consolidatedDataStores = Array.isArray(data)
         ? data
         : Object.values(data);
 
-      const chunks = splitInChunks(consolidatedDataStores, chunkSize);
+      const mappedData = consolidatedDataStores.map((item) => ({
+        ...item,
+        saleDate: item.saleDate || getUltimoDiaMesActual(formatDate(calculateDate)),
+        distributor: item.distributor || configuracionId?.distributor?.id || "",
+        codeStoreDistributor:
+          item.codeStoreDistributor || configuracionId?.codeStoreDistributor?.id || "",
+        codeProductDistributor: item.codeProductDistributor || item?.descriptionDistributor || "",
+        calculateDate: formatDate(calculateDate)
+      }));
 
-      for (const [index, chunk] of chunks.entries()) {
-        const dataContent = {
-          consolidated_data_stores: chunk.map((item) => ({
-            ...item,
-            saleDate:
-              item.saleDate || getUltimoDiaMesActual(formatDate(calculateDate)),
-            distributor:
-              item.distributor || configuracionId?.distributor?.id || "",
-            codeStoreDistributor:
-              item.codeStoreDistributor ||
-              configuracionId?.codeStoreDistributor?.id ||
-              "",
-            codeProductDistributor:
-              item.codeProductDistributor || item?.descriptionDistributor || "",
-            calculateDate: formatDate(calculateDate),
-          })),
-        };
+      const dataContent = {
+        consolidated_data_stores: mappedData
+      };
 
-        // Payload base (común a todos los chunks)
-        const payload = {
-          extractionDate: new Date().toISOString(),
-          dataContent,
-          selloutConfigurationId: parseInt(configuracionId?.id) || null,
-          recordCount: consolidatedDataStores.length,
-          dataName: "consolidated_data_stores",
-          calculateDate: formatDate(calculateDate),
-          productCount: totalUnitsSoldDistributor,
-          uploadCount: index + 1,
-          uploadTotal: chunks.length,
-          matriculationId: matriculacionData?.id,
-        };
+      const payload = {
+        extractionDate: new Date().toISOString(),
+        dataContent,
+        selloutConfigurationId: parseInt(configuracionId?.id) || null,
+        recordCount: consolidatedDataStores.length,
+        dataName: "consolidated_data_stores",
+        calculateDate: formatDate(calculateDate),
+        productCount: totalUnitsSoldDistributor,
+        uploadCount: 1,
+        uploadTotal: 1,
+        matriculationId: matriculacionData?.id,
+        matriculationLogs: detallesData
+      };
 
-        if (index === 0) {
-          payload.matriculationLogs = detallesData;
-        } else {
-          payload.matriculationLogs = null;
-        }
-
-        const response = await dispatch(sendSellout(payload));
-
-        if (response.meta.requestStatus === "fulfilled") {
-          if (index === chunks.length - 1) {
-            setDataResponse(response.payload.extractedData);
-            showSnackbar(response.payload.message);
-            setDialogInformation(true);
-            setConfiguracion({
-              hojaInicio: "",
-              hojaFin: "",
-              extraerTodos: false,
-              distributor: "",
-              codeStoreDistributor: "",
-            });
-          }
-        } else {
-          showSnackbar(
-            response.payload.message ||
-            `Error al guardar el chunk ${index + 1}`
-          );
-        }
+      const response = await dispatch(sendSellout(payload));
+      if (response.meta.requestStatus === "fulfilled") {
+        setDataResponse(response.payload.extractedData);
+        showSnackbar(response.payload.message);
+        setDialogInformation(true);
+        setConfiguracion({
+          hojaInicio: "",
+          hojaFin: "",
+          extraerTodos: false,
+          distributor: "",
+          codeStoreDistributor: "",
+        });
+      } else {
+        showSnackbar(response.payload.message || "Error al guardar");
       }
     } catch (error) {
-      showSnackbar(error || "Error al guardar la extracción");
+      showSnackbar(
+        error?.response?.data?.message ||
+        error?.message ||
+        "Error al guardar la extracción"
+      );
+
     } finally {
       setLoading(false);
     }
@@ -779,9 +746,6 @@ const ExtraccionDatos = () => {
     return { header: null, rowIndex: -1 };
   };
 
-
-
-
   const detectarColumnasAutomaticamente = (fila) => {
     const resultado = {};
 
@@ -808,22 +772,30 @@ const ExtraccionDatos = () => {
 
   const validarDescripcion = (desc) => {
     const descripcion = desc.trim().toLowerCase();
-    if (descripcion.length < 2) {
-      return false;
-    }
-    if (!/[a-z]/.test(descripcion)) {
+
+    if (descripcion.length < 2) return false;
+    if (!/[a-z]/.test(descripcion)) return false;
+
+    const palabras = descripcion.split(/\s+/);
+
+    if (PALABRAS_INVALIDAS.map(p => p.toLowerCase()).includes(descripcion)) {
       return false;
     }
 
     for (const palabra of PALABRAS_INVALIDAS) {
       const regex = new RegExp(`\\b${palabra.toLowerCase()}\\b`);
+
       if (regex.test(descripcion)) {
-        return false;
+        if (palabras.length === 1) {
+          return false;
+        }
       }
     }
 
     return true;
   };
+
+
 
   const normalizarFechaISO = (valorCelda) => {
     if (!valorCelda && valorCelda !== 0) return null;
@@ -968,7 +940,7 @@ const ExtraccionDatos = () => {
       }
 
       if (registros.length === 0) {
-        avisoCritico("⚠️ No se extrajeron registros del archivo");
+        avisoCritico("⚠️ Error al obtener los detalles del producto");
       }
       const registrosFiltrados = filterByCurrentMonth(registros, calculateDate);
       const camposDetectados = Object.keys(registrosFiltrados[0] || {});
@@ -979,7 +951,7 @@ const ExtraccionDatos = () => {
         ...camposDetectados.filter((key) => !ordenColumnas.includes(key)),
       ];
       if (registrosFiltrados.length === 0) {
-        avisoCritico("⚠️ No se encontraron registros del mes seleccionado. Verifica las fechas del archivo si coincide con la fecha de cálculo seleccionada."
+        avisoCritico("⚠️ No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo si coincide con la fecha de cálculo seleccionada."
         );
         setData([]);
         setCeldas([]);
@@ -1032,7 +1004,6 @@ const ExtraccionDatos = () => {
       if (!registro.saleDate) return false;
 
       const saleDateStr = registro.saleDate.slice(0, 7);
-      console.log(saleDateStr, mesCalculo);
       return saleDateStr === mesCalculo;
     });
   };
@@ -1441,12 +1412,10 @@ const ExtraccionDatos = () => {
 
                 <Grid
                   container
-                  spacing={1}
+                  spacing={1.5}
                   justifyContent="left"
-                  mb={1}
-                  mt={0}
                 >
-                  <Grid size={3}>
+                  <Grid size={2.5}>
                     <AtomDatePicker
                       id="calculateDate"
                       required={true}
@@ -1457,6 +1426,7 @@ const ExtraccionDatos = () => {
                       value={calculateDate || null}
                       onChange={(e) => {
                         dispatch(setCalculateDate(e));
+                        limpiarErrores();
                       }}
                     />
                   </Grid>
@@ -1467,7 +1437,7 @@ const ExtraccionDatos = () => {
                   ) : (
                     <>
                       {calculateDate && (
-                        <Grid size={3}>
+                        <Grid size={2.5}>
                           <AtomAutocompleteLabel
                             id="matriculacionId"
                             color="#fff"
@@ -1500,7 +1470,7 @@ const ExtraccionDatos = () => {
                         </Grid>
                       )}
                       {matriculacionData && (
-                        <Grid size={3}>
+                        <Grid size={2.5}>
                           <AtomAutocompleteLabel
                             id="configuracionId"
                             required={true}
@@ -1511,7 +1481,7 @@ const ExtraccionDatos = () => {
                             value={configuracionId}
                             options={optionsConfiguracionSellout}
                             onChange={(event, newValue) => {
-                              setConfiguracionId(newValue);
+                              setConfiguracionId(newValue); setConfiguracionId(newValue);
                               setData([]);
                               setCeldas([]);
                               setDocumento("");
@@ -1523,7 +1493,7 @@ const ExtraccionDatos = () => {
                       )}
                       {configuracionId?.label === "CONFIGURACION ESTANDAR" && (
                         <>
-                          <Grid size={3}>
+                          {/* <Grid size={3}>
                             <AtomTextField
                               id="distributor"
                               color="#fff"
@@ -1538,7 +1508,7 @@ const ExtraccionDatos = () => {
                                 });
                               }}
                             />
-                          </Grid>
+                          </Grid> */}
                           <Grid size={3}>
                             <AtomTextField
                               id="codeStoreDistributor"
@@ -1577,7 +1547,7 @@ const ExtraccionDatos = () => {
                               />
                             </Grid>
                           ))}
-                          <Grid size={1.5} mt={0.5}>
+                          <Grid size={2} mt={0.5}>
                             <AtomSwitch
                               id="extraerTodos"
                               color="#fff"
@@ -1613,7 +1583,7 @@ const ExtraccionDatos = () => {
                         </Grid>
                       )}
                       {data.length > 0 && (
-                        <Grid size={1.5} mt={2.6}>
+                        <Grid size={1.3} mt={2.6}>
                           <AtomButtonPrimary
                             height="44px"
 
@@ -1764,14 +1734,10 @@ const ExtraccionDatos = () => {
             <Divider sx={{ my: 2 }} />
             <Typography variant="h6">Registros</Typography>
             <Typography variant="body1">
-              Cantidad de registros: {dataResponse?.recordCount || ""}
+              Cantidad de registros: {dataResponse?.recordCount || 0}
             </Typography>
             <Typography variant="body1">
               ¿Procesado?: {dataResponse?.isProcessed ? "Sí" : "No"}
-            </Typography>
-            <Typography variant="body1">
-              Duración del procesamiento:{" "}
-              {dataResponse?.processingDetails?.duration || ""}
             </Typography>
             <Typography color="red">
               Errores: {dataResponse?.processingDetails?.error || 0}
@@ -1877,10 +1843,10 @@ const ExtraccionDatos = () => {
       <AtomDialogForm
         openDialog={openDialogoConfirmacion}
         titleCrear="Confirmación de guardado"
-        buttonCancel={true}
+        buttonSubmit={loading ? false : true}
         textButtonSubmit="Confirmar"
         maxWidth="xl"
-        buttonSubmit={loading ? false : true}
+        buttonCancel={loading ? false : true}
         handleSubmit={handleGuardar}
         handleCloseDialog={() => {
           setOpenDialogoConfirmacion(false);

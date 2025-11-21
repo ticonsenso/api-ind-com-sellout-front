@@ -206,27 +206,37 @@ const MasterAlmacen = () => {
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
+
     setLoading(true);
+
     try {
       const arrayBuffer = await file.arrayBuffer();
       const workbook = new ExcelJS.Workbook();
       await workbook.xlsx.load(arrayBuffer);
 
-      const worksheet = workbook.worksheets.find((ws) => ws.name === "mt. alm");
+      const worksheet = workbook.worksheets.find(
+        (ws) => ws.name === "mt. alm"
+      );
+
       if (!worksheet) {
         throw new Error("La hoja 'mt. alm' no fue encontrada en el archivo");
       }
 
       const headerRow = worksheet.getRow(1);
-      const headers = headerRow.values.slice(1);
+      const headersOriginal = headerRow.values.slice(1);
+
+      const headers = headersOriginal.map((h) =>
+        String(h).toLowerCase().trim()
+      );
 
       const expectedHeaders = columnsMaestrosStores
         .filter((col) => col.field !== "status")
-        .map((col) => col.label);
+        .map((col) => col.label.toLowerCase().trim());
 
       const missingHeaders = expectedHeaders.filter(
         (h) => !headers.includes(h)
       );
+
       if (missingHeaders.length > 0) {
         throw new Error(
           `Faltan columnas en el Excel: ${missingHeaders.join(", ")}`
@@ -244,8 +254,12 @@ const MasterAlmacen = () => {
           if (field === "status") {
             item[field] = true;
           } else {
-            const colIndex = headers.indexOf(label);
-            item[field] = colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
+            const normalizedLabel = label.toLowerCase().trim();
+
+            const colIndex = headers.indexOf(normalizedLabel);
+
+            item[field] =
+              colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
           }
         });
 

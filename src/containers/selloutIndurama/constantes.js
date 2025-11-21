@@ -64,10 +64,6 @@ export const columnsMaestrosProducts = [
     label: "Descripción Producto Almacen",
     type: "string",
   },
-  // {
-  //   field: "searchProductStore",
-  //   label: "Busqueda Producto",
-  // },
   {
     field: "codeProductSic",
     label: "Cod. Producto SIC",
@@ -158,7 +154,6 @@ export const camposConfiguracion = [
     headerTitle: "Código Almacén Distribuidor",
     placeholder: "Ingrese el código del almacén...",
     size: 4,
-    disabled: true,
   },
   {
     id: "name",

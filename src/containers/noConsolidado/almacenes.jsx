@@ -1,5 +1,4 @@
 import AtomCard from "../../atoms/AtomCard";
-import AtomTableForm from "../../atoms/AtomTableForm";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useCallback } from "react";
 import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
@@ -162,15 +161,12 @@ const AlmacenesNoHomologados = () => {
         }
     };
 
-
-    console.log(resultadosActualizados);
-
     const exportExcel = async () => {
         setLoading(true);
         try {
             const response = await dispatch(
                 exportarExcel({
-                    excel_name: "noHomologadosStore",
+                    excel_name: "noHomologadosStores",
                     nombre: "Almacenes_No_Homologados",
                     calculateDate: formatDate(calculateDate),
                 })
@@ -206,8 +202,7 @@ const AlmacenesNoHomologados = () => {
             buscarLista(search);
         } catch (error) {
             setLoading(false);
-            console.error('Error al subir el archivo:', error);
-            showSnackbar("Error al cargar archivo");
+            showSnackbar(error || "Error al cargar archivo");
         }
     };
 

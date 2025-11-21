@@ -11,7 +11,6 @@ const initialState = {
 };
 
 const handleMenuClick = (state, item) => {
-  console.log(item);
   const payload = item.payload;
 
   if (!payload) {

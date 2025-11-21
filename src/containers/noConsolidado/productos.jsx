@@ -214,8 +214,7 @@ const ProductosNoHomologados = () => {
             buscarLista(search);
         } catch (error) {
             setLoading(false);
-            console.error('Error al subir el archivo:', error);
-            showSnackbar("Error al cargar archivo");
+            showSnackbar(error || "Error al cargar archivo");
         }
     };
 

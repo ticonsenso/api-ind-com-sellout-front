@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { apiService } from "../service/apiService.js";
 import { apiConfig } from "../service/apiConfig.js";
-import { daDK } from "@mui/x-date-pickers/locales";
+import pako from "pako";
 
 const initialState = {
   dataMaestrosProducts: [],
@@ -642,17 +642,25 @@ export const sendSellout = createAsyncThunk(
   async (data, { getState, rejectWithValue }) => {
     const state = getState();
     const token = state.auth.auth.token;
+
     try {
-      return await apiService
+      const json = JSON.stringify(data);
+      const gzip = pako.gzip(json);
+
+      const response = await apiService
         .setUrl(apiConfig.sendSelloutUrl.url)
         .setMethod("POST")
-        .setData(data)
+        .setHeaders({ Accept: "application/json" })
+        .setData(gzip)
         .send(token);
+
+      return response?.data || response;
     } catch (error) {
       return rejectWithValue(error);
     }
   }
 );
+
 
 //consolidatedSellout
 
@@ -696,12 +704,12 @@ export const obtenerConsolidatedSellout = createAsyncThunk(
   async (data, { getState, rejectWithValue }) => {
     const state = getState();
     const token = state.auth.auth.token;
-    const { page, limit, calculateDate, search, ...rest } = data;
+    const { page, limit, calculateDate, ...rest } = data;
     try {
       return await apiService
-        .setUrl(apiConfig.consolidatedSelloutUrl.url + "/filters")
+        .setUrl(apiConfig.consolidatedSelloutUrl.url + "/filters-mod")
         .setMethod("POST")
-        .setParams({ page, limit, search, calculateDate })
+        .setParams({ page, limit, calculateDate })
         .setData(rest || {})
         .send(token);
     } catch (error) {

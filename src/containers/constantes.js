@@ -31,11 +31,24 @@ export const formatDate = (fechaISO) => {
 export const formatValueByType = (value, type) => {
   if (value === null || value === undefined || value === "") return "-";
 
+  if (type === "date") {
+    const date = new Date(value);
+
+    if (isNaN(date.getTime())) return "-";
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
   const number = parseFloat(value);
 
   if (type === "string") {
     return value;
   }
+
   if (type === "number") {
     return number.toLocaleString("es-EC", {
       minimumFractionDigits: 2,
@@ -58,7 +71,8 @@ export const formatValueByType = (value, type) => {
       maximumFractionDigits: 2,
     });
   }
-  if (number) {
+
+  if (!isNaN(number)) {
     return number.toLocaleString("es-EC", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -67,6 +81,7 @@ export const formatValueByType = (value, type) => {
 
   return value;
 };
+
 
 // busqueda con debounce
 export function debounce(func, delay) {
@@ -104,6 +119,18 @@ export const getPreviousMonthStart = () => {
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = "01";
+
+  return `${year}-${month}-${day}`;
+};
+
+export const formatIsoToDate = (isoString) => {
+  if (!isoString) return "";
+
+  const date = new Date(isoString);
+
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
 };

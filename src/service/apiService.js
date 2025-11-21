@@ -6,7 +6,6 @@ class ApiService {
       method: 'GET',
       url: '',
       headers: {
-        // Se elimina 'Content-Type': 'application/json' de los valores por defecto
       },
       data: null,
       params: null,
@@ -44,14 +43,25 @@ class ApiService {
   setData(data) {
     if (data !== undefined) {
       this.config.data = data;
+
+      // Si es FormData → permitir que el navegador genere el boundary
       if (data instanceof FormData) {
-        delete this.config.headers['Content-Type'];
-      } else {
-        this.config.headers['Content-Type'] = this.config.headers['Content-Type'] || 'application/json';
+        delete this.config.headers["Content-Type"];
+      }
+      // Si es Blob o Uint8Array → enviar como gzip binario
+      else if (data instanceof Blob || data instanceof Uint8Array) {
+        this.config.headers["Content-Type"] = "application/gzip";
+      }
+      // Caso normal → JSON
+      else {
+        this.config.headers["Content-Type"] =
+          this.config.headers["Content-Type"] || "application/json";
       }
     }
+
     return this;
   }
+
 
   setParams(params) {
     this.config.params = params;

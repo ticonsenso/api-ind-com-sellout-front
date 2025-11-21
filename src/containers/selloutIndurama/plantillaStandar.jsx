@@ -1,6 +1,6 @@
 import AtomCard from "../../atoms/AtomCard";
 import AtomTableForm from "../../atoms/AtomTableForm";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import { useState } from "react";
 import AtomButtonPrimary from "../../atoms/AtomButtonPrimary";
@@ -16,13 +16,8 @@ import {
   obtenerConsolidatedSellout,
   getConsolidatedAlert,
   sincronizarDatosConsolidated,
-  maestrosProductsSic,
-  maestrosStoresSic,
-  guardarProductSicBulk,
   exportarExcel,
-  obtenerConsolidatedSelloutUnique,
   guardarConsolidatedSellout,
-  editStatusConsolidatedSellout,
   updateArraySellout,
 } from "../../redux/configSelloutSlice";
 import { columnsPlantillaStandar } from "./constantes";
@@ -44,7 +39,6 @@ import { mesesNum } from "./constantes";
 import SelectorAnioForm from "../../atoms/AtomAnualInput";
 import AtomDialogForm from "../../atoms/AtomDialogForm";
 import {
-  stylesPlantillaStandar,
   camposPlantillaStandar,
   paramsValidatePlantillaStandar,
 } from "./constantes";
@@ -52,6 +46,7 @@ import AtomTextField from "../../atoms/AtomTextField";
 import IconoFlotante from "../../atoms/IconActionPage";
 import { setCalculateDate } from "../../redux/configSelloutSlice";
 import AtomSwitch from "../../atoms/AtomSwitch";
+import { debounce } from "../constantes";
 
 const formatDate = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -70,19 +65,17 @@ const PlantillaStandar = () => {
   const calculateDate = useSelector(
     (state) => state?.configSellout?.calculateDate || formatDate(new Date())
   );
-  const dataConsolidatedAlert = useSelector(
-    (state) => state?.configSellout?.dataConsolidatedAlert || null
-  );
+
   const totalConsolidatedSellout = useSelector(
     (state) => state?.configSellout?.totalConsolidatedSellout || 0
   );
-  const [filtroBusqueda, setFiltroBusqueda] = useState(null);
+  const [filtroBusqueda, setFiltroBusqueda] = useState("distributor");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(pageGeneral);
   const [limit, setLimit] = useState(limitGeneral);
   const [errors, setErrors] = useState({});
-  const [editState, setEditState] = useState(false);
+  const [edit, setEdit] = useState(false);
   const [dataConsolidado, setDataConsolidado] = useState({
     saleDate: calculateDate,
     distributor: "",
@@ -93,13 +86,10 @@ const PlantillaStandar = () => {
   });
   const [openDialogProduct, setOpenDialogProduct] = useState(false);
   const [openDialogoSincronizar, setOpenDialogoSincronizar] = useState(false);
-  const [openDialogStoreNull, setOpenDialogStoreNull] = useState(false);
   const [dataSincronizar, setDataSincronizar] = useState({
     year: 2025,
     month: null,
   });
-  const [dataEditable, setDataEditable] = useState([]);
-  const [resultadosActualizados, setResultadosActualizados] = useState([]);
 
   const handleOpenCreateProducts = () => {
     setOpenDialogProduct(true);
@@ -116,9 +106,6 @@ const PlantillaStandar = () => {
       status: true,
     });
     setErrors({});
-    setResultadosActualizados([]);
-    setDataEditable([]);
-    setResultadosActualizados([]);
   };
 
   const validateForm = () => {
@@ -185,72 +172,6 @@ const PlantillaStandar = () => {
     }
   };
 
-
-
-  const handleActualizarAlmacen = async (newRow) => {
-    if (newRow.codeStore === "") {
-      return;
-    }
-    try {
-      const response = await dispatch(maestrosStoresSic(newRow.codeStore));
-      if (response.meta.requestStatus === "rejected") {
-        showSnackbar(response.payload.message);
-      }
-      // if (response.meta.requestStatus === "fulfilled") {
-      const dataAlmacen = response?.payload || null;
-      const nuevaData = dataEditable.map((item) => {
-        if (item.id === newRow.id) {
-          return {
-            ...item,
-            codeStore: newRow.codeStore,
-            storeName: dataAlmacen.storeName,
-          };
-        }
-        return item;
-      });
-      setDataEditable(nuevaData);
-      const actualizado = nuevaData.find(
-        (item) => item.codeStore === newRow.codeStore
-      );
-      const nuevoObjeto = {
-        id: actualizado.id,
-        distributor: actualizado.distributor,
-        codeStoreDistributor: actualizado.codeStoreDistributor,
-        codeStore: actualizado.codeStore || newRow.codeStore,
-      };
-      setResultadosActualizados((prev) => {
-        const existe = prev.some(
-          (obj) =>
-            obj.codeStoreSic === nuevoObjeto.codeStoreSic &&
-            obj.searchStore === nuevoObjeto.searchStore
-        );
-        return existe ? prev : [...prev, nuevoObjeto];
-      });
-      // } else {
-      //   showSnackbar(response.payload.message);
-      // }
-    } catch (error) {
-      showSnackbar(error.message);
-    }
-  };
-
-
-
-  const handleGuardarStoreSic = async () => {
-    const response = await dispatch(
-      guardarProductSicBulk(resultadosActualizados)
-    );
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
-      setResultadosActualizados([]);
-      setOpenDialogStoreNull(false);
-      clearFilters();
-      setFiltroBusqueda("");
-    } else {
-      showSnackbar(response.payload.message);
-    }
-  };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -258,69 +179,6 @@ const PlantillaStandar = () => {
   const handleChangeRowsPerPage = (event) => {
     setLimit(event.target.value);
     setPage(1);
-  };
-
-  const handleOpenDialogStoreNull = async () => {
-    setLoading(true);
-    setOpenDialogStoreNull(true);
-    const response = await dispatch(
-      obtenerConsolidatedSelloutUnique({
-        calculateDate,
-        codeStore: true,
-      })
-    );
-    if (response.meta.requestStatus === "fulfilled") {
-      llamarDataStoreNull(response.payload.items);
-    } else {
-      setLoading(false);
-      showSnackbar(response.payload.message || "Error al obtener datos");
-    }
-  };
-
-  const llamarDataStoreNull = (data) => {
-    const dataStoreNull = data.map((item) => {
-      return {
-        ...item,
-        searchStore: `${item.distributor}${item.codeStoreDistributor}`.replace(
-          /\s+/g,
-          ""
-        ),
-      };
-    });
-    setDataEditable(dataStoreNull);
-    setLoading(false);
-  };
-
-  const handleOpenDialogProductNull = async () => {
-    setLoading(true);
-    const response = await dispatch(
-      obtenerConsolidatedSelloutUnique({
-        calculateDate: calculateDate,
-        codeProduct: true,
-      })
-    );
-
-    if (response.meta.requestStatus === "fulfilled") {
-      llamarDataProductNull(response.payload.items);
-    } else {
-      setLoading(false);
-      showSnackbar(response.payload.message || "Error al obtener datos");
-    }
-  };
-
-  const llamarDataProductNull = (data) => {
-    const dataProductNull = data.map((item) => {
-      return {
-        ...item,
-        searchProduct:
-          `${item.distributor}${item.codeProductDistributor}${item.descriptionDistributor}`.replace(
-            /\s+/g,
-            ""
-          ),
-      };
-    });
-    setDataEditable(dataProductNull);
-    setLoading(false);
   };
 
   const handleOpenDialogoSincronizar = () => {
@@ -351,15 +209,22 @@ const PlantillaStandar = () => {
     }
   };
 
-  const buscarConsolidado = async () => {
+  const debounceSearch = useCallback(
+    debounce((value) => {
+      buscarConsolidado(value);
+    }, 1000),
+    [filtroBusqueda]
+  );
+
+
+  const buscarConsolidado = async (value) => {
     setLoading(true);
     try {
       const filtros = {
-        search,
+        [filtroBusqueda]: value,
         page,
         limit,
         calculateDate: calculateDate,
-        ...(filtroBusqueda ? { [filtroBusqueda]: true } : {}),
       };
 
       await dispatch(obtenerConsolidatedSellout(filtros));
@@ -369,30 +234,29 @@ const PlantillaStandar = () => {
   };
 
   useEffect(() => {
-    buscarConsolidado();
-    dispatch(getConsolidatedAlert({ calculateDate }));
-  }, [search, page, limit, filtroBusqueda, calculateDate]);
+    if (calculateDate) {
+      buscarConsolidado(search);
+    }
+  }, [calculateDate, page, limit]);
+
 
   const optionsFiltros = [
-    // {
-    //   id: "codeProduct",
-    //   label: "Código de producto",
-    // },
-    // {
-    //   id: "codeStore",
-    //   label: "Código de almacén",
-    // },
+
     {
-      id: "authorizedDistributor",
-      label: "Distribuidor autorizado",
+      id: "distributor",
+      label: "Distribuidor",
     },
     {
-      id: "storeName",
-      label: "Nombre de almacén",
+      id: "codeStoreDistributor",
+      label: "Código almacén distribuidor",
     },
     {
-      id: "productModel",
-      label: "Modelo del producto",
+      id: "codeProductDistributor",
+      label: "Código producto distribuidor",
+    },
+    {
+      id: "descriptionDistributor",
+      label: "Descripción Distribuidor ",
     },
   ];
 
@@ -401,14 +265,6 @@ const PlantillaStandar = () => {
     setSearch("");
     setPage(1);
     setLimit(limitGeneral);
-    setDataEditable([]);
-    setResultadosActualizados([]);
-  };
-
-  const isAlertVacia = (alerta) => {
-    if (!alerta) return true;
-
-    return Object.values(alerta).every((valor) => valor === 0);
   };
 
   const exportExcel = async () => {
@@ -434,26 +290,6 @@ const PlantillaStandar = () => {
     }
   };
 
-  const handleEditState = (row) => {
-    const data = {
-      ...row,
-      codeProductStatus: row.codeProduct === null ? true : false,
-      codeStoreStatus: row.codeStore === null ? true : false,
-    }
-    setDataConsolidado(data);
-    setOpenDialogProduct(true);
-  };
-
-  const actions = [
-    {
-      label: "Editar estado",
-      icon: "SaveAlt",
-      color: "info",
-      onClick: (row) => {
-        handleEditState(row);
-      },
-    },
-  ];
 
   return (
     <>
@@ -564,6 +400,7 @@ const PlantillaStandar = () => {
                 setLimit(limitGeneral);
                 setSearch(e.target.value);
                 setFiltroBusqueda(null);
+
               }}
               children={
                 <>
@@ -598,7 +435,7 @@ const PlantillaStandar = () => {
                     </Grid>
 
                     <Grid size={4} mt={2.8}>
-                      <Tooltip title="Buscar por distribuidor y descripción distribuidor">
+                      <Tooltip title="Buscar por distribuidor, código almacén, código producto y descripción">
                         <TextField
                           variant="outlined"
                           value={search}
@@ -606,6 +443,7 @@ const PlantillaStandar = () => {
                             setPage(1);
                             setLimit(limitGeneral);
                             setSearch(e.target.value);
+                            debounceSearch(e.target.value);
                           }}
                           placeholder="Buscar..."
                           slotProps={{
@@ -774,7 +612,7 @@ const PlantillaStandar = () => {
       <AtomDialogForm
         openDialog={openDialogProduct}
         titleCrear={
-          editState
+          edit
             ? "Editar registro plantilla consolidado"
             : "Crear registro plantilla consolidado"
         }
@@ -796,7 +634,7 @@ const PlantillaStandar = () => {
                   headerTitle={campo.headerTitle}
                   required={campo.required}
                   type={campo.type}
-                  disabled={editState}
+                  disabled={edit}
                   value={dataConsolidado[campo.id]}
                   onChange={(e) => {
                     setDataConsolidado({
@@ -814,7 +652,7 @@ const PlantillaStandar = () => {
                 id="saleDate"
                 label="Fecha Ultimo día mes"
                 required={true}
-                disabled={editState}
+                disabled={edit}
                 value={dataConsolidado.saleDate || new Date() || null}
                 onChange={(e) => {
                   setDataConsolidado({

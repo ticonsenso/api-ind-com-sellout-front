@@ -54,7 +54,6 @@ const ColumnsCategorias = ({ id }) => {
     const totalLista = useSelector(
         (state) => state.diccionario.totalColumnsCategorias || 0
     );
-    console.log(totalLista);
     const [openMatriculacion, setOpenMatriculacion] = useState(false);
     const [search, setSearch] = useState("");
 
@@ -174,7 +173,6 @@ const ColumnsCategorias = ({ id }) => {
     };
 
     const handleDelete = (row) => {
-        console.log(row, "row");
         showDialog({
             title: "Eliminar registro",
             message: "¿Estás seguro de que deseas eliminar este registro?",

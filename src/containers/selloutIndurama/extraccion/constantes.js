@@ -3,7 +3,8 @@ export const PALABRAS_INVALIDAS = [
   "cliente",
   "subtotal",
   "iva",
-  // "total",
+  "total",
+  "total general",
   "datos",
   "producto",
   "vendedor",
@@ -45,7 +46,7 @@ export const CAMPOS_CONFIG_ESTANDAR = [
     type: "number",
     multiline: false,
     rows: 1,
-    size: 1.5,
+    size: 2,
     placeholder: "Inicio/extracción",
   },
   {
@@ -54,7 +55,7 @@ export const CAMPOS_CONFIG_ESTANDAR = [
     type: "number",
     multiline: false,
     rows: 1,
-    size: 1.5,
+    size: 2,
     placeholder: "Fin Extracción",
   },
 ];
@@ -89,9 +90,10 @@ export const columnsMatriculacion = [
     field: "storeName",
   },
   {
-    id: "createdAt",
+    id: "createAt",
     label: "Fecha de registro",
-    field: "calculateDate",
+    field: "createAt",
+    type: "date"
   },
   {
     id: "isUploaded",
@@ -102,11 +104,13 @@ export const columnsMatriculacion = [
     id: "productCount",
     label: "Unidades Vendidas",
     field: "productCountTotal",
+    type: "string"
   },
   {
     id: "rowsCount",
     label: "# Filas",
     field: "rowCountTotal",
+    type: "string"
   },
 ];
 

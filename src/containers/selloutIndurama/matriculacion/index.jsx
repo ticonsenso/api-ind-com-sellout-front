@@ -65,7 +65,7 @@ const TabGestionMatriculacion = () => {
             sx={{
               position: "fixed",
               top: 80,
-              right: 70,
+              right: 115,
               zIndex: 1000,
             }}
           >

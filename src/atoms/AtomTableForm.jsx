@@ -26,7 +26,7 @@ import {
   KeyboardArrowUp as KeyboardArrowUpIcon,
 } from "@mui/icons-material";
 import { pageOptions } from "../containers/constantes";
-import { limitGeneral } from "../containers/constantes";
+import { limitGeneral, formatValueByType } from "../containers/constantes";
 
 const decimalesCantidad = 2;
 
@@ -52,7 +52,6 @@ const AtomTableForm = (props) => {
   } = props;
 
   const [expandedRow, setExpandedRow] = useState(null);
-  console.log();
   const handleSelectRow = (id) => {
     let newSelection;
 
@@ -110,36 +109,6 @@ const AtomTableForm = (props) => {
       color: colorSetting,
       content: colorContentSetting,
     },
-  };
-
-  const formatValueByType = (value, type) => {
-    if (value === null || value === undefined || value === "") return "-";
-
-    const number = parseFloat(value);
-
-    if (type === "dinero") {
-      return number.toLocaleString("es-EC", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 2,
-      });
-    }
-
-    if (type === "porcentaje") {
-      return (
-        number.toLocaleString("es-EC", {
-          minimumFractionDigits: 2,
-        }) + "%"
-      );
-    }
-
-    if (type === "number") {
-      return number.toLocaleString("es-EC", {
-        minimumFractionDigits: 2,
-      });
-    }
-
-    return value;
   };
 
   const toggleRowExpansion = (index) => {
@@ -339,7 +308,6 @@ const AtomTableForm = (props) => {
                         ) : (
                           formatValueByType(row[column?.field], column?.type)
                         )}
-                        {console.log(column)}
                       </TableCell>
                     ))}
                     {actions?.length > 0 && (

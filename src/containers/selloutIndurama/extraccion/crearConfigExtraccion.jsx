@@ -45,7 +45,7 @@ import {
   setDataColumnsSearch,
   createColumnArraySellout,
   obtenerMatriculacion,
-  setIdEmpresaIndurama,
+  setCalculateDate
 } from "../../../redux/configSelloutSlice";
 import { optionsMappingToField } from "./constantes";
 import {
@@ -69,6 +69,10 @@ const CrearConfiguracionExtraccion = ({ config }) => {
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
   const { showDialog } = useDialog();
+
+  const calculateDate = useSelector(
+    (state) => state?.configSellout?.calculateDate || formatDate(new Date())
+  );
   const dataColumns = useSelector(
     (state) => state.configSellout.columnsExtracciones || []
   );
@@ -112,7 +116,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
     sourceType: config?.sourceType || "FILE",
     sheetName: config?.sheetName || "",
     matriculationId: config?.matriculation?.id || null,
-    calculateDate: config?.calculateDate || formatDate(new Date()),
+    calculateDate: calculateDate || formatDate(new Date()),
   });
 
   const [search, setSearch] = useState("");
@@ -162,6 +166,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
     const response = await dispatch(createExtractionsConfig(data));
     if (response.meta.requestStatus === "fulfilled") {
       showSnackbar(response.payload.message);
+      setInitialStep(1);
     } else {
       showSnackbar(response.payload.message);
     }
@@ -183,6 +188,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
     const response = await dispatch(updateExtractionsConfig(data));
     if (response.meta.requestStatus === "fulfilled") {
       showSnackbar(response.payload.message);
+      setInitialStep(1);
     } else {
       showSnackbar(response.payload.message);
     }
@@ -322,7 +328,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
 
   useEffect(() => {
     obtenerListaMatriculacion(searchMatriculacion);
-  }, [configuracion?.calculateDate]);
+  }, [calculateDate]);
 
   useEffect(() => {
     if (configuracionExtraccionSelloutId) {
@@ -369,7 +375,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
         page: 1,
         limit: 200,
         search: value,
-        calculateMonth: configuracion?.calculateDate,
+        calculateMonth: calculateDate,
       })
     );
   };
@@ -404,16 +410,16 @@ const CrearConfiguracionExtraccion = ({ config }) => {
               <AtomTitleForm title="Formulario de Configuración" />
             </Grid>
             <Grid size={4}>
+
               <AtomDatePicker
                 id="calculateMonth"
-                label="Fecha de carga"
+                required={true}
+                height="45px"
                 mode="month"
-                value={configuracion?.calculateDate}
+                label="Fecha de carga"
+                value={calculateDate || null}
                 onChange={(e) => {
-                  setConfiguracion({
-                    ...configuracion,
-                    calculateDate: e,
-                  });
+                  dispatch(setCalculateDate(e));
                 }}
               />
             </Grid>
@@ -450,6 +456,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
                   id={campo.id}
                   headerTitle={campo.headerTitle}
                   required={campo.required}
+                  disabled={campo.disabled}
                   multiline={campo.multiline}
                   rows={campo.rows}
                   value={configuracion[campo.id] || ""}
@@ -483,7 +490,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
             <Grid size={2}>
               <AtomButtonPrimary
                 id="create"
-                label={configuracionExtraccionSelloutId ? "Editar" : "Guardar"}
+                label={"Guardar"}
                 onClick={handleCreate}
               />
             </Grid>
