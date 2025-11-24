@@ -135,6 +135,7 @@ const AtomTableForm = (props) => {
       fontSize: "14px",
       color: "#6f6f6f",
       minWidth: "10",
+      textAlign: "center",
     },
     cellContainer: {
       fontSize: "12px",

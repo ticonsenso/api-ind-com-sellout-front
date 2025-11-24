@@ -34,7 +34,7 @@ import {
   SaveAlt as SaveAltIcon,
   Add as AddIcon,
 } from "@mui/icons-material";
-import { formatDate, isMonthClosed, debounce } from "../../constantes";
+import { formatDate, isMonthClosed, debounce, normalizeEncabezados } from "../../constantes";
 import { setCalculateDate } from "../../../redux/configSelloutSlice";
 
 const columns = [
@@ -48,7 +48,8 @@ const columns = [
   },
   {
     label: "Fecha Matriculación",
-    field: "calculateMonth",
+    field: "createdAt",
+    type: "date"
   },
   {
     label: "Estado",
@@ -63,11 +64,8 @@ const Matriculacion = ({ calculateDate }) => {
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
   const { showDialog } = useDialog();
-  const data = useSelector((state) => state?.configSellout?.dataMatriculacion);
-  const dataMatriculacion = data.map((item) => ({
-    ...item,
-    createdAt: formatDate(item.createdAt),
-  }));
+  const dataMatriculacion = useSelector((state) => state?.configSellout?.dataMatriculacion);
+
   const totalMatriculacion = useSelector(
     (state) => state?.configSellout?.totalMatriculacion || 0
   );
@@ -305,14 +303,19 @@ const Matriculacion = ({ calculateDate }) => {
       const headers = headerRow.values.slice(1);
 
       const expectedHeaders = [
-        "Nombre",
+        // "Nombre",
         "Distribuidor",
         "Nombre Almacen",
         "Mes",
         "Estado",
       ];
-      const missingHeaders = expectedHeaders.filter(
-        (h) => !headers.includes(h)
+      const normalizedHeaders = headers.map((h) => normalizeEncabezados(h));
+
+      // Normaliza los esperados
+      const normalizedExpected = expectedHeaders.map((h) => normalizeEncabezados(h));
+
+      const missingHeaders = normalizedExpected.filter(
+        (h) => !normalizedHeaders.includes(h)
       );
       if (missingHeaders.length > 0) {
         throw new Error(
@@ -455,111 +458,109 @@ const Matriculacion = ({ calculateDate }) => {
       <AtomContainerGeneral
         children={
           <>
-            {matriculacionCerrada === "abierto" && (
-              <>
-                <IconoFlotante
-                  handleButtonClick={() => {
-                    buscarMatriculacion(search, calculateDate);
-                  }}
-                  title="Actualizar lista"
-                  iconName="Refresh"
-                  right={60}
-                  color="#63B6FF"
-                  top={95}
-                />
-                {namePermission && (
-                  <>
-                    <IconoFlotante
-                      handleButtonClick={handleMenuOpen}
-                      title="Mas opciones"
-                      iconName="MoreVert"
-                      right={20}
-                      top={95}
-                    />
+            <>
+              <IconoFlotante
+                handleButtonClick={() => {
+                  buscarMatriculacion(search, calculateDate);
+                }}
+                title="Actualizar lista"
+                iconName="Refresh"
+                right={60}
+                color="#63B6FF"
+                top={95}
+              />
+              {namePermission && (
+                <>
+                  <IconoFlotante
+                    handleButtonClick={handleMenuOpen}
+                    title="Mas opciones"
+                    iconName="MoreVert"
+                    right={20}
+                    top={95}
+                  />
 
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={handleMenuClose}
-                      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                      transformOrigin={{ vertical: "top", horizontal: "right" }}
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleMenuClose}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    transformOrigin={{ vertical: "top", horizontal: "right" }}
+                  >
+                    {/* <MenuItem
+                      sx={{
+                        gap: 1,
+                      }}
+                      onClick={() =>
+                        document
+                          .getElementById("input-excel-matriculacion")
+                          .click()
+                      }
                     >
-                      <MenuItem
-                        sx={{
-                          gap: 1,
-                        }}
-                        onClick={() =>
-                          document
-                            .getElementById("input-excel-matriculacion")
-                            .click()
-                        }
-                      >
-                        <ListItemIcon>
-                          <DriveFolderUploadOutlinedIcon
-                            sx={{
-                              color: "white",
-                              backgroundColor: "details.main",
-                              borderRadius: "50%",
-                              padding: "3px",
-                            }}
-                          />
-                        </ListItemIcon>
-                        <Typography variant="inherit">
-                          Subir Excel matriculaciones
-                        </Typography>
-                      </MenuItem>
-                      <MenuItem
-                        sx={{
-                          gap: 1,
-                        }}
-                        onClick={confirmarExportarExcel}
-                      >
-                        <ListItemIcon>
-                          <SaveAltIcon
-                            sx={{
-                              color: "white",
-                              backgroundColor: "#5ab9f6",
-                              borderRadius: "50%",
-                              padding: "3px",
-                            }}
-                          />
-                        </ListItemIcon>
-                        <Typography variant="inherit">
-                          Descargar lista matriculaciones
-                        </Typography>
-                      </MenuItem>
-                      <MenuItem
-                        sx={{
-                          gap: 1,
-                        }}
-                        onClick={() => setOpenCreateMatriculacionBeforeMonth(true)}
-                      >
-                        <ListItemIcon>
-                          <AddIcon
-                            sx={{
-                              color: "white",
-                              backgroundColor: "success.main",
-                              borderRadius: "50%",
-                              padding: "3px",
-                            }}
-                          />
-                        </ListItemIcon>
-                        <Typography variant="inherit">
-                          Crear matriculaciones por mes
-                        </Typography>
-                      </MenuItem>
-                    </Menu>
-                    <input
-                      id="input-excel-matriculacion"
-                      type="file"
-                      accept=".xlsx, .xls"
-                      onChange={handleFileChange}
-                      style={{ display: "none" }}
-                    />
-                  </>
-                )}
-              </>
-            )}
+                      <ListItemIcon>
+                        <DriveFolderUploadOutlinedIcon
+                          sx={{
+                            color: "white",
+                            backgroundColor: "details.main",
+                            borderRadius: "50%",
+                            padding: "3px",
+                          }}
+                        />
+                      </ListItemIcon>
+                      <Typography variant="inherit">
+                        Subir Excel matriculaciones
+                      </Typography>
+                    </MenuItem> */}
+                    <MenuItem
+                      sx={{
+                        gap: 1,
+                      }}
+                      onClick={confirmarExportarExcel}
+                    >
+                      <ListItemIcon>
+                        <SaveAltIcon
+                          sx={{
+                            color: "white",
+                            backgroundColor: "#5ab9f6",
+                            borderRadius: "50%",
+                            padding: "3px",
+                          }}
+                        />
+                      </ListItemIcon>
+                      <Typography variant="inherit">
+                        Descargar lista matriculaciones
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        gap: 1,
+                      }}
+                      onClick={() => setOpenCreateMatriculacionBeforeMonth(true)}
+                    >
+                      <ListItemIcon>
+                        <AddIcon
+                          sx={{
+                            color: "white",
+                            backgroundColor: "success.main",
+                            borderRadius: "50%",
+                            padding: "3px",
+                          }}
+                        />
+                      </ListItemIcon>
+                      <Typography variant="inherit">
+                        Crear matriculaciones por mes
+                      </Typography>
+                    </MenuItem>
+                  </Menu>
+                  <input
+                    id="input-excel-matriculacion"
+                    type="file"
+                    accept=".xlsx, .xls"
+                    onChange={handleFileChange}
+                    style={{ display: "none" }}
+                  />
+                </>
+              )}
+            </>
             <AtomCard
               title=""
               nameButton={matriculacionCerrada === "abierto" && namePermission ? "Crear" : ""}

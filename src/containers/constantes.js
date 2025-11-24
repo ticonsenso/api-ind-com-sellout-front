@@ -29,6 +29,7 @@ export const formatDate = (fechaISO) => {
 };
 
 export const formatValueByType = (value, type) => {
+  console.log("fecha", value, type);
   if (value === null || value === undefined || value === "") return "-";
 
   if (type === "date") {
@@ -36,9 +37,10 @@ export const formatValueByType = (value, type) => {
 
     if (isNaN(date.getTime())) return "-";
 
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    // Formato usando UTC para evitar desfases por zona horaria
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(date.getUTCDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
   }
@@ -134,3 +136,27 @@ export const formatIsoToDate = (isoString) => {
 
   return `${year}-${month}-${day}`;
 };
+
+export const normalizeEncabezados = (str) => {
+  return str
+    .toString()
+    .normalize("NFD")                         // separa tildes
+    .replace(/[\u0300-\u036f]/g, "")         // elimina tildes
+    .replace(/\s+/g, "")                     // elimina espacios
+    .toLowerCase();                          // ignora may/min
+};
+
+
+export const formatIsoToDateTabla = (isoString) => {
+  if (!isoString) return "";
+
+  const date = new Date(isoString);
+
+  // Se obtiene año, mes y día reales de la fecha en UTC
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+

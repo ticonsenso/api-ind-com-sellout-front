@@ -90,9 +90,9 @@ export const columnsMatriculacion = [
     field: "storeName",
   },
   {
-    id: "createAt",
+    id: "createdAt",
     label: "Fecha de registro",
-    field: "createAt",
+    field: "createdAt",
     type: "date"
   },
   {

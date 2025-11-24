@@ -112,40 +112,43 @@ const AtomTableExtraccion = ({
 
   const styles = {
     headerCell: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: 14,
-      color: "#7f7f7fff",
+      color: "#5e5e5eff",
       height: "40px",
-      backgroundColor: "#ffffffff",
+      backgroundColor: "#ffffff",
       position: "sticky",
       top: 0,
       minWidth: "5px",
       zIndex: 1,
     },
     textCell: {
-      backgroundColor: "#fafafaff",
-      fontWeight: 500,
+      backgroundColor: "#f9f9f9",
+      fontWeight: 400,
       textAlign: "left",
       fontSize: "12px",
-      width: "10px",
       color: "text.secondary",
     },
     textFinal: {
-      fontWeight: "700",
+      fontWeight: 600,
       pt: 2,
       pb: 2,
       textAlign: "right",
       color: "#1976d2",
-      fontSize: "14px",
+      fontSize: "15px",
     },
-    indexCell: {
+    indexBadge: {
+      display: "inline-block",
+      padding: "2px 5px",
+      borderRadius: "12px",
       backgroundColor: "#ffffffff",
-      fontWeight: 500,
+      color: "#1976d2",
+      fontSize: "11px",
+      fontWeight: 600,
+      minWidth: "28px",
       textAlign: "center",
-      fontSize: "12px",
-      color: "#3a82dfff",
+      boxShadow: "0 1px 2px rgba(0,0,0,0.15)",
     },
-
   };
 
   return (
@@ -161,53 +164,10 @@ const AtomTableExtraccion = ({
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell
-              sx={styles.headerCell}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  padding: 0,
-                  margin: 0,
-                  width: "30px",
-                  justifyContent: "center",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={
-                    filasSeleccionadas.length === data.length && data.length > 0
-                  }
-                  indeterminate={
-                    filasSeleccionadas.length > 0 &&
-                    filasSeleccionadas.length < data.length
-                  }
-                  onChange={handleSeleccionarTodas}
-                />
-                {filasSeleccionadas.length > 0 && (
-                  <IconButton onClick={handleEliminarSeleccionadas}>
-                    <DeleteIcon
-                      color="error"
-                      sx={{
-                        fontSize: "16px",
-                      }} />
-                  </IconButton>
-                )}
-              </Box>
-            </TableCell>
-
-            {showIndex && (
-              <TableCell
-                sx={styles.headerCell}
-              ></TableCell>
-            )}
+            {showIndex && <TableCell sx={styles.headerCell}></TableCell>}
 
             {celdas.map((col, index) => (
-              <TableCell
-                key={index}
-                sx={styles.headerCell}
-              >
+              <TableCell key={index} sx={styles.headerCell}>
                 {col.label || col.field || "N/A"}
               </TableCell>
             ))}
@@ -222,19 +182,9 @@ const AtomTableExtraccion = ({
 
               return (
                 <TableRow key={globalIndex}>
-                  <TableCell sx={styles.indexCell}>
-                    <input
-                      type="checkbox"
-                      checked={filasSeleccionadas.includes(globalIndex)}
-                      onChange={() => handleSeleccionarFila(globalIndex)}
-                    />
-                  </TableCell>
-
                   {showIndex && (
-                    <TableCell
-                      sx={styles.indexCell}
-                    >
-                      {globalIndex + 1}
+                    <TableCell sx={{ textAlign: "center", width: "25px", backgroundColor: "#eff7ffff" }}>
+                      <span style={styles.indexBadge}>{globalIndex + 1}</span>
                     </TableCell>
                   )}
 
@@ -251,14 +201,15 @@ const AtomTableExtraccion = ({
                         key={index}
                         style={{
                           color: hasError ? "red" : "#414141ff",
-                          backgroundColor: hasError ? "#ffe6e6" : "#fafafaff",
-                          fontSize: "12px",
-                          fontWeight: "400",
+                          backgroundColor: hasError ? "#ffe6e6" : "#fafafa",
+                          fontSize: "11.5px",
+                          fontWeight: 400,
                           maxWidth: maxWidth,
                           minWidth: minWidth,
                           overflow: "hidden",
+                          height: "35px",
                           textOverflow: "ellipsis",
-                          textAlign: col.type !== "TEXT" ? "right" : "left",
+                          textAlign: "left",
                         }}
                       >
                         {value || "N/A"}
@@ -268,23 +219,22 @@ const AtomTableExtraccion = ({
                 </TableRow>
               );
             })}
+
           {celdas.map((col) => {
             if (col.field === "unitsSoldDistributor") {
               const totalUnits = data.reduce((acc, row) => {
                 const val = parseFloat(row[col.field]) || 0;
                 return acc + val;
               }, 0);
+
               return (
                 <TableRow
                   sx={{
-                    backgroundColor: "#ffffffff",
-                    fontWeight: "bold",
+                    backgroundColor: "#eff7ffff",
+                    fontWeight: 500,
                   }}
                 >
-                  <TableCell
-                    colSpan={celdas.length + 1}
-                    sx={styles.textFinal}
-                  >
+                  <TableCell colSpan={celdas.length} sx={styles.textFinal}>
                     TOTAL UNIDADES VENDIDAS:
                   </TableCell>
                   <TableCell sx={styles.textFinal}>
@@ -311,9 +261,7 @@ const AtomTableExtraccion = ({
               page={page}
               rowsPerPageOptions={[25, 50, 100]}
               rowsPerPage={rowsPerPage}
-              onPageChange={(event, newPage) =>
-                handleChangePage(event, newPage)
-              }
+              onPageChange={(event, newPage) => handleChangePage(event, newPage)}
               onRowsPerPageChange={handleChangeRowsPerPage}
               labelRowsPerPage="Filas por página:"
               labelDisplayedRows={({ from, to, count }) =>

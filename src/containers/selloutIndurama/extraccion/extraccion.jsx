@@ -1338,7 +1338,7 @@ const ExtraccionDatos = () => {
     dispatch(
       obtenerMatriculacion({
         page: 1,
-        limit: 10,
+        limit: 50,
         search: value,
         calculateMonth: formatDate(calculateDate),
       })
@@ -1409,309 +1409,318 @@ const ExtraccionDatos = () => {
                   style={{ display: "none" }}
                   onChange={handleFileInputChange}
                 />
-
-                <Grid
-                  container
-                  spacing={1.5}
-                  justifyContent="left"
+                <Accordion
+                  defaultExpanded
+                  sx={{
+                    backgroundColor: "white",
+                    borderRadius: 3,
+                    boxShadow: 2,
+                    "&:before": { display: "none" },
+                  }}
                 >
-                  <Grid size={2.5}>
-                    <AtomDatePicker
-                      id="calculateDate"
-                      required={true}
-                      color="#fff"
-                      height="45px"
-                      mode="month"
-                      label="Fecha de carga"
-                      value={calculateDate || null}
-                      onChange={(e) => {
-                        dispatch(setCalculateDate(e));
-                        limpiarErrores();
-                      }}
-                    />
-                  </Grid>
-                  {mostrarAlerta && mensajeAlerta ? (
-                    <Grid size={9} mt={2}>
-                      <AtomAlert text={mensajeAlerta} severity="error" />
-                    </Grid>
-                  ) : (
-                    <>
-                      {calculateDate && (
-                        <Grid size={2.5}>
-                          <AtomAutocompleteLabel
-                            id="matriculacionId"
-                            color="#fff"
-                            height="45px"
-                            label="Matriculación"
-                            required={true}
-                            inputValue={searchMatriculacion}
-                            onInputChange={(event, newValue) => {
-                              setSearchMatriculacion(newValue);
-                              buscarMatriculacion(newValue);
-                            }}
-                            value={matriculacionData || null}
-                            options={optionsMatriculacion}
-                            onChange={(event, newValue) => {
-                              setMatriculacionData(newValue);
-                              setConfiguracion({
-                                ...configuracion,
-                                distributor: newValue?.distributor || "",
-                                codeStoreDistributor:
-                                  newValue?.codeStoreDistributor || "",
-                              });
-                              setConfiguracionId(null);
-                              setData([]);
-                              setCeldas([]);
-                              setDocumento("");
-                              setErrors(false);
-                              setErrores([]);
-                            }}
-                          />
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon color="primary" />}
+                    aria-controls="panel-content"
+                    id="panel-header"
+                    sx={{
+                      flexDirection: "row-reverse",
+                      "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+                        transform: "rotate(180deg)",
+                      },
+                      "& .MuiAccordionSummary-content": {
+                        justifyContent: "flex-start",
+                      },
+                    }}
+                  >
+                    <Typography sx={{ fontSize: "15.5px", fontWeight: "500", color: "primary.main", pl: 2 }}>
+                      Parámetros de carga
+                    </Typography>
+                  </AccordionSummary>
+
+                  <AccordionDetails >
+                    <Grid
+                      container
+                      justifyContent="space-evenly"
+                      sx={{ backgroundColor: "white", borderRadius: 3 }}
+                    >
+                      <Grid size={2.5}>
+                        <AtomDatePicker
+                          id="calculateDate"
+                          required={true}
+                          height="40px"
+                          mode="month"
+                          label="Fecha de carga"
+                          value={calculateDate || null}
+                          onChange={(e) => {
+                            dispatch(setCalculateDate(e));
+                            limpiarErrores();
+                          }}
+                        />
+                      </Grid>
+                      {mostrarAlerta && mensajeAlerta ? (
+                        <Grid size={9} mt={1}>
+                          <AtomAlert text={mensajeAlerta} severity="error" />
                         </Grid>
-                      )}
-                      {matriculacionData && (
-                        <Grid size={2.5}>
-                          <AtomAutocompleteLabel
-                            id="configuracionId"
-                            required={true}
-                            color="#fff"
-                            placeholder="Seleccionar..."
-                            height="45px"
-                            label="Configuración"
-                            value={configuracionId}
-                            options={optionsConfiguracionSellout}
-                            onChange={(event, newValue) => {
-                              setConfiguracionId(newValue); setConfiguracionId(newValue);
-                              setData([]);
-                              setCeldas([]);
-                              setDocumento("");
-                              setErrors(false);
-                              setErrores([]);
-                            }}
-                          />
-                        </Grid>
-                      )}
-                      {configuracionId?.label === "CONFIGURACION ESTANDAR" && (
+                      ) : (
                         <>
-                          {/* <Grid size={3}>
-                            <AtomTextField
-                              id="distributor"
-                              color="#fff"
-                              height="45px"
-                              headerTitle="Distribuidor"
-                              onBlur={handleChangeDistributorData}
-                              value={configuracion?.distributor || ""}
-                              onChange={(e) => {
-                                setConfiguracion({
-                                  ...configuracion,
-                                  distributor: e.target.value,
-                                });
-                              }}
-                            />
-                          </Grid> */}
-                          <Grid size={3}>
-                            <AtomTextField
-                              id="codeStoreDistributor"
-                              color="#fff"
-                              height="45px"
-                              headerTitle="Almacén Distribuidor"
-                              value={configuracion?.codeStoreDistributor || ""}
-                              onChange={(e) => {
-                                setConfiguracion({
-                                  ...configuracion,
-                                  codeStoreDistributor: e.target.value,
-                                });
-                              }}
-                              onBlur={handleChangeCodeStoreDistributorData}
-                            />
-                          </Grid>
-                          {CAMPOS_CONFIG_ESTANDAR.map((campo) => (
-                            <Grid size={campo.size} key={campo.id}>
-                              <AtomTextField
-                                id={campo.id}
-                                color="#fff"
-                                height="45px"
-                                headerTitle={campo.headerTitle}
-                                required={campo.required}
-                                type={campo.type}
-                                multiline={campo.multiline}
-                                rows={campo.rows}
-                                value={configuracion[campo.id] || ""}
-                                placeholder={campo.placeholder}
-                                onChange={(e) =>
+                          {calculateDate && (
+                            <Grid size={3}>
+                              <AtomAutocompleteLabel
+                                id="matriculacionId"
+                                height="40px"
+                                label="Matriculación"
+                                required={true}
+                                inputValue={searchMatriculacion}
+                                onInputChange={(event, newValue) => {
+                                  setSearchMatriculacion(newValue);
+                                  buscarMatriculacion(newValue);
+                                }}
+                                value={matriculacionData || null}
+                                options={optionsMatriculacion}
+                                onChange={(event, newValue) => {
+                                  setMatriculacionData(newValue);
                                   setConfiguracion({
                                     ...configuracion,
-                                    [campo.id]: e.target.value,
-                                  })
-                                }
+                                    distributor: newValue?.distributor || "",
+                                    codeStoreDistributor:
+                                      newValue?.codeStoreDistributor || "",
+                                  });
+                                  setConfiguracionId(null);
+                                  setData([]);
+                                  setCeldas([]);
+                                  setDocumento("");
+                                  setErrors(false);
+                                  setErrores([]);
+                                }}
                               />
                             </Grid>
-                          ))}
-                          <Grid size={2} mt={0.5}>
-                            <AtomSwitch
-                              id="extraerTodos"
-                              color="#fff"
-                              height="45px"
-                              title="Todas"
-                              tooltip="Define si se extraen todas las hojas"
-                              checked={configuracion.extraerTodos || false}
-                              onChange={(e) =>
-                                setConfiguracion({
-                                  ...configuracion,
-                                  extraerTodos: e.target.checked,
-                                })
-                              }
-                            />
-                          </Grid>
+                          )}
+                          {matriculacionData && (
+                            <Grid size={3}>
+                              <AtomAutocompleteLabel
+                                id="configuracionId"
+                                required={true}
+                                placeholder="Seleccionar..."
+                                height="40px"
+                                label="Configuración"
+                                value={configuracionId}
+                                options={optionsConfiguracionSellout}
+                                onChange={(event, newValue) => {
+                                  setConfiguracionId(newValue); setConfiguracionId(newValue);
+                                  setData([]);
+                                  setCeldas([]);
+                                  setDocumento("");
+                                  setErrors(false);
+                                  setErrores([]);
+                                }}
+                              />
+                            </Grid>
+                          )}
+                          {configuracionId?.label === "CONFIGURACION ESTANDAR" && (
+                            <>
+                              <Grid size={3}>
+                                <AtomTextField
+                                  id="codeStoreDistributor"
+                                  height="40px"
+                                  headerTitle="Almacén Distribuidor"
+                                  value={configuracion?.codeStoreDistributor || ""}
+                                  onChange={(e) => {
+                                    setConfiguracion({
+                                      ...configuracion,
+                                      codeStoreDistributor: e.target.value,
+                                    });
+                                  }}
+                                  onBlur={handleChangeCodeStoreDistributorData}
+                                />
+                              </Grid>
+                              {CAMPOS_CONFIG_ESTANDAR.map((campo) => (
+                                <Grid size={campo.size} key={campo.id}>
+                                  <AtomTextField
+                                    id={campo.id}
+                                    height="40px"
+                                    headerTitle={campo.headerTitle}
+                                    required={campo.required}
+                                    type={campo.type}
+                                    multiline={campo.multiline}
+                                    rows={campo.rows}
+                                    value={configuracion[campo.id] || ""}
+                                    placeholder={campo.placeholder}
+                                    onChange={(e) =>
+                                      setConfiguracion({
+                                        ...configuracion,
+                                        [campo.id]: e.target.value,
+                                      })
+                                    }
+                                  />
+                                </Grid>
+                              ))}
+                              <Grid size={2} mt={0.5}>
+                                <AtomSwitch
+                                  id="extraerTodos"
+                                  height="40px"
+                                  title="Todas"
+                                  tooltip="Define si se extraen todas las hojas"
+                                  checked={configuracion.extraerTodos || false}
+                                  onChange={(e) =>
+                                    setConfiguracion({
+                                      ...configuracion,
+                                      extraerTodos: e.target.checked,
+                                    })
+                                  }
+                                />
+                              </Grid>
+                            </>
+                          )}
+                          {configuracionId && (
+                            <Grid size={3}>
+                              <AtomTextFielInputForm
+                                id="documento"
+                                height="40px"
+                                required
+                                headerTitle="Seleccionar Excel"
+                                placeholder="Seleccionar"
+                                value={documento}
+                                fullWidth
+                                endIcon={true}
+                                nameEndIcon={UploadFileIcon}
+                                onClickEndIcon={handleIconClick}
+                                onChange={handleIconClick}
+                              />
+                            </Grid>
+                          )}
+                          {data.length > 0 && (
+                            <Grid size={1.3} mt={2.5}>
+                              <AtomButtonPrimary
+                                height="40px"
+
+                                onClick={handleOpenDialogoConfirmacion}
+                                label="Guardar"
+                                disabled={loading}
+                              />
+                            </Grid>
+                          )}
                         </>
                       )}
-                      {configuracionId && (
-                        <Grid size={3}>
-                          <AtomTextFielInputForm
-                            id="documento"
-                            color="#fff"
-                            height="45px"
-                            headerTitle="Seleccionar Excel"
-                            placeholder="Seleccionar"
-                            value={documento}
-                            fullWidth
-                            endIcon={true}
-                            nameEndIcon={UploadFileIcon}
-                            onClickEndIcon={handleIconClick}
-                            onChange={handleIconClick}
-                          />
-                        </Grid>
-                      )}
-                      {data.length > 0 && (
-                        <Grid size={1.3} mt={2.6}>
-                          <AtomButtonPrimary
-                            height="44px"
-
-                            onClick={handleOpenDialogoConfirmacion}
-                            label="Guardar"
-                            disabled={loading}
-                          />
-                        </Grid>
-                      )}
-                    </>
-                  )}
-                  {hayErrores && (
-                    <Grid
-                      item
-                      size={12}
-                      sx={{
-                        width: "100%",
-                        mt: -2,
-                        mb: 1,
-                      }}
-                    >
-                      <Accordion
-                        sx={{
-                          "&:before": {
-                            display: "none",
-                          },
-                        }}
-                        elevation={0}
-                      >
-                        <AccordionSummary
-                          expandIcon={<ExpandMoreIcon color="error" />}
-                          aria-controls="panel-content"
-                          id="panel-header"
+                      {hayErrores && (
+                        <Grid
+                          item
+                          size={12}
                           sx={{
-                            backgroundColor: "#ffe6e6",
-                            flexDirection: "row-reverse",
-                            "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded":
-                            {
-                              transform: "rotate(180deg)",
-                            },
-                            "& .MuiAccordionSummary-content": {
-                              justifyContent: "center",
-                            },
+                            width: "100%",
+                            mt: -2,
+                            mb: 1,
                           }}
                         >
-                          <Typography
-                            color="error"
-                            sx={{ fontWeight: "bold", fontSize: "15px" }}
-                          >
-                            Errores encontrados (
-                            {errores.reduce(
-                              (sum, err) => sum + Object.keys(err).length,
-                              0
-                            )}
-                            )
-                          </Typography>
-                        </AccordionSummary>
-
-                        <AccordionDetails
-                          sx={{
-                            border: "1px solid #ff4d4d",
-                          }}
-                        >
-                          <Box
+                          <Accordion
                             sx={{
-                              maxHeight: 300,
-                              overflowY: "auto",
-                              px: 2,
-                              pb: 2,
-                              display: "flex",
-                              flexDirection: "row",
-                              gap: 1,
+                              "&:before": {
+                                display: "none",
+                              },
                             }}
+                            elevation={0}
                           >
-                            <ul
-                              style={{
-                                paddingLeft: "20px",
-                                margin: 0,
-                                display: "flex",
-                                flexDirection: "row",
-                                flexWrap: "wrap",
+                            <AccordionSummary
+                              expandIcon={<ExpandMoreIcon color="error" />}
+                              aria-controls="panel-content"
+                              id="panel-header"
+                              sx={{
+                                backgroundColor: "#ffe6e6",
+                                flexDirection: "row-reverse",
+                                "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded":
+                                {
+                                  transform: "rotate(180deg)",
+                                },
+                                "& .MuiAccordionSummary-content": {
+                                  justifyContent: "center",
+                                },
                               }}
                             >
-                              {errores.map((filaError, rowIndex) =>
-                                Object.entries(filaError).map(
-                                  ([columna, mensaje], idx) => (
-                                    <Grid
-                                      item
-                                      size={6}
-                                      key={`${rowIndex}-${idx}`}
-                                    >
-                                      <li
-                                        key={`${rowIndex}-${idx}`}
-                                        style={{
-                                          color: "#d32f2f",
-                                          fontSize: "13px",
-                                        }}
-                                      >
-                                        Fila {rowIndex + 1}, Columna "{columna}
-                                        ": {mensaje}
-                                      </li>
-                                    </Grid>
-                                  )
+                              <Typography
+                                color="error"
+                                sx={{ fontWeight: "bold", fontSize: "15px" }}
+                              >
+                                Errores encontrados (
+                                {errores.reduce(
+                                  (sum, err) => sum + Object.keys(err).length,
+                                  0
+                                )}
                                 )
-                              )}
-                            </ul>
-                          </Box>
-                        </AccordionDetails>
-                      </Accordion>
-                    </Grid>
-                  )}
+                              </Typography>
+                            </AccordionSummary>
 
-                  <Grid size={12}>
-                    {loading ? (
-                      <AtomCircularProgress />
-                    ) : (
-                      <AtomTableExtraccion
-                        loading={loading}
-                        data={data}
-                        setData={setData}
-                        celdas={celdas}
-                        errors={errores}
-                        setErrores={setErrores}
-                        showIndex={true}
-                      />
-                    )}
-                  </Grid>
-                </Grid>
+                            <AccordionDetails
+                              sx={{
+                                border: "1px solid #ff4d4d",
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  maxHeight: 300,
+                                  overflowY: "auto",
+                                  px: 2,
+                                  pb: 2,
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  gap: 1,
+                                }}
+                              >
+                                <ul
+                                  style={{
+                                    paddingLeft: "20px",
+                                    margin: 0,
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  {errores.map((filaError, rowIndex) =>
+                                    Object.entries(filaError).map(
+                                      ([columna, mensaje], idx) => (
+                                        <Grid
+                                          item
+                                          size={6}
+                                          key={`${rowIndex}-${idx}`}
+                                        >
+                                          <li
+                                            key={`${rowIndex}-${idx}`}
+                                            style={{
+                                              color: "#d32f2f",
+                                              fontSize: "13px",
+                                            }}
+                                          >
+                                            Fila {rowIndex + 1}, Columna "{columna}
+                                            ": {mensaje}
+                                          </li>
+                                        </Grid>
+                                      )
+                                    )
+                                  )}
+                                </ul>
+                              </Box>
+                            </AccordionDetails>
+                          </Accordion>
+                        </Grid>
+                      )}
+
+                    </Grid>
+                  </AccordionDetails>
+                </Accordion>
+
+                <Box>
+                  {loading ? (
+                    <AtomCircularProgress />
+                  ) : (
+                    <AtomTableExtraccion
+                      loading={loading}
+                      data={data}
+                      setData={setData}
+                      celdas={celdas}
+                      errors={errores}
+                      setErrores={setErrores}
+                      showIndex={true}
+                    />
+                  )}
+                </Box>
               </>
             }
           />

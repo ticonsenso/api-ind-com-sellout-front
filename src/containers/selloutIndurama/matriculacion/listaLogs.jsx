@@ -33,7 +33,7 @@ import {
   CheckCircle as CheckCircleIcon,
   Cancel as CancelIcon,
 } from "@mui/icons-material";
-import { formatDate, formatIsoToDate } from "../../constantes";
+import { formatDate } from "../../constantes";
 
 const ListaLogsMatriculacion = ({ calculateDate }) => {
   const hasPermission = usePermission();
@@ -41,13 +41,9 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
   const { showDialog } = useDialog();
-  const data = useSelector(
+  const dataMatriculacionRegistrados = useSelector(
     (state) => state.configSellout?.dataMatriculacionRegistrados
   );
-  const dataMatriculacionRegistrados = data.map((item) => ({
-    ...item,
-    calculateDate: formatDate(item?.calculateDate || null),
-  }));
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
