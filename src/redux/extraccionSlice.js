@@ -171,6 +171,24 @@ export const guardarExtraccion = createAsyncThunk(
   }
 );
 
+//eliminar clientes/datos cargados
+export const deleteClientesCargados = createAsyncThunk(
+  "extraccion/deleteClientesCargados",
+  async (data, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = state.auth.auth.token;
+    try {
+      return await apiService
+        .setUrl(apiConfig.sendSelloutUrl.url + "/deleteall")
+        .setMethod("POST")
+        .setData(data)
+        .send(token);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 //tabla envio
 export const obtenerTablaEnvio = createAsyncThunk(
   "tablaEnvio/obtenerTablaEnvio",

@@ -74,7 +74,7 @@ const ProductosNoHomologados = () => {
             const items = response.payload.items || [];
             const dataTransformada = items.map(item => ({
                 ...item,
-                codeProduct: item.codeProduct?.trim() === "" ? "OTROS" : item.codeProduct
+                // codeProduct: item.codeProduct?.trim() === "" ? "OTROS" : item.codeProduct
             }));
             setData(dataTransformada);
         } finally {
@@ -276,6 +276,7 @@ const ProductosNoHomologados = () => {
                                                 value={calculateDate}
                                                 onChange={(e) => {
                                                     dispatch(setCalculateDate(e));
+                                                    setResultadosActualizados(null);
                                                 }}
                                             />
                                         </Grid>

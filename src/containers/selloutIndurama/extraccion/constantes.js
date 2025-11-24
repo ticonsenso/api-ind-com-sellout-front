@@ -80,39 +80,61 @@ export const etiquetasColumnas = {
 
 export const columnsMatriculacion = [
   {
-    id: "distributor",
     label: "Distribuidor",
     field: "distributor",
   },
   {
-    id: "storeName",
     label: "Almacén",
     field: "storeName",
   },
   {
-    id: "createdAt",
     label: "Fecha de registro",
     field: "createdAt",
     type: "date"
   },
   {
-    id: "isUploaded",
     label: "Cargado",
     field: "isUploaded",
   },
   {
-    id: "productCount",
     label: "Unidades Vendidas",
     field: "productCountTotal",
     type: "string"
   },
   {
-    id: "rowsCount",
     label: "# Filas",
     field: "rowCountTotal",
     type: "string"
   },
 ];
+
+export const columnsDetallesMatriculacion = [
+  {
+    label: "Distribuidor",
+    field: "distributor",
+  },
+  {
+    label: "Almacén",
+    field: "storeName",
+  },
+  {
+    label: "Unidades Vendidas",
+    field: "productCount",
+    type: "string"
+  },
+  {
+    label: "# Filas/Registros",
+    field: "rowsCount",
+    type: "string"
+  },
+  {
+    label: "Usuario",
+    field: "user",
+    type: "string"
+
+  }
+];
+
 
 export const optionsMappingToField = [
   { id: "distributor", label: "Distribuidor" },

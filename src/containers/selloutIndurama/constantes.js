@@ -247,42 +247,51 @@ export const columnsPlantillaStandar = [
   {
     field: "distributor",
     label: "Distribuidor",
+    type: "string"
   },
   {
     field: "codeStoreDistributor",
     label: "Cod. Almacen Distribuidor",
+    type: "string"
   },
   {
     field: "codeProductDistributor",
     label: "Cod. Prod. Distribuidor",
+    type: "string"
   },
   {
     field: "descriptionDistributor",
     label: "Descripción Distribuidor",
+    type: "string"
   },
   {
     field: "unitsSoldDistributor",
-    label: "Unidades Venta Distribuidor",
+    label: "Unidades Venta",
   },
   {
-    field: "saleDate",
-    label: "Fecha Ultimo día mes",
+    field: "calculateDate",
+    label: "Fecha registro",
+    type: "date"
   },
   {
     field: "codeStore",
     label: "Cod. Almacen",
+    type: "string"
   },
   {
     field: "codeProduct",
     label: "Cod. Producto",
+    type: "string"
   },
   {
     field: "storeName",
     label: "Nombre Almacen",
+    type: "string"
   },
   {
     field: "productModel",
     label: "Modelo Producto",
+    type: "string"
   },
   // {
   //   field: "calculateDate",

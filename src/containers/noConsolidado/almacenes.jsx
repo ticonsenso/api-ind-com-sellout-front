@@ -70,7 +70,7 @@ const AlmacenesNoHomologados = () => {
             const items = response.payload.items || [];
             const dataTransformada = items.map(item => ({
                 ...item,
-                codeStore: item.codeStore?.trim() === "" ? "NO SE VISITA" : item.codeStore
+                // codeStore: item.codeStore?.trim() === "" ? "NO SE VISITA" : item.codeStore
             }));
             setData(dataTransformada);
         } finally {
@@ -264,6 +264,7 @@ const AlmacenesNoHomologados = () => {
                                                 value={calculateDate}
                                                 onChange={(e) => {
                                                     dispatch(setCalculateDate(e));
+                                                    setResultadosActualizados(null);
                                                 }}
                                             />
                                         </Grid>

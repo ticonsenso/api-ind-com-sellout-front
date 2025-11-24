@@ -593,7 +593,7 @@ const Matriculacion = ({ calculateDate }) => {
                       page={page}
                       limit={limit}
                       count={totalMatriculacion}
-                      selectable={true}
+                      selectable={matriculacionCerrada === "abierto" ? true : false}
                       selectedRows={selectedIds}
                       onSelectionChange={(ids) => {
                         setSelectedIds(ids);

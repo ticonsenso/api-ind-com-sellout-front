@@ -59,7 +59,7 @@ export const DialogProvider = ({ children }) => {
           {dialogState.title}
         </DialogTitle>
         <DialogContent dividers>
-          <DialogContentText>{dialogState.message}</DialogContentText>
+          <DialogContentText sx={{ textAlign: "center" }}>{dialogState.message}</DialogContentText>
         </DialogContent>
         <DialogActions sx={{ pt: 2 }}>
           <Grid container justifyContent="space-between" spacing={2}>

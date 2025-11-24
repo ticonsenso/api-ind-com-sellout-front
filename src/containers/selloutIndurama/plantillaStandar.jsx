@@ -486,14 +486,14 @@ const PlantillaStandar = () => {
                         />
                       </Tooltip>
                     </Grid>
-                    {/* <Grid size={2} mt={2.8}>
+                    <Grid size={2} mt={2.8}>
                       <AtomButtonPrimary
                         label="Sincronizar"
                         height="45px"
                         icon={<SyncIcon />}
                         onClick={handleOpenDialogoSincronizar}
                       />
-                    </Grid> */}
+                    </Grid>
                   </Grid>
 
                   {loading ? (

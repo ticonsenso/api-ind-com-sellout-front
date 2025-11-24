@@ -1464,7 +1464,7 @@ const ExtraccionDatos = () => {
                       ) : (
                         <>
                           {calculateDate && (
-                            <Grid size={3}>
+                            <Grid size={2.5}>
                               <AtomAutocompleteLabel
                                 id="matriculacionId"
                                 height="40px"
@@ -1496,7 +1496,7 @@ const ExtraccionDatos = () => {
                             </Grid>
                           )}
                           {matriculacionData && (
-                            <Grid size={3}>
+                            <Grid size={2.5}>
                               <AtomAutocompleteLabel
                                 id="configuracionId"
                                 required={true}
@@ -1741,12 +1741,12 @@ const ExtraccionDatos = () => {
               {formatDate(dataResponse?.extractionDate || "")}
             </Typography>
             <Divider sx={{ my: 2 }} />
-            <Typography variant="h6">Registros</Typography>
+            <Typography variant="h6">Detalles de Registros</Typography>
             <Typography variant="body1">
-              Cantidad de registros: {dataResponse?.recordCount || 0}
+              Total de registros: {dataResponse?.recordCount || 0}
             </Typography>
             <Typography variant="body1">
-              ¿Procesado?: {dataResponse?.isProcessed ? "Sí" : "No"}
+              Unidades Vendidas: {dataResponse?.productCount || 0}
             </Typography>
             <Typography color="red">
               Errores: {dataResponse?.processingDetails?.error || 0}

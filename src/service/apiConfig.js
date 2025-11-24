@@ -180,4 +180,5 @@ export const apiConfig = {
   listaColumnsCategoriasUrl: {
     url: ipServe + "api/column-config/keywords",
   },
+
 };

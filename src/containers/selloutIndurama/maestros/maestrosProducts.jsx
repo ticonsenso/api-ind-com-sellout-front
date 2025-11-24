@@ -23,7 +23,7 @@ import { Typography, IconButton, Box, CircularProgress } from "@mui/material";
 import { useDialog } from "../../../context/DialogDeleteContext";
 import AtomSwitch from "../../../atoms/AtomSwitch";
 import { DriveFolderUploadOutlined as DriveFolderUploadOutlinedIcon } from "@mui/icons-material";
-import { limitGeneral } from "../../constantes";
+import { limitGeneral, normalizeEncabezados } from "../../constantes";
 import AtomTableInformationExtraccion from "../../../atoms/AtomTableInformationExtraccion";
 import { useCallback } from "react";
 import IconoFlotante from "../../../atoms/IconActionPage";
@@ -272,24 +272,21 @@ const MasterProducts = () => {
       const workbook = new ExcelJS.Workbook();
       await workbook.xlsx.load(arrayBuffer);
 
-      const worksheet = workbook.worksheets.find(
-        (ws) => ws.name === "mt prod"
-      );
+      const worksheet = workbook.worksheets.find((ws) => ws.name === "mt prod");
 
       if (!worksheet) {
         throw new Error("La hoja 'mt prod' no fue encontrada en el archivo");
       }
 
       const headerRow = worksheet.getRow(1);
-      const headersOriginal = headerRow.values.slice(1);
+      const headersData = headerRow.values.slice(1);
 
-      const headers = headersOriginal.map((h) =>
-        String(h).toLowerCase().trim()
-      );
-
-      const expectedHeaders = columnsMaestrosProducts
+      const expectedHeadersData = columnsMaestrosProducts
         .filter((col) => col.field !== "status")
-        .map((col) => col.label.toLowerCase().trim());
+        .map((col) => col.label);
+
+      const headers = headersData.map((h) => normalizeEncabezados(h));
+      const expectedHeaders = expectedHeadersData.map((h) => normalizeEncabezados(h));
 
       const missingHeaders = expectedHeaders.filter(
         (h) => !headers.includes(h)
@@ -313,14 +310,9 @@ const MasterProducts = () => {
           if (field === "status") {
             item[field] = true;
           } else {
-            // Normalizar label para buscarlo en headers
-            const normalizedLabel = label.toLowerCase().trim();
+            const colIndex = headers.indexOf(normalizeEncabezados(label));
 
-            // Buscar columna en headers normalizados
-            const colIndex = headers.indexOf(normalizedLabel);
-
-            item[field] =
-              colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
+            item[field] = colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
           }
         });
 

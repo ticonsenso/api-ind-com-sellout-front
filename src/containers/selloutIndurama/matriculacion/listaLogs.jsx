@@ -26,7 +26,7 @@ import { useDialog } from "../../../context/DialogDeleteContext";
 import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
 import { usePermission } from "../../../context/PermisosComtext";
 import IconoFlotante from "../../../atoms/IconActionPage";
-import { columnsMatriculacion } from "../extraccion/constantes";
+import { columnsMatriculacion, columnsDetallesMatriculacion } from "../extraccion/constantes";
 import AtomDialog from "../../../atoms/AtomDialogForm";
 import { styles } from "../extraccion/constantes";
 import {
@@ -34,6 +34,7 @@ import {
   Cancel as CancelIcon,
 } from "@mui/icons-material";
 import { formatDate } from "../../constantes";
+import { deleteClientesCargados } from "../../../redux/extraccionSlice"
 
 const ListaLogsMatriculacion = ({ calculateDate }) => {
   const hasPermission = usePermission();
@@ -116,9 +117,65 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
       color: "success",
       onClick: (row) => handleDetailsMatriculacion(row),
     },
+    {
+      label: "Eliminar",
+      color: "error",
+      onClick: (row) => handleDeleteDistribuidor(row),
+    }
   ];
 
+  const actionsDetalles = [
+    {
+      label: "Eliminar",
+      color: "error",
+      onClick: (row) => handleDeleteDistribuidorAlmacen(row),
+    }
+  ];
+
+
+  const handleDeleteDistribuidor = (row) => {
+    showDialog({
+      title: "Confirmación de eliminación", message: `¿Está seguro que desea eliminar todos los datos registrados con el Distribuidor: ${row?.distributor}?`,
+      onConfirm: async () => {
+        try {
+          const response = await dispatch(deleteClientesCargados({ distribuidor: row.distributor, storeName: "" }));
+          if (response.meta.requestStatus === "fulfilled") {
+            showSnackbar(response.payload.message);
+            buscarMatriculacionRegistrados();
+          } else {
+            showSnackbar(response.payload.message);
+          }
+        } catch (error) {
+          showSnackbar(error || "Error al eliminar la matriculacion");
+        }
+      },
+      onCancel: () => { },
+    });
+  };
+
+  const handleDeleteDistribuidorAlmacen = (row) => {
+    showDialog({
+      title: "Confirmación de eliminación", message: `¿Está seguro que desea eliminar los registros: Distribuidor: ${row?.distributor} Almacén: ${row?.storeName}?`,
+      onConfirm: async () => {
+        try {
+          const response = await dispatch(deleteClientesCargados({ distribuidor: row.distributor, storeName: row.storeName }));
+          if (response.meta.requestStatus === "fulfilled") {
+            showSnackbar(response.payload.message);
+            handleClose();
+            buscarMatriculacionRegistrados();
+          } else {
+            showSnackbar(response.payload.message);
+          }
+        } catch (error) {
+          showSnackbar(error || "Error al eliminar la matriculacion");
+        }
+      },
+      onCancel: () => { },
+    });
+  };
+
   const handleDetailsMatriculacion = (row) => {
+    console.log(row);
     setDetallesData(row);
     setOpen(true);
   };
@@ -234,7 +291,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
                       </Table>
                     </TableContainer>
                   </Box>
-                  {detallesData?.logs?.length > 1 && (
+                  {detallesData?.logs?.length > 0 && (
                     <Box sx={styles.container}>
                       <Typography
                         variant="subtitle2"
@@ -243,63 +300,16 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
                       >
                         Detalles de Almacenes
                       </Typography>
-
-                      <TableContainer
-                        component={Paper}
-                        elevation={0}
-                        sx={styles.table}
-                      >
-                        <Table size="small">
-                          <TableHead>
-                            <TableRow>
-                              <TableCell sx={styles.tableCell}></TableCell>
-                              <TableCell sx={styles.tableCell}>
-                                <Typography sx={styles.typography}>
-                                  Distribuidor
-                                </Typography>
-                              </TableCell>
-                              <TableCell sx={styles.tableCell}>
-                                <Typography sx={styles.typography}>
-                                  Almacén
-                                </Typography>
-                              </TableCell>
-                              <TableCell sx={styles.tableCell}>
-                                <Typography sx={styles.typography}>
-                                  Filas / Registros
-                                </Typography>
-                              </TableCell>
-                              <TableCell sx={styles.tableCell}>
-                                <Typography sx={styles.typography}>
-                                  Unidades Vendidas
-                                </Typography>
-                              </TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {detallesData?.logs?.map((detalle, index) => (
-                              <TableRow
-                                key={`${detalle.distributor}-${detalle.codeStoreDistributor}-${index}`}
-                              >
-                                <TableCell sx={styles.tableCell}>
-                                  {index + 1}
-                                </TableCell>
-                                <TableCell sx={styles.tableCellDetail}>
-                                  {detalle.distributor}
-                                </TableCell>
-                                <TableCell sx={styles.tableCellDetail}>
-                                  {detalle.storeName}
-                                </TableCell>
-                                <TableCell sx={styles.tableCellDetail}>
-                                  {detalle.rowsCount}
-                                </TableCell>
-                                <TableCell sx={styles.tableCellDetail}>
-                                  {detalle.productCount}
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
+                      <AtomTableForm
+                        columns={columnsDetallesMatriculacion}
+                        data={detallesData.logs || []}
+                        pagination={false}
+                        actions={actionsDetalles}
+                        page={page}
+                        limit={limit}
+                        handleChangePage={handleChangePage}
+                        handleChangeRowsPerPage={handleChangeRowsPerPage}
+                      />
                     </Box>
                   )}
                 </Box>
