@@ -142,7 +142,7 @@ const AlmacenesNoHomologados = () => {
                 id: newRow.id,
                 distributor: newRow.distributor,
                 storeDistributor: newRow.codeStoreDistributor,
-                codeStoreSic: Number(newRow.codeStore) || 0,
+                codeStoreSic: newRow.codeStore || null,
             };
             setResultadosActualizados((prev) => {
                 const lista = prev || [];

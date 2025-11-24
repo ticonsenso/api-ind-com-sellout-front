@@ -153,7 +153,7 @@ const ProductosNoHomologados = () => {
                 distributor: newRow.distributor,
                 productStore: newRow.codeProductDistributor,
                 productDistributor: newRow.descriptionDistributor,
-                codeProductSic: Number(valorNuevo) || 0,
+                codeProductSic: valorNuevo || null,
             };
 
             setResultadosActualizados((prev) => {
