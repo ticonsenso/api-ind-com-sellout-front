@@ -1593,6 +1593,22 @@ const ExtraccionDatos = () => {
                             <>
                               <Grid size={3}>
                                 <AtomTextField
+                                  id="distributor"
+                                  height="45px"
+                                  disabled
+                                  headerTitle="Distribuidor"
+                                  onBlur={handleChangeDistributorData}
+                                  value={configuracion?.distributor || ""}
+                                  onChange={(e) => {
+                                    setConfiguracion({
+                                      ...configuracion,
+                                      distributor: e.target.value,
+                                    });
+                                  }}
+                                />
+                              </Grid>
+                              <Grid size={2.5}>
+                                <AtomTextField
                                   id="codeStoreDistributor"
                                   height="40px"
                                   headerTitle="Almacén Distribuidor"
@@ -1627,7 +1643,7 @@ const ExtraccionDatos = () => {
                                   />
                                 </Grid>
                               ))}
-                              <Grid size={2} mt={0.5}>
+                              <Grid size={1.5} mt={0.5}>
                                 <AtomSwitch
                                   id="extraerTodos"
                                   height="40px"

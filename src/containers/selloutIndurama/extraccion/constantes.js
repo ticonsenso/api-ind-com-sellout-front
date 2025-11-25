@@ -48,7 +48,7 @@ export const CAMPOS_CONFIG_ESTANDAR = [
     type: "number",
     multiline: false,
     rows: 1,
-    size: 2,
+    size: 1.5,
     placeholder: "Inicio/extracción",
   },
   {
@@ -57,7 +57,7 @@ export const CAMPOS_CONFIG_ESTANDAR = [
     type: "number",
     multiline: false,
     rows: 1,
-    size: 2,
+    size: 1.5,
     placeholder: "Fin Extracción",
   },
 ];

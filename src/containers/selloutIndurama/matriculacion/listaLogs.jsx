@@ -206,7 +206,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
               title="Actualizar lista"
               iconName="Refresh"
               right={60}
-              // color="#63B6FF"
+              color="#63B6FF"
               top={95}
             />
             {namePermission && (
@@ -214,8 +214,8 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
                 handleButtonClick={confirmarExportarExcel}
                 title="Descargar lista matriculaciones por mes"
                 iconName="SaveAlt"
-                color="#5ab9f6"
-                right={15}
+                color="#01960eff"
+                right={20}
                 top={95}
               />
             )}

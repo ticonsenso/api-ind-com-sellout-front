@@ -471,22 +471,29 @@ const Matriculacion = ({ calculateDate }) => {
               />
               {namePermission && (
                 <>
-                  <IconoFlotante
+                  {/* <IconoFlotante
                     handleButtonClick={handleMenuOpen}
                     title="Mas opciones"
                     iconName="MoreVert"
                     right={20}
                     top={95}
+                  /> */}
+                  <IconoFlotante
+                    handleButtonClick={() => setOpenCreateMatriculacionBeforeMonth(true)}
+                    title="Crear clientes por mes"
+                    iconName="Add"
+                    color="#0c9200ff"
+                    right={20}
+                    top={95}
                   />
-
-                  <Menu
+                  {/* <Menu
                     anchorEl={anchorEl}
                     open={open}
                     onClose={handleMenuClose}
                     anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                     transformOrigin={{ vertical: "top", horizontal: "right" }}
-                  >
-                    {/* <MenuItem
+                  > */}
+                  {/* <MenuItem
                       sx={{
                         gap: 1,
                       }}
@@ -510,27 +517,27 @@ const Matriculacion = ({ calculateDate }) => {
                         Subir Excel matriculaciones
                       </Typography>
                     </MenuItem> */}
-                    <MenuItem
-                      sx={{
-                        gap: 1,
-                      }}
-                      onClick={confirmarExportarExcel}
-                    >
-                      <ListItemIcon>
-                        <SaveAltIcon
-                          sx={{
-                            color: "white",
-                            backgroundColor: "#5ab9f6",
-                            borderRadius: "50%",
-                            padding: "3px",
-                          }}
-                        />
-                      </ListItemIcon>
-                      <Typography variant="inherit">
-                        Descargar lista matriculaciones
-                      </Typography>
-                    </MenuItem>
-                    <MenuItem
+                  {/* <MenuItem
+                    sx={{
+                      gap: 1,
+                    }}
+                    onClick={confirmarExportarExcel}
+                  >
+                    <ListItemIcon>
+                      <SaveAltIcon
+                        sx={{
+                          color: "white",
+                          backgroundColor: "#5ab9f6",
+                          borderRadius: "50%",
+                          padding: "3px",
+                        }}
+                      />
+                    </ListItemIcon>
+                    <Typography variant="inherit">
+                      Descargar lista matriculaciones
+                    </Typography>
+                  </MenuItem> */}
+                  {/* <MenuItem
                       sx={{
                         gap: 1,
                       }}
@@ -550,7 +557,7 @@ const Matriculacion = ({ calculateDate }) => {
                         Crear matriculaciones por mes
                       </Typography>
                     </MenuItem>
-                  </Menu>
+                  </Menu> */}
                   <input
                     id="input-excel-matriculacion"
                     type="file"
