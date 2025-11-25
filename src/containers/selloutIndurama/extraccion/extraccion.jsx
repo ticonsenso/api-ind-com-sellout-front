@@ -423,15 +423,17 @@ const ExtraccionDatos = () => {
         const valor = registro.unitsSoldDistributor;
         const cantidadNumerica = parseFloat(valor);
 
-        if (!isNaN(cantidadNumerica) && cantidadNumerica !== 0) {
-          cantidad = hasNegativeValue
-            ? Math.abs(cantidadNumerica)
-            : cantidadNumerica;
+        if (isNaN(cantidadNumerica) || cantidadNumerica === 0) continue;
 
-          registro.unitsSoldDistributor = cantidad;
-        } else {
-          continue;
-        }
+        if (!Number.isInteger(cantidadNumerica)) continue;
+
+        cantidad = hasNegativeValue
+          ? Math.abs(cantidadNumerica)
+          : cantidadNumerica;
+
+        registro.unitsSoldDistributor = cantidad;
+      } else {
+        cantidad = 1;
       }
 
 
@@ -1103,6 +1105,11 @@ const ExtraccionDatos = () => {
         const hasNegativeValue = configuracion.hasNegativeValue;
 
         if (!isNaN(cantidadNumerica) && cantidadNumerica !== 0) {
+
+          if (!Number.isInteger(cantidadNumerica)) {
+            continue;
+          }
+
           rawCantidad = hasNegativeValue
             ? Math.abs(cantidadNumerica)
             : cantidadNumerica;
