@@ -141,14 +141,14 @@ export const DATATYPE = [
 ];
 
 export const camposConfiguracion = [
-  {
-    id: "distributorCompanyName",
-    headerTitle: "Nombre Distribuidor",
-    placeholder: "Ingrese el nombre del distribuidor",
-    size: 4,
-    disabled: true,
-    error: false,
-  },
+  // {
+  //   id: "distributorCompanyName",
+  //   headerTitle: "Nombre Distribuidor",
+  //   placeholder: "Ingrese el nombre del distribuidor",
+  //   size: 4,
+  //   disabled: true,
+  //   error: false,
+  // },
   {
     id: "codeStoreDistributor",
     headerTitle: "Código Almacén Distribuidor",
@@ -163,12 +163,20 @@ export const camposConfiguracion = [
     required: true,
   },
   {
-    id: "sheetName",
-    headerTitle: "Nombre de hoja excel",
-    placeholder: "Ingrese el nombre de la hoja",
-    size: 4,
+    id: "initialSheet",
+    headerTitle: "Hoja Inicio",
+    placeholder: "Por defecto la primera",
+    size: 2,
     required: false,
     error: false,
+  },
+  {
+    id: "endSheet",
+    headerTitle: "Hoja Fin",
+    placeholder: "Ingrese la hoja final a extraer",
+    type: "number",
+    required: false,
+    size: 2,
   },
   // {
   //   id: "description",

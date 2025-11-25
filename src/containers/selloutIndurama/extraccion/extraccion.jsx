@@ -339,120 +339,185 @@ const ExtraccionDatos = () => {
     calculateDate
   ) => {
     const registros = [];
-    let sheetName = configuracionId?.sheetName.trimEnd();
-    if (!sheetName || !workbook.Sheets[sheetName]) {
-      sheetName = workbook.SheetNames[0];
+
+    // --- Determinar lista de hojas a procesar ----------------
+    const totalHojas = workbook.SheetNames.length;
+
+    const rawInitial = configuracionId?.initialSheet ?? null;
+    const rawEnd = configuracionId?.endSheet ?? null;
+    const explicitSheetName = configuracionId?.sheetName?.trimEnd?.();
+
+    const hojasAProcesar = [];
+
+    const isDefined = (v) => v !== null && v !== undefined && v !== "";
+
+    if (isDefined(rawInitial) || isDefined(rawEnd)) {
+      // Si vienen initial/end (uno o ambos), construir rango.
+      // Podemos aceptar tanto índices (números) como nombres (strings).
+      const resolveIndex = (val, fallbackIndex) => {
+        // Si es número (o string que representa número) -> convertir a índice 0-based
+        if (typeof val === "number" || /^\d+$/.test(String(val))) {
+          const idx = parseInt(val, 10) - 1; // 1-based -> 0-based
+          if (idx < 0) return 0;
+          if (idx >= totalHojas) return totalHojas - 1;
+          return idx;
+        }
+        // Si es string no numérica -> buscar nombre exacto en SheetNames
+        if (typeof val === "string") {
+          const name = val.trim();
+          const foundIdx = workbook.SheetNames.indexOf(name);
+          return foundIdx === -1 ? fallbackIndex : foundIdx;
+        }
+        // fallback
+        return fallbackIndex;
+      };
+
+      const inicioIdx = isDefined(rawInitial)
+        ? resolveIndex(rawInitial, 0)
+        : resolveIndex(rawEnd, 0); // si no viene initial pero sí end, usamos end como inicio
+      const finIdx = isDefined(rawEnd)
+        ? resolveIndex(rawEnd, inicioIdx)
+        : inicioIdx; // si no viene end -> solo initial
+
+      // Asegurar orden correcto
+      const start = Math.max(0, Math.min(inicioIdx, finIdx));
+      const end = Math.min(totalHojas - 1, Math.max(inicioIdx, finIdx));
+
+      for (let i = start; i <= end; i++) {
+        hojasAProcesar.push(workbook.SheetNames[i]);
+      }
+    } else if (isDefined(explicitSheetName) && workbook.Sheets[explicitSheetName]) {
+      // Usar sheetName como antes, si existe
+      hojasAProcesar.push(explicitSheetName);
+    } else {
+      // Ninguna configuración: usar la primera hoja
+      if (totalHojas > 0) hojasAProcesar.push(workbook.SheetNames[0]);
     }
-    const worksheet = workbook.Sheets[sheetName];
 
+    // --- Procesar cada hoja usando tu lógica original ------------
     const columnasActivas = columnasConfig.filter((c) => c.isActive);
-    const filaInicio = Math.min(...columnasActivas.map((c) => c.startRow || 2));
-    const rango = XLSX.utils.decode_range(worksheet["!ref"]);
-    const filaFin = rango.e.r + 1;
+    // Si columnasActivas está vacío, no seguimos
+    if (!columnasActivas || columnasActivas.length === 0) return registros;
 
-    const camposConfig = columnasActivas.map((col) => ({
+    // Precalcular camposConfig una vez (misma config para todas las hojas)
+    const camposConfigGlobal = columnasActivas.map((col) => ({
       campo: col.mappingToField,
       letra: col.columnLetter,
       tipo: col.dataType,
     }));
 
-    for (let fila = filaInicio; fila <= filaFin; fila++) {
-      const registro = {};
-      let filaVacia = true;
+    for (const sheetName of hojasAProcesar) {
+      const worksheet = workbook.Sheets[sheetName];
+      if (!worksheet) continue;
 
-      for (const campoConfig of camposConfig) {
-        const valorRaw = extraerTextoCelda(
-          worksheet[`${campoConfig.letra}${fila}`]
-        );
+      // Determinar filaInicio por hoja (igual que antes)
+      const filaInicio = Math.min(...columnasActivas.map((c) => c.startRow || 2));
 
-        if (campoConfig.tipo === "INTEGER") {
-          const valorNum = parseFloat(valorRaw);
-          registro[campoConfig.campo] = !isNaN(valorNum) ? valorNum : null;
-        } else if (campoConfig.tipo === "DATE") {
-          registro[campoConfig.campo] = normalizarFechaISO(valorRaw);
-        } else {
-          registro[campoConfig.campo] =
-            typeof valorRaw === "string" ? valorRaw.trim() : valorRaw;
+      // Si la hoja está vacía o no tiene rango, saltar
+      if (!worksheet["!ref"]) continue;
+      const rango = XLSX.utils.decode_range(worksheet["!ref"]);
+      const filaFin = rango.e.r + 1;
+
+      // Recorremos filas tal como lo hacías
+      for (let fila = filaInicio; fila <= filaFin; fila++) {
+        const registro = {};
+        let filaVacia = true;
+
+        for (const campoConfig of camposConfigGlobal) {
+          const cellRef = `${campoConfig.letra}${fila}`;
+          const valorRaw = extraerTextoCelda(worksheet[cellRef]);
+
+          if (campoConfig.tipo === "INTEGER") {
+            const valorNum = parseFloat(valorRaw);
+            registro[campoConfig.campo] = !isNaN(valorNum) ? valorNum : null;
+          } else if (campoConfig.tipo === "DATE") {
+            registro[campoConfig.campo] = normalizarFechaISO(valorRaw);
+          } else {
+            registro[campoConfig.campo] =
+              typeof valorRaw === "string" ? valorRaw.trim() : valorRaw;
+          }
+
+          if (
+            registro[campoConfig.campo] !== null &&
+            registro[campoConfig.campo] !== "" &&
+            registro[campoConfig.campo] !== undefined
+          ) {
+            filaVacia = false;
+          }
         }
 
         if (
-          registro[campoConfig.campo] !== null &&
-          registro[campoConfig.campo] !== "" &&
-          registro[campoConfig.campo] !== undefined
+          !registro.codeProductDistributor ||
+          registro.codeProductDistributor === ""
         ) {
-          filaVacia = false;
+          registro.codeProductDistributor = registro.descriptionDistributor;
         }
-      }
 
-      if (
-        !registro.codeProductDistributor ||
-        registro.codeProductDistributor === ""
-      ) {
-        registro.codeProductDistributor = registro.descriptionDistributor;
-      }
-      if (!registro.saleDate) {
-        const diaTexto = registro.saleDay ?? "01";
-        const mesTexto = registro.saleMonth ?? null;
-        const anioTexto = registro.saleYear ?? null;
+        if (!registro.saleDate) {
+          const diaTexto = registro.saleDay ?? "01";
+          const mesTexto = registro.saleMonth ?? null;
+          const anioTexto = registro.saleYear ?? null;
 
-        const fechaConstruida = construirFechaDesdeComponente({
-          diaTexto,
-          mesTexto,
-          anioTexto,
-        });
-        registro.saleDate =
-          normalizarFechaISO(registro?.saleDate) ||
-          fechaConstruida ||
-          getUltimoDiaMesActual(calculateDate);
-      }
-      delete registro.saleDay;
-      delete registro.saleMonth;
-      delete registro.saleYear;
+          const fechaConstruida = construirFechaDesdeComponente({
+            diaTexto,
+            mesTexto,
+            anioTexto,
+          });
+          registro.saleDate =
+            normalizarFechaISO(registro?.saleDate) ||
+            fechaConstruida ||
+            getUltimoDiaMesActual(calculateDate);
+        }
 
-      if (
-        !registro.descriptionDistributor ||
-        !validarDescripcion(registro.descriptionDistributor)
-      ) {
-        continue;
-      }
+        delete registro.saleDay;
+        delete registro.saleMonth;
+        delete registro.saleYear;
 
-      let cantidad = 1;
-      const tieneColumnaCantidad = registro.unitsSoldDistributor !== undefined;
+        if (
+          !registro.descriptionDistributor ||
+          !validarDescripcion(registro.descriptionDistributor)
+        ) {
+          continue;
+        }
 
-      if (tieneColumnaCantidad) {
-        const valor = registro.unitsSoldDistributor;
-        const cantidadNumerica = parseFloat(valor);
+        let cantidad = 1;
+        const tieneColumnaCantidad = registro.unitsSoldDistributor !== undefined;
 
-        if (isNaN(cantidadNumerica) || cantidadNumerica === 0) continue;
+        if (tieneColumnaCantidad) {
+          const valor = registro.unitsSoldDistributor;
+          const cantidadNumerica = parseFloat(valor);
 
-        if (!Number.isInteger(cantidadNumerica)) continue;
+          if (isNaN(cantidadNumerica) || cantidadNumerica === 0) continue;
 
-        cantidad = hasNegativeValue
-          ? Math.abs(cantidadNumerica)
-          : cantidadNumerica;
+          if (!Number.isInteger(cantidadNumerica)) continue;
+
+          cantidad = hasNegativeValue
+            ? Math.abs(cantidadNumerica)
+            : cantidadNumerica;
+
+          registro.unitsSoldDistributor = cantidad;
+        } else {
+          cantidad = 1;
+        }
+
+        registro.distributor =
+          registro?.distributor ||
+          configuracion?.distributor ||
+          defaultDistributorId ||
+          null;
+
+        registro.codeStoreDistributor =
+          registro?.codeStoreDistributor ||
+          configuracion?.codeStoreDistributor ||
+          configuracionId?.codeStoreDistributor ||
+          sheetName;
 
         registro.unitsSoldDistributor = cantidad;
-      } else {
-        cantidad = 1;
+
+        if (filaVacia) continue;
+
+        registros.push(...repartirValoresNumerico(registro));
       }
-
-
-      registro.distributor =
-        defaultDistributorId ||
-        configuracion?.distributor ||
-        registro?.distributor ||
-        null;
-
-      registro.codeStoreDistributor =
-        configuracion?.codeStoreDistributor ||
-        registro?.codeStoreDistributor ||
-        configuracionId?.codeStoreDistributor ||
-        sheetName;
-      registro.unitsSoldDistributor = cantidad;
-
-
-      if (filaVacia) continue;
-      registros.push(...repartirValoresNumerico(registro));
     }
 
     return registros;
@@ -1514,6 +1579,7 @@ const ExtraccionDatos = () => {
                                 options={optionsConfiguracionSellout}
                                 onChange={(event, newValue) => {
                                   setConfiguracionId(newValue); setConfiguracionId(newValue);
+                                  console.log(newValue);
                                   setData([]);
                                   setCeldas([]);
                                   setDocumento("");

@@ -1081,6 +1081,7 @@ const extraReducers = (builder) => {
             sheetName: item.sheetName,
             distributor: item?.distributorCompanyName || "",
             codeStoreDistributor: item?.codeStoreDistributor || "",
+            ...item,
           })
         );
       } else {

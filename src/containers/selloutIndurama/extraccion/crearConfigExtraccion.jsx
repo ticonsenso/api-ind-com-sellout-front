@@ -184,6 +184,8 @@ const CrearConfiguracionExtraccion = ({ config }) => {
       companyId: idEmpresaIndurama,
       matriculationId: configuracion?.matriculationId || null,
       calculateDate: configuracion?.calculateDate || null,
+      initialSheet: configuracion?.initialSheet || null,
+      endSheet: configuracion?.endSheet || null,
     };
     const response = await dispatch(updateExtractionsConfig(data));
     if (response.meta.requestStatus === "fulfilled") {
@@ -307,6 +309,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
       isActive: true,
       selloutConfigurationId: configuracionExtraccionSelloutId,
       hasNegativeValue: param?.hasNegativeValue || false,
+
     };
     const response = await dispatch(createColumnSellout(data));
     if (response.meta.requestStatus === "fulfilled") {
