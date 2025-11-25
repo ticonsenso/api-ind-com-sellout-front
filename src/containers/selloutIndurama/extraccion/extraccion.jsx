@@ -252,13 +252,13 @@ const ExtraccionDatos = () => {
       setData((prevData) =>
         prevData.map((item) => ({
           ...item,
-          codeStoreDistributor: configuracion.codeStoreDistributor,
+          storeName: configuracion.codeStoreDistributor,
         }))
       );
       setDetallesData((prevData) =>
         prevData.map((item) => ({
           ...item,
-          codeStoreDistributor: configuracion.codeStoreDistributor,
+          storeName: configuracion.codeStoreDistributor,
         }))
       );
     }, 1000);
