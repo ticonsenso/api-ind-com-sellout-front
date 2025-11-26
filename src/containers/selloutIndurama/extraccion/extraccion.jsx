@@ -14,9 +14,12 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Tooltip,
   Paper,
   MenuItem,
   ListItemIcon,
+  IconButton,
+
 } from "@mui/material";
 import {
   CAMPOS_CONFIG_ESTANDAR,
@@ -36,6 +39,7 @@ import {
   AddCircle as AddCircleIcon,
   ExpandMore as ExpandMoreIcon,
   Info as InfoIcon,
+  FileOpen as FileOpenIcon,
 } from "@mui/icons-material";
 import AtomTextFielInputForm from "../../../atoms/AtomTextField";
 import { useSelector, useDispatch } from "react-redux";
@@ -77,6 +81,7 @@ import { obtenerMatriculacionConfig } from "../../../redux/selloutDatosSlic";
 import { useDialog } from "../../../context/DialogDeleteContext";
 import { obtenerListaCategorias } from "../../../redux/diccionarioSlice"
 import { setCalculateDate } from "../../../redux/configSelloutSlice";
+import BotonProcesarExcel from "./cargarExcel";
 
 const formatDate = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -1435,7 +1440,7 @@ const ExtraccionDatos = () => {
                   title="Limpiar datos"
                   iconName="AutoFixHigh"
                   color="#b91818"
-                  right={70}
+                  right={120}
                 />
                 <IconoFlotante
                   handleButtonClick={downloadEmptyExcel}
@@ -1443,6 +1448,9 @@ const ExtraccionDatos = () => {
                   iconName="SaveAlt"
                   color="#5ab9f6"
                 />
+                <BotonProcesarExcel />
+
+
                 <Menu
                   anchorEl={anchorEl}
                   open={open}
