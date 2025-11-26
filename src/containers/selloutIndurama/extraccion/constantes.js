@@ -28,7 +28,8 @@ export const PALABRAS_INVALIDAS = [
   "almacen",
   "sucursal",
   "total productos",
-  "total motorola"
+  "total motorola",
+  "descripcion"
 ];
 
 export const normalizarTexto = (texto = "") => {
