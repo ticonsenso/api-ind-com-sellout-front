@@ -9,7 +9,6 @@ class ApiService {
       },
       data: null,
       params: null,
-      timeout: 20000,
     };
 
     this.config = { ...this.defaultConfig };

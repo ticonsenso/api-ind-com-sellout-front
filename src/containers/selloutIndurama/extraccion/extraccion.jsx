@@ -345,7 +345,6 @@ const ExtraccionDatos = () => {
   ) => {
     const registros = [];
 
-    // --- Determinar lista de hojas a procesar ----------------
     const totalHojas = workbook.SheetNames.length;
 
     const rawInitial = configuracionId?.initialSheet ?? null;
@@ -357,23 +356,18 @@ const ExtraccionDatos = () => {
     const isDefined = (v) => v !== null && v !== undefined && v !== "";
 
     if (isDefined(rawInitial) || isDefined(rawEnd)) {
-      // Si vienen initial/end (uno o ambos), construir rango.
-      // Podemos aceptar tanto índices (números) como nombres (strings).
       const resolveIndex = (val, fallbackIndex) => {
-        // Si es número (o string que representa número) -> convertir a índice 0-based
         if (typeof val === "number" || /^\d+$/.test(String(val))) {
-          const idx = parseInt(val, 10) - 1; // 1-based -> 0-based
+          const idx = parseInt(val, 10) - 1;
           if (idx < 0) return 0;
           if (idx >= totalHojas) return totalHojas - 1;
           return idx;
         }
-        // Si es string no numérica -> buscar nombre exacto en SheetNames
         if (typeof val === "string") {
           const name = val.trim();
           const foundIdx = workbook.SheetNames.indexOf(name);
           return foundIdx === -1 ? fallbackIndex : foundIdx;
         }
-        // fallback
         return fallbackIndex;
       };
 
@@ -384,7 +378,6 @@ const ExtraccionDatos = () => {
         ? resolveIndex(rawEnd, inicioIdx)
         : inicioIdx; // si no viene end -> solo initial
 
-      // Asegurar orden correcto
       const start = Math.max(0, Math.min(inicioIdx, finIdx));
       const end = Math.min(totalHojas - 1, Math.max(inicioIdx, finIdx));
 
@@ -392,19 +385,14 @@ const ExtraccionDatos = () => {
         hojasAProcesar.push(workbook.SheetNames[i]);
       }
     } else if (isDefined(explicitSheetName) && workbook.Sheets[explicitSheetName]) {
-      // Usar sheetName como antes, si existe
       hojasAProcesar.push(explicitSheetName);
     } else {
-      // Ninguna configuración: usar la primera hoja
       if (totalHojas > 0) hojasAProcesar.push(workbook.SheetNames[0]);
     }
 
-    // --- Procesar cada hoja usando tu lógica original ------------
     const columnasActivas = columnasConfig.filter((c) => c.isActive);
-    // Si columnasActivas está vacío, no seguimos
     if (!columnasActivas || columnasActivas.length === 0) return registros;
 
-    // Precalcular camposConfig una vez (misma config para todas las hojas)
     const camposConfigGlobal = columnasActivas.map((col) => ({
       campo: col.mappingToField,
       letra: col.columnLetter,
@@ -415,15 +403,12 @@ const ExtraccionDatos = () => {
       const worksheet = workbook.Sheets[sheetName];
       if (!worksheet) continue;
 
-      // Determinar filaInicio por hoja (igual que antes)
       const filaInicio = Math.min(...columnasActivas.map((c) => c.startRow || 2));
 
-      // Si la hoja está vacía o no tiene rango, saltar
       if (!worksheet["!ref"]) continue;
       const rango = XLSX.utils.decode_range(worksheet["!ref"]);
       const filaFin = rango.e.r + 1;
 
-      // Recorremos filas tal como lo hacías
       for (let fila = filaInicio; fila <= filaFin; fila++) {
         const registro = {};
         let filaVacia = true;
