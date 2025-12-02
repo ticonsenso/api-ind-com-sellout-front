@@ -33,8 +33,11 @@ import {
   CheckCircle as CheckCircleIcon,
   Cancel as CancelIcon,
 } from "@mui/icons-material";
-import { formatDate } from "../../constantes";
+import { formatDate, isMonthClosed } from "../../constantes";
 import { deleteClientesCargados } from "../../../redux/extraccionSlice"
+import {
+  obtenerMatriculacionConfig,
+} from "../../../redux/selloutDatosSlic";
 
 const ListaLogsMatriculacion = ({ calculateDate }) => {
   const hasPermission = usePermission();
@@ -44,6 +47,17 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
   const { showDialog } = useDialog();
   const dataMatriculacionRegistrados = useSelector(
     (state) => state.configSellout?.dataMatriculacionRegistrados
+  );
+
+  const dataMatriculacionConfig = useSelector(
+    (state) => state.selloutDatos.dataMatriculacionConfig
+  );
+  const monthToCompare = calculateDate;
+  const matriculacionConfigrada = dataMatriculacionConfig?.find(
+    (config) => config.month === monthToCompare
+  );
+  const matriculacionCerrada = isMonthClosed(
+    matriculacionConfigrada?.closingDate
   );
 
   const [open, setOpen] = useState(false);
@@ -59,6 +73,18 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
   const handleChangeRowsPerPage = (event) => {
     setLimit(event.target.value);
   };
+
+  const buscarMatriculacion = async () => {
+    await dispatch(
+      obtenerMatriculacionConfig({ search: "", page: 1, limit: 1000 })
+    );
+  };
+
+
+  useEffect(() => {
+    buscarMatriculacion();
+  }, [calculateDate]);
+
 
   const buscarMatriculacionRegistrados = async () => {
     setLoading(true);
@@ -232,7 +258,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
                       columns={columnsMatriculacion}
                       data={dataMatriculacionRegistrados || []}
                       pagination={false}
-                      actions={actions}
+                      actions={matriculacionCerrada === "abierto" ? actions : []}
                       page={page}
                       limit={limit}
                       handleChangePage={handleChangePage}
