@@ -315,17 +315,35 @@ const ExtraccionDatos = () => {
     const descripcion = registroOriginal.descriptionDistributor || "";
 
     const productos = descripcion
-      .split(/\r?\n/)
+      .split(/[\r\n]+|\+/)
       .map((linea) => linea.trim())
       .filter((linea) => linea !== "");
 
     if (productos.length <= 1) {
       return [registroOriginal];
     }
-    const cantidadOriginal = Number(registroOriginal.unitsSoldDistributor) || 1;
-    const cantidadDividida = parseFloat(
-      (cantidadOriginal / productos.length).toFixed(2)
-    );
+
+    let cantidadOriginal = Number(registroOriginal.unitsSoldDistributor);
+    if (isNaN(cantidadOriginal) || cantidadOriginal < 1) {
+      cantidadOriginal = 1;
+    }
+
+    if (cantidadOriginal === 1) {
+      return productos.map((prod) => ({
+        ...registroOriginal,
+        descriptionDistributor: prod,
+        codeProductDistributor: prod,
+        unitsSoldDistributor: 1,
+      }));
+    }
+
+    let cantidadDividida = cantidadOriginal / productos.length;
+
+    cantidadDividida = Math.round(cantidadDividida);
+
+    if (cantidadDividida < 1) {
+      cantidadDividida = 1;
+    }
 
     return productos.map((prod) => ({
       ...registroOriginal,
@@ -334,6 +352,7 @@ const ExtraccionDatos = () => {
       unitsSoldDistributor: cantidadDividida,
     }));
   };
+
 
   const procesarExtraccionDesdeConfiguracion = (
     workbook,
@@ -938,6 +957,26 @@ const ExtraccionDatos = () => {
           }
         }
       }
+
+      if (!fecha) {
+        const matchPuntos = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.exec(texto);
+        if (matchPuntos) {
+          const dia = parseInt(matchPuntos[1], 10);
+          const mes = parseInt(matchPuntos[2], 10);
+          const anio = parseInt(matchPuntos[3], 10);
+
+          fecha = new Date(anio, mes - 1, dia);
+
+          if (
+            fecha.getFullYear() !== anio ||
+            fecha.getMonth() + 1 !== mes ||
+            fecha.getDate() !== dia
+          ) {
+            fecha = null;
+          }
+        }
+      }
+
 
       if (!fecha) {
         const matchLetras = texto.match(/^(\d{1,2})-([A-Za-z]+)-(\d{2,4})$/);
