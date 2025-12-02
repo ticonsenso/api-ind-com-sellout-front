@@ -98,10 +98,12 @@ const columns = [
   {
     label: "Fecha de inicio",
     field: "startDate",
+    type: "date",
   },
   {
     label: "Fecha de cierre",
     field: "closingDate",
+    type: "date",
   },
 
   {

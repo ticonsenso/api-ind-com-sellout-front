@@ -160,11 +160,12 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
 
 
   const handleDeleteDistribuidor = (row) => {
+    console.log(row);
     showDialog({
       title: "Confirmación de eliminación", message: `¿Está seguro que desea eliminar todos los datos registrados con el Distribuidor: ${row?.distributor}?`,
       onConfirm: async () => {
         try {
-          const response = await dispatch(deleteClientesCargados({ distribuidor: row.distributor, storeName: "" }));
+          const response = await dispatch(deleteClientesCargados({ distribuidor: row.distributor || null, storeName: row.storeName || null }));
           if (response.meta.requestStatus === "fulfilled") {
             showSnackbar(response.payload.message);
             buscarMatriculacionRegistrados();
