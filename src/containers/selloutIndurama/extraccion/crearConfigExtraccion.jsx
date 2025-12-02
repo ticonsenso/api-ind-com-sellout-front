@@ -13,8 +13,6 @@ import {
   DeleteOutline as DeleteOutlineIcon,
   AutoFixHigh as AutoFixHighIcon,
 } from "@mui/icons-material";
-import { DATATYPE, SOURCE_TYPE_SELLOUT } from "../constantes";
-import AtomSwitch from "../../../atoms/AtomSwitch";
 import {
   Typography,
   Autocomplete,
@@ -48,22 +46,10 @@ import {
   setCalculateDate
 } from "../../../redux/configSelloutSlice";
 import { optionsMappingToField } from "./constantes";
-import {
-  busquedaDistribuidorMaestrosStores,
-  busquedaAlmacenMaestrosStores,
-} from "../../../redux/configSelloutSlice";
 import AtomAutocompleteLabel from "../../../atoms/AtomAutocomplete";
 import AtomTitleForm from "../../../atoms/AtomTitleForm";
 import AtomTableForm from "../../../atoms/AtomTableForm";
 import AtomDatePicker from "../../../atoms/AtomDatePicker";
-
-function debounce(func, delay) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => func(...args), delay);
-  };
-}
 
 const CrearConfiguracionExtraccion = ({ config }) => {
   const dispatch = useDispatch();
@@ -215,6 +201,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
   };
 
   const handleEdit = (row) => {
+    console.log(row);
     setParam(row);
   };
 

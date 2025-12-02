@@ -285,38 +285,6 @@ const ConfiguracionMatriculacion = () => {
     setOpenMatriculacion(true);
   };
 
-  const isMonthPrevious = (monthISO) => {
-    if (!monthISO) return false;
-    const hoy = new Date();
-    const mesAnterior = new Date(hoy.getFullYear(), hoy.getMonth() - 1, 1);
-    const mesData = new Date(monthISO);
-    mesData.setDate(1);
-
-    const anioMesAnterior = mesAnterior.getFullYear() * 100 + mesAnterior.getMonth();
-    const anioMesData = mesData.getFullYear() * 100 + mesData.getMonth();
-
-    return anioMesData === anioMesAnterior;
-  };
-
-  const canBeEditedByDate = (monthISO) => {
-    if (!monthISO) return false;
-
-    const fechaData = new Date(monthISO);
-    fechaData.setDate(1); // Normaliza al día 1
-
-    const hoy = new Date();
-    const haceDosMeses = new Date(hoy.getFullYear(), hoy.getMonth() - 2, 1);
-
-    // La data debe ser igual o posterior a hace dos meses.
-    // Es decir, mes actual (0), mes anterior (-1) o el mes anterior a ese (-2).
-    // Si es menor (hace 3 meses o más), retorna false.
-
-    const anioMesData = fechaData.getFullYear() * 12 + fechaData.getMonth();
-    const anioMesLimite = haceDosMeses.getFullYear() * 12 + haceDosMeses.getMonth();
-
-    return anioMesData >= anioMesLimite;
-  };
-
   return (
     <>
       <AtomContainerGeneral

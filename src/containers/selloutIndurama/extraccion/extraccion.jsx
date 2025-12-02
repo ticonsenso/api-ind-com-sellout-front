@@ -373,10 +373,10 @@ const ExtraccionDatos = () => {
 
       const inicioIdx = isDefined(rawInitial)
         ? resolveIndex(rawInitial, 0)
-        : resolveIndex(rawEnd, 0); // si no viene initial pero sí end, usamos end como inicio
+        : resolveIndex(rawEnd, 0);
       const finIdx = isDefined(rawEnd)
         ? resolveIndex(rawEnd, inicioIdx)
-        : inicioIdx; // si no viene end -> solo initial
+        : inicioIdx;
 
       const start = Math.max(0, Math.min(inicioIdx, finIdx));
       const end = Math.min(totalHojas - 1, Math.max(inicioIdx, finIdx));
@@ -474,12 +474,20 @@ const ExtraccionDatos = () => {
         const tieneColumnaCantidad = registro.unitsSoldDistributor !== undefined;
 
         if (tieneColumnaCantidad) {
-          const valor = registro.unitsSoldDistributor;
-          const cantidadNumerica = parseFloat(valor);
+          const rawValue = registro.unitsSoldDistributor;
 
-          if (isNaN(cantidadNumerica) || cantidadNumerica === 0) continue;
+          const valorLimpio = String(rawValue).trim();
+          const cantidadNumerica = parseFloat(valorLimpio);
 
-          if (!Number.isInteger(cantidadNumerica)) continue;
+          if (
+            !valorLimpio ||
+            isNaN(cantidadNumerica) ||
+            Object.is(cantidadNumerica, 0) ||
+            cantidadNumerica === 0 ||
+            !Number.isInteger(cantidadNumerica)
+          ) {
+            continue;
+          }
 
           cantidad = hasNegativeValue
             ? Math.abs(cantidadNumerica)
@@ -490,18 +498,36 @@ const ExtraccionDatos = () => {
           cantidad = 1;
         }
 
+
         registro.distributor =
           registro?.distributor ||
           configuracion?.distributor ||
           defaultDistributorId ||
           null;
 
-        registro.codeStoreDistributor =
-          registro?.codeStoreDistributor ||
-          configuracion?.codeStoreDistributor ||
-          configuracionId?.codeStoreDistributor ||
-          sheetName;
+        let codeStoreDistributor;
 
+        const tieneColumnaAlmacen = columnasConfig.some(
+          (c) => c.mappingToField === "codeStoreDistributor"
+        );
+
+        if (tieneColumnaAlmacen && registro.codeStoreDistributor !== undefined) {
+          codeStoreDistributor = String(registro.codeStoreDistributor || "").trim();
+
+          if (!codeStoreDistributor) continue;
+
+          if (!validarAlmacen(codeStoreDistributor)) continue;
+        }
+
+        else {
+          codeStoreDistributor =
+            registro?.codeStoreDistributor ||
+            configuracion?.codeStoreDistributor ||
+            configuracionId?.codeStoreDistributor ||
+            sheetName;
+        }
+
+        registro.codeStoreDistributor = codeStoreDistributor;
         registro.unitsSoldDistributor = cantidad;
 
         if (filaVacia) continue;
@@ -852,6 +878,20 @@ const ExtraccionDatos = () => {
     return true;
   };
 
+  const validarAlmacen = (valor) => {
+    if (!valor) return false;
+
+    const texto = valor.trim().toLowerCase();
+
+    if (texto.length < 2) return false;
+    if (!/[a-z]/.test(texto)) return false;
+
+    const invalidas = PALABRAS_INVALIDAS.map(p => p.toLowerCase());
+    if (invalidas.includes(texto)) return false;
+
+    return true;
+  };
+
 
 
   const normalizarFechaISO = (valorCelda) => {
@@ -1193,11 +1233,21 @@ const ExtraccionDatos = () => {
           ? extraerTextoCelda(fila[mapeo.distributor])
           : defaultDistributorId;
 
-      const codeStoreDistributor =
-        configuracion?.codeStoreDistributor ||
-          mapeo.codeStoreDistributor !== undefined
-          ? extraerTextoCelda(fila[mapeo.codeStoreDistributor])
-          : hojaName;
+      let codeStoreDistributor;
+
+      if (configuracion?.codeStoreDistributor) {
+        codeStoreDistributor = configuracion.codeStoreDistributor;
+      } else if (mapeo.codeStoreDistributor !== undefined) {
+        codeStoreDistributor = extraerTextoCelda(fila[mapeo.codeStoreDistributor]);
+      } else {
+        codeStoreDistributor = hojaName;
+      }
+
+      if (mapeo.codeStoreDistributor !== undefined) {
+        if (!validarAlmacen(codeStoreDistributor)) {
+          continue;
+        }
+      }
 
       const registroBase = {
         descriptionDistributor: rawDescripcion,
