@@ -191,7 +191,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
       title: "Confirmación de eliminación", message: `¿Está seguro que desea eliminar los registros: Distribuidor: ${row?.distributor} Almacén: ${row?.storeName}?`,
       onConfirm: async () => {
         try {
-          const response = await dispatch(deleteClientesCargados({ distribuidor: row.distributor, storeName: row.storeName }));
+          const response = await dispatch(deleteClientesCargados({ distribuidor: row.distributor, storeName: row.storeName, calculateDate: calculateDate }));
           if (response.meta.requestStatus === "fulfilled") {
             showSnackbar(response.payload.message);
             handleClose();
