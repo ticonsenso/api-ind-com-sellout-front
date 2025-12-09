@@ -311,11 +311,23 @@ const ExtraccionDatos = () => {
     return fecha.toISOString().split("T")[0];
   };
 
-  const repartirValoresNumerico = (registroOriginal) => {
+  const repartirValoresNumerico = (registroOriginal, simboloConfig) => {
     const descripcion = registroOriginal.descriptionDistributor || "";
 
+    const separadores = [
+      "\\t",
+      "[\\r\\n]+"
+    ];
+
+    if (simboloConfig) {
+      const escaped = simboloConfig.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      separadores.push(escaped);
+    }
+
+    const regexSeparador = new RegExp(separadores.join("|"), "g");
+
     const productos = descripcion
-      .split(/[\r\n]+|\+/)
+      .split(regexSeparador)
       .map((linea) => linea.trim())
       .filter((linea) => linea !== "");
 
@@ -337,13 +349,8 @@ const ExtraccionDatos = () => {
       }));
     }
 
-    let cantidadDividida = cantidadOriginal / productos.length;
-
-    cantidadDividida = Math.round(cantidadDividida);
-
-    if (cantidadDividida < 1) {
-      cantidadDividida = 1;
-    }
+    let cantidadDividida = Math.round(cantidadOriginal / productos.length);
+    if (cantidadDividida < 1) cantidadDividida = 1;
 
     return productos.map((prod) => ({
       ...registroOriginal,
@@ -354,13 +361,15 @@ const ExtraccionDatos = () => {
   };
 
 
+
   const procesarExtraccionDesdeConfiguracion = (
     workbook,
     configuracionId,
     columnasConfig,
     defaultDistributorId,
     hasNegativeValue,
-    calculateDate
+    calculateDate,
+    simboloConfig
   ) => {
     const registros = [];
 
@@ -551,7 +560,7 @@ const ExtraccionDatos = () => {
 
         if (filaVacia) continue;
 
-        registros.push(...repartirValoresNumerico(registro));
+        registros.push(...repartirValoresNumerico(registro, simboloConfig));
       }
     }
 
@@ -578,15 +587,19 @@ const ExtraccionDatos = () => {
         setCeldas([]);
         return;
       }
+
+      console.log('configuracionId', columns);
       const registrosExtraidos = procesarExtraccionDesdeConfiguracion(
         workbook,
         configuracionId,
         columns,
         configuracionId?.distributor,
         hasNegativeValue,
-        calculateDate
+        calculateDate,
+        configuracion.simbolo,
       );
 
+      console.log("registrosFiltrados", registrosExtraidos)
       const registrosFiltrados = filterByCurrentMonth(
         registrosExtraidos,
         calculateDate
@@ -872,11 +885,25 @@ const ExtraccionDatos = () => {
     return resultado;
   };
 
+  const normalizarTextoDescripcion = (txt) =>
+    txt
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[\u200B-\u200D\uFEFF]/g, "")
+      .replace(/[∕⁄／]/g, "/")
+      .replace(/\u00A0/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+
+
   const validarDescripcion = (desc) => {
-    const descripcion = desc.trim().toLowerCase();
+    const descripcionFormat = desc.trim().toLowerCase();
+    const descripcion = normalizarTextoDescripcion(descripcionFormat);
 
     if (descripcion.length < 2) return false;
-    if (!/[a-z]/.test(descripcion)) return false;
+
+    if (!/\p{L}/u.test(descripcion)) return false;
 
     const palabras = descripcion.split(/\s+/);
 
@@ -903,11 +930,9 @@ const ExtraccionDatos = () => {
     const texto = valor.trim().toLowerCase();
 
     if (texto.length < 2) return false;
-    if (!/[a-z]/.test(texto)) return false;
 
     const invalidas = PALABRAS_INVALIDAS.map(p => p.toLowerCase());
     if (invalidas.includes(texto)) return false;
-
     return true;
   };
 
@@ -918,36 +943,46 @@ const ExtraccionDatos = () => {
 
     let fecha = null;
 
+    // --- 1) Excel serial number ---
     if (typeof valorCelda === "number") {
       const serial = Math.round(valorCelda);
+      if (serial >= 1 && serial <= 2958465) {
+        fecha = new Date((serial - 25569) * 86400 * 1000);
+      }
+    }
 
-      if (serial < 1 || serial > 2958465) return null;
-
-      fecha = new Date((serial - 25569) * 86400 * 1000);
-    } else if (Object.prototype.toString.call(valorCelda) === "[object Date]") {
+    // --- 2) Fecha objeto ---
+    else if (Object.prototype.toString.call(valorCelda) === "[object Date]") {
       fecha = valorCelda;
-    } else if (typeof valorCelda === "string") {
+    }
+
+    // --- 3) Texto ---
+    else if (typeof valorCelda === "string") {
       const texto = valorCelda.trim();
 
+      // 3.1 Serial en texto
       const matchSerial = texto.match(/^\+?0*(\d{4,7})(\.\d+)?$/);
       if (matchSerial) {
         const serial = Math.round(parseFloat(matchSerial[1]));
-
         if (serial >= 1 && serial <= 2958465) {
           fecha = new Date((serial - 25569) * 86400 * 1000);
         }
       }
 
+      // 3.2 Fecha DD/MM/YY o DD/MM/YYYY (siempre día primero)
       if (!fecha) {
-        const regexFecha = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/;
-        const match = texto.match(regexFecha);
-        if (match) {
-          const dia = parseInt(match[1], 10);
-          const mes = parseInt(match[2], 10);
-          const anio = parseInt(match[3], 10);
+        const matchSlash = texto.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+        if (matchSlash) {
+          let dia = parseInt(matchSlash[1], 10);
+          let mes = parseInt(matchSlash[2], 10);
+          let anio = parseInt(matchSlash[3], 10);
+
+          // Interpretar años de 2 dígitos como 2000+YY
+          if (anio < 100) anio = 2000 + anio;
 
           fecha = new Date(anio, mes - 1, dia);
 
+          // Validación de fecha real
           if (
             fecha.getFullYear() !== anio ||
             fecha.getMonth() + 1 !== mes ||
@@ -958,8 +993,9 @@ const ExtraccionDatos = () => {
         }
       }
 
+      // 3.3 Formato DD.MM.YYYY
       if (!fecha) {
-        const matchPuntos = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.exec(texto);
+        const matchPuntos = texto.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
         if (matchPuntos) {
           const dia = parseInt(matchPuntos[1], 10);
           const mes = parseInt(matchPuntos[2], 10);
@@ -977,7 +1013,7 @@ const ExtraccionDatos = () => {
         }
       }
 
-
+      // 3.4 Fechas con meses en letras
       if (!fecha) {
         const matchLetras = texto.match(/^(\d{1,2})-([A-Za-z]+)-(\d{2,4})$/);
         if (matchLetras) {
@@ -986,18 +1022,8 @@ const ExtraccionDatos = () => {
           const anioCorto = parseInt(matchLetras[3], 10);
 
           const meses = {
-            jan: 0,
-            feb: 1,
-            mar: 2,
-            apr: 3,
-            may: 4,
-            jun: 5,
-            jul: 6,
-            aug: 7,
-            sep: 8,
-            oct: 9,
-            nov: 10,
-            dec: 11,
+            jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+            jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
           };
 
           const mes = meses[mesStr.slice(0, 3)];
@@ -1023,6 +1049,7 @@ const ExtraccionDatos = () => {
 
     return null;
   };
+
 
   const avisoCritico = (mensaje) => {
     showSnackbar(`⚠️ ${mensaje}`);
@@ -1069,12 +1096,13 @@ const ExtraccionDatos = () => {
           rows.slice(headerInfo.rowIndex + 1),
           headerInfo.header,
           hojaName,
-          configuracion.distributor || null
+          configuracion.distributor || null,
+          configuracion.simbolo || null
         );
 
         registros.push(...processedRecords);
       }
-
+      console.log("registrosFiltrados", registros)
       if (registros.length === 0) {
         avisoCritico("⚠️ Error al obtener los detalles del producto");
       }
@@ -1217,7 +1245,11 @@ const ExtraccionDatos = () => {
     return [0];
   };
 
-  const processRows = (rows, encabezados, hojaName, defaultDistributorId) => {
+  const processRows = (rows, encabezados, hojaName, defaultDistributorId, simbolo) => {
+    console.log('encabezados', encabezados);
+    console.log("", hojaName,)
+    console.log("", simbolo)
+    console.log("rows", rows)
     const registros = [];
     const mapeo = detectarColumnasAutomaticamente(encabezados);
     const tieneColumnaCantidad = mapeo.unitsSoldDistributor !== undefined;
@@ -1227,6 +1259,7 @@ const ExtraccionDatos = () => {
         extraerTextoCelda(fila[mapeo.descriptionDistributor] || "") || "";
 
       if (!rawDescripcion || !validarDescripcion(rawDescripcion)) {
+        console.log("Descripcion no valida", rawDescripcion);
         continue;
       };
 
@@ -1297,7 +1330,9 @@ const ExtraccionDatos = () => {
           configuracion?.codeStoreDistributor || codeStoreDistributor,
         saleDate,
       };
-      registros.push(...repartirValoresNumerico(registroBase));
+
+      console.log('registroBase', registroBase);
+      registros.push(...repartirValoresNumerico(registroBase, simbolo));
     }
     if (registros.length === 0) {
       if (registros.map((r) => r.descriptionDistributor).every((desc) => !desc || desc.trim() === "")) {
@@ -1743,21 +1778,41 @@ const ExtraccionDatos = () => {
                             </>
                           )}
                           {configuracionId && (
-                            <Grid size={3}>
-                              <AtomTextFielInputForm
-                                id="documento"
-                                height="40px"
-                                required
-                                headerTitle="Seleccionar Excel"
-                                placeholder="Seleccionar"
-                                value={documento}
-                                fullWidth
-                                endIcon={true}
-                                nameEndIcon={UploadFileIcon}
-                                onClickEndIcon={handleIconClick}
-                                onChange={handleIconClick}
-                              />
-                            </Grid>
+                            <>
+                              <Grid size={2}>
+                                <AtomTextFielInputForm
+                                  id="simbolo"
+                                  height="40px"
+                                  required
+                                  headerTitle="Símbolo separador"
+                                  placeholder="Seleccionar"
+                                  value={configuracion?.simbolo || ""}
+                                  fullWidth
+                                  onChange={(e) =>
+                                    setConfiguracion({
+                                      ...configuracion,
+                                      simbolo: e.target.value,
+                                    })
+                                  }
+                                />
+                              </Grid>
+                              <Grid size={3}>
+                                <AtomTextFielInputForm
+                                  id="documento"
+                                  height="40px"
+                                  required
+                                  headerTitle="Seleccionar Excel"
+                                  placeholder="Seleccionar"
+                                  value={documento}
+                                  fullWidth
+                                  endIcon={true}
+                                  nameEndIcon={UploadFileIcon}
+                                  onClickEndIcon={handleIconClick}
+                                  onChange={handleIconClick}
+                                />
+                              </Grid>
+
+                            </>
                           )}
                           {data.length > 0 && (
                             <Grid size={1.3} mt={2.5}>

@@ -29,7 +29,6 @@ export const PALABRAS_INVALIDAS = [
   "sucursal",
   "total productos",
   "total motorola",
-  "descripcion",
   "#N/D",
   "n/a",
 ];
@@ -51,7 +50,7 @@ export const CAMPOS_CONFIG_ESTANDAR = [
     type: "number",
     multiline: false,
     rows: 1,
-    size: 1.5,
+    size: 1,
     placeholder: "Inicio/extracción",
   },
   {
@@ -60,7 +59,7 @@ export const CAMPOS_CONFIG_ESTANDAR = [
     type: "number",
     multiline: false,
     rows: 1,
-    size: 1.5,
+    size: 1,
     placeholder: "Fin Extracción",
   },
 ];
