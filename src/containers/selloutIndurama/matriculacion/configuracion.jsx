@@ -123,6 +123,7 @@ function debounce(func, delay) {
 const ConfiguracionMatriculacion = () => {
   const hasPermission = usePermission();
   const namePermission = hasPermission("CONFIGURACION CIERRE SELLOUT");
+  const isAdmin = hasPermission("CONFIGURACION ADMINISTRADOR");
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
   const { showDialog } = useDialog();
@@ -231,7 +232,8 @@ const ConfiguracionMatriculacion = () => {
       color: "info",
       onClick: (row) => handleEditMatriculacion(row),
       visible: (row) => {
-        const esEstadoCerrado = row.status.includes("Cerrado");
+        if (isAdmin) return true;
+        const esEstadoCerrado = row.status?.includes("Cerrado");
         return !esEstadoCerrado;
       },
     },
@@ -240,7 +242,8 @@ const ConfiguracionMatriculacion = () => {
       color: "error",
       onClick: (row) => handleDeleteMatriculacion(row),
       visible: (row) => {
-        const esEstadoCerrado = row.status.includes("Cerrado");
+        if (isAdmin) return true;
+        const esEstadoCerrado = row.status?.includes("Cerrado");
         return !esEstadoCerrado;
       },
     },
@@ -341,24 +344,6 @@ const ConfiguracionMatriculacion = () => {
         titleEditar="Editar Configuración de Cierre"
         dialogContentComponent={
           <Grid container spacing={2} sx={{ width: "90%" }}>
-            {/* <Grid size={6}>
-              <AtomTextField
-                id="description"
-                required={true}
-                headerTitle="Descripción de la Configuración"
-                value={matricula.description}
-                onChange={(e) =>
-                  setMatricula({
-                    ...matricula,
-                    description: e.target.value,
-                  })
-                }
-                error={errors.description}
-                helperText={
-                  errors.description ? "La descripción es requerida" : ""
-                }
-              />
-            </Grid> */}
             <Grid size={6}>
               <AtomDatePicker
                 id="month"
