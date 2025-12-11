@@ -6,25 +6,20 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Divider,
   Menu,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Tooltip,
-  Paper,
   MenuItem,
   ListItemIcon,
-  IconButton,
-
+  TableContainer,
+  TableCell,
+  TableRow,
+  Paper,
+  Table,
+  Checkbox,
+  TableHead,
+  TableBody, Tooltip, IconButton
 } from "@mui/material";
 import {
   CAMPOS_CONFIG_ESTANDAR,
-  PALABRAS_INVALIDAS,
-  NOMBRES_CAMPOS,
   etiquetasColumnas,
   isClosed,
 } from "./constantes";
@@ -32,14 +27,9 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import {
   UploadFile as UploadFileIcon,
-  MoreVert as MoreVertIcon,
   BrowserUpdated as BrowserUpdatedIcon,
   PictureAsPdf as PictureAsPdfIcon,
-  AutoFixHigh as AutoFixHighIcon,
-  AddCircle as AddCircleIcon,
   ExpandMore as ExpandMoreIcon,
-  Info as InfoIcon,
-  FileOpen as FileOpenIcon,
 } from "@mui/icons-material";
 import AtomTextFielInputForm from "../../../atoms/AtomTextField";
 import { useSelector, useDispatch } from "react-redux";
@@ -72,25 +62,34 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 import * as pdfjsLib from "pdfjs-dist";
-import AtomTableForm from "../../../atoms/AtomTableForm";
-import AtomSearchTextfield from "../../../atoms/AtomSearchTextfield";
 import IconoFlotante from "../../../atoms/IconActionPage";
 pdfjsLib.GlobalWorkerOptions.workerSrc = "../../../public/pdfWorker.js";
-import { styles, normalizarTexto } from "./constantes";
+import { normalizarTexto, formatDate } from "./constantes";
 import { obtenerMatriculacionConfig } from "../../../redux/selloutDatosSlic";
 import { useDialog } from "../../../context/DialogDeleteContext";
 import { obtenerListaCategorias } from "../../../redux/diccionarioSlice"
 import { setCalculateDate } from "../../../redux/configSelloutSlice";
 import BotonProcesarExcel from "./cargarExcel";
+import {
+  repartirValoresNumerico,
+  construirFechaDesdeComponente,
+  extraerTextoCelda,
+  normalizarFechaISO,
+  getUltimoDiaMesActual,
+  detectHeader,
+  detectarColumnasAutomaticamente,
+  validarDescripcion,
+  validarAlmacen,
+  extractRowsFromWorksheet,
+  getSheetIndexes,
+  tieneSeparadores
+} from "./funciones";
+import TablaSeleccionProductos from "./tableProductos";
+import Informacion from "./infoExtraccion";
+import DetallesExtraccion from "./detallesExtraccion";
+import DetallesErrores from "./detailsErrors";
 
-const formatDate = (fechaISO) => {
-  const fecha = new Date(fechaISO);
-  const dia = String(fecha.getUTCDate()).padStart(2, "0");
-  const mes = String(fecha.getUTCMonth() + 1).padStart(2, "0");
-  const anio = fecha.getUTCFullYear();
-  return `${anio}-${mes}-${dia}`;
-};
-
+import AtomTableForm from "../../../atoms/AtomTableForm";
 const ExtraccionDatos = () => {
   const { showDialog } = useDialog();
 
@@ -142,7 +141,8 @@ const ExtraccionDatos = () => {
   const idEmpresaIndurama = useSelector(
     (state) => state?.configSellout?.idEmpresaIndurama
   );
-
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(100);
   const optionsEmpresas =
     useSelector((state) => state.empresa?.optionsEmpresas) || [];
   const empresaIndurama =
@@ -180,8 +180,11 @@ const ExtraccionDatos = () => {
   const [celdas, setCeldas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dataResponse, setDataResponse] = useState({});
+  const [dialogSeparation, setDialogSeparation] = useState(false);
   const [dialogInformation, setDialogInformation] = useState(false);
   const [errorsCalculateDate, setErrorsCalculateDate] = useState({});
+  const [preSplitInfo, setPreSplitInfo] = useState([]);
+  const [temporalRegistrosSinSeparar, setTemporalRegistrosSinSeparar] = useState([]);
   const [search, setSearch] = useState("");
   const [detallesData, setDetallesData] = useState([]);
   const [searchMatriculacion, setSearchMatriculacion] = useState("");
@@ -198,6 +201,7 @@ const ExtraccionDatos = () => {
   const [filteredData, setFilteredData] = useState(
     dataMatriculacionRegistrados
   );
+
 
   const totalUnitsSoldDistributor = data.reduce(
     (acc, row) => acc + Number(row.unitsSoldDistributor),
@@ -221,19 +225,7 @@ const ExtraccionDatos = () => {
     buscarConfiguraciones();
   }, [search]);
 
-  const getUltimoDiaMesActual = (fechaInput) => {
-    const [year, month, day] = fechaInput.split("-").map(Number);
-    if (!year || !month || !day)
-      throw new Error(`Fecha inválida: ${fechaInput}`);
 
-    const ultimoDia = new Date(year, month, 0);
-
-    const yyyy = ultimoDia.getFullYear();
-    const mm = String(ultimoDia.getMonth() + 1).padStart(2, "0");
-    const dd = String(ultimoDia.getDate()).padStart(2, "0");
-
-    return `${yyyy}-${mm}-${dd}`;
-  };
 
   const handleChangeDistributorData = () => {
     setTimeout(() => {
@@ -269,97 +261,6 @@ const ExtraccionDatos = () => {
     }, 1000);
   };
 
-  const construirFechaDesdeComponente = ({ diaTexto, mesTexto, anioTexto }) => {
-    if (!mesTexto || !anioTexto) return null;
-
-    const meses = {
-      enero: 1,
-      febrero: 2,
-      marzo: 3,
-      abril: 4,
-      mayo: 5,
-      junio: 6,
-      julio: 7,
-      agosto: 8,
-      septiembre: 9,
-      setiembre: 9,
-      noviembre: 11,
-      diciembre: 12,
-    };
-
-    const normalizarTexto = (texto) =>
-      texto
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .trim();
-
-    const mesNormalizado = normalizarTexto(String(mesTexto));
-    const mes =
-      !isNaN(mesTexto) && mesTexto !== ""
-        ? parseInt(mesTexto, 10)
-        : meses[mesNormalizado] ?? null;
-
-    const anio = parseInt(anioTexto, 10);
-    const dia = diaTexto ? parseInt(diaTexto, 10) : 1;
-
-    if (!mes || isNaN(anio) || isNaN(dia)) return null;
-
-    const fecha = new Date(anio, mes - 1, dia);
-    if (isNaN(fecha.getTime())) return null;
-
-    return fecha.toISOString().split("T")[0];
-  };
-
-  const repartirValoresNumerico = (registroOriginal, simboloConfig) => {
-    const descripcion = registroOriginal.descriptionDistributor || "";
-
-    const separadores = [
-      "\\t",
-      "[\\r\\n]+"
-    ];
-
-    if (simboloConfig) {
-      const escaped = simboloConfig.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      separadores.push(escaped);
-    }
-
-    const regexSeparador = new RegExp(separadores.join("|"), "g");
-
-    const productos = descripcion
-      .split(regexSeparador)
-      .map((linea) => linea.trim())
-      .filter((linea) => linea !== "");
-
-    if (productos.length <= 1) {
-      return [registroOriginal];
-    }
-
-    let cantidadOriginal = Number(registroOriginal.unitsSoldDistributor);
-    if (isNaN(cantidadOriginal) || cantidadOriginal < 1) {
-      cantidadOriginal = 1;
-    }
-
-    if (cantidadOriginal === 1) {
-      return productos.map((prod) => ({
-        ...registroOriginal,
-        descriptionDistributor: prod,
-        codeProductDistributor: prod,
-        unitsSoldDistributor: 1,
-      }));
-    }
-
-    let cantidadDividida = Math.round(cantidadOriginal / productos.length);
-    if (cantidadDividida < 1) cantidadDividida = 1;
-
-    return productos.map((prod) => ({
-      ...registroOriginal,
-      descriptionDistributor: prod,
-      codeProductDistributor: prod,
-      unitsSoldDistributor: cantidadDividida,
-    }));
-  };
-
 
 
   const procesarExtraccionDesdeConfiguracion = (
@@ -371,7 +272,8 @@ const ExtraccionDatos = () => {
     calculateDate,
     simboloConfig
   ) => {
-    const registros = [];
+    const registrosConSeparadores = [];
+    const registrosSinSeparar = [];
 
     const totalHojas = workbook.SheetNames.length;
 
@@ -380,25 +282,25 @@ const ExtraccionDatos = () => {
     const explicitSheetName = configuracionId?.sheetName?.trimEnd?.();
 
     const hojasAProcesar = [];
-
     const isDefined = (v) => v !== null && v !== undefined && v !== "";
 
-    if (isDefined(rawInitial) || isDefined(rawEnd)) {
-      const resolveIndex = (val, fallbackIndex) => {
-        if (typeof val === "number" || /^\d+$/.test(String(val))) {
-          const idx = parseInt(val, 10) - 1;
-          if (idx < 0) return 0;
-          if (idx >= totalHojas) return totalHojas - 1;
-          return idx;
-        }
-        if (typeof val === "string") {
-          const name = val.trim();
-          const foundIdx = workbook.SheetNames.indexOf(name);
-          return foundIdx === -1 ? fallbackIndex : foundIdx;
-        }
-        return fallbackIndex;
-      };
 
+    const resolveIndex = (val, fallbackIndex) => {
+      if (typeof val === "number" || /^\d+$/.test(String(val))) {
+        const idx = parseInt(val, 10) - 1;
+        if (idx < 0) return 0;
+        if (idx >= totalHojas) return totalHojas - 1;
+        return idx;
+      }
+      if (typeof val === "string") {
+        const name = val.trim();
+        const foundIdx = workbook.SheetNames.indexOf(name);
+        return foundIdx === -1 ? fallbackIndex : foundIdx;
+      }
+      return fallbackIndex;
+    };
+
+    if (isDefined(rawInitial) || isDefined(rawEnd)) {
       const inicioIdx = isDefined(rawInitial)
         ? resolveIndex(rawInitial, 0)
         : resolveIndex(rawEnd, 0);
@@ -419,13 +321,14 @@ const ExtraccionDatos = () => {
     }
 
     const columnasActivas = columnasConfig.filter((c) => c.isActive);
-    if (!columnasActivas || columnasActivas.length === 0) return registros;
+    if (!columnasActivas || columnasActivas.length === 0) return [];
 
     const camposConfigGlobal = columnasActivas.map((col) => ({
       campo: col.mappingToField,
       letra: col.columnLetter,
       tipo: col.dataType,
     }));
+
 
     for (const sheetName of hojasAProcesar) {
       const worksheet = workbook.Sheets[sheetName];
@@ -448,8 +351,10 @@ const ExtraccionDatos = () => {
           if (campoConfig.tipo === "INTEGER") {
             const valorNum = parseFloat(valorRaw);
             registro[campoConfig.campo] = !isNaN(valorNum) ? valorNum : null;
+
           } else if (campoConfig.tipo === "DATE") {
             registro[campoConfig.campo] = normalizarFechaISO(valorRaw);
+
           } else {
             registro[campoConfig.campo] =
               typeof valorRaw === "string" ? valorRaw.trim() : valorRaw;
@@ -464,32 +369,7 @@ const ExtraccionDatos = () => {
           }
         }
 
-        if (
-          !registro.codeProductDistributor ||
-          registro.codeProductDistributor === ""
-        ) {
-          registro.codeProductDistributor = registro.descriptionDistributor;
-        }
-
-        if (!registro.saleDate) {
-          const diaTexto = registro.saleDay ?? "01";
-          const mesTexto = registro.saleMonth ?? null;
-          const anioTexto = registro.saleYear ?? null;
-
-          const fechaConstruida = construirFechaDesdeComponente({
-            diaTexto,
-            mesTexto,
-            anioTexto,
-          });
-          registro.saleDate =
-            normalizarFechaISO(registro?.saleDate) ||
-            fechaConstruida ||
-            getUltimoDiaMesActual(calculateDate);
-        }
-
-        delete registro.saleDay;
-        delete registro.saleMonth;
-        delete registro.saleYear;
+        if (filaVacia) continue;
 
         if (
           !registro.descriptionDistributor ||
@@ -503,14 +383,12 @@ const ExtraccionDatos = () => {
 
         if (tieneColumnaCantidad) {
           const rawValue = registro.unitsSoldDistributor;
-
           const valorLimpio = String(rawValue).trim();
           const cantidadNumerica = parseFloat(valorLimpio);
 
           if (
             !valorLimpio ||
             isNaN(cantidadNumerica) ||
-            Object.is(cantidadNumerica, 0) ||
             cantidadNumerica === 0 ||
             !Number.isInteger(cantidadNumerica)
           ) {
@@ -522,50 +400,66 @@ const ExtraccionDatos = () => {
             : cantidadNumerica;
 
           registro.unitsSoldDistributor = cantidad;
-        } else {
-          cantidad = 1;
         }
 
+        if (!registro.saleDate) {
+          const diaTexto = registro.saleDay ?? "01";
+          const mesTexto = registro.saleMonth ?? null;
+          const anioTexto = registro.saleYear ?? null;
+
+          const fechaConstruida = construirFechaDesdeComponente({
+            diaTexto,
+            mesTexto,
+            anioTexto,
+          });
+
+          registro.saleDate =
+            normalizarFechaISO(registro.saleDate) ||
+            fechaConstruida ||
+            getUltimoDiaMesActual(calculateDate);
+        }
+
+        delete registro.saleDay;
+        delete registro.saleMonth;
+        delete registro.saleYear;
 
         registro.distributor =
-          registro?.distributor ||
-          configuracion?.distributor ||
+          registro.distributor ||
+          configuracionId?.distributor ||
           defaultDistributorId ||
           null;
-
-        let codeStoreDistributor;
 
         const tieneColumnaAlmacen = columnasConfig.some(
           (c) => c.mappingToField === "codeStoreDistributor"
         );
 
         if (tieneColumnaAlmacen && registro.codeStoreDistributor !== undefined) {
-          codeStoreDistributor = String(registro.codeStoreDistributor || "").trim();
+          const almac = String(registro.codeStoreDistributor || "").trim();
+          if (!almac || !validarAlmacen(almac)) continue;
+          registro.codeStoreDistributor = almac;
 
-          if (!codeStoreDistributor) continue;
-
-          if (!validarAlmacen(codeStoreDistributor)) continue;
-        }
-
-        else {
-          codeStoreDistributor =
-            registro?.codeStoreDistributor ||
-            configuracion?.codeStoreDistributor ||
+        } else {
+          registro.codeStoreDistributor =
+            registro.codeStoreDistributor ||
             configuracionId?.codeStoreDistributor ||
             sheetName;
         }
 
-        registro.codeStoreDistributor = codeStoreDistributor;
-        registro.unitsSoldDistributor = cantidad;
 
-        if (filaVacia) continue;
-
-        registros.push(...repartirValoresNumerico(registro, simboloConfig));
+        if (tieneSeparadores(registro.descriptionDistributor, simboloConfig)) {
+          registrosConSeparadores.push(registro);
+        } else {
+          registrosSinSeparar.push(...repartirValoresNumerico(registro, simboloConfig));
+        }
       }
     }
 
-    return registros;
+    return {
+      registrosSinSeparar,
+      registrosConSeparadores,
+    };
   };
+
 
   const handleFileChange = async (event) => {
     const file = event.target.files?.[0];
@@ -573,14 +467,16 @@ const ExtraccionDatos = () => {
       showSnackbar("⚠️ No se seleccionó archivo");
       return;
     }
-    setLoading(true);
-    const nombreSinExtension = file.name.replace(/\.[^/.]+$/, "");
-    const hasNegativeValue = configuracion.hasNegativeValue;
 
+    setLoading(true);
+
+    const nombreSinExtension = file.name.replace(/\.[^/.]+$/, "");
     setDocumento(nombreSinExtension);
+
     try {
       const data = await file.arrayBuffer();
       const workbook = XLSX.read(data, { type: "array" });
+
       if (columns.length === 0) {
         showSnackbar("⚠️ No se encontraron columnas en la configuración");
         setData([]);
@@ -588,31 +484,48 @@ const ExtraccionDatos = () => {
         return;
       }
 
-      console.log('configuracionId', columns);
-      const registrosExtraidos = procesarExtraccionDesdeConfiguracion(
+      const {
+        registrosSinSeparar,
+        registrosConSeparadores
+      } = procesarExtraccionDesdeConfiguracion(
         workbook,
         configuracionId,
         columns,
         configuracionId?.distributor,
-        hasNegativeValue,
+        configuracion.hasNegativeValue,
         calculateDate,
-        configuracion.simbolo,
+        configuracion.simbolo
       );
 
-      console.log("registrosFiltrados", registrosExtraidos)
+      if (
+        registrosSinSeparar.length === 0 &&
+        registrosConSeparadores.length === 0
+      ) {
+        showSnackbar("⚠️ Error al obtener los detalles del producto");
+        return;
+      }
+
+      if (registrosConSeparadores.length > 0) {
+        setPreSplitInfo(registrosConSeparadores);
+        setTemporalRegistrosSinSeparar(registrosSinSeparar);
+        setDialogSeparation(true);
+        return;
+      }
+
       const registrosFiltrados = filterByCurrentMonth(
-        registrosExtraidos,
+        registrosSinSeparar,
         calculateDate
       );
 
       if (registrosFiltrados.length === 0) {
         showSnackbar(
-          "⚠️ Error al obtener los datos del detalle del producto, validar la información cargada o la configuración de extracción"
+          "⚠️ No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo."
         );
         setData([]);
         setCeldas([]);
         return;
       }
+
       const agrupados = registrosFiltrados.reduce((acc, item) => {
         const key = `${item.distributor}_${item.codeStoreDistributor}`;
 
@@ -621,27 +534,29 @@ const ExtraccionDatos = () => {
             distributor: item.distributor,
             storeName: item.codeStoreDistributor,
             rowsCount: 0,
-            productCount: 0,
+            productCount: 0
           };
         }
 
         acc[key].rowsCount += 1;
+
         const unidades = Number(item.unitsSoldDistributor);
         acc[key].productCount += isNaN(unidades) ? 0 : unidades;
 
         return acc;
       }, {});
 
-      let detallesData = Object.values(agrupados);
+      setDetallesData(Object.values(agrupados));
 
-      setDetallesData(detallesData);
+      // ⬅️ IGUAL QUE ESTÁNDAR
       setData(registrosFiltrados);
       setCeldas(
         Object.keys(registrosFiltrados[0] || {}).map((columna) => ({
           label: etiquetasColumnas[columna] || columna,
-          field: columna,
+          field: columna
         }))
       );
+
     } catch (error) {
       showSnackbar(`Error al procesar archivo: ${error.message}`);
       setData([]);
@@ -652,6 +567,7 @@ const ExtraccionDatos = () => {
       event.target.value = null;
     }
   };
+
 
   const handleIconClick = () => {
     setData([]);
@@ -813,244 +729,6 @@ const ExtraccionDatos = () => {
     });
   };
 
-  const extraerTextoCelda = (celda) => {
-    if (celda == null || celda == undefined) return "";
-
-    if (typeof celda === "string") return celda.trim();
-
-    if (typeof celda === "number") return String(celda);
-
-    if (Object.prototype.toString.call(celda) === "[object Date]") {
-      return celda.toISOString();
-    }
-
-    if (typeof celda === "object") {
-      if ("v" in celda) {
-        if (typeof celda.v === "string") return celda.v.trim();
-        if (typeof celda.v === "number") return String(celda.v);
-        if (celda.v instanceof Date) return celda.v.toISOString();
-      }
-      if ("text" in celda && typeof celda.text === "string")
-        return celda.text.trim();
-      if ("result" in celda && typeof celda.result === "string")
-        return celda.result.trim();
-      if ("richText" in celda && Array.isArray(celda.richText)) {
-        return celda.richText
-          .map((rt) => rt.text)
-          .join("")
-          .trim();
-      }
-    }
-
-    return "";
-  };
-
-  const detectHeader = (rows) => {
-    for (let i = 0; i < Math.min(100, rows.length); i++) {
-      const fila = rows[i];
-      const cleanedRow = fila.map((celda) => extraerTextoCelda(celda));
-      const nonEmptyCells = cleanedRow.filter((c) => c !== "");
-
-      if (nonEmptyCells.length < 2) continue;
-
-      const mapeo = detectarColumnasAutomaticamente(cleanedRow);
-      if (mapeo.descriptionDistributor !== undefined) {
-        return { header: fila, rowIndex: i };
-      }
-    }
-    return { header: null, rowIndex: -1 };
-  };
-
-  const detectarColumnasAutomaticamente = (fila) => {
-    const resultado = {};
-
-    const headers = fila.map((celda) =>
-      normalizarTexto(extraerTextoCelda(celda))
-    );
-
-    for (const [tipo, keywords] of Object.entries(COLUMN_KEYWORDS)) {
-      for (let i = 0; i < headers.length; i++) {
-        const header = headers[i];
-        for (const keyword of keywords) {
-          if (header === keyword) {
-            if (resultado[tipo] === undefined) {
-              resultado[tipo] = i;
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    return resultado;
-  };
-
-  const normalizarTextoDescripcion = (txt) =>
-    txt
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[\u200B-\u200D\uFEFF]/g, "")
-      .replace(/[∕⁄／]/g, "/")
-      .replace(/\u00A0/g, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .toLowerCase();
-
-
-  const validarDescripcion = (desc) => {
-    const descripcionFormat = desc.trim().toLowerCase();
-    const descripcion = normalizarTextoDescripcion(descripcionFormat);
-
-    if (descripcion.length < 2) return false;
-
-    if (!/\p{L}/u.test(descripcion)) return false;
-
-    const palabras = descripcion.split(/\s+/);
-
-    if (PALABRAS_INVALIDAS.map(p => p.toLowerCase()).includes(descripcion)) {
-      return false;
-    }
-
-    for (const palabra of PALABRAS_INVALIDAS) {
-      const regex = new RegExp(`\\b${palabra.toLowerCase()}\\b`);
-
-      if (regex.test(descripcion)) {
-        if (palabras.length === 1) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  };
-
-  const validarAlmacen = (valor) => {
-    if (!valor) return false;
-
-    const texto = valor.trim().toLowerCase();
-
-    if (texto.length < 2) return false;
-
-    const invalidas = PALABRAS_INVALIDAS.map(p => p.toLowerCase());
-    if (invalidas.includes(texto)) return false;
-    return true;
-  };
-
-
-
-  const normalizarFechaISO = (valorCelda) => {
-    if (!valorCelda && valorCelda !== 0) return null;
-
-    let fecha = null;
-
-    // --- 1) Excel serial number ---
-    if (typeof valorCelda === "number") {
-      const serial = Math.round(valorCelda);
-      if (serial >= 1 && serial <= 2958465) {
-        fecha = new Date((serial - 25569) * 86400 * 1000);
-      }
-    }
-
-    // --- 2) Fecha objeto ---
-    else if (Object.prototype.toString.call(valorCelda) === "[object Date]") {
-      fecha = valorCelda;
-    }
-
-    // --- 3) Texto ---
-    else if (typeof valorCelda === "string") {
-      const texto = valorCelda.trim();
-
-      // 3.1 Serial en texto
-      const matchSerial = texto.match(/^\+?0*(\d{4,7})(\.\d+)?$/);
-      if (matchSerial) {
-        const serial = Math.round(parseFloat(matchSerial[1]));
-        if (serial >= 1 && serial <= 2958465) {
-          fecha = new Date((serial - 25569) * 86400 * 1000);
-        }
-      }
-
-      // 3.2 Fecha DD/MM/YY o DD/MM/YYYY (siempre día primero)
-      if (!fecha) {
-        const matchSlash = texto.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
-        if (matchSlash) {
-          let dia = parseInt(matchSlash[1], 10);
-          let mes = parseInt(matchSlash[2], 10);
-          let anio = parseInt(matchSlash[3], 10);
-
-          // Interpretar años de 2 dígitos como 2000+YY
-          if (anio < 100) anio = 2000 + anio;
-
-          fecha = new Date(anio, mes - 1, dia);
-
-          // Validación de fecha real
-          if (
-            fecha.getFullYear() !== anio ||
-            fecha.getMonth() + 1 !== mes ||
-            fecha.getDate() !== dia
-          ) {
-            fecha = null;
-          }
-        }
-      }
-
-      // 3.3 Formato DD.MM.YYYY
-      if (!fecha) {
-        const matchPuntos = texto.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-        if (matchPuntos) {
-          const dia = parseInt(matchPuntos[1], 10);
-          const mes = parseInt(matchPuntos[2], 10);
-          const anio = parseInt(matchPuntos[3], 10);
-
-          fecha = new Date(anio, mes - 1, dia);
-
-          if (
-            fecha.getFullYear() !== anio ||
-            fecha.getMonth() + 1 !== mes ||
-            fecha.getDate() !== dia
-          ) {
-            fecha = null;
-          }
-        }
-      }
-
-      // 3.4 Fechas con meses en letras
-      if (!fecha) {
-        const matchLetras = texto.match(/^(\d{1,2})-([A-Za-z]+)-(\d{2,4})$/);
-        if (matchLetras) {
-          const dia = parseInt(matchLetras[1], 10);
-          const mesStr = matchLetras[2].toLowerCase();
-          const anioCorto = parseInt(matchLetras[3], 10);
-
-          const meses = {
-            jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
-            jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
-          };
-
-          const mes = meses[mesStr.slice(0, 3)];
-          let anio = anioCorto < 100 ? 2000 + anioCorto : anioCorto;
-
-          if (!isNaN(dia) && mes !== undefined && !isNaN(anio)) {
-            fecha = new Date(anio, mes, dia);
-          }
-        }
-      }
-
-      if (!fecha) {
-        const timestamp = Date.parse(texto);
-        if (!isNaN(timestamp)) {
-          fecha = new Date(timestamp);
-        }
-      }
-    }
-
-    if (fecha instanceof Date && !isNaN(fecha.getTime())) {
-      return fecha.toISOString().split("T")[0];
-    }
-
-    return null;
-  };
-
-
   const avisoCritico = (mensaje) => {
     showSnackbar(`⚠️ ${mensaje}`);
     setData([]);
@@ -1064,8 +742,10 @@ const ExtraccionDatos = () => {
   const handleExtraccionStandar = async (event) => {
     const file = event.target.files?.[0];
     setLoading(true);
+
     const nombreSinExtension = file.name.replace(/\.[^/.]+$/, "");
     setDocumento(nombreSinExtension);
+
     try {
       const data = await file.arrayBuffer();
       const workbook = XLSX.read(data, { type: "array" });
@@ -1080,33 +760,61 @@ const ExtraccionDatos = () => {
         totalHojas,
       });
 
-      let registros = [];
+      let registrosSinSeparar = [];
+      let registrosConSeparadores = [];
 
       for (const index of sheetIndexes) {
         const hojaName = workbook.SheetNames[index];
         const worksheet = workbook.Sheets[hojaName];
 
         const rows = extractRowsFromWorksheet(worksheet);
-        const headerInfo = detectHeader(rows);
+        const headerInfo = detectHeader(rows, COLUMN_KEYWORDS);
+
         if (!headerInfo.header) {
           avisoCritico(`Encabezados no encontrados en hoja: ${hojaName}`);
+          continue;
         }
 
-        const processedRecords = processRows(
-          rows.slice(headerInfo.rowIndex + 1),
-          headerInfo.header,
-          hojaName,
-          configuracion.distributor || null,
-          configuracion.simbolo || null
-        );
+        const { registrosSinSeparar: sinSep, registrosConSeparadores: conSep } =
+          processRows(
+            rows.slice(headerInfo.rowIndex + 1),
+            headerInfo.header,
+            hojaName,
+            configuracion.distributor || null,
+            configuracion.simbolo || null
+          );
 
-        registros.push(...processedRecords);
+        registrosSinSeparar.push(...sinSep);
+        registrosConSeparadores.push(...conSep);
       }
-      console.log("registrosFiltrados", registros)
-      if (registros.length === 0) {
+
+
+      if (registrosSinSeparar.length === 0 && registrosConSeparadores.length === 0) {
         avisoCritico("⚠️ Error al obtener los detalles del producto");
+        return;
       }
-      const registrosFiltrados = filterByCurrentMonth(registros, calculateDate);
+
+      if (registrosConSeparadores.length > 0) {
+
+        setPreSplitInfo(registrosConSeparadores);
+        setTemporalRegistrosSinSeparar(registrosSinSeparar);
+
+        setDialogSeparation(true);
+
+        return;
+      }
+
+      const registrosFiltrados = filterByCurrentMonth(registrosSinSeparar, calculateDate);
+
+      if (registrosFiltrados.length === 0) {
+        avisoCritico(
+          "⚠️ No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo."
+        );
+        setData([]);
+        setCeldas([]);
+        return;
+      }
+
       const camposDetectados = Object.keys(registrosFiltrados[0] || {});
       const ordenColumnas = Object.keys(etiquetasColumnas);
 
@@ -1114,13 +822,7 @@ const ExtraccionDatos = () => {
         ...ordenColumnas.filter((key) => camposDetectados.includes(key)),
         ...camposDetectados.filter((key) => !ordenColumnas.includes(key)),
       ];
-      if (registrosFiltrados.length === 0) {
-        avisoCritico("⚠️ No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo si coincide con la fecha de cálculo seleccionada."
-        );
-        setData([]);
-        setCeldas([]);
-        return;
-      }
+
       const agrupados = registrosFiltrados.reduce((acc, item) => {
         const key = `${item.distributor}_${item.codeStoreDistributor}`;
 
@@ -1136,15 +838,13 @@ const ExtraccionDatos = () => {
         acc[key].rowsCount += 1;
         const unidades = Number(item.unitsSoldDistributor);
         acc[key].productCount += isNaN(unidades) ? 0 : unidades;
-
         return acc;
       }, {});
 
-      let detallesData = Object.values(agrupados);
-
-      setDetallesData(detallesData);
+      setDetallesData(Object.values(agrupados));
 
       setData(registrosFiltrados);
+
       setCeldas(
         columnasOrdenadas.map((key) => ({
           label: etiquetasColumnas[key] || key,
@@ -1162,6 +862,7 @@ const ExtraccionDatos = () => {
     }
   };
 
+
   const filterByCurrentMonth = (registros, calculateDate) => {
     const mesCalculo = new Date(calculateDate).toISOString().slice(0, 7);
     return registros.filter((registro) => {
@@ -1172,117 +873,22 @@ const ExtraccionDatos = () => {
     });
   };
 
-  const extractRowsFromWorksheet = (worksheet, limiteVacias = 5) => {
-    let rows = XLSX.utils.sheet_to_json(worksheet, {
-      header: 1,
-      defval: "",
-      blankrows: false,
-    });
-
-    if (!rows.length) return [];
-
-    let resultadoFinal = [];
-    let consecutivasVacias = 0;
-
-    for (let i = 0; i < rows.length; i++) {
-      const fila = rows[i];
-      const filaVacia = fila.every(
-        (cell) => cell === "" || cell === null || cell === undefined
-      );
-
-      if (filaVacia) {
-        consecutivasVacias++;
-        if (consecutivasVacias >= limiteVacias) {
-          console.warn(
-            `⚠️ Se detuvo la lectura en la fila ${i} por exceso de filas vacías consecutivas`
-          );
-          break;
-        }
-        continue;
-      } else {
-        consecutivasVacias = 0;
-      }
-
-      let consecutivasColVacias = 0;
-      let ultimaColumnaConDato = fila.length - 1;
-
-      for (let j = 0; j < fila.length; j++) {
-        const cell = fila[j];
-        if (cell === "" || cell === null || cell === undefined) {
-          consecutivasColVacias++;
-          if (consecutivasColVacias >= limiteVacias) {
-            ultimaColumnaConDato = j - limiteVacias;
-            break;
-          }
-        } else {
-          consecutivasColVacias = 0;
-          ultimaColumnaConDato = j;
-        }
-      }
-
-      resultadoFinal.push(fila.slice(0, ultimaColumnaConDato + 1));
-    }
-
-    return resultadoFinal;
-  };
-
-  const getSheetIndexes = ({
-    hojaInicio,
-    hojaFin,
-    extraerTodos,
-    totalHojas,
-  }) => {
-    const start = parseInt(hojaInicio, 10) - 1;
-    const end = parseInt(hojaFin, 10) - 1;
-
-    const isValidStart = !isNaN(start) && start >= 0 && start < totalHojas;
-    const isValidEnd = !isNaN(end) && end >= start && end < totalHojas;
-
-    if (extraerTodos) return Array.from({ length: totalHojas }, (_, i) => i);
-    if (isValidStart && isValidEnd)
-      return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-    if (isValidStart) return [start];
-    return [0];
-  };
-
   const processRows = (rows, encabezados, hojaName, defaultDistributorId, simbolo) => {
-    console.log('encabezados', encabezados);
-    console.log("", hojaName,)
-    console.log("", simbolo)
-    console.log("rows", rows)
-    const registros = [];
-    const mapeo = detectarColumnasAutomaticamente(encabezados);
-    const tieneColumnaCantidad = mapeo.unitsSoldDistributor !== undefined;
-    const columnaNumber = Number(mapeo.descriptionDistributor) + 1;
-    for (const fila of rows) {
-      const rawDescripcion =
-        extraerTextoCelda(fila[mapeo.descriptionDistributor] || "") || "";
+    const registrosSinSeparar = [];
+    const registrosConSeparadores = [];
 
-      if (!rawDescripcion || !validarDescripcion(rawDescripcion)) {
-        console.log("Descripcion no valida", rawDescripcion);
-        continue;
-      };
+    const mapeo = detectarColumnasAutomaticamente(encabezados, COLUMN_KEYWORDS);
+
+    for (const fila of rows) {
+      const rawDescripcion = extraerTextoCelda(fila[mapeo.descriptionDistributor] || "");
+      if (!rawDescripcion || !validarDescripcion(rawDescripcion)) continue;
 
       let rawCantidad = 1;
-      if (tieneColumnaCantidad) {
-        const valorExtraido = extraerTextoCelda(
-          fila[mapeo.unitsSoldDistributor]
-        );
+      if (mapeo.unitsSoldDistributor !== undefined) {
+        const valorExtraido = extraerTextoCelda(fila[mapeo.unitsSoldDistributor]);
         const cantidadNumerica = parseFloat(valorExtraido);
-        const hasNegativeValue = configuracion.hasNegativeValue;
-
-        if (!isNaN(cantidadNumerica) && cantidadNumerica !== 0) {
-
-          if (!Number.isInteger(cantidadNumerica)) {
-            continue;
-          }
-
-          rawCantidad = hasNegativeValue
-            ? Math.abs(cantidadNumerica)
-            : cantidadNumerica;
-        } else {
-          continue;
-        }
+        if (isNaN(cantidadNumerica) || cantidadNumerica === 0) continue;
+        rawCantidad = Math.abs(cantidadNumerica);
       }
 
       let saleDate;
@@ -1290,10 +896,7 @@ const ExtraccionDatos = () => {
         const val = extraerTextoCelda(fila[mapeo.saleDate]);
         saleDate = normalizarFechaISO(val);
       }
-
-      if (!saleDate) {
-        saleDate = getUltimoDiaMesActual(calculateDate);
-      }
+      if (!saleDate) saleDate = getUltimoDiaMesActual(calculateDate);
 
       const codeProductDistributor =
         mapeo.codeProductDistributor !== undefined
@@ -1301,46 +904,101 @@ const ExtraccionDatos = () => {
           : rawDescripcion;
 
       const distributor =
-        configuracion?.distributor || mapeo.distributor !== undefined
-          ? extraerTextoCelda(fila[mapeo.distributor])
-          : defaultDistributorId;
+        configuracion?.distributor || defaultDistributorId;
 
-      let codeStoreDistributor;
+      const codeStoreDistributor =
+        configuracion?.codeStoreDistributor ||
+        (mapeo.codeStoreDistributor !== undefined
+          ? extraerTextoCelda(fila[mapeo.codeStoreDistributor])
+          : hojaName);
 
-      if (configuracion?.codeStoreDistributor) {
-        codeStoreDistributor = configuracion.codeStoreDistributor;
-      } else if (mapeo.codeStoreDistributor !== undefined) {
-        codeStoreDistributor = extraerTextoCelda(fila[mapeo.codeStoreDistributor]);
-      } else {
-        codeStoreDistributor = hojaName;
-      }
-
-      if (mapeo.codeStoreDistributor !== undefined) {
-        if (!validarAlmacen(codeStoreDistributor)) {
-          continue;
-        }
-      }
-
-      const registroBase = {
+      const registro = {
         descriptionDistributor: rawDescripcion,
         unitsSoldDistributor: rawCantidad,
         codeProductDistributor,
-        distributor: configuracion?.distributor || distributor,
-        codeStoreDistributor:
-          configuracion?.codeStoreDistributor || codeStoreDistributor,
+        distributor,
+        codeStoreDistributor,
         saleDate,
       };
 
-      console.log('registroBase', registroBase);
-      registros.push(...repartirValoresNumerico(registroBase, simbolo));
-    }
-    if (registros.length === 0) {
-      if (registros.map((r) => r.descriptionDistributor).every((desc) => !desc || desc.trim() === "")) {
-        avisoCritico(`Por favor verificar la descripcion en la hoja: ${hojaName}, columna: ` + (columnaNumber || "No encontrada"));
+      if (tieneSeparadores(rawDescripcion, simbolo)) {
+        registrosConSeparadores.push(registro);
+      } else {
+        registrosSinSeparar.push(registro);
       }
     }
-    return registros;
+
+    return { registrosSinSeparar, registrosConSeparadores };
   };
+
+
+  const [selectedToSplitIds, setSelectedToSplitIds] = useState([]);
+
+  const handleConfirmarSeparacion = () => {
+    if (!preSplitInfo) return;
+
+    const seleccionados = selectedToSplitIds.map((idx) => preSplitInfo[idx]);
+
+    // No seleccionados
+    const noSeleccionados = preSplitInfo.filter(
+      (_, idx) => !selectedToSplitIds.includes(idx)
+    );
+
+    const separados = seleccionados.flatMap((item) =>
+      repartirValoresNumerico(item, configuracion.simbolo)
+    );
+
+    const finalData = [
+      ...temporalRegistrosSinSeparar, // registros originales SIN separar
+      ...separados,                   // registros separados
+      ...noSeleccionados              // productos detectados pero NO separados
+    ];
+
+    const registrosFiltrados = filterByCurrentMonth(finalData, calculateDate);
+
+    const camposDetectados = Object.keys(registrosFiltrados[0] || {});
+    const ordenColumnas = Object.keys(etiquetasColumnas);
+
+    const columnasOrdenadas = [
+      ...ordenColumnas.filter((key) => camposDetectados.includes(key)),
+      ...camposDetectados.filter((key) => !ordenColumnas.includes(key)),
+    ];
+
+    const agrupados = registrosFiltrados.reduce((acc, item) => {
+      const key = `${item.distributor}_${item.codeStoreDistributor}`;
+
+      if (!acc[key]) {
+        acc[key] = {
+          distributor: item.distributor,
+          storeName: item.codeStoreDistributor,
+          rowsCount: 0,
+          productCount: 0,
+        };
+      }
+
+      acc[key].rowsCount += 1;
+      const unidades = Number(item.unitsSoldDistributor);
+      acc[key].productCount += isNaN(unidades) ? 0 : unidades;
+
+      return acc;
+    }, {});
+
+    setDetallesData(Object.values(agrupados));
+    setData(registrosFiltrados);
+
+    setCeldas(
+      columnasOrdenadas.map((key) => ({
+        label: etiquetasColumnas[key] || key,
+        field: key,
+        type: "TEXT",
+      }))
+    );
+
+    setDialogSeparation(false);
+    setPreSplitInfo([]);
+    setSelectedToSplitIds([]);
+  };
+
 
   const handleCloseCreateStores = () => {
     setOpenCreateStores(false);
@@ -1779,23 +1437,6 @@ const ExtraccionDatos = () => {
                           )}
                           {configuracionId && (
                             <>
-                              <Grid size={2}>
-                                <AtomTextFielInputForm
-                                  id="simbolo"
-                                  height="40px"
-                                  required
-                                  headerTitle="Símbolo separador"
-                                  placeholder="Seleccionar"
-                                  value={configuracion?.simbolo || ""}
-                                  fullWidth
-                                  onChange={(e) =>
-                                    setConfiguracion({
-                                      ...configuracion,
-                                      simbolo: e.target.value,
-                                    })
-                                  }
-                                />
-                              </Grid>
                               <Grid size={3}>
                                 <AtomTextFielInputForm
                                   id="documento"
@@ -1837,94 +1478,7 @@ const ExtraccionDatos = () => {
                             mb: 1,
                           }}
                         >
-                          <Accordion
-                            sx={{
-                              "&:before": {
-                                display: "none",
-                              },
-                            }}
-                            elevation={0}
-                          >
-                            <AccordionSummary
-                              expandIcon={<ExpandMoreIcon color="error" />}
-                              aria-controls="panel-content"
-                              id="panel-header"
-                              sx={{
-                                backgroundColor: "#ffe6e6",
-                                flexDirection: "row-reverse",
-                                "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded":
-                                {
-                                  transform: "rotate(180deg)",
-                                },
-                                "& .MuiAccordionSummary-content": {
-                                  justifyContent: "center",
-                                },
-                              }}
-                            >
-                              <Typography
-                                color="error"
-                                sx={{ fontWeight: "bold", fontSize: "15px" }}
-                              >
-                                Errores encontrados (
-                                {errores.reduce(
-                                  (sum, err) => sum + Object.keys(err).length,
-                                  0
-                                )}
-                                )
-                              </Typography>
-                            </AccordionSummary>
-
-                            <AccordionDetails
-                              sx={{
-                                border: "1px solid #ff4d4d",
-                              }}
-                            >
-                              <Box
-                                sx={{
-                                  maxHeight: 300,
-                                  overflowY: "auto",
-                                  px: 2,
-                                  pb: 2,
-                                  display: "flex",
-                                  flexDirection: "row",
-                                  gap: 1,
-                                }}
-                              >
-                                <ul
-                                  style={{
-                                    paddingLeft: "20px",
-                                    margin: 0,
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    flexWrap: "wrap",
-                                  }}
-                                >
-                                  {errores.map((filaError, rowIndex) =>
-                                    Object.entries(filaError).map(
-                                      ([columna, mensaje], idx) => (
-                                        <Grid
-                                          item
-                                          size={6}
-                                          key={`${rowIndex}-${idx}`}
-                                        >
-                                          <li
-                                            key={`${rowIndex}-${idx}`}
-                                            style={{
-                                              color: "#d32f2f",
-                                              fontSize: "13px",
-                                            }}
-                                          >
-                                            Fila {rowIndex + 1}, Columna "{columna}
-                                            ": {mensaje}
-                                          </li>
-                                        </Grid>
-                                      )
-                                    )
-                                  )}
-                                </ul>
-                              </Box>
-                            </AccordionDetails>
-                          </Accordion>
+                          <DetallesErrores errores={errores} />
                         </Grid>
                       )}
 
@@ -1960,46 +1514,7 @@ const ExtraccionDatos = () => {
         handleSubmit={limpiarErrores}
         textButtonSubmit="Aceptar"
         dialogContentComponent={
-          <Box sx={{ width: "80%" }}>
-            <Typography variant="h6">Extracción de datos</Typography>
-            <Typography variant="body1">
-              Fecha de extracción:{" "}
-              {formatDate(dataResponse?.extractionDate || "")}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-            <Typography variant="h6">Detalles de Registros</Typography>
-            <Typography variant="body1">
-              Total de registros: {dataResponse?.recordCount || 0}
-            </Typography>
-            <Typography variant="body1">
-              Unidades Vendidas: {dataResponse?.productCount || 0}
-            </Typography>
-            <Typography color="red">
-              Errores: {dataResponse?.processingDetails?.error || 0}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-            {dataResponse?.processingDetails?.smsErrors?.length > 0 && (
-              <Accordion sx={{ mt: 1 }}>
-                <AccordionSummary
-                  sx={{ backgroundColor: "#ffd6d6" }}
-                  expandIcon={<ExpandMoreIcon />}
-                >
-                  <Typography sx={{ color: "red" }}>
-                    Ver detalles de errores
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {dataResponse.processingDetails.smsErrors.map(
-                    (error, index) => (
-                      <Typography key={index} variant="body2" sx={{ mb: 1 }}>
-                        • {error}
-                      </Typography>
-                    )
-                  )}
-                </AccordionDetails>
-              </Accordion>
-            )}
-          </Box>
+          <Informacion dataResponse={dataResponse} />
         }
       />
       <AtomDialogForm
@@ -2086,6 +1601,7 @@ const ExtraccionDatos = () => {
         handleCloseDialog={() => {
           setOpenDialogoConfirmacion(false);
           setLoading(false);
+          setData([...data]);
         }}
         dialogContentComponent={
           <Box sx={{ height: "100%" }}>
@@ -2109,176 +1625,9 @@ const ExtraccionDatos = () => {
 
                 {data?.length > 0 && (
                   <>
-                    <Grid item size={6}>
-                      <Box sx={styles.container}>
-                        <Typography
-                          variant="subtitle2"
-                          color="primary"
-                          gutterBottom
-                        >
-                          Primer Registro
-                        </Typography>
-                        <TableContainer
-                          component={Paper}
-                          elevation={0}
-                          sx={styles.table}
-                        >
-                          <Table size="small">
-                            <TableBody>
-                              {Object.keys(NOMBRES_CAMPOS).map((key) => (
-                                <TableRow key={key}>
-                                  <TableCell sx={styles.tableCell}>
-                                    <Typography
-                                      variant="subtitle2"
-                                      sx={styles.typography}
-                                    >
-                                      {NOMBRES_CAMPOS[key]}
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell sx={styles.tableCellDetail}>
-                                    {data[0]?.[key] || "N/A"}
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      </Box>
-                    </Grid>
-
-                    <Grid size={6}>
-                      <Box sx={styles.container}>
-                        <Typography variant="subtitle2" color="primary">
-                          Último Registro
-                        </Typography>
-
-                        <TableContainer
-                          component={Paper}
-                          elevation={0}
-                          sx={styles.table}
-                        >
-                          <Table size="small">
-                            <TableBody>
-                              {Object.keys(NOMBRES_CAMPOS).map((key) => (
-                                <TableRow key={key}>
-                                  <TableCell sx={styles.tableCell}>
-                                    <Typography
-                                      variant="subtitle2"
-                                      sx={styles.typography}
-                                    >
-                                      {NOMBRES_CAMPOS[key]}
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell sx={styles.tableCellDetail}>
-                                    {data[data.length - 1]?.[key] || "N/A"}
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      </Box>
-                    </Grid>
-                    {detallesData.length > 0 && (
-                      <Grid size={12}>
-                        <Box sx={styles.container}>
-                          <Typography
-                            variant="subtitle2"
-                            color="primary"
-                            gutterBottom
-                          >
-                            Detalles de la extracción
-                          </Typography>
-
-                          <TableContainer
-                            component={Paper}
-                            elevation={0}
-                            sx={styles.table}
-                          >
-                            <Table size="small">
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell sx={styles.tableCell}>
-                                    <Typography sx={styles.typography}>
-                                      Distribuidor
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell sx={styles.tableCell}>
-                                    <Typography sx={styles.typography}>
-                                      Almacén
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell sx={styles.tableCell}>
-                                    <Typography sx={styles.typography}>
-                                      Filas / Registros
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell sx={styles.tableCell}>
-                                    <Typography sx={styles.typography}>
-                                      Unidades Vendidas
-                                    </Typography>
-                                  </TableCell>
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {detallesData.map((detalle, index) => (
-                                  <TableRow
-                                    key={`${detalle.distributor}-${detalle.codeStoreDistributor}-${index}`}
-                                  >
-                                    <TableCell sx={styles.tableCellDetail}>
-                                      {detalle.distributor}
-                                    </TableCell>
-                                    <TableCell sx={styles.tableCellDetail}>
-                                      {detalle.storeName}
-                                    </TableCell>
-                                    <TableCell sx={styles.tableCellDetail}>
-                                      {detalle.rowsCount}
-                                    </TableCell>
-                                    <TableCell sx={styles.tableCellDetail}>
-                                      {detalle.productCount}
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
-                          </TableContainer>
-                        </Box>
-                      </Grid>
-                    )}
-
-                    <Grid size={12}>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "flex-end",
-                          gap: 1,
-                        }}
-                      >
-                        <Typography
-                          variant="subtitle2"
-                          color="primary"
-                          gutterBottom
-                          sx={styles.title}
-                        >
-                          Total Filas/Registros:{" "}
-                          <span style={{ fontWeight: "bold" }}>
-                            {data.length}
-                          </span>
-                        </Typography>
-                        <Typography
-                          variant="subtitle2"
-                          color="primary"
-                          gutterBottom
-                          sx={styles.title}
-                        >
-                          Total Unidades Vendidas:{" "}
-                          <span style={{ fontWeight: "bold" }}>
-                            {totalUnitsSoldDistributor}
-                          </span>
-                        </Typography>
-                      </Box>
-                    </Grid>
+                    <DetallesExtraccion
+                      data={data}
+                      detallesData={detallesData} />
                   </>
                 )}
               </Grid>
@@ -2286,6 +1635,41 @@ const ExtraccionDatos = () => {
           </Box>
         }
       />
+      <AtomDialogForm
+        openDialog={dialogSeparation}
+        titleCrear="Productos detectados para separación"
+        buttonSubmit={true}
+        textButtonSubmit="Continuar"
+        handleSubmit={handleConfirmarSeparacion}
+        buttonCancel={true}
+        handleCloseDialog={() => {
+          setDialogSeparation(false);
+          setPreSplitInfo([]);
+          setSelectedToSplitIds([]);
+        }}
+        maxWidth="lg"
+        dialogContentComponent={
+          <TablaSeleccionProductos
+            columns={[
+              { label: "Descripción", field: "descriptionDistributor", type: "TEXT" },
+              { label: "Cantidad", field: "unitsSoldDistributor", type: "NUMBER" },
+              { label: "Almacén", field: "codeStoreDistributor", type: "TEXT" }
+            ]}
+            data={preSplitInfo || []}
+            pagination={true}
+            page={page}
+            limit={limit}
+            count={preSplitInfo.length || 0}
+            selectable={true}
+            selected={selectedToSplitIds}
+            setSelected={setSelectedToSplitIds}
+            setPage={setPage}
+            setLimit={setLimit}
+          />
+
+        }
+      />
+
     </>
   );
 };

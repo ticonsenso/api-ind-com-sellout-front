@@ -259,7 +259,7 @@ const Matriculacion = ({ calculateDate }) => {
       onConfirm: async () => {
         try {
           const ids = selectedIds;
-          const response = await dispatch(deleteMasivaMatriculacion({ ids }));
+          const response = await dispatch(deleteMasivaMatriculacion({ ids, calculateDate }));
           if (response.meta.requestStatus === "fulfilled") {
             showSnackbar(response.payload.message);
             buscarMatriculacion(search, calculateDate);
