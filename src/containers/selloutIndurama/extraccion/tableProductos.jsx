@@ -44,11 +44,12 @@ const TablaSeleccionProductos = ({
 
     return (
         <Paper elevation={1} sx={{
-            width: "100%", mb: 1, border: "1px solid #e0e0e0",
+            width: "100%",
             borderRadius: 3,
+            height: "100%",
         }}>
             <TableContainer sx={{
-                maxHeight: 340,
+                height: "100%",
                 borderRadius: 3,
             }}>
                 <Table size="small" stickyHeader>
@@ -58,8 +59,9 @@ const TablaSeleccionProductos = ({
 
                             {selectable && (
                                 <TableCell padding="checkbox" sx={{
-                                    backgroundColor: "#f5f5f5",
+                                    backgroundColor: "#e9f3ffff",
                                     color: "#070730ff",
+                                    height: "50px",
                                 }}>
                                     <Checkbox
                                         checked={
@@ -78,7 +80,8 @@ const TablaSeleccionProductos = ({
                             {columns.map((col) => (
                                 <TableCell key={col.field} sx={{
                                     color: "#0d5dc5ff",
-                                    fontWeight: "bold", backgroundColor: "#f5f5f5"
+                                    fontSize: "15px",
+                                    fontWeight: "600", backgroundColor: "#e9f3ffff"
                                 }}>
                                     {col.label}
                                 </TableCell>
@@ -121,7 +124,7 @@ const TablaSeleccionProductos = ({
                 component="div"
                 count={count}
                 sx={{
-                    backgroundColor: "#f5f5f5"
+                    backgroundColor: "#e9f3ffff"
                 }}
                 page={page}
                 rowsPerPage={limit}

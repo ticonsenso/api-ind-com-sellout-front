@@ -261,8 +261,6 @@ const ExtraccionDatos = () => {
     }, 1000);
   };
 
-
-
   const procesarExtraccionDesdeConfiguracion = (
     workbook,
     configuracionId,
@@ -1649,24 +1647,25 @@ const ExtraccionDatos = () => {
         }}
         maxWidth="lg"
         dialogContentComponent={
-          <TablaSeleccionProductos
-            columns={[
-              { label: "Descripción", field: "descriptionDistributor", type: "TEXT" },
-              { label: "Cantidad", field: "unitsSoldDistributor", type: "NUMBER" },
-              { label: "Almacén", field: "codeStoreDistributor", type: "TEXT" }
-            ]}
-            data={preSplitInfo || []}
-            pagination={true}
-            page={page}
-            limit={limit}
-            count={preSplitInfo.length || 0}
-            selectable={true}
-            selected={selectedToSplitIds}
-            setSelected={setSelectedToSplitIds}
-            setPage={setPage}
-            setLimit={setLimit}
-          />
-
+          <Box sx={{ height: "100%" }}>
+            <TablaSeleccionProductos
+              columns={[
+                { label: "Descripción", field: "descriptionDistributor", type: "TEXT" },
+                { label: "Cantidad", field: "unitsSoldDistributor", type: "NUMBER" },
+                { label: "Almacén", field: "codeStoreDistributor", type: "TEXT" }
+              ]}
+              data={preSplitInfo || []}
+              pagination={true}
+              page={page}
+              limit={limit}
+              count={preSplitInfo.length || 0}
+              selectable={true}
+              selected={selectedToSplitIds}
+              setSelected={setSelectedToSplitIds}
+              setPage={setPage}
+              setLimit={setLimit}
+            />
+          </Box>
         }
       />
 
