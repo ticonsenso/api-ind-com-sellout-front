@@ -78,7 +78,7 @@ const AtomTableExtraccion = ({
   if (data.length === 0) return null;
 
   const formatValueByType = (value, type) => {
-    if (value === null || value === undefined || value === "") return "N/A";
+    if (value === null || value === undefined || value === "") return "-";
 
     const number = parseFloat(value || 0);
 

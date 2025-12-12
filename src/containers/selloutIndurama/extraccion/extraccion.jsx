@@ -733,7 +733,6 @@ const ExtraccionDatos = () => {
     setCeldas([]);
     setDetallesData([]);
     setLoading(false);
-    throw new Error(mensaje);
   };
 
 
@@ -788,7 +787,7 @@ const ExtraccionDatos = () => {
 
 
       if (registrosSinSeparar.length === 0 && registrosConSeparadores.length === 0) {
-        avisoCritico("⚠️ Error al obtener los detalles del producto");
+        avisoCritico("Error al obtener los detalles del producto");
         return;
       }
 
@@ -803,10 +802,9 @@ const ExtraccionDatos = () => {
       }
 
       const registrosFiltrados = filterByCurrentMonth(registrosSinSeparar, calculateDate);
-
       if (registrosFiltrados.length === 0) {
         avisoCritico(
-          "⚠️ No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo."
+          "No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo."
         );
         setData([]);
         setCeldas([]);
@@ -862,6 +860,7 @@ const ExtraccionDatos = () => {
 
 
   const filterByCurrentMonth = (registros, calculateDate) => {
+    console.log("calculateDate", calculateDate, registros);
     const mesCalculo = new Date(calculateDate).toISOString().slice(0, 7);
     return registros.filter((registro) => {
       if (!registro.saleDate) return false;
@@ -917,6 +916,7 @@ const ExtraccionDatos = () => {
         distributor,
         codeStoreDistributor,
         saleDate,
+        observation: "",
       };
 
       if (tieneSeparadores(rawDescripcion, simbolo)) {
@@ -937,23 +937,33 @@ const ExtraccionDatos = () => {
 
     const seleccionados = selectedToSplitIds.map((idx) => preSplitInfo[idx]);
 
-    // No seleccionados
     const noSeleccionados = preSplitInfo.filter(
       (_, idx) => !selectedToSplitIds.includes(idx)
     );
 
-    const separados = seleccionados.flatMap((item) =>
-      repartirValoresNumerico(item, configuracion.simbolo)
-    );
+    const separados = seleccionados
+      .flatMap((item) => repartirValoresNumerico(item, configuracion.simbolo))
+      .map((item) => ({
+        ...item,
+        observation: "Dato separado",
+      }));
 
     const finalData = [
-      ...temporalRegistrosSinSeparar, // registros originales SIN separar
-      ...separados,                   // registros separados
-      ...noSeleccionados              // productos detectados pero NO separados
+      ...temporalRegistrosSinSeparar,
+      ...separados,
+      ...noSeleccionados
     ];
 
     const registrosFiltrados = filterByCurrentMonth(finalData, calculateDate);
-
+    if (registrosFiltrados.length === 0) {
+      avisoCritico(
+        "No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo."
+      );
+      setData([]);
+      setCeldas([]);
+      handleCloseDialogSeparation();
+      return;
+    }
     const camposDetectados = Object.keys(registrosFiltrados[0] || {});
     const ordenColumnas = Object.keys(etiquetasColumnas);
 
@@ -997,6 +1007,7 @@ const ExtraccionDatos = () => {
     setSelectedToSplitIds([]);
   };
 
+  console.log("data", data);
 
   const handleCloseCreateStores = () => {
     setOpenCreateStores(false);
@@ -1190,6 +1201,12 @@ const ExtraccionDatos = () => {
   useEffect(() => {
     buscarMatriculacion("");
   }, [calculateDate]);
+
+  const handleCloseDialogSeparation = () => {
+    setDialogSeparation(false);
+    setPreSplitInfo([]);
+    setSelectedToSplitIds([]);
+  }
 
   return (
     <>
@@ -1640,11 +1657,7 @@ const ExtraccionDatos = () => {
         textButtonSubmit="Continuar"
         handleSubmit={handleConfirmarSeparacion}
         buttonCancel={true}
-        handleCloseDialog={() => {
-          setDialogSeparation(false);
-          setPreSplitInfo([]);
-          setSelectedToSplitIds([]);
-        }}
+        handleCloseDialog={() => { handleCloseDialogSeparation(); }}
         maxWidth="lg"
         dialogContentComponent={
           <Box sx={{ height: "100%" }}>

@@ -80,6 +80,7 @@ export const etiquetasColumnas = {
   codeProductDistributor: "Código producto",
   descriptionDistributor: "Detalle producto",
   unitsSoldDistributor: "Cant.",
+  observation: "Observación",
 };
 
 export const columnsMatriculacion = [
