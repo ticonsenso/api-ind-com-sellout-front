@@ -57,7 +57,7 @@ import * as XLSX from "xlsx";
 import { camposMaestrosStores } from "../maestros/constantes";
 import AtomAlert from "../../../atoms/AtomAlert";
 import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
-import { mensajeExtraccion } from "../../constantes";
+import { mensajeExtraccion, normalizeSpaces } from "../../constantes";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
@@ -627,11 +627,12 @@ const ExtraccionDatos = () => {
       const mappedData = consolidatedDataStores.map((item) => ({
         ...item,
         saleDate: item.saleDate || getUltimoDiaMesActual(formatDate(calculateDate)),
-        distributor: item.distributor || configuracionId?.distributor?.id || "",
+        distributor: normalizeSpaces(item.distributor) || normalizeSpaces(configuracionId?.distributor?.id) || "",
         codeStoreDistributor:
-          item.codeStoreDistributor || configuracionId?.codeStoreDistributor?.id || "",
-        codeProductDistributor: item.codeProductDistributor || item?.descriptionDistributor || "",
-        calculateDate: formatDate(calculateDate)
+          normalizeSpaces(item.codeStoreDistributor) || normalizeSpaces(configuracionId?.codeStoreDistributor?.id) || "",
+        codeProductDistributor: normalizeSpaces(item.codeProductDistributor) || normalizeSpaces(item?.descriptionDistributor) || "",
+        calculateDate: formatDate(calculateDate),
+        descriptionDistributor: normalizeSpaces(item.descriptionDistributor) || "",
       }));
 
       const dataContent = {

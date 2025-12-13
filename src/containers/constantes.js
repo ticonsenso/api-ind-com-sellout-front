@@ -160,3 +160,8 @@ export const formatIsoToDateTabla = (isoString) => {
   return `${year}-${month}-${day}`;
 };
 
+export const normalizeSpaces = (value = "") => {
+  return value
+    .replace(/\s+/g, " ")
+    .trim();
+};

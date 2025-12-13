@@ -34,7 +34,7 @@ import {
   SaveAlt as SaveAltIcon,
   Add as AddIcon,
 } from "@mui/icons-material";
-import { formatDate, isMonthClosed, debounce, normalizeEncabezados } from "../../constantes";
+import { formatDate, isMonthClosed, debounce, normalizeEncabezados, normalizeSpaces } from "../../constantes";
 import { setCalculateDate } from "../../../redux/configSelloutSlice";
 
 const columns = [
@@ -194,8 +194,13 @@ const Matriculacion = ({ calculateDate }) => {
   };
 
   const crearMatriculacion = async () => {
-    const { multipleDistributors, ...rest } = matricula;
-    const response = await dispatch(createMatriculacion(rest));
+    const data = {
+      distributor: normalizeSpaces(matricula.distributor),
+      storeName: normalizeSpaces(matricula.storeName),
+      calculateMonth: matricula.calculateMonth,
+      status: matricula.status,
+    }
+    const response = await dispatch(createMatriculacion(data));
     if (response.meta.requestStatus === "fulfilled") {
       showSnackbar(response.payload.message);
       handleCloseMatriculacion();
@@ -275,9 +280,12 @@ const Matriculacion = ({ calculateDate }) => {
   };
 
   const handleEditMatriculacion = (row) => {
-    const { isUploaded, createdAt, updatedAt, ...rest } = row;
     setMatricula({
-      ...rest,
+      id: row.id,
+      distributor: normalizeSpaces(row.distributor),
+      storeName: normalizeSpaces(row.storeName),
+      calculateMonth: row.calculateMonth,
+      status: row.status,
       multipleDistributors: row.distributor ? false : true,
     });
     setEdit(true);
@@ -590,11 +598,11 @@ const Matriculacion = ({ calculateDate }) => {
                     <AtomTableForm
                       columns={columns}
                       data={dataMatriculacion}
-                      actions={
-                        matriculacionCerrada === "abierto" && namePermission
-                          ? actions
-                          : []
-                      }
+                      // actions={
+                      //   matriculacionCerrada === "abierto" && namePermission
+                      //     ? actions
+                      //     : []
+                      // }
 
                       pagination={true}
                       page={page}
