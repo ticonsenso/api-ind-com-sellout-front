@@ -35,6 +35,8 @@ const MenuIndex = () => {
   const userPermissions = useSelector((state) => state.auth.auth.permisos);
   const token = useSelector((state) => state.auth.auth.token);
   const [expandedMenus, setExpandedMenus] = useState({});
+  const cerrarSesionAutomatico = localStorage.getItem('logout');
+
 
   const toggleSubMenu = (name) => {
     setExpandedMenus((prev) => ({
@@ -108,9 +110,16 @@ const MenuIndex = () => {
         logoutWindow.close();
         dispatch(actionLogoutReducer());
         navigate("/");
+        localStorage.clear();
       }, 1000);
     }, 500);
   };
+
+  useEffect(() => {
+    if (cerrarSesionAutomatico) {
+      handleLogout();
+    }
+  }, [cerrarSesionAutomatico]);
 
   const renderMenuItems = (items, level = 0) =>
     items?.map((item) => {

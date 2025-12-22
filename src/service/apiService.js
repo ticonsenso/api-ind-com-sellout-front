@@ -43,15 +43,12 @@ class ApiService {
     if (data !== undefined) {
       this.config.data = data;
 
-      // Si es FormData → permitir que el navegador genere el boundary
       if (data instanceof FormData) {
         delete this.config.headers["Content-Type"];
       }
-      // Si es Blob o Uint8Array → enviar como gzip binario
       else if (data instanceof Blob || data instanceof Uint8Array) {
         this.config.headers["Content-Type"] = "application/gzip";
       }
-      // Caso normal → JSON
       else {
         this.config.headers["Content-Type"] =
           this.config.headers["Content-Type"] || "application/json";
@@ -81,6 +78,10 @@ class ApiService {
 
       return response.data;
     } catch (error) {
+      if (error.response?.status === 403) {
+        window.location.reload();
+        localStorage.setItem('logout', true);
+      }
       const errorData =
         error.response?.data ||
         error.message ||
