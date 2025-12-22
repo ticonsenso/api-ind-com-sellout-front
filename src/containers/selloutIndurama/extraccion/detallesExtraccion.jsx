@@ -19,10 +19,30 @@ const DetallesExtraccion = ({ data, detallesData }) => {
     const lista = Array.isArray(data) ? data : [];
     const listaDetalles = Array.isArray(detallesData) ? detallesData : [];
 
-    const totalUnitsSoldDistributor = lista.reduce(
-        (acc, row) => acc + Number(row.unitsSoldDistributor || 0),
-        0
+    const totales = lista.reduce(
+        (acc, row) => {
+            const valor = Number(row.unitsSoldDistributor);
+
+            if (Number.isNaN(valor) || valor === 0) {
+                return acc;
+            }
+
+            if (valor > 0) {
+                acc.totalPositivos += valor;
+            } else {
+                acc.totalDevoluciones += Math.abs(valor);
+            }
+
+            return acc;
+        },
+        {
+            totalPositivos: 0,
+            totalDevoluciones: 0,
+        }
     );
+
+    const totalUnitsSoldDistributor = totales.totalPositivos;
+    const totalUnitsReturnedDistributor = totales.totalDevoluciones;
 
 
     return (
@@ -136,6 +156,11 @@ const DetallesExtraccion = ({ data, detallesData }) => {
                                                 Unidades Vendidas
                                             </Typography>
                                         </TableCell>
+                                        <TableCell sx={styles.tableCell}>
+                                            <Typography sx={styles.typography}>
+                                                Unidades Devueltas
+                                            </Typography>
+                                        </TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -153,7 +178,10 @@ const DetallesExtraccion = ({ data, detallesData }) => {
                                                 {detalle.rowsCount}
                                             </TableCell>
                                             <TableCell sx={styles.tableCellDetail}>
-                                                {detalle.productCount}
+                                                {detalle.unitsSold}
+                                            </TableCell>
+                                            <TableCell sx={styles.tableCellDetail}>
+                                                {detalle.unitsReturned}
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -190,9 +218,20 @@ const DetallesExtraccion = ({ data, detallesData }) => {
                         gutterBottom
                         sx={styles.title}
                     >
-                        Total Unidades Vendidas:{" "}
+                        Unidades Vendidas:{" "}
                         <span style={{ fontWeight: "bold" }}>
                             {totalUnitsSoldDistributor}
+                        </span>
+                    </Typography>
+                    <Typography
+                        variant="subtitle2"
+                        color="primary"
+                        gutterBottom
+                        sx={styles.title}
+                    >
+                        Unidades Devueltas:{" "}
+                        <span style={{ fontWeight: "bold" }}>
+                            {totalUnitsReturnedDistributor}
                         </span>
                     </Typography>
                 </Box>

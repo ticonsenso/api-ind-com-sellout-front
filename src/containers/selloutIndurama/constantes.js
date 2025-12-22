@@ -178,6 +178,14 @@ export const camposConfiguracion = [
     required: false,
     size: 2,
   },
+  {
+    id: "sheetName",
+    headerTitle: "Nombre Hoja",
+    placeholder: "Nombre de la hoja",
+    type: "text",
+    required: true,
+    size: 2,
+  },
   // {
   //   id: "description",
   //   headerTitle: "Descripción configuración",
@@ -205,6 +213,7 @@ export const camposParam = [
     required: true,
     size: 6,
   },
+
 ];
 
 export const mesesNum = [

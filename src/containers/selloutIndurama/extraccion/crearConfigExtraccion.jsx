@@ -103,6 +103,8 @@ const CrearConfiguracionExtraccion = ({ config }) => {
     sheetName: config?.sheetName || "",
     matriculationId: config?.matriculation?.id || null,
     calculateDate: calculateDate || formatDate(new Date()),
+    initialSheet: config?.initialSheet || "",
+    endSheet: config?.endSheet || "",
   });
 
   const [search, setSearch] = useState("");
@@ -476,8 +478,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
                 required={true}
               />
             </Grid> */}
-            <Grid size={2}></Grid>
-            <Grid size={2}>
+            <Grid size={2} mt={1.5}>
               <AtomButtonPrimary
                 id="create"
                 label={"Guardar"}

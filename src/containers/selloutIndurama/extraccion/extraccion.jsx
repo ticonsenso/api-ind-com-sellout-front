@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import AtomCard from "../../../atoms/AtomCard";
 import {
   Box,
@@ -9,14 +9,6 @@ import {
   Menu,
   MenuItem,
   ListItemIcon,
-  TableContainer,
-  TableCell,
-  TableRow,
-  Paper,
-  Table,
-  Checkbox,
-  TableHead,
-  TableBody, Tooltip, IconButton
 } from "@mui/material";
 import {
   CAMPOS_CONFIG_ESTANDAR,
@@ -89,7 +81,6 @@ import Informacion from "./infoExtraccion";
 import DetallesExtraccion from "./detallesExtraccion";
 import DetallesErrores from "./detailsErrors";
 
-import AtomTableForm from "../../../atoms/AtomTableForm";
 const ExtraccionDatos = () => {
   const { showDialog } = useDialog();
 
@@ -127,6 +118,7 @@ const ExtraccionDatos = () => {
     codeStoreSic: "",
     status: true,
   });
+  const [busqueda, setBusqueda] = useState("");
   const [errors, setErrors] = useState({});
   const paramsValidate = [
     "distributor",
@@ -202,6 +194,17 @@ const ExtraccionDatos = () => {
     dataMatriculacionRegistrados
   );
 
+  const preSplitInfoFiltrado = useMemo(() => {
+    if (!busqueda) return preSplitInfo || [];
+
+    const texto = busqueda.toLowerCase();
+
+    return (preSplitInfo || []).filter(item =>
+      item.descriptionDistributor
+        ?.toLowerCase()
+        .includes(texto)
+    );
+  }, [busqueda, preSplitInfo]);
 
   const totalUnitsSoldDistributor = data.reduce(
     (acc, row) => acc + Number(row.unitsSoldDistributor),
@@ -282,7 +285,6 @@ const ExtraccionDatos = () => {
     const hojasAProcesar = [];
     const isDefined = (v) => v !== null && v !== undefined && v !== "";
 
-
     const resolveIndex = (val, fallbackIndex) => {
       if (typeof val === "number" || /^\d+$/.test(String(val))) {
         const idx = parseInt(val, 10) - 1;
@@ -317,17 +319,18 @@ const ExtraccionDatos = () => {
     } else {
       if (totalHojas > 0) hojasAProcesar.push(workbook.SheetNames[0]);
     }
-
+    console.log("hojasAProcesar", hojasAProcesar);
     const columnasActivas = columnasConfig.filter((c) => c.isActive);
     if (!columnasActivas || columnasActivas.length === 0) return [];
 
+    console.log("columnasActivas", columnasActivas);
     const camposConfigGlobal = columnasActivas.map((col) => ({
       campo: col.mappingToField,
       letra: col.columnLetter,
       tipo: col.dataType,
     }));
 
-
+    console.log("camposConfigGlobal", camposConfigGlobal);
     for (const sheetName of hojasAProcesar) {
       const worksheet = workbook.Sheets[sheetName];
       if (!worksheet) continue;
@@ -376,12 +379,14 @@ const ExtraccionDatos = () => {
           continue;
         }
 
-        let cantidad = 1;
         const tieneColumnaCantidad = registro.unitsSoldDistributor !== undefined;
 
-        if (tieneColumnaCantidad) {
+        if (!tieneColumnaCantidad) {
+          registro.unitsSoldDistributor = 1;
+
+        } else {
           const rawValue = registro.unitsSoldDistributor;
-          const valorLimpio = String(rawValue).trim();
+          const valorLimpio = String(rawValue ?? "").trim();
           const cantidadNumerica = parseFloat(valorLimpio);
 
           if (
@@ -393,12 +398,11 @@ const ExtraccionDatos = () => {
             continue;
           }
 
-          cantidad = hasNegativeValue
+          registro.unitsSoldDistributor = hasNegativeValue
             ? Math.abs(cantidadNumerica)
             : cantidadNumerica;
-
-          registro.unitsSoldDistributor = cantidad;
         }
+
 
         if (!registro.saleDate) {
           const diaTexto = registro.saleDay ?? "01";
@@ -443,7 +447,6 @@ const ExtraccionDatos = () => {
             sheetName;
         }
 
-
         if (tieneSeparadores(registro.descriptionDistributor, simboloConfig)) {
           registrosConSeparadores.push(registro);
         } else {
@@ -452,6 +455,8 @@ const ExtraccionDatos = () => {
       }
     }
 
+    console.log("registrosSinSeparar", registrosSinSeparar);
+    console.log("registrosConSeparadores", registrosConSeparadores);
     return {
       registrosSinSeparar,
       registrosConSeparadores,
@@ -482,6 +487,11 @@ const ExtraccionDatos = () => {
         return;
       }
 
+      console.log("workbook", workbook);
+      console.log("configuracionId", configuracionId);
+      console.log("columns", columns);
+      console.log("calculateDate", calculateDate);
+      console.log("configuracion", configuracion);
       const {
         registrosSinSeparar,
         registrosConSeparadores
@@ -515,6 +525,8 @@ const ExtraccionDatos = () => {
         calculateDate
       );
 
+      console.log("registrosFiltrados", registrosFiltrados);
+
       if (registrosFiltrados.length === 0) {
         showSnackbar(
           "⚠️ No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo."
@@ -532,21 +544,29 @@ const ExtraccionDatos = () => {
             distributor: item.distributor,
             storeName: item.codeStoreDistributor,
             rowsCount: 0,
-            productCount: 0
+            productCount: 0,
+            unitsSold: 0,
+            unitsReturned: 0,
           };
         }
 
         acc[key].rowsCount += 1;
 
         const unidades = Number(item.unitsSoldDistributor);
-        acc[key].productCount += isNaN(unidades) ? 0 : unidades;
+
+        if (!Number.isNaN(unidades) && unidades !== 0) {
+          if (unidades > 0) {
+            acc[key].unitsSold += unidades;
+          } else {
+            acc[key].unitsReturned += Math.abs(unidades);
+          }
+        }
 
         return acc;
       }, {});
 
       setDetallesData(Object.values(agrupados));
 
-      // ⬅️ IGUAL QUE ESTÁNDAR
       setData(registrosFiltrados);
       setCeldas(
         Object.keys(registrosFiltrados[0] || {}).map((columna) => ({
@@ -779,7 +799,8 @@ const ExtraccionDatos = () => {
             headerInfo.header,
             hojaName,
             configuracion.distributor || null,
-            configuracion.simbolo || null
+            configuracion.simbolo || null,
+            configuracion.hasNegativeValue || false,
           );
 
         registrosSinSeparar.push(...sinSep);
@@ -828,15 +849,26 @@ const ExtraccionDatos = () => {
             distributor: item.distributor,
             storeName: item.codeStoreDistributor,
             rowsCount: 0,
-            productCount: 0,
+            unitsSold: 0,
+            unitsReturned: 0,
           };
         }
 
         acc[key].rowsCount += 1;
+
         const unidades = Number(item.unitsSoldDistributor);
-        acc[key].productCount += isNaN(unidades) ? 0 : unidades;
+
+        if (!Number.isNaN(unidades) && unidades !== 0) {
+          if (unidades > 0) {
+            acc[key].unitsSold += unidades;
+          } else {
+            acc[key].unitsReturned += Math.abs(unidades);
+          }
+        }
+
         return acc;
       }, {});
+
 
       setDetallesData(Object.values(agrupados));
 
@@ -871,7 +903,7 @@ const ExtraccionDatos = () => {
     });
   };
 
-  const processRows = (rows, encabezados, hojaName, defaultDistributorId, simbolo) => {
+  const processRows = (rows, encabezados, hojaName, defaultDistributorId, simbolo, hasNegativeValue) => {
     const registrosSinSeparar = [];
     const registrosConSeparadores = [];
 
@@ -886,7 +918,7 @@ const ExtraccionDatos = () => {
         const valorExtraido = extraerTextoCelda(fila[mapeo.unitsSoldDistributor]);
         const cantidadNumerica = parseFloat(valorExtraido);
         if (isNaN(cantidadNumerica) || cantidadNumerica === 0) continue;
-        rawCantidad = Math.abs(cantidadNumerica);
+        rawCantidad = hasNegativeValue ? Math.abs(cantidadNumerica) : cantidadNumerica;
       }
 
       let saleDate;
@@ -1659,26 +1691,40 @@ const ExtraccionDatos = () => {
         handleSubmit={handleConfirmarSeparacion}
         buttonCancel={true}
         handleCloseDialog={() => { handleCloseDialogSeparation(); }}
-        maxWidth="lg"
+        maxWidth="xl"
         dialogContentComponent={
-          <Box sx={{ height: "100%" }}>
-            <TablaSeleccionProductos
-              columns={[
-                { label: "Descripción", field: "descriptionDistributor", type: "TEXT" },
-                { label: "Cantidad", field: "unitsSoldDistributor", type: "NUMBER" },
-                { label: "Almacén", field: "codeStoreDistributor", type: "TEXT" }
-              ]}
-              data={preSplitInfo || []}
-              pagination={true}
-              page={page}
-              limit={limit}
-              count={preSplitInfo.length || 0}
-              selectable={true}
-              selected={selectedToSplitIds}
-              setSelected={setSelectedToSplitIds}
-              setPage={setPage}
-              setLimit={setLimit}
-            />
+          <Box sx={{ height: "100%", width: "100%", display: "flex", flexDirection: "column" }}>
+            <Box sx={{ width: "100%", justifyContent: "center", display: "flex", }}>
+              <AtomTextField
+                id="busqueda"
+                headerTitle="Buscar"
+                required={true}
+                value={busqueda}
+                onChange={(e) => {
+                  setBusqueda(e.target.value);
+                  setPage(0);
+                }}
+              />
+            </Box>
+            <Box sx={{ height: "100%", width: "100%" }}>
+              <TablaSeleccionProductos
+                columns={[
+                  { label: "Descripción", field: "descriptionDistributor", type: "TEXT" },
+                  { label: "Cantidad", field: "unitsSoldDistributor", type: "NUMBER" },
+                  { label: "Almacén", field: "codeStoreDistributor", type: "TEXT" }
+                ]}
+                data={preSplitInfoFiltrado || []}
+                pagination={true}
+                page={page}
+                limit={limit}
+                count={preSplitInfoFiltrado.length || 0}
+                selectable={true}
+                selected={selectedToSplitIds}
+                setSelected={setSelectedToSplitIds}
+                setPage={setPage}
+                setLimit={setLimit}
+              />
+            </Box>
           </Box>
         }
       />
