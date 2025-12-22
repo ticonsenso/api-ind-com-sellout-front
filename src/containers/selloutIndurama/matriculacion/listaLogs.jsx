@@ -2,7 +2,7 @@ import React from "react";
 import AtomCard from "../../../atoms/AtomCard";
 import AtomTableForm from "../../../atoms/AtomTableForm";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import AtomContainerGeneral from "../../../atoms/AtomContainerGeneral";
 import { useState } from "react";
 import {
@@ -33,7 +33,7 @@ import {
   CheckCircle as CheckCircleIcon,
   Cancel as CancelIcon,
 } from "@mui/icons-material";
-import { formatDate, isMonthClosed } from "../../constantes";
+import { formatDate, isMonthClosed, debounce, timeSearch } from "../../constantes";
 import { deleteClientesCargados } from "../../../redux/extraccionSlice"
 import {
   obtenerMatriculacionConfig,
@@ -65,6 +65,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [detallesData, setDetallesData] = useState([]);
+  const [search, setSearch] = useState('');
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -76,22 +77,29 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
 
   const buscarMatriculacion = async () => {
     await dispatch(
-      obtenerMatriculacionConfig({ search: "", page: 1, limit: 1000 })
+      obtenerMatriculacionConfig({ page: 1, limit: 1000 })
     );
   };
 
+  const debounceSearch = useCallback(
+    debounce((value) => {
+      buscarMatriculacionRegistrados(value);
+    }, timeSearch),
+    [calculateDate]
+  );
 
   useEffect(() => {
     buscarMatriculacion();
   }, [calculateDate]);
 
 
-  const buscarMatriculacionRegistrados = async () => {
+  const buscarMatriculacionRegistrados = async (value) => {
     setLoading(true);
     try {
       dispatch(
         obtenerMatriculacionRegistrados({
           calculateDate,
+          distributor: value,
         })
       );
     } finally {
@@ -100,7 +108,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
   };
 
   useEffect(() => {
-    buscarMatriculacionRegistrados();
+    buscarMatriculacionRegistrados(search);
   }, [calculateDate]);
 
   const confirmarExportarExcel = () => {
@@ -255,7 +263,13 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
             <AtomCard
               title=""
               nameButton={""}
-              search={false}
+              search={true}
+              placeholder="Buscar distribuidor"
+              searchValue={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                debounceSearch(e.target.value);
+              }}
               children={
                 <>
                   {loading ? (
