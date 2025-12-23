@@ -319,18 +319,15 @@ const ExtraccionDatos = () => {
     } else {
       if (totalHojas > 0) hojasAProcesar.push(workbook.SheetNames[0]);
     }
-    console.log("hojasAProcesar", hojasAProcesar);
     const columnasActivas = columnasConfig.filter((c) => c.isActive);
     if (!columnasActivas || columnasActivas.length === 0) return [];
 
-    console.log("columnasActivas", columnasActivas);
     const camposConfigGlobal = columnasActivas.map((col) => ({
       campo: col.mappingToField,
       letra: col.columnLetter,
       tipo: col.dataType,
     }));
 
-    console.log("camposConfigGlobal", camposConfigGlobal);
     for (const sheetName of hojasAProcesar) {
       const worksheet = workbook.Sheets[sheetName];
       if (!worksheet) continue;
@@ -446,17 +443,20 @@ const ExtraccionDatos = () => {
             configuracionId?.codeStoreDistributor ||
             sheetName;
         }
+        const registroFinal = {
+          ...registro,
+          codeProductDistributor: registro.codeProductDistributor || registro.descriptionDistributor,
+          observation: "",
+        };
 
         if (tieneSeparadores(registro.descriptionDistributor, simboloConfig)) {
-          registrosConSeparadores.push(registro);
+          registrosConSeparadores.push(registroFinal);
         } else {
-          registrosSinSeparar.push(...repartirValoresNumerico(registro, simboloConfig));
+          registrosSinSeparar.push(...repartirValoresNumerico(registroFinal, simboloConfig));
         }
       }
     }
 
-    console.log("registrosSinSeparar", registrosSinSeparar);
-    console.log("registrosConSeparadores", registrosConSeparadores);
     return {
       registrosSinSeparar,
       registrosConSeparadores,
@@ -487,11 +487,6 @@ const ExtraccionDatos = () => {
         return;
       }
 
-      console.log("workbook", workbook);
-      console.log("configuracionId", configuracionId);
-      console.log("columns", columns);
-      console.log("calculateDate", calculateDate);
-      console.log("configuracion", configuracion);
       const {
         registrosSinSeparar,
         registrosConSeparadores
@@ -525,8 +520,6 @@ const ExtraccionDatos = () => {
         calculateDate
       );
 
-      console.log("registrosFiltrados", registrosFiltrados);
-
       if (registrosFiltrados.length === 0) {
         showSnackbar(
           "⚠️ No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo."
@@ -545,8 +538,6 @@ const ExtraccionDatos = () => {
             storeName: item.codeStoreDistributor,
             rowsCount: 0,
             productCount: 0,
-            unitsSold: 0,
-            unitsReturned: 0,
           };
         }
 
@@ -554,13 +545,7 @@ const ExtraccionDatos = () => {
 
         const unidades = Number(item.unitsSoldDistributor);
 
-        if (!Number.isNaN(unidades) && unidades !== 0) {
-          if (unidades > 0) {
-            acc[key].unitsSold += unidades;
-          } else {
-            acc[key].unitsReturned += Math.abs(unidades);
-          }
-        }
+        acc[key].productCount += isNaN(unidades) ? 0 : unidades;
 
         return acc;
       }, {});
@@ -568,10 +553,20 @@ const ExtraccionDatos = () => {
       setDetallesData(Object.values(agrupados));
 
       setData(registrosFiltrados);
+
+      const camposDetectados = Object.keys(registrosFiltrados[0] || {});
+      const ordenColumnas = Object.keys(etiquetasColumnas);
+
+      const columnasOrdenadas = [
+        ...ordenColumnas.filter((key) => camposDetectados.includes(key)),
+        ...camposDetectados.filter((key) => !ordenColumnas.includes(key)),
+      ];
+
       setCeldas(
-        Object.keys(registrosFiltrados[0] || {}).map((columna) => ({
-          label: etiquetasColumnas[columna] || columna,
-          field: columna
+        columnasOrdenadas.map((key) => ({
+          label: etiquetasColumnas[key] || key,
+          field: key,
+          type: key === "unitsSoldDistributor" ? "NUMBER" : "TEXT",
         }))
       );
 
@@ -849,22 +844,14 @@ const ExtraccionDatos = () => {
             distributor: item.distributor,
             storeName: item.codeStoreDistributor,
             rowsCount: 0,
-            unitsSold: 0,
-            unitsReturned: 0,
+            productCount: 0,
           };
         }
 
         acc[key].rowsCount += 1;
 
         const unidades = Number(item.unitsSoldDistributor);
-
-        if (!Number.isNaN(unidades) && unidades !== 0) {
-          if (unidades > 0) {
-            acc[key].unitsSold += unidades;
-          } else {
-            acc[key].unitsReturned += Math.abs(unidades);
-          }
-        }
+        acc[key].productCount += isNaN(unidades) ? 0 : unidades;
 
         return acc;
       }, {});
@@ -878,7 +865,7 @@ const ExtraccionDatos = () => {
         columnasOrdenadas.map((key) => ({
           label: etiquetasColumnas[key] || key,
           field: key,
-          type: "TEXT",
+          type: key === "unitsSoldDistributor" ? "number" : "TEXT",
         }))
       );
     } catch (error) {
@@ -893,7 +880,6 @@ const ExtraccionDatos = () => {
 
 
   const filterByCurrentMonth = (registros, calculateDate) => {
-    console.log("calculateDate", calculateDate, registros);
     const mesCalculo = new Date(calculateDate).toISOString().slice(0, 7);
     return registros.filter((registro) => {
       if (!registro.saleDate) return false;
@@ -945,7 +931,7 @@ const ExtraccionDatos = () => {
       const registro = {
         descriptionDistributor: rawDescripcion,
         unitsSoldDistributor: rawCantidad,
-        codeProductDistributor,
+        codeProductDistributor: codeProductDistributor || rawDescripcion,
         distributor,
         codeStoreDistributor,
         saleDate,
@@ -1693,12 +1679,12 @@ const ExtraccionDatos = () => {
         handleCloseDialog={() => { handleCloseDialogSeparation(); }}
         maxWidth="xl"
         dialogContentComponent={
-          <Box sx={{ height: "100%", width: "100%", display: "flex", flexDirection: "column" }}>
-            <Box sx={{ width: "100%", justifyContent: "center", display: "flex", }}>
+          <Box sx={{ height: "100%", width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+            <Box sx={{ width: "450px", justifyContent: "center" }}>
               <AtomTextField
                 id="busqueda"
-                headerTitle="Buscar"
-                required={true}
+                placeholder="Buscar descripción..."
+                height={"45px"}
                 value={busqueda}
                 onChange={(e) => {
                   setBusqueda(e.target.value);
@@ -1728,9 +1714,7 @@ const ExtraccionDatos = () => {
           </Box>
         }
       />
-
     </>
   );
 };
-
 export default ExtraccionDatos;

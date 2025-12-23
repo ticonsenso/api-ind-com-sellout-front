@@ -203,7 +203,6 @@ const CrearConfiguracionExtraccion = ({ config }) => {
   };
 
   const handleEdit = (row) => {
-    console.log(row);
     setParam(row);
   };
 
@@ -707,12 +706,23 @@ const CrearConfiguracionExtraccion = ({ config }) => {
                               value={param[campo.id] || ""}
                               placeholder={campo.placeholder}
                               error={errorsParam[campo.id] || false}
-                              onChange={(e) =>
+                              onChange={(e) => {
+                                let finalValue = e.target.value;
+
+                                if (campo.id === "columnLetter") {
+                                  const re = /^[a-zA-Z]*$/;
+                                  if (re.test(finalValue)) {
+                                    finalValue = finalValue.toUpperCase();
+                                  } else {
+                                    return;
+                                  }
+                                }
+
                                 setParam({
                                   ...param,
-                                  [campo.id]: e.target.value,
-                                })
-                              }
+                                  [campo.id]: finalValue,
+                                });
+                              }}
                             />
                           </Grid>
                         ))}

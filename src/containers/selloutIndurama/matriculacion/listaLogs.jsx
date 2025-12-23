@@ -168,7 +168,6 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
 
 
   const handleDeleteDistribuidor = (row) => {
-    console.log(row);
     showDialog({
       title: "Confirmación de eliminación", message:
         `¿Está seguro que desea eliminar todos los datos registrados a:  Distribuidor: ${row?.distributor}   - Fecha: ${calculateDate}?`,
@@ -201,9 +200,11 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
         try {
           const response = await dispatch(deleteClientesCargados({ distribuidor: row.distributor, storeName: row.storeName, calculateDate: calculateDate }));
           if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message);
-            handleClose();
-            buscarMatriculacionRegistrados();
+            setDetallesData((prev) => ({
+              ...prev,
+              logs: prev.logs.filter((log) => log.id !== row.id),
+            }));
+
           } else {
             showSnackbar(response.payload.message);
           }
@@ -216,7 +217,6 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
   };
 
   const handleDetailsMatriculacion = (row) => {
-    console.log(row);
     setDetallesData(row);
     setOpen(true);
   };
@@ -224,6 +224,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
   const handleClose = () => {
     setOpen(false);
     setDetallesData([]);
+    buscarMatriculacionRegistrados(search);
   };
 
   const NOMBRES_CAMPOS = {

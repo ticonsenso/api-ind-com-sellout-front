@@ -29,7 +29,6 @@ export const formatDate = (fechaISO) => {
 };
 
 export const formatValueByType = (value, type) => {
-  console.log("fecha", value, type);
   if (value === null || value === undefined || value === "") return "-";
 
   if (type === "date") {
@@ -37,7 +36,6 @@ export const formatValueByType = (value, type) => {
 
     if (isNaN(date.getTime())) return "-";
 
-    // Formato usando UTC para evitar desfases por zona horaria
     const year = date.getUTCFullYear();
     const month = String(date.getUTCMonth() + 1).padStart(2, "0");
     const day = String(date.getUTCDate()).padStart(2, "0");

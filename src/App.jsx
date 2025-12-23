@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { createTheme, ThemeProvider } from "@mui/material";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
-  useNavigate,
 } from "react-router-dom";
 import Login from "./containers/login/login.jsx";
 import Index from "./containers/dashboard/contenedor.jsx";
@@ -26,26 +25,12 @@ const theme = createTheme({
   locale: esES,
 });
 
-function AuthHandler() {
-  const navigate = useNavigate();
-  const wasLoggingOut = localStorage.getItem("loggingOut");
-
-  useEffect(() => {
-    if (wasLoggingOut) {
-      navigate("/");
-      localStorage.removeItem("loggingOut");
-    }
-  }, [wasLoggingOut]);
-  return null;
-}
-
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <DialogProvider>
         <SnackbarProvider>
           <Router>
-            <AuthHandler />
             <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/dashboard" element={<Index />} />

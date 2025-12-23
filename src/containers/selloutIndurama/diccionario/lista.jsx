@@ -46,11 +46,9 @@ const ListaCategorias = () => {
         };
     });
 
-    console.log(data);
     const totalLista = useSelector(
         (state) => state.diccionario.totalCategorias || 0
     );
-    console.log(totalLista);
     const [openMatriculacion, setOpenMatriculacion] = useState(false);
     const [openColumns, setOpenColumns] = useState(false);
     const [search, setSearch] = useState("");
