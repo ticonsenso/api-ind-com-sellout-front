@@ -1,6 +1,4 @@
-// excelWorker.js
-
-importScripts("https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.full.min.js");
+import * as XLSX from "https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.mjs";
 
 self.onmessage = function (e) {
   const { arrayBuffer, columns } = e.data;
@@ -14,12 +12,10 @@ self.onmessage = function (e) {
       blankrows: false,
     });
 
-    // Solo filas con datos
     const filteredRows = sheetData.filter(
       (row) => Array.isArray(row) && row.some((cell) => cell !== "")
     );
 
-    // Buscar encabezado
     const expectedLabels = columns.map((col) => col.label.trim().toUpperCase());
 
     let headerRowIndex = -1;
