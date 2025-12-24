@@ -117,11 +117,9 @@ const MenuIndex = () => {
 
   useEffect(() => {
     if (cerrarSesionAutomatico) {
-
-    } if (userPermissions.length === 0) {
       handleLogout();
     }
-  }, [cerrarSesionAutomatico, userPermissions]);
+  }, [cerrarSesionAutomatico]);
 
   const renderMenuItems = (items, level = 0) =>
     items?.map((item) => {
