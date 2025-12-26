@@ -24,11 +24,16 @@ import {
   EditSquare as EditSquareIcon,
   KeyboardArrowDown as KeyboardArrowDownIcon,
   KeyboardArrowUp as KeyboardArrowUpIcon,
+  ArrowUpward as ArrowUpwardIcon,
+  ArrowDownward as ArrowDownwardIcon,
 } from "@mui/icons-material";
 import { pageOptions } from "../containers/constantes";
 import { limitGeneral, formatValueByType } from "../containers/constantes";
 
 const decimalesCantidad = 2;
+const colorSortActive = "#0075faff";
+const colorSortInactive = "#B0B0B0";
+
 
 const AtomTableForm = (props) => {
   const {
@@ -52,6 +57,45 @@ const AtomTableForm = (props) => {
   } = props;
 
   const [expandedRow, setExpandedRow] = useState(null);
+  const [orderBy, setOrderBy] = useState(null); // campo
+  const [order, setOrder] = useState("asc");   // asc | desc
+
+  const handleSort = (field) => {
+    if (!field) return;
+
+    const isAsc = orderBy === field && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(field);
+  };
+
+  const getSortedData = () => {
+    if (!orderBy) return data;
+
+    return [...data].sort((a, b) => {
+      const aValue = a[orderBy];
+      const bValue = b[orderBy];
+
+      // valores nulos al final
+      if (aValue == null) return 1;
+      if (bValue == null) return -1;
+
+      // números
+      if (typeof aValue === "number") {
+        return order === "asc" ? aValue - bValue : bValue - aValue;
+      }
+
+      // strings
+      return order === "asc"
+        ? String(aValue).localeCompare(String(bValue), "es", {
+          sensitivity: "base",
+        })
+        : String(bValue).localeCompare(String(aValue), "es", {
+          sensitivity: "base",
+        });
+    });
+  };
+
+
   const handleSelectRow = (id) => {
     let newSelection;
 
@@ -61,12 +105,12 @@ const AtomTableForm = (props) => {
       newSelection = [...selectedRows, id];
     }
 
-    onSelectionChange(newSelection); // enviamos los IDs al padre
+    onSelectionChange(newSelection);
   };
 
   const handleSelectAll = () => {
     if (selectedRows.length === data.length) {
-      onSelectionChange([]); // desmarcar todo
+      onSelectionChange([]);
     } else {
       onSelectionChange(data.map((row) => row.id)); // seleccionar todos
     }
@@ -202,23 +246,52 @@ const AtomTableForm = (props) => {
                 sx={styles.tableCellHeader}
               ></TableCell>
             )}
-            {columns?.map((column, index) => (
-              <TableCell
-                key={index}
-                align={column?.align || "left"}
-                sx={{
-                  ...styles.tableCellHeader,
-                  textAlign:
-                    column?.type === "dinero" ||
-                      column?.type === "porcentaje" ||
-                      column?.type === "number"
-                      ? "right"
-                      : "left",
-                }}
-              >
-                {column?.label}
-              </TableCell>
-            ))}
+            {columns?.map((column, index) => {
+              const isActive = orderBy === column.field;
+
+              return (
+                <TableCell
+                  key={index}
+                  sx={{
+                    ...styles.tableCellHeader,
+                    cursor: column.field ? "pointer" : "default",
+                    userSelect: "none",
+                  }}
+                  onClick={() => column.field && handleSort(column.field)}
+                >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <span>{column.label}</span>
+
+                    {column.field && (
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        ml={0}
+                        color={isActive ? colorSortActive : colorSortInactive}
+                      >
+                        {isActive ? (
+                          order === "asc" ? (
+                            <ArrowUpwardIcon />
+                          ) : (
+                            <ArrowDownwardIcon />
+                          )
+                        ) : (
+                          <ArrowUpwardIcon
+                            sx={{ opacity: 0.3 }}
+                          />
+                        )}
+                      </Box>
+                    )}
+                  </Box>
+                </TableCell>
+              );
+            })}
+
+
             {actions?.length > 0 && (
               <TableCell
                 sx={styles.tableCellHeader}
@@ -231,7 +304,8 @@ const AtomTableForm = (props) => {
         <TableBody>
           {data?.length > 0 ? (
             <>
-              {data?.map((row, rowIndex) => (
+              {getSortedData()?.map((row, rowIndex) => (
+
                 <React.Fragment key={row.id || rowIndex}>
                   <TableRow>
                     {selectable && (

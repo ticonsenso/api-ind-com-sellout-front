@@ -292,21 +292,49 @@ export const detectarColumnasAutomaticamente = (fila, COLUMN_KEYWORDS) => {
 };
 
 export const detectHeader = (rows, COLUMN_KEYWORDS) => {
+    const defaultsAplicados = new Set();
+
     for (let i = 0; i < Math.min(100, rows.length); i++) {
         const fila = rows[i];
-        const cleanedRow = fila.map((celda) => extraerTextoCelda(celda));
-        const nonEmptyCells = cleanedRow.filter((c) => c !== "");
+
+        const cleanedRow = fila.map(celda => extraerTextoCelda(celda));
+        const nonEmptyCells = cleanedRow.filter(c => c !== "");
 
         if (nonEmptyCells.length < 2) continue;
 
-        const mapeo = detectarColumnasAutomaticamente(cleanedRow, COLUMN_KEYWORDS);
+        const mapeo = detectarColumnasAutomaticamente(
+            cleanedRow,
+            COLUMN_KEYWORDS
+        );
+
+        if (mapeo.unitsSoldDistributor === undefined) {
+            defaultsAplicados.add("unitsSoldDistributor");
+        }
+
+        if (mapeo.codeStoreDistributor === undefined) {
+            defaultsAplicados.add("codeStoreDistributor");
+        }
+
+        if (mapeo.codeProductDistributor === undefined) {
+            defaultsAplicados.add("codeProductDistributor");
+        }
 
         if (mapeo.descriptionDistributor !== undefined) {
-            return { header: fila, rowIndex: i };
+            return {
+                header: fila,
+                rowIndex: i,
+                defaultsAplicados,
+            };
         }
     }
-    return { header: null, rowIndex: -1 };
+
+    return {
+        header: null,
+        rowIndex: -1,
+        defaultsAplicados,
+    };
 };
+
 
 export const getSheetIndexes = ({
     hojaInicio,

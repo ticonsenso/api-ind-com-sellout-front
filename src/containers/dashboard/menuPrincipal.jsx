@@ -17,12 +17,9 @@ import { actionLogoutReducer } from "../../redux/authSlice.js";
 import { ArrowForwardIos as ArrowForwardIosIcon } from "@mui/icons-material";
 import * as Icons from "@mui/icons-material";
 
-
 const iconMapping = {
   InicioIcon,
-
 };
-
 
 const MenuIndex = () => {
   const dispatch = useDispatch();

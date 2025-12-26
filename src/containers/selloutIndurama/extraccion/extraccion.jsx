@@ -118,6 +118,7 @@ const ExtraccionDatos = () => {
     codeStoreSic: "",
     status: true,
   });
+  const [defaultsAplicados, setDefaultsAplicados] = useState({});
   const [busqueda, setBusqueda] = useState("");
   const [errors, setErrors] = useState({});
   const paramsValidate = [
@@ -482,10 +483,29 @@ const ExtraccionDatos = () => {
 
       if (columns.length === 0) {
         showSnackbar("⚠️ No se encontraron columnas en la configuración");
-        setData([]);
-        setCeldas([]);
         return;
       }
+
+      const mappingFields = new Set(
+        columns.map(col => col.mappingToField)
+      );
+
+      const columnsFaltantes = new Set();
+
+      if (!mappingFields.has("unitsSoldDistributor")) {
+        columnsFaltantes.add("unitsSoldDistributor");
+      }
+
+      if (!mappingFields.has("codeStoreDistributor")) {
+        columnsFaltantes.add("codeStoreDistributor");
+      }
+
+      if (!mappingFields.has("codeProductDistributor")) {
+        columnsFaltantes.add("codeProductDistributor");
+      }
+
+      setDefaultsAplicados(columnsFaltantes);
+
 
       const {
         registrosSinSeparar,
@@ -569,6 +589,8 @@ const ExtraccionDatos = () => {
           type: key === "unitsSoldDistributor" ? "NUMBER" : "TEXT",
         }))
       );
+
+      mostrarAvisoDefaults(columnsFaltantes, DEFAULT_FIELD_LABELS);
 
     } catch (error) {
       showSnackbar(`Error al procesar archivo: ${error.message}`);
@@ -751,14 +773,12 @@ const ExtraccionDatos = () => {
     setLoading(false);
   };
 
-
   const handleExtraccionStandar = async (event) => {
     const file = event.target.files?.[0];
     setLoading(true);
 
     const nombreSinExtension = file.name.replace(/\.[^/.]+$/, "");
     setDocumento(nombreSinExtension);
-
     try {
       const data = await file.arrayBuffer();
       const workbook = XLSX.read(data, { type: "array" });
@@ -782,6 +802,7 @@ const ExtraccionDatos = () => {
 
         const rows = extractRowsFromWorksheet(worksheet);
         const headerInfo = detectHeader(rows, COLUMN_KEYWORDS);
+        setDefaultsAplicados(headerInfo.defaultsAplicados);
 
         if (!headerInfo.header) {
           avisoCritico(`Encabezados no encontrados en hoja: ${hojaName}`);
@@ -868,8 +889,11 @@ const ExtraccionDatos = () => {
           type: key === "unitsSoldDistributor" ? "number" : "TEXT",
         }))
       );
+
+      mostrarAvisoDefaults(defaultsAplicados, DEFAULT_FIELD_LABELS);
+
     } catch (error) {
-      showSnackbar(`Error al procesar archivo: ${error.message}`);
+      avisoCritico(`Error al procesar archivo: ${error.message}`);
       setData([]);
       setCeldas([]);
     } finally {
@@ -877,7 +901,6 @@ const ExtraccionDatos = () => {
       event.target.value = null;
     }
   };
-
 
   const filterByCurrentMonth = (registros, calculateDate) => {
     const mesCalculo = new Date(calculateDate).toISOString().slice(0, 7);
@@ -948,7 +971,11 @@ const ExtraccionDatos = () => {
     return { registrosSinSeparar, registrosConSeparadores };
   };
 
-
+  const DEFAULT_FIELD_LABELS = {
+    unitsSoldDistributor: "Cantidad",
+    codeStoreDistributor: "Almacén",
+    codeProductDistributor: "Código de producto",
+  };
   const [selectedToSplitIds, setSelectedToSplitIds] = useState([]);
 
   const handleConfirmarSeparacion = () => {
@@ -1020,13 +1047,33 @@ const ExtraccionDatos = () => {
         type: "TEXT",
       }))
     );
-
     setDialogSeparation(false);
     setPreSplitInfo([]);
     setSelectedToSplitIds([]);
+    mostrarAvisoDefaults(defaultsAplicados, DEFAULT_FIELD_LABELS);
   };
 
-  console.log("data", data);
+  const mostrarAvisoDefaults = (
+    defaultsAplicados,
+    DEFAULT_FIELD_LABELS,
+  ) => {
+    if (!defaultsAplicados || defaultsAplicados.size === 0) return;
+
+    const camposLegibles = [...defaultsAplicados]
+      .map(key => DEFAULT_FIELD_LABELS[key])
+      .filter(Boolean);
+
+    if (camposLegibles.length === 0) return;
+
+    showSnackbar(
+      `Se ha aplicado valores por defecto a los campos: ${camposLegibles.join(", ")}`,
+      "warning"
+    );
+  };
+
+
+
+
 
   const handleCloseCreateStores = () => {
     setOpenCreateStores(false);
