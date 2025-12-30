@@ -132,14 +132,14 @@ const PlantillaStandar = () => {
     };
     const response = await dispatch(updateArraySellout(data));
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "success" });
       handleCloseDialogProduct();
       buscarConsolidado();
       dispatch(getConsolidatedAlert({
         calculateDate: calculateDate,
       }));
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 
@@ -151,17 +151,17 @@ const PlantillaStandar = () => {
     };
     const response = await dispatch(guardarConsolidatedSellout(dataFinal));
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "success" });
       handleCloseDialogProduct();
       buscarConsolidado();
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 
   const handleGuardarConsolidado = async () => {
     if (!validateForm()) {
-      showSnackbar("Complete los campos requeridos");
+      showSnackbar("Complete los campos requeridos", { severity: "error" });
       return;
     }
     if (dataConsolidado.id) {
@@ -200,11 +200,11 @@ const PlantillaStandar = () => {
     );
     if (response.meta.requestStatus === "fulfilled") {
       handleCloseDialogoSincronizar();
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "success" });
       buscarConsolidado();
       setLoading(false);
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
       setLoading(false);
     }
   };
@@ -280,11 +280,11 @@ const PlantillaStandar = () => {
       if (response.meta.requestStatus === "fulfilled") {
         setLoading(false);
         showSnackbar(
-          response.payload.message || "Archivo descargado correctamente"
+          response.payload.message || "Archivo descargado correctamente", { severity: "success" }
         );
       }
     } catch (error) {
-      showSnackbar(error.message || "Error al descargar el archivo");
+      showSnackbar(error.message || "Error al descargar el archivo", { severity: "error" });
     } finally {
       setLoading(false);
     }

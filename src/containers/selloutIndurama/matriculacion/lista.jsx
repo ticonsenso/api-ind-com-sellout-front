@@ -185,11 +185,11 @@ const Matriculacion = ({ calculateDate }) => {
     const { multipleDistributors, ...rest } = matricula;
     const response = await dispatch(updateMatriculacion(rest));
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
       buscarMatriculacion(search, calculateDate);
       handleCloseMatriculacion();
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
     }
   };
 
@@ -202,11 +202,11 @@ const Matriculacion = ({ calculateDate }) => {
     }
     const response = await dispatch(createMatriculacion(data));
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
       handleCloseMatriculacion();
       buscarMatriculacion(search, calculateDate);
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
     }
   };
 
@@ -266,13 +266,13 @@ const Matriculacion = ({ calculateDate }) => {
           const ids = selectedIds;
           const response = await dispatch(deleteMasivaMatriculacion({ ids, calculateDate }));
           if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
             buscarMatriculacion(search, calculateDate);
           } else {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
           }
         } catch (error) {
-          showSnackbar(error || "Error al eliminar los registros");
+          showSnackbar(error || "Error al eliminar los registros", { severity: "error" });
         }
       },
       onCancel: () => { },
@@ -368,9 +368,9 @@ const Matriculacion = ({ calculateDate }) => {
 
       setDatosExcel(data);
       setOpenUploadExcel(true);
-      showSnackbar("Archivo cargado correctamente.");
+      showSnackbar("Archivo cargado correctamente", { severity: "success" });
     } catch (error) {
-      showSnackbar(error.message || "Error leyendo el archivo Excel.");
+      showSnackbar(error.message || "Error leyendo el archivo Excel.", { severity: "error" });
     } finally {
       setLoading(false);
       event.target.value = null;
@@ -401,11 +401,11 @@ const Matriculacion = ({ calculateDate }) => {
       if (response.meta.requestStatus === "fulfilled") {
         setLoading(false);
         showSnackbar(
-          response.payload.message || "Archivo descargado correctamente"
+          response.payload.message || "Archivo descargado correctamente", { severity: "success" }
         );
       }
     } catch (error) {
-      showSnackbar(error.message || "Error al descargar el archivo");
+      showSnackbar(error.message || "Error al descargar el archivo", { severity: "error" });
     } finally {
       setLoading(false);
     }
@@ -423,11 +423,11 @@ const Matriculacion = ({ calculateDate }) => {
     try {
       const response = await dispatch(createMatriculacionBulk(datosExcel));
       if (response.meta.requestStatus === "fulfilled") {
-        showSnackbar(response.payload.message);
+        showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
         buscarMatriculacion(search, calculateDate);
         handleCloseUploadExcel();
       } else {
-        showSnackbar(response.payload.message);
+        showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
       }
     } catch (error) {
       showSnackbar(error || "Error al guardar los datos.");
@@ -438,11 +438,11 @@ const Matriculacion = ({ calculateDate }) => {
 
   const handleCreateMatriculacionBeforeMonth = async () => {
     if (!calculateDate) {
-      showSnackbar("La fecha de matriculacion a crear es requerida");
+      showSnackbar("La fecha de matriculacion a crear es requerida", { severity: "error" });
       return;
     }
     if (!copyMonth) {
-      showSnackbar("La fecha de copia de matriculaciones es requerida");
+      showSnackbar("La fecha de copia de matriculaciones es requerida", { severity: "error" });
       return;
     }
     const response = await dispatch(
@@ -452,12 +452,12 @@ const Matriculacion = ({ calculateDate }) => {
       })
     );
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
       buscarMatriculacion(search, calculateDate);
       setOpenCreateMatriculacionBeforeMonth(false);
       setOpen(false);
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
     }
   };
 

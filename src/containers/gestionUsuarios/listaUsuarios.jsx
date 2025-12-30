@@ -111,7 +111,7 @@ const ListUsers = () => {
 
   const handleSubmit = async () => {
     if (!validForm()) {
-      showSnackbar("Complete los campos requeridos");
+      showSnackbar("Complete los campos requeridos", { severity: "error" });
     } else {
       if (userObject.id) {
         editarUsuario();
@@ -124,22 +124,22 @@ const ListUsers = () => {
   const editarUsuario = async () => {
     const response = await dispatch(updateUser(userObject));
     if (!response.error) {
-      showSnackbar("Usuario editado correctamente");
+      showSnackbar("Usuario editado correctamente", { severity: "success" });
       handleCloseUser();
       buscarUsuarios();
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 
   const guardarUsuario = async () => {
     const response = await dispatch(createUser(userObject));
     if (!response.error) {
-      showSnackbar("Usuario creado correctamente");
+      showSnackbar("Usuario creado correctamente", { severity: "success" });
       handleCloseUser();
       buscarUsuarios();
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 
@@ -158,11 +158,11 @@ const ListUsers = () => {
     };
     const response = await dispatch(asignarRolUsuario(data));
     if (!response.error) {
-      showSnackbar("Roles asignados correctamente");
+      showSnackbar("Roles asignados correctamente", { severity: "success" });
       handleCloseRoles();
       buscarUsuarios();
     } else {
-      showSnackbar("Error al asignar roles");
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 

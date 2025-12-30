@@ -161,7 +161,7 @@ const ProductsSic = () => {
         const response = await dispatch(deleteProductsSic(row.id));
         const msg =
           response?.payload?.message || "Ocurrió un error al eliminar";
-        showSnackbar(msg);
+        showSnackbar(msg, { severity: "success" });
 
         if (response.meta?.requestStatus === "fulfilled") {
           buscarProductsSic();
@@ -179,11 +179,11 @@ const ProductsSic = () => {
     const response = await dispatch(dispatchFunction(data));
 
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message || "Registro exitoso");
+      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
       onSuccessCallback?.();
       onResetForm?.();
     } else {
-      showSnackbar(response.payload.message || "Ocurrió un error");
+      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
     }
   };
 
@@ -225,11 +225,11 @@ const ProductsSic = () => {
       if (response.meta.requestStatus === "fulfilled") {
         setLoading(false);
         showSnackbar(
-          response.payload.message || "Archivo descargado correctamente"
+          response.payload.message || "Archivo descargado correctamente", { severity: "success" }
         );
       }
     } catch (error) {
-      showSnackbar(error.message || "Error al descargar el archivo");
+      showSnackbar(error.message || "Error al descargar el archivo", { severity: "error" });
     } finally {
       setLoading(false);
     }
@@ -305,9 +305,9 @@ const ProductsSic = () => {
 
       setDatosExcel(data);
       setOpenUploadExcel(true);
-      showSnackbar("Archivo cargado correctamente.");
+      showSnackbar("Archivo cargado correctamente.", { severity: "success" });
     } catch (error) {
-      showSnackbar(error.message || "Error leyendo el archivo Excel.");
+      showSnackbar(error.message || "Error leyendo el archivo Excel.", { severity: "error" });
     } finally {
       setLoading(false);
       event.target.value = null;

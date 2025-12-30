@@ -135,7 +135,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
         setErrorsConfiguracion
       )
     ) {
-      showSnackbar("Por favor, complete todos los campos");
+      showSnackbar("Por favor, complete todos los campos", { severity: "error" });
       return;
     }
 
@@ -153,10 +153,10 @@ const CrearConfiguracionExtraccion = ({ config }) => {
     }
     const response = await dispatch(createExtractionsConfig(data));
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "success" });
       setInitialStep(1);
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 
@@ -177,10 +177,10 @@ const CrearConfiguracionExtraccion = ({ config }) => {
     };
     const response = await dispatch(updateExtractionsConfig(data));
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "success" });
       setInitialStep(1);
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 
@@ -191,11 +191,11 @@ const CrearConfiguracionExtraccion = ({ config }) => {
       onConfirm: async () => {
         const response = await dispatch(deleteExtractionsColumn(row.id));
         if (response.meta.requestStatus === "fulfilled") {
-          showSnackbar(response.payload.message);
+          showSnackbar(response.payload.message, { severity: "success" });
           buscarColumnas();
           setParam({});
         } else {
-          showSnackbar(response.payload.message);
+          showSnackbar(response.payload.message, { severity: "error" });
         }
       },
       onCancel: () => { },
@@ -249,7 +249,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
 
   const handleSaveColumn = () => {
     if (!validateForm(param, paramsValidateColums, setErrorsParam)) {
-      showSnackbar("Por favor, complete todos los campos");
+      showSnackbar("Por favor, complete todos los campos", { severity: "error" });
       return;
     }
     if (param.id) {
@@ -276,11 +276,11 @@ const CrearConfiguracionExtraccion = ({ config }) => {
     };
     const response = await dispatch(updateExtractionsColumn(data));
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "success" });
       buscarColumnas();
       setParam({});
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 
@@ -301,11 +301,11 @@ const CrearConfiguracionExtraccion = ({ config }) => {
     };
     const response = await dispatch(createColumnSellout(data));
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "success" });
       buscarColumnas();
       setParam({});
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 
@@ -342,13 +342,13 @@ const CrearConfiguracionExtraccion = ({ config }) => {
     }));
     const response = await dispatch(createColumnArraySellout(data));
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "success" });
       buscarColumnas();
       setParam({});
       dispatch(setDataColumnsSearch(null));
       setMostrarFormulario(false);
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 

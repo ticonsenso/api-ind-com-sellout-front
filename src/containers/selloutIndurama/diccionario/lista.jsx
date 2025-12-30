@@ -118,22 +118,22 @@ const ListaCategorias = () => {
         };
         const response = await dispatch(updateCategorias(data));
         if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message, { severity: "success" });
             buscarLista();
             handleCloseMatriculacion();
         } else {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message, { severity: "error" });
         }
     };
 
     const crearMatriculacion = async () => {
         const response = await dispatch(createCategorias(matricula));
         if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message, { severity: "success" });
             handleCloseMatriculacion();
             buscarLista();
         } else {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message, { severity: "error" });
         }
     };
 

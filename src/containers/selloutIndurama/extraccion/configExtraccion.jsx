@@ -70,10 +70,10 @@ const ConfiguracionExtraccion = () => {
       onConfirm: async () => {
         const response = await dispatch(deleteExtractionsConfig(row.id));
         if (response.meta.requestStatus === "fulfilled") {
-          showSnackbar(response.payload.message);
+          showSnackbar(response.payload.message, { severity: "success" });
           buscarConfiguraciones();
         } else {
-          showSnackbar(response.payload.message);
+          showSnackbar(response.payload.message, { severity: "error" });
         }
       },
       onCancel: () => { },

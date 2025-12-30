@@ -54,7 +54,7 @@ const TabPermisos = () => {
 
   const handleSubmit = async () => {
     if (permiso.name === "") {
-      showSnackbar("El nombre es requerido");
+      showSnackbar("El nombre es requerido", { severity: "error" });
     } else {
       if (permiso.id) {
         editarPermiso();
@@ -67,22 +67,22 @@ const TabPermisos = () => {
   const editarPermiso = async () => {
     const response = await dispatch(updatePermission(permiso));
     if (!response.error) {
-      showSnackbar("Permiso editado correctamente");
+      showSnackbar("Permiso editado correctamente", { severity: "success" });
       handleClosePermission();
       buscarPermisos();
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 
   const guardarPermiso = async () => {
     const response = await dispatch(createPermission(permiso));
     if (!response.error) {
-      showSnackbar("Permiso creado correctamente");
+      showSnackbar("Permiso creado correctamente", { severity: "success" });
       handleClosePermission();
       buscarPermisos();
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 
@@ -124,13 +124,13 @@ const TabPermisos = () => {
       onConfirm: async () => {
         const response = await dispatch(deletePermission(row.id));
         if (!response.error) {
-          showSnackbar("Registro eliminado exitosamente");
+          showSnackbar("Registro eliminado exitosamente", { severity: "success" });
           buscarPermisos();
         } else {
-          showSnackbar(response.payload.message);
+          showSnackbar(response.payload.message, { severity: "error" });
         }
       },
-      onCancel: () => {},
+      onCancel: () => { },
     });
   };
   return (

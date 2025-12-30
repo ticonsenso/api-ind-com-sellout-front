@@ -34,7 +34,7 @@ const MenuIndex = () => {
   const [expandedMenus, setExpandedMenus] = useState({});
   const cerrarSesionAutomatico = localStorage.getItem('logout');
 
-
+  console.log(userPermissions);
   const toggleSubMenu = (name) => {
     setExpandedMenus((prev) => ({
       ...prev,
@@ -96,6 +96,16 @@ const MenuIndex = () => {
 
     const logoutWindow = window.open("", "_blank", "width=300,height=300");
 
+    // 🔴 AQUÍ ESTÁ LA CLAVE
+    if (!logoutWindow) {
+      // Fallback cuando el navegador bloquea el popup (useEffect)
+      window.location.href = logoutUrl;
+      dispatch(actionLogoutReducer());
+      navigate("/");
+      localStorage.clear();
+      return;
+    }
+
     logoutWindow.document.write("<h1>Cerrando sesión...</h1>");
     logoutWindow.document.write(
       "<p>Por favor espere, estamos procesando su solicitud.</p>"
@@ -111,6 +121,7 @@ const MenuIndex = () => {
       }, 1000);
     }, 500);
   };
+
 
   useEffect(() => {
     if (cerrarSesionAutomatico) {

@@ -135,11 +135,11 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
       if (response.meta.requestStatus === "fulfilled") {
         setLoading(false);
         showSnackbar(
-          response.payload.message || "Archivo descargado correctamente"
+          response.payload.message || "Archivo descargado correctamente", { severity: "success" }
         );
       }
     } catch (error) {
-      showSnackbar(error.message || "Error al descargar el archivo");
+      showSnackbar(error.message || "Error al descargar el archivo", { severity: "error" });
     } finally {
       setLoading(false);
     }
@@ -180,13 +180,13 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
           }
           const response = await dispatch(deleteClientesCargados(data));
           if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
             buscarMatriculacionRegistrados();
           } else {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
           }
         } catch (error) {
-          showSnackbar(error || "Error al eliminar la matriculacion");
+          showSnackbar(error || "Error al eliminar la matriculacion", { severity: "error" });
         }
       },
       onCancel: () => { },
@@ -206,10 +206,10 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
             }));
 
           } else {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
           }
         } catch (error) {
-          showSnackbar(error || "Error al eliminar la matriculacion");
+          showSnackbar(error || "Error al eliminar la matriculacion", { severity: "error" });
         }
       },
       onCancel: () => { },

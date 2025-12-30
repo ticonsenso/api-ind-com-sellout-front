@@ -100,7 +100,7 @@ const ProductosNoHomologados = () => {
 
     const handleGuardarExcel = async () => {
         if (resultadosActualizados.length === 0) {
-            showSnackbar("No hay cambios para guardar");
+            showSnackbar("No hay cambios para guardar", { severity: "info" });
             return;
         }
 
@@ -128,10 +128,10 @@ const ProductosNoHomologados = () => {
                 }
             }
 
-            showSnackbar("Cambios guardados correctamente");
+            showSnackbar("Cambios guardados correctamente", { severity: "success" });
             setResultadosActualizados(null);
         } catch (error) {
-            showSnackbar(error.message || "Ocurrió un error al guardar");
+            showSnackbar(error.message || "Ocurrió un error al guardar", { severity: "error" });
         } finally {
             buscarLista(search);
         }
@@ -169,7 +169,7 @@ const ProductosNoHomologados = () => {
                 return [...lista, nuevoObjeto];
             });
         } catch (error) {
-            showSnackbar(error.message);
+            showSnackbar(error.message, { severity: "error" });
         }
     };
 
@@ -186,11 +186,11 @@ const ProductosNoHomologados = () => {
             if (response.meta.requestStatus === "fulfilled") {
                 setLoading(false);
                 showSnackbar(
-                    response.payload.message || "Archivo descargado correctamente"
+                    response.payload.message || "Archivo descargado correctamente", { severity: "success" }
                 );
             }
         } catch (error) {
-            showSnackbar(error.message || "Error al descargar el archivo");
+            showSnackbar(error.message || "Error al descargar el archivo", { severity: "error" });
         } finally {
             setLoading(false);
         }
@@ -210,11 +210,11 @@ const ProductosNoHomologados = () => {
             if (response.meta.requestStatus !== 'fulfilled') {
                 throw response.payload || 'Error al subir el archivo.';
             }
-            showSnackbar("Archivo cargado correctamente");
+            showSnackbar("Archivo cargado correctamente", { severity: "success" });
             buscarLista(search);
         } catch (error) {
             setLoading(false);
-            showSnackbar(error || "Error al cargar archivo");
+            showSnackbar(error || "Error al cargar archivo", { severity: "error" });
         }
     };
 

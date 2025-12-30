@@ -158,7 +158,7 @@ const AlmacenSic = () => {
         const response = await dispatch(deleteStoresSic(row.id));
         const msg =
           response?.payload?.message || "Ocurrió un error al eliminar";
-        showSnackbar(msg);
+        showSnackbar(msg, { severity: "success" });
 
         if (response.meta?.requestStatus === "fulfilled") {
           buscarStoresSic();
@@ -176,11 +176,11 @@ const AlmacenSic = () => {
     const response = await dispatch(dispatchFunction(data));
 
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message || "Registro exitoso");
+      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
       onSuccessCallback?.();
       onResetForm?.();
     } else {
-      showSnackbar(response.payload.message || "Ocurrió un error");
+      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
     }
   };
 
@@ -266,9 +266,9 @@ const AlmacenSic = () => {
 
       setDatosExcel(data);
       setOpenUploadExcel(true);
-      showSnackbar("Archivo cargado correctamente.");
+      showSnackbar("Archivo cargado correctamente.", { severity: "success" });
     } catch (error) {
-      showSnackbar(error.message || "Error leyendo el archivo Excel.");
+      showSnackbar(error.message || "Error leyendo el archivo Excel.", { severity: "error" });
     } finally {
       setLoading(false);
       event.target.value = null;
@@ -314,11 +314,11 @@ const AlmacenSic = () => {
               index === chunks.length - 1 ? handleCloseUploadExcel : undefined,
           });
         } catch (error) {
-          showSnackbar(`${error}, carga ${index + 1}:`);
+          showSnackbar(`${error}, carga ${index + 1}:`, { severity: "error" });
         }
       }
     } catch (error) {
-      showSnackbar(error.message || "Error al guardar el archivo Excel.");
+      showSnackbar(error.message || "Error al guardar el archivo Excel.", { severity: "error" });
     } finally {
       setLoading(false);
     }
@@ -344,11 +344,11 @@ const AlmacenSic = () => {
       if (response.meta.requestStatus === "fulfilled") {
         setLoading(false);
         showSnackbar(
-          response.payload.message || "Archivo descargado correctamente"
+          response.payload.message || "Archivo descargado correctamente", { severity: "success" }
         );
       }
     } catch (error) {
-      showSnackbar(error.message || "Error al descargar el archivo");
+      showSnackbar(error.message || "Error al descargar el archivo", { severity: "error" });
     } finally {
       setLoading(false);
     }

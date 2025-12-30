@@ -118,7 +118,7 @@ const ExtraccionDatos = () => {
     codeStoreSic: "",
     status: true,
   });
-  const [defaultsAplicados, setDefaultsAplicados] = useState({});
+  const [defaultsAplicados, setDefaultsAplicados] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [errors, setErrors] = useState({});
   const paramsValidate = [
@@ -468,7 +468,7 @@ const ExtraccionDatos = () => {
   const handleFileChange = async (event) => {
     const file = event.target.files?.[0];
     if (!file) {
-      showSnackbar("⚠️ No se seleccionó archivo");
+      showSnackbar("⚠️ No se seleccionó archivo", { severity: "error" });
       return;
     }
 
@@ -482,7 +482,7 @@ const ExtraccionDatos = () => {
       const workbook = XLSX.read(data, { type: "array" });
 
       if (columns.length === 0) {
-        showSnackbar("⚠️ No se encontraron columnas en la configuración");
+        showSnackbar("⚠️ No se encontraron columnas en la configuración", { severity: "error" });
         return;
       }
 
@@ -524,7 +524,7 @@ const ExtraccionDatos = () => {
         registrosSinSeparar.length === 0 &&
         registrosConSeparadores.length === 0
       ) {
-        showSnackbar("⚠️ Error al obtener los detalles del producto");
+        showSnackbar("⚠️ Error al obtener los detalles del producto", { severity: "error" });
         return;
       }
 
@@ -542,7 +542,8 @@ const ExtraccionDatos = () => {
 
       if (registrosFiltrados.length === 0) {
         showSnackbar(
-          "⚠️ No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo."
+          "⚠️ No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo.",
+          { severity: "info" }
         );
         setData([]);
         setCeldas([]);
@@ -593,7 +594,7 @@ const ExtraccionDatos = () => {
       mostrarAvisoDefaults(columnsFaltantes, DEFAULT_FIELD_LABELS);
 
     } catch (error) {
-      showSnackbar(`Error al procesar archivo: ${error.message}`);
+      showSnackbar(`Error al procesar archivo: ${error.message}`, { severity: "error" });
       setData([]);
       setCeldas([]);
       setDetallesData([]);
@@ -693,7 +694,7 @@ const ExtraccionDatos = () => {
       const response = await dispatch(sendSellout(payload));
       if (response.meta.requestStatus === "fulfilled") {
         setDataResponse(response.payload.extractedData);
-        showSnackbar(response.payload.message);
+        showSnackbar(response.payload.message, { severity: "success" });
         setDialogInformation(true);
         setConfiguracion({
           hojaInicio: "",
@@ -703,13 +704,14 @@ const ExtraccionDatos = () => {
           codeStoreDistributor: "",
         });
       } else {
-        showSnackbar(response.payload.message || "Error al guardar");
+        showSnackbar(response.payload.message || "Error al guardar", { severity: "error" });
       }
     } catch (error) {
       showSnackbar(
         error?.response?.data?.message ||
         error?.message ||
-        "Error al guardar la extracción"
+        "Error al guardar la extracción",
+        { severity: "error" }
       );
 
     } finally {
@@ -766,7 +768,7 @@ const ExtraccionDatos = () => {
   };
 
   const avisoCritico = (mensaje) => {
-    showSnackbar(`⚠️ ${mensaje}`);
+    showSnackbar(`⚠️ ${mensaje}`, { severity: "error" });
     setData([]);
     setCeldas([]);
     setDetallesData([]);
@@ -1067,7 +1069,7 @@ const ExtraccionDatos = () => {
 
     showSnackbar(
       `Se ha aplicado valores por defecto a los campos: ${camposLegibles.join(", ")}`,
-      "warning"
+      { severity: "info" }
     );
   };
 
@@ -1102,11 +1104,11 @@ const ExtraccionDatos = () => {
     const response = await dispatch(dispatchFunction(data));
 
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message || "Registro exitoso");
+      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
       onSuccessCallback?.();
       onResetForm?.();
     } else {
-      showSnackbar(response.payload.message || "Ocurrió un error");
+      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
     }
   };
 
@@ -1130,7 +1132,7 @@ const ExtraccionDatos = () => {
     setLoading(true);
     const file = event.target.files[0];
     if (!file) {
-      showSnackbar("⚠️ No se seleccionó archivo");
+      showSnackbar("⚠️ No se seleccionó archivo", { severity: "error" });
       return;
     }
 
@@ -1152,13 +1154,13 @@ const ExtraccionDatos = () => {
         const rows = extractData(fullText);
 
         if (rows.length === 0) {
-          showSnackbar("⚠️ No se encontraron datos válidos en el PDF.");
+          showSnackbar("⚠️ No se encontraron datos válidos en el PDF.", { severity: "error" });
           return;
         }
 
         exportToExcel(rows);
       } catch (error) {
-        showSnackbar(error || "Ocurrió un error al procesar el PDF");
+        showSnackbar(error || "Ocurrió un error al procesar el PDF", { severity: "error" });
         setLoading(false);
       } finally {
         setLoading(false);

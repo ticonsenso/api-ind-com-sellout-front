@@ -101,13 +101,13 @@ const ColumnsCategorias = ({ id }) => {
 
     const handleSubmit = async () => {
         if (!matricula.keyword) {
-            showSnackbar("La descripción de la configuración es requerida");
+            showSnackbar("La descripción de la configuración es requerida", { severity: "error" });
             return;
         }
         const duplicado = existeKeywordGlobal(matricula.keyword);
 
         if (duplicado) {
-            showSnackbar(" ⚠️ La palabra ya existe");
+            showSnackbar(" ⚠️ La palabra ya existe", { severity: "error" });
             return;
         }
         if (matricula.id) {
@@ -125,22 +125,22 @@ const ColumnsCategorias = ({ id }) => {
         };
         const response = await dispatch(updateColumns(data));
         if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message, { severity: "success" });
             buscarLista();
             handleCloseMatriculacion();
         } else {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message, { severity: "error" });
         }
     };
 
     const crearMatriculacion = async () => {
         const response = await dispatch(createColumns(matricula));
         if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message, { severity: "success" });
             handleCloseMatriculacion();
             buscarLista();
         } else {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message, { severity: "error" });
         }
     };
 
@@ -180,13 +180,13 @@ const ColumnsCategorias = ({ id }) => {
                 try {
                     const response = await dispatch(deleteColumns(row.id));
                     if (response.meta.requestStatus === "fulfilled") {
-                        showSnackbar(response.payload.message);
+                        showSnackbar(response.payload.message, { severity: "success" });
                         buscarLista();
                     } else {
-                        showSnackbar(response.payload.message);
+                        showSnackbar(response.payload.message, { severity: "error" });
                     }
                 } catch (error) {
-                    showSnackbar(error || "Error al eliminar registro");
+                    showSnackbar(error || "Error al eliminar registro", { severity: "error" });
                 }
             },
             onCancel: () => { },

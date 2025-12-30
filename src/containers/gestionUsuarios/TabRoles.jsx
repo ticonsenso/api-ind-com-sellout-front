@@ -84,10 +84,10 @@ const TabRoles = () => {
       onConfirm: async () => {
         const response = await dispatch(deleteRole(row.id));
         if (!response.error) {
-          showSnackbar("Registro eliminado exitosamente");
+          showSnackbar("Registro eliminado exitosamente", { severity: "success" });
           buscarRoles();
         } else {
-          showSnackbar(response.payload.message);
+          showSnackbar(response.payload.message, { severity: "error" });
         }
       },
     });
@@ -117,17 +117,17 @@ const TabRoles = () => {
   const guardarRol = async () => {
     const response = await dispatch(createRole(role));
     if (!response.error) {
-      showSnackbar("Rol creado correctamente");
+      showSnackbar("Rol creado correctamente", { severity: "success" });
       handleCloseRole();
       buscarRoles();
     } else {
-      showSnackbar(response.payload.error);
+      showSnackbar(response.payload.error, { severity: "error" });
     }
   };
 
   const handleSubmit = async () => {
     if (role.name === "") {
-      showSnackbar("El nombre es requerido");
+      showSnackbar("El nombre es requerido", { severity: "error" });
       return;
     }
     if (role.id) {
@@ -140,17 +140,17 @@ const TabRoles = () => {
   const editarRol = async () => {
     const response = await dispatch(updateRole(role));
     if (!response.error) {
-      showSnackbar("Rol actualizado correctamente");
+      showSnackbar("Rol actualizado correctamente", { severity: "success" });
       handleCloseRole();
       buscarRoles();
     } else {
-      showSnackbar(response.payload.error);
+      showSnackbar(response.payload.error, { severity: "error" });
     }
   };
 
   const guardarPermisos = async () => {
     if (!permisosSeleccionados.length > 0) {
-      showSnackbar("No hay permisos seleccionados");
+      showSnackbar("No hay permisos seleccionados", { severity: "error" });
       return;
     }
     const permisosFinales = permisosFinalesVisuales.map((p) => p.id);
@@ -163,9 +163,9 @@ const TabRoles = () => {
     const response = await dispatch(asignarPermisoRol(data));
 
     if (response.error) {
-      showSnackbar("Error al asignar permisos");
+      showSnackbar("Error al asignar permisos", { severity: "error" });
     } else {
-      showSnackbar("Permisos asignados correctamente");
+      showSnackbar("Permisos asignados correctamente", { severity: "success" });
       handleClosePermisos();
     }
   };

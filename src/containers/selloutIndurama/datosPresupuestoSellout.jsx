@@ -183,7 +183,7 @@ const DatosPresupuestoSellout = () => {
         const response = await dispatch(deletePresupuestoSellout(row.id));
         const msg =
           response?.payload?.message || "Ocurrió un error al eliminar";
-        showSnackbar(msg);
+        showSnackbar(msg, { severity: "error" });
 
         if (response.meta?.requestStatus === "fulfilled") {
           buscarPresupuestoSellout();
@@ -201,11 +201,11 @@ const DatosPresupuestoSellout = () => {
     const response = await dispatch(dispatchFunction(data));
 
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message || "Registro exitoso");
+      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
       onSuccessCallback?.();
       onResetForm?.();
     } else {
-      showSnackbar(response.payload.message || "Ocurrió un error");
+      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
     }
   };
 
@@ -285,9 +285,9 @@ const DatosPresupuestoSellout = () => {
 
       setDatosExcel(data);
       setOpenUploadExcel(true);
-      showSnackbar("Archivo cargado correctamente.");
+      showSnackbar("Archivo cargado correctamente.", { severity: "success" });
     } catch (error) {
-      showSnackbar(error.message || "Error leyendo el archivo Excel.");
+      showSnackbar(error.message || "Error leyendo el archivo Excel.", { severity: "error" });
     } finally {
       setLoading(false);
       event.target.value = null;
@@ -316,7 +316,7 @@ const DatosPresupuestoSellout = () => {
           onResetForm: () => { },
         });
       } catch (error) {
-        showSnackbar(`Error al subir el chunk ${index + 1}: ${error}`);
+        showSnackbar(`Error al subir el chunk ${index + 1}: ${error}`, { severity: "error" });
       }
     }
     setLoading(false);
@@ -336,11 +336,11 @@ const DatosPresupuestoSellout = () => {
       if (response.meta.requestStatus === "fulfilled") {
         setLoading(false);
         showSnackbar(
-          response.payload.message || "Archivo descargado correctamente"
+          response.payload.message || "Archivo descargado correctamente", { severity: "success" }
         );
       }
     } catch (error) {
-      showSnackbar(error.message || "Error al descargar el archivo");
+      showSnackbar(error.message || "Error al descargar el archivo", { severity: "error" });
     } finally {
       setLoading(false);
     }

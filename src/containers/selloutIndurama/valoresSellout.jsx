@@ -162,7 +162,7 @@ const ValoresSellout = () => {
         const response = await dispatch(deleteValoresSellout(row.id));
         const msg =
           response?.payload?.message || "Ocurrió un error al eliminar";
-        showSnackbar(msg);
+        showSnackbar(msg, { severity: "success" });
 
         if (response.meta?.requestStatus === "fulfilled") {
           buscarValoresSellout();
@@ -180,11 +180,11 @@ const ValoresSellout = () => {
     const response = await dispatch(dispatchFunction(data));
 
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message || "Registro exitoso");
+      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
       onSuccessCallback?.();
       onResetForm?.();
     } else {
-      showSnackbar(response.payload.message || "Ocurrió un error");
+      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
     }
   };
 
@@ -229,16 +229,16 @@ const ValoresSellout = () => {
       excelWorker.onmessage = (e) => {
         const { data, error } = e.data;
         if (error) {
-          showSnackbar(error);
+          showSnackbar(error, { severity: "error" });
         } else {
           setDatosExcel(data);
           setOpenUploadExcel(true);
-          showSnackbar("Archivo procesado correctamente.");
+          showSnackbar("Archivo procesado correctamente.", { severity: "success" });
         }
         setLoading(false);
       };
     } catch (error) {
-      showSnackbar(error || "Error al procesar el archivo.");
+      showSnackbar(error || "Error al procesar el archivo.", { severity: "error" });
       setLoading(false);
     }
   };
@@ -265,7 +265,7 @@ const ValoresSellout = () => {
           onResetForm: () => { },
         });
       } catch (error) {
-        showSnackbar(`Error al subir el chunk ${index + 1}: ${error}`);
+        showSnackbar(`Error al subir el chunk ${index + 1}: ${error}`, { severity: "error" });
       }
     }
     setLoading(false);
@@ -285,11 +285,11 @@ const ValoresSellout = () => {
       if (response.meta.requestStatus === "fulfilled") {
         setLoading(false);
         showSnackbar(
-          response.payload.message || "Archivo descargado correctamente"
+          response.payload.message || "Archivo descargado correctamente", { severity: "success" }
         );
       }
     } catch (error) {
-      showSnackbar(error.message || "Error al descargar el archivo");
+      showSnackbar(error.message || "Error al descargar el archivo", { severity: "error" });
     } finally {
       setLoading(false);
     }

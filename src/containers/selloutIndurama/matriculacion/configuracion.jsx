@@ -203,22 +203,22 @@ const ConfiguracionMatriculacion = () => {
     };
     const response = await dispatch(updateMatriculacionConfig(data));
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "success" });
       buscarMatriculacion();
       handleCloseMatriculacion();
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 
   const crearMatriculacion = async () => {
     const response = await dispatch(createMatriculacionConfig(matricula));
     if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "success" });
       handleCloseMatriculacion();
       buscarMatriculacion();
     } else {
-      showSnackbar(response.payload.message);
+      showSnackbar(response.payload.message, { severity: "error" });
     }
   };
 
@@ -269,10 +269,10 @@ const ConfiguracionMatriculacion = () => {
         try {
           const response = await dispatch(deleteMatriculacionConfig(row.id));
           if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message, { severity: "success" });
             buscarMatriculacion();
           } else {
-            showSnackbar(response.payload.message);
+            showSnackbar(response.payload.message, { severity: "error" });
           }
         } catch (error) {
           showSnackbar(error || "Error al eliminar la matriculacion");
