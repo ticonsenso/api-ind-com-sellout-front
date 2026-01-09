@@ -22,7 +22,16 @@ import {
   BrowserUpdated as BrowserUpdatedIcon,
   PictureAsPdf as PictureAsPdfIcon,
   ExpandMore as ExpandMoreIcon,
+  InfoOutlined as InfoOutlinedIcon,
+  LabelImportant as LabelImportantIcon,
 } from "@mui/icons-material";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Paper,
+} from "@mui/material";
 import AtomTextFielInputForm from "../../../atoms/AtomTextField";
 import { useSelector, useDispatch } from "react-redux";
 import Grid from "@mui/material/Grid";
@@ -190,6 +199,8 @@ const ExtraccionDatos = () => {
   });
   const [openDialogoConfirmacionNegativo, setOpenDialogoConfirmacionNegativo] =
     useState(false);
+  const [openDialogDefaults, setOpenDialogDefaults] = useState(false);
+  const [defaultsContent, setDefaultsContent] = useState([]);
 
   const [filteredData, setFilteredData] = useState(
     dataMatriculacionRegistrados
@@ -1067,10 +1078,8 @@ const ExtraccionDatos = () => {
 
     if (camposLegibles.length === 0) return;
 
-    showSnackbar(
-      `Se ha aplicado valores por defecto a los campos: ${camposLegibles.join(", ")}`,
-      { severity: "info" }
-    );
+    setDefaultsContent(camposLegibles);
+    setOpenDialogDefaults(true);
   };
 
 
@@ -1299,7 +1308,6 @@ const ExtraccionDatos = () => {
                   color="#5ab9f6"
                 />
                 <BotonProcesarExcel />
-
 
                 <Menu
                   anchorEl={anchorEl}
@@ -1601,6 +1609,63 @@ const ExtraccionDatos = () => {
         }
       />
       <AtomDialogForm
+        maxWidth="md"
+        openDialog={openDialogDefaults}
+        buttonCancel={false}
+        buttonSubmit={true}
+        textButtonSubmit="Aceptar"
+        handleCloseDialog={() => setOpenDialogDefaults(false)}
+        handleSubmit={() => setOpenDialogDefaults(false)}
+        titleCrear="Detalles de extracción"
+        dialogContentComponent={
+          <Box sx={{
+            p: 3,
+            borderRadius: 3,
+            backgroundColor: '#ecf6ffff',
+            width: '80%'
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
+              <InfoOutlinedIcon color="primary" />
+              <Typography variant="subtitle1" fontWeight="400">
+                Se han aplicado valores por defecto a los siguientes campos:
+              </Typography>
+            </Box>
+            <List>
+              {defaultsContent.map((field, index) => (
+                <React.Fragment key={index}>
+                  <ListItem>
+                    <ListItemIcon sx={{ minWidth: 36 }}>
+                      <LabelImportantIcon color="info" fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={field}
+                      sx={{
+                        fontWeight: 400,
+                        color: 'text.secondary'
+                      }}
+                    />
+                  </ListItem>
+                  {index < defaultsContent.length - 1 && <Divider component="li" variant="inset" marginLeft={0} />}
+                </React.Fragment>
+              ))}
+            </List>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{
+                mt: 2,
+                textAlign: 'center',
+                display: 'block',
+                fontStyle: 'italic',
+              }}
+            >
+              * Revise que estos valores sean correctos para su reporte.
+            </Typography>
+          </Box >
+        }
+      />
+
+      < AtomDialogForm
         openDialog={openCreateStores}
         titleCrear={"Crear almacén"}
         buttonCancel={true}
@@ -1609,53 +1674,55 @@ const ExtraccionDatos = () => {
         handleSubmit={handleGuardarMaestrosStores}
         handleCloseDialog={handleCloseCreateStores}
         dialogContentComponent={
-          <Grid
+          < Grid
             container
             spacing={2}
             sx={{ width: "80%", justifyContent: "right" }}
           >
-            {camposMaestrosStores.map((campo) => (
-              <Grid size={campo.size} key={campo.id}>
-                <AtomTextField
-                  id={campo.id}
-                  headerTitle={campo.headerTitle}
-                  required={campo.required}
-                  value={maestrosStores[campo.id]}
-                  disabled={campo.disabled}
-                  onChange={(e) => {
-                    const nuevoValor = e.target.value;
-                    const nuevosDatos = {
-                      ...maestrosStores,
-                      [campo.id]: nuevoValor,
-                    };
+            {
+              camposMaestrosStores.map((campo) => (
+                <Grid size={campo.size} key={campo.id}>
+                  <AtomTextField
+                    id={campo.id}
+                    headerTitle={campo.headerTitle}
+                    required={campo.required}
+                    value={maestrosStores[campo.id]}
+                    disabled={campo.disabled}
+                    onChange={(e) => {
+                      const nuevoValor = e.target.value;
+                      const nuevosDatos = {
+                        ...maestrosStores,
+                        [campo.id]: nuevoValor,
+                      };
 
-                    if (
-                      campo.id === "distributor" ||
-                      campo.id === "storeDistributor"
-                    ) {
-                      const distribuidor =
-                        campo.id === "distributor"
-                          ? nuevoValor
-                          : maestrosStores.distributor || "";
-                      const almacen =
+                      if (
+                        campo.id === "distributor" ||
                         campo.id === "storeDistributor"
-                          ? nuevoValor
-                          : maestrosStores.storeDistributor || "";
-                      nuevosDatos.searchStore =
-                        `${distribuidor}${almacen}`.replace(/\s+/g, "");
+                      ) {
+                        const distribuidor =
+                          campo.id === "distributor"
+                            ? nuevoValor
+                            : maestrosStores.distributor || "";
+                        const almacen =
+                          campo.id === "storeDistributor"
+                            ? nuevoValor
+                            : maestrosStores.storeDistributor || "";
+                        nuevosDatos.searchStore =
+                          `${distribuidor}${almacen}`.replace(/\s+/g, "");
+                      }
+
+                      setMaestrosStores(nuevosDatos);
+                    }}
+                    error={errors[campo.id]}
+                    helperText={
+                      errors[campo.id] ? "El código SIC es requerido" : ""
                     }
+                  />
+                </Grid>
+              ))
+            }
 
-                    setMaestrosStores(nuevosDatos);
-                  }}
-                  error={errors[campo.id]}
-                  helperText={
-                    errors[campo.id] ? "El código SIC es requerido" : ""
-                  }
-                />
-              </Grid>
-            ))}
-
-            <Grid size={6}>
+            < Grid size={6} >
               <AtomSwitch
                 id="status"
                 required={true}
@@ -1669,11 +1736,11 @@ const ExtraccionDatos = () => {
                   })
                 }
               />
-            </Grid>
-          </Grid>
+            </Grid >
+          </Grid >
         }
       />
-      <AtomDialogForm
+      < AtomDialogForm
         openDialog={openDialogoConfirmacion}
         titleCrear="Confirmación de guardado"
         buttonSubmit={loading ? false : true}
@@ -1687,38 +1754,39 @@ const ExtraccionDatos = () => {
           setData([...data]);
         }}
         dialogContentComponent={
-          <Box sx={{ height: "100%" }}>
-            {loading ? (
-              <AtomCircularProgress />
-            ) : (
-              <Grid
-                container
-                spacing={1}
-                justifyContent="center"
-                sx={{
-                  backgroundColor: "white",
-                  width: "100%",
-                  borderRadius: 2,
-                  height: "100%",
-                }}
-              >
-                <Grid size={12}>
-                  <AtomAlert text={mensajeExtraccion} severity="info" />
-                </Grid>
+          < Box sx={{ height: "100%" }}>
+            {
+              loading ? (
+                <AtomCircularProgress />
+              ) : (
+                <Grid
+                  container
+                  spacing={1}
+                  justifyContent="center"
+                  sx={{
+                    backgroundColor: "white",
+                    width: "100%",
+                    borderRadius: 2,
+                    height: "100%",
+                  }}
+                >
+                  <Grid size={12}>
+                    <AtomAlert text={mensajeExtraccion} severity="info" />
+                  </Grid>
 
-                {data?.length > 0 && (
-                  <>
-                    <DetallesExtraccion
-                      data={data}
-                      detallesData={detallesData} />
-                  </>
-                )}
-              </Grid>
-            )}
-          </Box>
+                  {data?.length > 0 && (
+                    <>
+                      <DetallesExtraccion
+                        data={data}
+                        detallesData={detallesData} />
+                    </>
+                  )}
+                </Grid>
+              )}
+          </Box >
         }
       />
-      <AtomDialogForm
+      < AtomDialogForm
         openDialog={dialogSeparation}
         titleCrear="Productos detectados para separación"
         buttonSubmit={true}
@@ -1728,7 +1796,7 @@ const ExtraccionDatos = () => {
         handleCloseDialog={() => { handleCloseDialogSeparation(); }}
         maxWidth="xl"
         dialogContentComponent={
-          <Box sx={{ height: "100%", width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+          < Box sx={{ height: "100%", width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
             <Box sx={{ width: "450px", justifyContent: "center" }}>
               <AtomTextField
                 id="busqueda"
@@ -1760,7 +1828,7 @@ const ExtraccionDatos = () => {
                 setLimit={setLimit}
               />
             </Box>
-          </Box>
+          </Box >
         }
       />
     </>
