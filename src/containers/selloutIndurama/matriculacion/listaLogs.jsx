@@ -174,7 +174,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
       onConfirm: async () => {
         try {
           const data = {
-            distribuidor: row.distributor || null,
+            distribuidor: row.id || null,
             storeName: row.storeName || null,
             calculateDate: calculateDate || null,
           }
