@@ -264,7 +264,7 @@ const ProductosNoHomologados = () => {
                             }}
                             children={
                                 <>
-                                    <Grid container spacing={2} sx={{ justifyContent: "center", display: "flex" }}>
+                                    <Grid container spacing={2} sx={{ justifyContent: "flex-end", display: "flex" }}>
                                         <Grid size={3}>
                                             <AtomDatePicker
                                                 id="calculateDate"
@@ -280,20 +280,17 @@ const ProductosNoHomologados = () => {
                                                 }}
                                             />
                                         </Grid>
-                                        <Grid size={5}>
-
-                                        </Grid>
-                                        <Grid size={1.5} mt={1.5}>
-                                            {resultadosActualizados != null && (
+                                        {resultadosActualizados != null && (
+                                            <Grid size={1.5} mt={1.5}>
                                                 <AtomButtonPrimary
                                                     label="Guardar"
                                                     onClick={handleGuardarExcel}
 
                                                 />
-                                            )}
-                                        </Grid>
+                                            </Grid>
+                                        )}
 
-                                        <Grid size={11} >
+                                        <Grid size={12} >
                                             {loading ? (
                                                 <AtomCircularProgress />
                                             ) : (
@@ -311,7 +308,11 @@ const ProductosNoHomologados = () => {
                                                             handleActualizarProducto(newRow);
                                                             return newRow;
                                                         }}
-                                                        localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+                                                        localeText={{
+                                                            ...esES.components.MuiDataGrid.defaultProps.localeText,
+                                                            noRowsLabel: "No existen datos registrados",
+                                                            errorOverlayDefaultLabel: "Ha ocurrido un error.",
+                                                        }}
                                                         pagination
                                                         pageSizeOptions={[10, 50, 100]}
                                                         initialState={{

@@ -435,12 +435,19 @@ export const subirExcelMaestrosProducts = createAsyncThunk(
   async (data, { getState, rejectWithValue }) => {
     const state = getState();
     const token = state.auth.auth.token;
+
     try {
-      return await apiService
+      const json = JSON.stringify(data);
+      const gzip = pako.gzip(json);
+
+      const response = await apiService
         .setUrl(apiConfig.maestrosProductsUrl.url + "/bulk")
         .setMethod("POST")
-        .setData(data)
+        .setHeaders({ Accept: "application/json" })
+        .setData(gzip)
         .send(token);
+
+      return response?.data || response;
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -452,12 +459,19 @@ export const subirExcelMaestrosStores = createAsyncThunk(
   async (data, { getState, rejectWithValue }) => {
     const state = getState();
     const token = state.auth.auth.token;
+
     try {
-      return await apiService
+      const json = JSON.stringify(data);
+      const gzip = pako.gzip(json);
+
+      const response = await apiService
         .setUrl(apiConfig.maestrosStoresUrl.url + "/bulk")
         .setMethod("POST")
-        .setData(data)
+        .setHeaders({ Accept: "application/json" })
+        .setData(gzip)
         .send(token);
+
+      return response?.data || response;
     } catch (error) {
       return rejectWithValue(error);
     }

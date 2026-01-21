@@ -337,34 +337,18 @@ const MasterProducts = () => {
 
   const handleGuardarExcel = async () => {
     setLoading(true);
-    const chunkSize = 2000;
-
-    const splitInChunks = (array, size) => {
-      const result = [];
-      for (let i = 0; i < array.length; i += size) {
-        result.push(array.slice(i, i + size));
-      }
-      return result;
-    };
 
     try {
-      const data = Array.isArray(datosExcel)
-        ? datosExcel
-        : Object.values(datosExcel);
-      const chunks = splitInChunks(data, chunkSize);
+      const response = await dispatch(subirExcelMaestrosProducts(datosExcel));
 
-      for (const chunk of chunks) {
-        const response = await dispatch(subirExcelMaestrosProducts(chunk));
-
-        if (response.meta.requestStatus !== "fulfilled") {
-          throw new Error(
-            response.payload.message ||
-            "Ocurrió un error al subir un bloque de productos"
-          );
-        }
+      if (response.meta.requestStatus !== "fulfilled") {
+        throw new Error(
+          response.payload.message ||
+          "Ocurrió un error al subir los productos."
+        );
       }
 
-      showSnackbar("Se subieron todos los productos exitosamente", { severity: "success" });
+      showSnackbar(response.payload.message || "Se subieron todos los productos exitosamente", { severity: "success" });
       handleCloseUploadExcel();
       buscarMaestrosProducts();
     } catch (error) {
@@ -428,7 +412,7 @@ const MasterProducts = () => {
               title="Subir archivo excel mt productos"
             />
             <AtomCard
-              title="Maestros Productos"
+              title=""
               nameButton="Crear"
               border={true}
               onClick={handleOpenCreateMaestrosProducts}

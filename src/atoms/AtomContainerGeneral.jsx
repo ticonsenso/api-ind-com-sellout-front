@@ -3,27 +3,35 @@ import { Box } from "@mui/material";
 
 const AtomContainerGeneral = ({
   children,
-  color = "#f5f5f5",
-  encabezado }) => {
+  color = "transparent",
+  encabezado
+}) => {
   return (
     <Grid
+      container
       sx={{
-        display: "flex",
         height: "100%",
-        width: "100%",
+        justifyContent: "center",
       }}
     >
-      {encabezado}
-      <Box
-        sx={{
-          height: "100%",
-          width: "100%",
-          overflow: "auto",
-          backgroundColor: color,
-        }}
-      >
-        {children}
-      </Box>
+      {encabezado && (
+        <Grid>
+          {encabezado}
+        </Grid>
+      )}
+
+      <Grid>
+        <Box
+          sx={{
+            backgroundColor: color,
+            padding: 2,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {children}
+        </Box>
+      </Grid>
     </Grid>
   );
 };

@@ -17,12 +17,59 @@ import {
   DialogContent,
   Button,
   Typography,
+  styled,
+  alpha
 } from "@mui/material";
 import Encabezado from "./encabezado.jsx";
 import componentMap from "./componentMap.jsx";
 import {
   setIdEmpresaIndurama,
 } from "../../redux/configSelloutSlice.js";
+
+// --- Styled Components for Glass Dialog ---
+const GlassDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiBackdrop-root": {
+    backdropFilter: "blur(8px)",
+    backgroundColor: "rgba(10, 25, 47, 0.7)", // Deep blue tint
+  },
+  "& .MuiPaper-root": {
+    borderRadius: "24px",
+    background: "rgba(255, 255, 255, 0.1)", // Glass
+    backdropFilter: "blur(20px)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
+    minWidth: "320px",
+    padding: theme.spacing(2),
+  },
+}));
+
+const GlassDialogTitle = styled(DialogTitle)(({ theme }) => ({
+  color: "#ffffff",
+  textAlign: "center",
+  fontWeight: 700,
+  fontSize: "1.2rem",
+  textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+}));
+
+const GlassRoleButton = styled(Button)(({ theme }) => ({
+  width: "100%",
+  padding: "12px 24px",
+  borderRadius: "12px",
+  background: "rgba(255, 255, 255, 0.05)",
+  color: "#fff",
+  textTransform: "none",
+  fontSize: "1rem",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
+  transition: "all 0.3s ease",
+  justifyContent: "flex-start",
+  "&:hover": {
+    background: "linear-gradient(90deg, rgba(0, 114, 206, 0.2) 0%, rgba(0, 114, 206, 0.05) 100%)",
+    border: "1px solid rgba(0, 114, 206, 0.5)",
+    transform: "translateX(5px)",
+    boxShadow: "0 4px 12px rgba(0, 114, 206, 0.2)",
+  },
+}));
+
 function Index() {
   const dispatch = useDispatch();
 
@@ -37,6 +84,7 @@ function Index() {
   const rolesUsuario =
     useSelector((state) => state.auth.auth.rolesUsuario) || [];
   const rolSelected = useSelector((state) => state.auth.auth.rolSelected);
+
   const obtenerToken = async () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("token")) {
@@ -98,10 +146,8 @@ function Index() {
 
   const menuSelect = useSelector((state) => state.navigator.selectMenu);
   const renderComponent = () => {
-    return componentMap[menuSelect.id] || <div>Componente no encontrado</div>;
+    return componentMap[menuSelect.id] || <Typography sx={{ color: 'white', p: 4 }}>Componente no encontrado</Typography>;
   };
-
-
 
   return (
     <Box sx={styles.mainContainer}>
@@ -117,45 +163,43 @@ function Index() {
         </Box>
       )}
       <MenuIndex />
-      <Box
-        sx={{
-          ...styles.contentBox,
-        }}
-      >
+      <Box sx={styles.contentBox}>
         {renderComponent()}
       </Box>
 
       <Box sx={styles.footer}>
         <FooterGeneral />
       </Box>
+
+      {/* Role Selection Glass Dialog */}
       {rolesUsuario && (
-        <Dialog open={open}>
-          <DialogTitle>Roles registrados en el sistema</DialogTitle>
+        <GlassDialog open={open}>
+          <GlassDialogTitle>Seleccione su Perfil</GlassDialogTitle>
           <DialogContent>
             {rolesUsuario.length > 0 ? (
               <Box
-                sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+                sx={{ display: "flex", flexDirection: "column", gap: "0.8rem", mt: 1 }}
               >
                 {rolesUsuario?.map((role) => (
-                  <Button
+                  <GlassRoleButton
                     key={role.id}
                     onClick={() => {
                       handleClose(role);
                     }}
                   >
                     {role.name}
-                  </Button>
+                  </GlassRoleButton>
                 ))}
               </Box>
             ) : (
               <Box
                 sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
               >
-                <Typography>No hay roles registrados en el sistema</Typography>
+                <Typography sx={{ color: 'white', opacity: 0.7 }}>No hay roles registrados en el sistema</Typography>
               </Box>
             )}
           </DialogContent>
-        </Dialog>
+        </GlassDialog>
       )}
     </Box>
   );

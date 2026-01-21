@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Collapse } from "@mui/material";
+import { Box, Collapse, Typography, styled, alpha } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -21,6 +21,112 @@ const iconMapping = {
   InicioIcon,
 };
 
+const GlassDrawer = styled(Drawer)(({ theme }) => ({
+  "& .MuiDrawer-paper": {
+    background: "linear-gradient(180deg, #073861ff 0%, #005a9c 100%)", // Brand Primary Blue
+    backdropFilter: "blur(20px)",
+    color: "#ffffff",
+    width: "280px",
+    borderRight: "1px solid rgba(255, 255, 255, 0.1)",
+    boxShadow: "10px 0 30px rgba(0, 0, 0, 0.2)",
+    overflowX: "hidden",
+    "::-webkit-scrollbar": {
+      width: "6px",
+    },
+    "::-webkit-scrollbar-thumb": {
+      background: "rgba(255, 255, 255, 0.2)",
+      borderRadius: "3px",
+    },
+  },
+}));
+
+const LogoArea = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(4, 2),
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  position: "relative",
+  "&::after": {
+    content: '""',
+    position: "absolute",
+    bottom: 0,
+    left: "10%",
+    width: "80%",
+    height: "1px",
+    background: "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.92), transparent)",
+  }
+}));
+
+const LogoVisual = styled("div")(({ theme }) => ({
+  position: "relative",
+  width: "180px",
+  height: "40px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  transition: "transform 0.5s ease",
+  "&:hover": {
+    transform: "scale(1.05)",
+    "& .glow": {
+      transform: "translate(-50%, -50%) scale(1.2)",
+    },
+    "& img": {
+      filter: "drop-shadow(0 0 12px rgba(255,255,255,0.6))",
+    }
+  },
+}));
+
+const LogoGlow = styled("div")({
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "120px",
+  height: "120px",
+  borderRadius: "50%",
+  transition: "all 0.5s ease",
+  className: "glow",
+  pointerEvents: "none",
+});
+
+const LogoImg = styled("img")({
+  width: "100%",
+  height: "auto",
+  maxHeight: "60px",
+  position: "relative",
+});
+
+const StyledListItemButton = styled(ListItemButton)(({ theme, active }) => ({
+  margin: "4px 12px",
+  borderRadius: "12px",
+  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+  borderLeft: active ? `4px solid #F39400` : "4px solid transparent", // Orange accent
+  background: active
+    ? "linear-gradient(90deg, rgba(0, 114, 206, 0.2) 0%, rgba(0, 114, 206, 0.05) 100%)" // Blue tint
+    : "transparent",
+  "&:hover": {
+    background: "rgba(255, 255, 255, 0.08)",
+    transform: "translateX(4px)",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+    "& .MuiListItemIcon-root": {
+      color: "#F39400",
+      transform: "scale(1.1)",
+    },
+  },
+  "& .MuiTypography-root": {
+    fontWeight: active ? 600 : 400,
+    fontFamily: "'Poppins', sans-serif",
+    fontSize: "0.9rem",
+    color: active ? "#ffffff" : "#a8b2d1",
+  },
+}));
+
+const StyledListItemIcon = styled(ListItemIcon)(({ active }) => ({
+  minWidth: "40px",
+  color: active ? "#F39400" : "#8892b0",
+  transition: "all 0.3s ease",
+}));
+
 const MenuIndex = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -34,7 +140,6 @@ const MenuIndex = () => {
   const [expandedMenus, setExpandedMenus] = useState({});
   const cerrarSesionAutomatico = localStorage.getItem('logout');
 
-  console.log(userPermissions);
   const toggleSubMenu = (name) => {
     setExpandedMenus((prev) => ({
       ...prev,
@@ -67,38 +172,13 @@ const MenuIndex = () => {
 
   const filteredMenu = filterMenuByPermissions(initialStateMenu) || [];
 
-  const styles = {
-    content: {
-      backgroundColor: " #4c4c4c ",
-      color: "white",
-      height: "100vh",
-      display: "flex",
-      flexDirection: "column",
-    },
-    listItem: {
-      "&:hover": {
-        backgroundColor: " #4c4c4c ",
-      },
-    },
-    listIcon: {
-      color: "white",
-      alignItems: "center",
-      justifyContent: "center",
-      display: "flex",
-      width: "30px",
-      height: "30px",
-    },
-  };
-
   const handleLogout = () => {
     const logoutUrl =
       import.meta.env.VITE_API_URL + `api/auth/saml/logout?token=${token}`;
 
     const logoutWindow = window.open("", "_blank", "width=300,height=300");
 
-    // 🔴 AQUÍ ESTÁ LA CLAVE
     if (!logoutWindow) {
-      // Fallback cuando el navegador bloquea el popup (useEffect)
       window.location.href = logoutUrl;
       dispatch(actionLogoutReducer());
       navigate("/");
@@ -122,7 +202,6 @@ const MenuIndex = () => {
     }, 500);
   };
 
-
   useEffect(() => {
     if (cerrarSesionAutomatico) {
       handleLogout();
@@ -133,17 +212,14 @@ const MenuIndex = () => {
     items?.map((item) => {
       const hasSubMenu = item.subMenu?.length > 0;
       const isExpanded = expandedMenus[item.name] || false;
+      const isActive = selectedItem?.name === item.name;
 
       return (
         <React.Fragment key={item.id || item.name}>
-          <ListItem
-            disablePadding
-            sx={{
-              pl: level * 2,
-              color: "white",
-            }}
-          >
-            <ListItemButton
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <StyledListItemButton
+              active={isActive ? 1 : 0}
+              sx={{ pl: level * 3 + 2 }} // Indentation for submenus
               onClick={() => {
                 if (hasSubMenu) {
                   toggleSubMenu(item.name);
@@ -155,17 +231,8 @@ const MenuIndex = () => {
                   if (item.url) navigate(item.url);
                 }
               }}
-              sx={{
-                backgroundColor:
-                  selectedItem?.name === item.name ? "#333" : "transparent",
-                color: "white",
-                "&:hover": {
-                  backgroundColor:
-                    selectedItem?.name === item.name ? "#333" : "gray",
-                },
-              }}
             >
-              <ListItemIcon sx={{ color: "#F39400" }}>
+              <StyledListItemIcon active={isActive ? 1 : 0}>
                 {item.icon?.startsWith("mui:") &&
                   Icons[item.icon.replace("mui:", "")] ? (
                   React.createElement(Icons[item.icon.replace("mui:", "")])
@@ -174,38 +241,31 @@ const MenuIndex = () => {
                   <img
                     src={iconMapping[item.icon.replace("svg:", "")]}
                     alt={item.name}
-                    width={24}
-                    height={24}
+                    width={22}
+                    height={22}
+                    style={{ filter: isActive ? "none" : "grayscale(100%) opacity(0.7)" }}
                   />
                 ) : null}
-              </ListItemIcon>
+              </StyledListItemIcon>
 
               <ListItemText primary={item.name} />
+
               {hasSubMenu && (
                 <ArrowForwardIosIcon
                   sx={{
-                    fontSize: "15px",
+                    fontSize: "12px",
                     transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
                     transition: "transform 0.3s",
-                    color: "white",
+                    color: isActive ? "#F39400" : "#8892b0",
                   }}
                 />
               )}
-            </ListItemButton>
+            </StyledListItemButton>
           </ListItem>
 
           {hasSubMenu && (
-            <Collapse
-              sx={{ backgroundColor: " #4c4c4c " }}
-              in={isExpanded}
-              timeout="auto"
-              unmountOnExit
-            >
-              <List
-                component="div"
-                disablePadding
-                sx={{ backgroundColor: " #4c4c4c " }}
-              >
+            <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding sx={{ background: "rgba(0,0,0,0.2)" }}>
                 {renderMenuItems(item.subMenu, level + 1)}
               </List>
             </Collapse>
@@ -215,51 +275,38 @@ const MenuIndex = () => {
     });
 
   const list = () => (
-    <Box sx={styles.content}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <img
-          src={Logo}
-          alt="Logo"
-          style={{
-            width: "200px",
-            height: "auto",
-          }}
-        />
-      </Box>
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <LogoArea>
+        <LogoVisual>
+          <LogoGlow className="glow" />
+          <LogoImg src={Logo} alt="Indurama" />
+        </LogoVisual>
+      </LogoArea>
 
-      <List sx={{ flexGrow: 1, backgroundColor: " #4c4c4c " }}>
+      <List sx={{ flexGrow: 1, px: 1 }}>
         {renderMenuItems(filteredMenu)}
       </List>
 
-      <Divider sx={{ backgroundColor: " #4c4c4c " }} />
-
-      <List sx={{ backgroundColor: " #4c4c4c " }}>
-        <ListItem disablePadding sx={styles.listItem}>
-          <ListItemButton onClick={handleLogout}>
-            <ListItemIcon sx={styles.listIcon}>
-              <LogoutIcon sx={{ color: "#F39400" }} />
-            </ListItemIcon>
-            <ListItemText primary="Cerrar sesión" />
-          </ListItemButton>
-        </ListItem>
-      </List>
+      <Box sx={{ p: 2 }}>
+        <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", mb: 2 }} />
+        <StyledListItemButton onClick={handleLogout}>
+          <StyledListItemIcon>
+            <LogoutIcon />
+          </StyledListItemIcon>
+          <ListItemText primary="Cerrar sesión" />
+        </StyledListItemButton>
+      </Box>
     </Box>
   );
 
   return (
-    <Drawer
+    <GlassDrawer
       anchor={"left"}
       open={state}
       onClose={() => dispatch(handleMenu())}
     >
       {list()}
-    </Drawer>
+    </GlassDrawer>
   );
 };
 

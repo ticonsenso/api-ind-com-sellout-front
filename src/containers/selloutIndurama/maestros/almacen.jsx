@@ -283,30 +283,17 @@ const MasterAlmacen = () => {
 
   const handleGuardarExcel = async () => {
     setLoading(true);
-    const chunkSize = 2000;
-
-    const splitInChunks = (array, size) => {
-      const result = [];
-      for (let i = 0; i < array.length; i += size) {
-        result.push(array.slice(i, i + size));
-      }
-      return result;
-    };
 
     try {
-      const chunks = splitInChunks(datosExcel, chunkSize);
+      const response = await dispatch(subirExcelMaestrosStores(datosExcel));
 
-      for (const [index, chunk] of chunks.entries()) {
-        const response = await dispatch(subirExcelMaestrosStores(chunk));
-
-        if (response.meta.requestStatus !== "fulfilled") {
-          throw new Error(
-            response.payload?.message || `Error al subir el chunk ${index + 1}`
-          );
-        }
+      if (response.meta.requestStatus !== "fulfilled") {
+        throw new Error(
+          response.payload?.message || "Ocurrió un error al subir los datos."
+        );
       }
 
-      showSnackbar("Se subieron todos los productos exitosamente");
+      showSnackbar(response.payload.message || "Se subieron todos los productos exitosamente");
       handleCloseUploadExcel();
       buscarMaestrosStores();
     } catch (error) {
@@ -370,7 +357,7 @@ const MasterAlmacen = () => {
               iconName="DriveFolderUploadOutlined"
             />
             <AtomCard
-              title="Maestros Almacén"
+              title=""
               nameButton="Crear"
               border={true}
               onClick={handleOpenCreateMaestrosStores}

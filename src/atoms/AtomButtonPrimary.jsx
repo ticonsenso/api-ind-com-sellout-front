@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@mui/material";
 
 function AtomButtonPrimary({
@@ -13,15 +12,20 @@ function AtomButtonPrimary({
         height: height,
         mt: mt,
         width: "100%",
-        fontSize: "14px",
-        color: "white",
-        fontWeight: 400,
         overflow: "hidden",
-        backgroundColor: "#0072CE",
+        background: "linear-gradient(135deg, #0072CE 0%, #00509e 100%)",
+        color: "white",
         textTransform: "none",
+        fontWeight: 400,
+        fontSize: "0.95rem",
+        transition: "all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)",
+        borderRadius: "30px",
+        border: "1px solid rgba(255, 255, 255, 0.15)",
+        boxShadow: "0 4px 14px 0 rgba(0, 114, 206, 0.25)",
         "&:hover": {
-          backgroundColor: "#0072CE",
-          scale: 1.05,
+          background: "linear-gradient(135deg, #00509e 0%, #003c7a 100%)",
+          transform: "translateY(-2px)",
+          boxShadow: "0 8px 25px 0 rgba(0, 114, 206, 0.25)",
         },
       }}
       onClick={onClick}

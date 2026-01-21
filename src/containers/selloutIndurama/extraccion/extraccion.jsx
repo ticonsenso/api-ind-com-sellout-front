@@ -1289,312 +1289,330 @@ const ExtraccionDatos = () => {
     <>
       <AtomContainerGeneral
         children={
-          <AtomCard
-            nameButton=""
-            border={false}
-            children={
-              <>
-                <IconoFlotante
-                  handleButtonClick={limpiarErrores}
-                  title="Limpiar datos"
-                  iconName="AutoFixHigh"
-                  color="#b91818"
-                  right={120}
-                />
-                <IconoFlotante
-                  handleButtonClick={downloadEmptyExcel}
-                  title="Descargar Formato Estandar"
-                  iconName="SaveAlt"
-                  color="#5ab9f6"
-                />
-                <BotonProcesarExcel />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+            }}>
+            <>
+              <IconoFlotante
+                handleButtonClick={limpiarErrores}
+                title="Limpiar datos"
+                iconName="AutoFixHigh"
+                color="#b91818"
+                right={120}
+              />
+              <IconoFlotante
+                handleButtonClick={downloadEmptyExcel}
+                title="Descargar Formato Estandar"
+                iconName="SaveAlt"
+                color="#5ab9f6"
+              />
+              <BotonProcesarExcel />
 
-                <Menu
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleMenuClose}
-                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                  transformOrigin={{ vertical: "top", horizontal: "right" }}
-                >
-                  <MenuItem onClick={handleClick}>
-                    <ListItemIcon>
-                      <PictureAsPdfIcon color="error" />
-                    </ListItemIcon>
-                    <Typography variant="inherit">Cargar PDF</Typography>
-                  </MenuItem>
+              <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleMenuClose}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+              >
+                <MenuItem onClick={handleClick}>
+                  <ListItemIcon>
+                    <PictureAsPdfIcon color="error" />
+                  </ListItemIcon>
+                  <Typography variant="inherit">Cargar PDF</Typography>
+                </MenuItem>
 
-                  <MenuItem onClick={downloadEmptyExcel}>
-                    <ListItemIcon>
-                      <BrowserUpdatedIcon color="success" />
-                    </ListItemIcon>
-                    <Typography variant="inherit">
-                      Descargar Formato Sellout
-                    </Typography>
-                  </MenuItem>
-                </Menu>
+                <MenuItem onClick={downloadEmptyExcel}>
+                  <ListItemIcon>
+                    <BrowserUpdatedIcon color="success" />
+                  </ListItemIcon>
+                  <Typography variant="inherit">
+                    Descargar Formato Sellout
+                  </Typography>
+                </MenuItem>
+              </Menu>
 
-                <input
-                  type="file"
-                  accept=".pdf"
-                  ref={pdfFile}
-                  style={{ display: "none" }}
-                  onChange={handleFileUpload}
-                />
-                <input
-                  type="file"
-                  accept=".xlsx,.xls"
-                  ref={fileInputRef}
-                  style={{ display: "none" }}
-                  onChange={handleFileInputChange}
-                />
-                <Accordion
-                  defaultExpanded
+              <input
+                type="file"
+                accept=".pdf"
+                ref={pdfFile}
+                style={{ display: "none" }}
+                onChange={handleFileUpload}
+              />
+              <input
+                type="file"
+                accept=".xlsx,.xls"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileInputChange}
+              />
+
+              <Accordion
+                defaultExpanded
+                disableGutters
+                elevation={0}
+                sx={{
+                  backgroundColor: "#ffffff",
+                  borderRadius: "24px !important",
+                  border: "none",
+                  boxShadow: "0 10px 40px -10px rgba(0,0,0,0.08)",
+                  width: "95vw",
+                  margin: "0 auto",
+                  mb: 1,
+                  "&:before": { display: "none" },
+                  overflow: "hidden",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    boxShadow: "0 15px 50px -10px rgba(0,0,0,0.12)",
+                  }
+                }}
+              >
+                <AccordionSummary
+                  expandIcon={
+                    <Box sx={{
+                      backgroundColor: "rgba(0, 114, 206, 0.1)",
+                      borderRadius: "50%",
+                      display: "flex"
+                    }}>
+                      <ExpandMoreIcon sx={{ color: "#0072CE", fontSize: "1.2rem" }} />
+                    </Box>
+                  }
+                  aria-controls="panel-content"
+                  id="panel-header"
                   sx={{
-                    backgroundColor: "white",
-                    borderRadius: 3,
-                    boxShadow: 2,
-                    "&:before": { display: "none" },
+                    background: "linear-gradient(90deg, #ffffff 0%, #f8faff 100%)", // Very subtle gradient
+                    minHeight: "72px", // Taller header
+                    padding: "0 32px",
+                    "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+                      transform: "rotate(180deg)",
+                    },
+                    "& .MuiAccordionSummary-content": {
+                      margin: "12px 0",
+                    },
                   }}
                 >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon color="primary" />}
-                    aria-controls="panel-content"
-                    id="panel-header"
-                    sx={{
-                      flexDirection: "row-reverse",
-                      "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-                        transform: "rotate(180deg)",
-                      },
-                      "& .MuiAccordionSummary-content": {
-                        justifyContent: "flex-start",
-                      },
-                    }}
-                  >
-                    <Typography sx={{ fontSize: "15.5px", fontWeight: "500", color: "primary.main", pl: 2 }}>
-                      Parámetros de carga
+                  <Box display="flex" flexDirection="column">
+                    <Typography sx={{
+                      fontSize: "1.1rem",
+                      fontWeight: 700,
+                      color: "primary.main",
+                      letterSpacing: "-0.5px"
+                    }}>
+                      Parámetros de Carga
                     </Typography>
-                  </AccordionSummary>
+                  </Box>
+                </AccordionSummary>
 
-                  <AccordionDetails >
-                    <Grid
-                      container
-                      justifyContent="space-evenly"
-                      sx={{ backgroundColor: "white", borderRadius: 3 }}
-                    >
-                      <Grid size={2.5}>
-                        <AtomDatePicker
-                          id="calculateDate"
-                          required={true}
-                          height="40px"
-                          mode="month"
-                          label="Fecha de carga"
-                          value={calculateDate || null}
-                          onChange={(e) => {
-                            dispatch(setCalculateDate(e));
-                            limpiarErrores();
-                          }}
-                        />
+                <AccordionDetails sx={{ padding: 2 }}>
+                  <Grid
+                    container
+                    spacing={2}
+                  >
+                    <Grid size={{ xs: 12, md: 2.5 }}>
+                      <AtomDatePicker
+                        id="calculateDate"
+                        required={true}
+                        mode="month"
+                        label="Fecha de carga"
+                        value={calculateDate || null}
+                        onChange={(e) => {
+                          dispatch(setCalculateDate(e));
+                          limpiarErrores();
+                        }}
+                      />
+                    </Grid>
+                    {mostrarAlerta && mensajeAlerta ? (
+                      <Grid size={{ xs: 12, md: 9 }}>
+                        <AtomAlert text={mensajeAlerta} severity="error" />
                       </Grid>
-                      {mostrarAlerta && mensajeAlerta ? (
-                        <Grid size={9} mt={1}>
-                          <AtomAlert text={mensajeAlerta} severity="error" />
-                        </Grid>
-                      ) : (
-                        <>
-                          {calculateDate && (
-                            <Grid size={2.5}>
-                              <AtomAutocompleteLabel
-                                id="matriculacionId"
-                                height="40px"
-                                label="Matriculación"
-                                required={true}
-                                inputValue={searchMatriculacion}
-                                onInputChange={(event, newValue) => {
-                                  setSearchMatriculacion(newValue);
-                                  buscarMatriculacion(newValue);
-                                }}
-                                value={matriculacionData || null}
-                                options={optionsMatriculacion}
-                                onChange={(event, newValue) => {
-                                  setMatriculacionData(newValue);
+                    ) : (
+                      <>
+                        {calculateDate && (
+                          <Grid size={{ xs: 12, md: 2.5 }}>
+                            <AtomAutocompleteLabel
+                              id="matriculacionId"
+                              label="Matriculación"
+                              required={true}
+                              inputValue={searchMatriculacion}
+                              onInputChange={(event, newValue) => {
+                                setSearchMatriculacion(newValue);
+                                buscarMatriculacion(newValue);
+                              }}
+                              value={matriculacionData || null}
+                              options={optionsMatriculacion}
+                              onChange={(event, newValue) => {
+                                setMatriculacionData(newValue);
+                                setConfiguracion({
+                                  ...configuracion,
+                                  distributor: newValue?.distributor || "",
+                                  codeStoreDistributor:
+                                    newValue?.codeStoreDistributor || "",
+                                });
+                                setConfiguracionId(null);
+                                setData([]);
+                                setCeldas([]);
+                                setDocumento("");
+                                setErrors(false);
+                                setErrores([]);
+                              }}
+                            />
+                          </Grid>
+                        )}
+                        {matriculacionData && (
+                          <Grid size={{ xs: 12, md: 2.5 }}>
+                            <AtomAutocompleteLabel
+                              id="configuracionId"
+                              required={true}
+                              placeholder="Seleccionar..."
+                              label="Configuración"
+                              value={configuracionId}
+                              options={optionsConfiguracionSellout}
+                              onChange={(event, newValue) => {
+                                setConfiguracionId(newValue); setConfiguracionId(newValue);
+                                console.log(newValue);
+                                setData([]);
+                                setCeldas([]);
+                                setDocumento("");
+                                setErrors(false);
+                                setErrores([]);
+                              }}
+                            />
+                          </Grid>
+                        )}
+                        {configuracionId?.label === "CONFIGURACION ESTANDAR" && (
+                          <>
+                            <Grid size={{ xs: 12, md: 3, }}>
+                              <AtomTextField
+                                id="distributor"
+                                disabled
+                                headerTitle="Distribuidor"
+                                onBlur={handleChangeDistributorData}
+                                value={configuracion?.distributor || ""}
+                                onChange={(e) => {
                                   setConfiguracion({
                                     ...configuracion,
-                                    distributor: newValue?.distributor || "",
-                                    codeStoreDistributor:
-                                      newValue?.codeStoreDistributor || "",
+                                    distributor: e.target.value,
                                   });
-                                  setConfiguracionId(null);
-                                  setData([]);
-                                  setCeldas([]);
-                                  setDocumento("");
-                                  setErrors(false);
-                                  setErrores([]);
                                 }}
                               />
                             </Grid>
-                          )}
-                          {matriculacionData && (
-                            <Grid size={2.5}>
-                              <AtomAutocompleteLabel
-                                id="configuracionId"
-                                required={true}
-                                placeholder="Seleccionar..."
-                                height="40px"
-                                label="Configuración"
-                                value={configuracionId}
-                                options={optionsConfiguracionSellout}
-                                onChange={(event, newValue) => {
-                                  setConfiguracionId(newValue); setConfiguracionId(newValue);
-                                  console.log(newValue);
-                                  setData([]);
-                                  setCeldas([]);
-                                  setDocumento("");
-                                  setErrors(false);
-                                  setErrores([]);
+                            <Grid size={{ xs: 12, md: 2.5 }}>
+                              <AtomTextField
+                                id="codeStoreDistributor"
+                                headerTitle="Almacén Distribuidor"
+                                value={configuracion?.codeStoreDistributor || ""}
+                                onChange={(e) => {
+                                  setConfiguracion({
+                                    ...configuracion,
+                                    codeStoreDistributor: e.target.value,
+                                  });
                                 }}
+                                onBlur={handleChangeCodeStoreDistributorData}
                               />
                             </Grid>
-                          )}
-                          {configuracionId?.label === "CONFIGURACION ESTANDAR" && (
-                            <>
-                              <Grid size={3}>
+                            {CAMPOS_CONFIG_ESTANDAR.map((campo) => (
+                              <Grid size={campo.size} key={campo.id}>
                                 <AtomTextField
-                                  id="distributor"
-                                  height="45px"
-                                  disabled
-                                  headerTitle="Distribuidor"
-                                  onBlur={handleChangeDistributorData}
-                                  value={configuracion?.distributor || ""}
-                                  onChange={(e) => {
-                                    setConfiguracion({
-                                      ...configuracion,
-                                      distributor: e.target.value,
-                                    });
-                                  }}
-                                />
-                              </Grid>
-                              <Grid size={2.5}>
-                                <AtomTextField
-                                  id="codeStoreDistributor"
-                                  height="40px"
-                                  headerTitle="Almacén Distribuidor"
-                                  value={configuracion?.codeStoreDistributor || ""}
-                                  onChange={(e) => {
-                                    setConfiguracion({
-                                      ...configuracion,
-                                      codeStoreDistributor: e.target.value,
-                                    });
-                                  }}
-                                  onBlur={handleChangeCodeStoreDistributorData}
-                                />
-                              </Grid>
-                              {CAMPOS_CONFIG_ESTANDAR.map((campo) => (
-                                <Grid size={campo.size} key={campo.id}>
-                                  <AtomTextField
-                                    id={campo.id}
-                                    height="40px"
-                                    headerTitle={campo.headerTitle}
-                                    required={campo.required}
-                                    type={campo.type}
-                                    multiline={campo.multiline}
-                                    rows={campo.rows}
-                                    value={configuracion[campo.id] || ""}
-                                    placeholder={campo.placeholder}
-                                    onChange={(e) =>
-                                      setConfiguracion({
-                                        ...configuracion,
-                                        [campo.id]: e.target.value,
-                                      })
-                                    }
-                                  />
-                                </Grid>
-                              ))}
-                              <Grid size={1.5} mt={0.5}>
-                                <AtomSwitch
-                                  id="extraerTodos"
-                                  height="40px"
-                                  title="Todas"
-                                  tooltip="Define si se extraen todas las hojas"
-                                  checked={configuracion.extraerTodos || false}
+                                  id={campo.id}
+                                  headerTitle={campo.headerTitle}
+                                  required={campo.required}
+                                  type={campo.type}
+                                  multiline={campo.multiline}
+                                  rows={campo.rows}
+                                  value={configuracion[campo.id] || ""}
+                                  placeholder={campo.placeholder}
                                   onChange={(e) =>
                                     setConfiguracion({
                                       ...configuracion,
-                                      extraerTodos: e.target.checked,
+                                      [campo.id]: e.target.value,
                                     })
                                   }
                                 />
                               </Grid>
-                            </>
-                          )}
-                          {configuracionId && (
-                            <>
-                              <Grid size={3}>
-                                <AtomTextFielInputForm
-                                  id="documento"
-                                  height="40px"
-                                  required
-                                  headerTitle="Seleccionar Excel"
-                                  placeholder="Seleccionar"
-                                  value={documento}
-                                  fullWidth
-                                  endIcon={true}
-                                  nameEndIcon={UploadFileIcon}
-                                  onClickEndIcon={handleIconClick}
-                                  onChange={handleIconClick}
-                                />
-                              </Grid>
-
-                            </>
-                          )}
-                          {data.length > 0 && (
-                            <Grid size={1.3} mt={2.5}>
-                              <AtomButtonPrimary
-                                height="40px"
-
-                                onClick={handleOpenDialogoConfirmacion}
-                                label="Guardar"
-                                disabled={loading}
+                            ))}
+                            <Grid size={{ xs: 12, md: 1.5 }}>
+                              <AtomSwitch
+                                id="extraerTodos"
+                                title="Todas"
+                                tooltip="Define si se extraen todas las hojas"
+                                checked={configuracion.extraerTodos || false}
+                                onChange={(e) =>
+                                  setConfiguracion({
+                                    ...configuracion,
+                                    extraerTodos: e.target.checked,
+                                  })
+                                }
                               />
                             </Grid>
-                          )}
-                        </>
-                      )}
-                      {hayErrores && (
-                        <Grid
-                          item
-                          size={12}
-                          sx={{
-                            width: "100%",
-                            mt: -2,
-                            mb: 1,
-                          }}
-                        >
-                          <DetallesErrores errores={errores} />
-                        </Grid>
-                      )}
+                          </>
+                        )}
+                        {configuracionId && (
+                          <>
+                            <Grid size={{ xs: 12, md: 3 }}>
+                              <AtomTextFielInputForm
+                                id="documento"
+                                required
+                                headerTitle="Seleccionar Excel"
+                                placeholder="Seleccionar"
+                                value={documento}
+                                fullWidth
+                                endIcon={true}
+                                nameEndIcon={UploadFileIcon}
+                                onClickEndIcon={handleIconClick}
+                                onChange={handleIconClick}
+                              />
+                            </Grid>
 
-                    </Grid>
-                  </AccordionDetails>
-                </Accordion>
+                          </>
+                        )}
+                        {data.length > 0 && (
+                          <Grid mt={2.5} size={{ xs: 12, md: 1.3, }}>
+                            <AtomButtonPrimary
+                              onClick={handleOpenDialogoConfirmacion}
+                              label="Guardar"
+                              disabled={loading}
+                            />
+                          </Grid>
+                        )}
+                      </>
+                    )}
+                    {hayErrores && (
+                      <Grid
+                        item
+                        size={12}
+                        sx={{
+                          width: "100%",
+                          mt: -2,
+                          mb: 1,
+                        }}
+                      >
+                        <DetallesErrores errores={errores} />
+                      </Grid>
+                    )}
 
-                <Box>
-                  {loading ? (
-                    <AtomCircularProgress />
-                  ) : (
-                    <AtomTableExtraccion
-                      loading={loading}
-                      data={data}
-                      setData={setData}
-                      celdas={celdas}
-                      errors={errores}
-                      setErrores={setErrores}
-                      showIndex={true}
-                    />
-                  )}
-                </Box>
-              </>
-            }
-          />
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+
+              <Box>
+                {loading ? (
+                  <AtomCircularProgress />
+                ) : (
+                  <AtomTableExtraccion
+                    loading={loading}
+                    data={data}
+                    setData={setData}
+                    celdas={celdas}
+                    errors={errores}
+                    setErrores={setErrores}
+                    showIndex={true}
+                  />
+                )}
+              </Box>
+            </>
+          </Box>
         }
       />
       <AtomDialogForm

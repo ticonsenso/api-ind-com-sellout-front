@@ -24,13 +24,12 @@ const AtomCard = (props) => {
   return (
     <Grid
       container
-      spacing={0}
       sx={{
+        width: "100%",
         display: "flex",
         alignItems: "center",
         flexDirection: "row",
         borderRadius: 5,
-        padding: 1,
         justifyContent: "right",
         backgroundColor: color,
       }}
@@ -45,7 +44,7 @@ const AtomCard = (props) => {
             paddingLeft: 2,
             justifyContent: "left",
             textAlign: "left",
-            color: "textSecondary.main",
+            color: "#5e5e5eff",
           }}
         >
           {title}
@@ -136,6 +135,7 @@ const AtomCard = (props) => {
       <Grid
         size={12}
         sx={{
+          width: "100%",
           borderRadius: 4,
         }}
       >

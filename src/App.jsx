@@ -18,8 +18,6 @@ const theme = createTheme({
     secondary: { main: "#B2B4B4" },
     details: { main: "#F39400" },
     title: { main: "#0072CE" },
-    text: { main: "#5850EC" },
-    textSecondary: { main: "#6b6b6b" },
   },
   typography: { fontFamily: "Poppins" },
   locale: esES,

@@ -11,11 +11,10 @@ const FooterGeneral = () => {
         height: "45px",
         fontSize: "12px",
         overflow: "hidden",
-        color: "primary.main",
-        backgroundColor: "#F5F6F7",
+        color: "#64748B",
       }}
     >
-      © 2025 CONSENSO. Todos los derechos reservados
+      © {new Date().getFullYear()} Sellout. Todos los derechos reservados
     </Typography>
   );
 };

@@ -117,27 +117,75 @@ export const columnsStoreNull = [
 
 export const styleTableData = {
     width: "100%",
-    boxShadow: 1,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 3,
+    boxShadow: "none", // Remove default shadow
+    backgroundColor: "transparent",
     border: "none",
-    "& .MuiDataGrid-columnHeader": {
-        backgroundColor: "#ffffffff",
-        color: "#575757ff",
-        height: "56px",
-        fontSize: 15
+
+    // Header Styling
+    "& .MuiDataGrid-columnHeaders": {
+        backgroundColor: "#0072CE", // Brand Blue
+        color: "#ffffff",
+        fontWeight: 700,
+        fontSize: "0.85rem",
+        borderBottom: "none",
+        borderRadius: "8px 8px 0 0", // Rounded top corners
     },
-    "& .MuiDataGrid-columnHeader:hover": {
-        backgroundColor: "#f5f5f5",
+    "& .MuiDataGrid-columnHeader": {
+        backgroundColor: "#0072CE", // Ensure bg color covers all
+        color: "#ffffff",
+    },
+    "& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader:focus-within": {
+        outline: "none",
+    },
+    "& .MuiDataGrid-iconSeparator": {
+        display: "none", // Clean look
+    },
+    "& .MuiDataGrid-menuIcon": {
+        color: "#ffffff",
+    },
+    "& .MuiDataGrid-sortIcon": {
+        color: "#ffffff",
+        opacity: 0.8,
+    },
+
+    // Row & Cell Styling
+    "& .MuiDataGrid-row": {
+        backgroundColor: "#ffffff",
+        marginBottom: "2px",
+        boxShadow: "0 2px 4px rgba(0,0,0,0.02)",
+        borderBottom: "1px solid #f1f5f9",
+        minHeight: "60px !important", // Enforce taller appearance
+        "&:hover": {
+            backgroundColor: "#f8fafc",
+            transform: "translateY(-1px)",
+            boxShadow: "0 4px 6px rgba(0,0,0,0.05)",
+            zIndex: 1,
+        },
+        transition: "all 0.2s ease",
     },
     "& .MuiDataGrid-cell": {
-        color: "#646464ff",
-        fontSize: "14px",
-        pt: 1,
-        pb: 1,
+        color: "#334155",
+        fontSize: "0.875rem",
+        borderBottom: "none",
+        padding: "18px 16px", // Increased padding for height
+        display: "flex",
+        alignItems: "center",
+        whiteSpace: "normal !important",
+        wordWrap: "break-word !important",
+        lineHeight: "1.5",
     },
-    "& .MuiDataGrid-cell:hover": {
-        color: "#434343",
-        backgroundColor: "#f5f5f5",
+    "& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within": {
+        outline: "none",
+    },
+
+    // Pagination
+    "& .MuiDataGrid-footerContainer": {
+        borderTop: "none",
+        justifyContent: "flex-end",
+        marginTop: "16px",
+        backgroundColor: "#ffffff",
+        borderRadius: "16px",
+        padding: "8px 16px",
+        boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
     },
 };

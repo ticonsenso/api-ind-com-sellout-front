@@ -1,58 +1,112 @@
 import React, { useState } from "react";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, Tab, Tabs, styled, alpha } from "@mui/material";
+
+const TabsContainer = styled(Box)(({ theme }) => ({
+  position: "sticky",
+  top: 0,
+  zIndex: 10,
+  padding: "3px",
+  background: "rgba(255, 255, 255, 0.7)",
+  backdropFilter: "blur(20px)",
+  boxShadow: "0 10px 20px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0,0,0,0.05)",
+  borderRadius: "50px",
+  marginBottom: theme.spacing(1),
+  display: "flex",
+  justifyContent: "center",
+  width: "fit-content",
+  margin: "0 auto 5px auto",
+  border: "1px solid rgba(255, 255, 255, 0.6)",
+  transition: "all 0.3s ease",
+  "&:hover": {
+    boxShadow: "0 5px 5px rgba(0, 114, 206, 0.15)",
+    transform: "translateY(-2px)",
+    border: "1px solid rgba(0, 114, 206, 0.3)",
+  }
+}));
+
+const StyledTab = styled(Tab)(({ theme }) => ({
+  textTransform: "none",
+  borderRadius: "40px",
+  fontSize: "0.95rem",
+  fontWeight: 600,
+  minHeight: "44px",
+  padding: "0 28px",
+  margin: "0 4px",
+  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+  color: "#64748B",
+  position: "relative",
+  overflow: "hidden",
+  zIndex: 1,
+  "&.Mui-selected": {
+    color: "#fff",
+    background: "linear-gradient(135deg, #0072CE 0%, #00c6ff 100%)", // Vibrant Gradient
+    boxShadow: "0 3px 3px rgba(0, 114, 206, 0.4)",
+    "&::after": {
+      opacity: 1,
+    }
+  },
+  "&:hover:not(.Mui-selected)": {
+    color: "#0072CE",
+    background: "rgba(0, 114, 206, 0.05)",
+    transform: "translateY(-1px)",
+
+  },
+  "&::after": {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    background: 'linear-gradient(rgba(255,255,255,0.2), transparent)',
+    opacity: 0,
+    transition: 'opacity 0.3s',
+  }
+}));
 
 const TabGestionGeneral = ({ tabs, num = 0 }) => {
   const [activeTab, setActiveTab] = useState(num);
 
+  const handleChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
+
   return (
     <>
-      <Box
-        sx={{
-          width: "100%",
-          flexDirection: "column",
-          position: "sticky",
-          zIndex: 1,
-          backgroundColor: "#f5f5f5",
-        }}
-      >
+      <TabsContainer>
         <Tabs
           value={activeTab}
-          onChange={(_, newValue) => setActiveTab(newValue)}
+          onChange={handleChange}
           centered
-          indicatorColor="#F39400"
-          textColor="white"
+          TabIndicatorProps={{
+            style: { display: "none" }
+          }}
           sx={{
-            marginLeft: 2,
-            mt: 0,
-            mb: 1,
+            "& .MuiTabs-flexContainer": {
+              justifyContent: "center",
+              gap: "8px"
+            }
           }}
         >
           {tabs.map(({ label }, index) => (
-            <Tab
+            <StyledTab
               key={label}
               label={label}
-              sx={{
-                display: "flex",
-                flex: 1,
-                flexDirection: "row",
-                textTransform: "none",
-                borderRadius: "8px",
-                fontSize: "15px",
-                fontWeight: 400,
-                marginRight: 2,
-                border: activeTab === index ? "none" : "1px solid #f07761ff",
-                backgroundColor: activeTab === index ? "details.main" : "white",
-                color: activeTab === index ? "white" : "#e68b61ff",
-                boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
-                "&:hover": {
-                  backgroundColor:
-                    activeTab === index ? "details.main" : "#fff2f2ff",
-                  color: activeTab === index ? "white" : "details.main",
-                },
-              }}
+              disableRipple
             />
           ))}
         </Tabs>
+      </TabsContainer>
+
+      <Box sx={{
+        position: 'relative',
+        zIndex: 1,
+        animation: 'fadeIn 0.5s ease-out',
+        "@keyframes fadeIn": {
+          "0%": { opacity: 0, transform: "translateY(10px)" },
+          "100%": { opacity: 1, transform: "translateY(0)" }
+        }
+      }}>
         {tabs[activeTab]?.component}
       </Box>
     </>
