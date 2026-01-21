@@ -163,7 +163,7 @@ function Login() {
             letterSpacing: "0.8px"
           }}
         >
-          SISTEMA DE GESTIÓN V 1.0.0
+          SISTEMA DE GESTIÓN V 2.0.0
         </Typography>
 
         <AtomButtonPrimary
