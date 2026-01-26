@@ -286,8 +286,8 @@ export const columnsPlantillaStandar = [
     label: "Unidades Venta",
   },
   {
-    field: "calculateDate",
-    label: "Fecha registro",
+    field: "saleDate",
+    label: "Fecha Venta",
     type: "date"
   },
   {

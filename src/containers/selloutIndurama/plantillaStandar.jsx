@@ -23,11 +23,9 @@ import {
 import { columnsPlantillaStandar } from "./constantes";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  Box,
   Typography,
   IconButton,
   Tooltip,
-  Paper,
   TextField,
   InputAdornment,
 } from "@mui/material";
@@ -504,7 +502,6 @@ const PlantillaStandar = () => {
                       data={dataConsolidatedSellout}
                       showIcons={true}
                       pagination={true}
-                      // actions={actions}
                       page={page}
                       limit={limit}
                       count={totalConsolidatedSellout}
@@ -698,7 +695,6 @@ const PlantillaStandar = () => {
               </>
             )
             }
-
           </Grid>
         }
       />
