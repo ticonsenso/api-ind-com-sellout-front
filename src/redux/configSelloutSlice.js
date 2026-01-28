@@ -1000,6 +1000,45 @@ export const exportarExcel = createAsyncThunk(
   }
 );
 
+export const exportarExcelAvanced = createAsyncThunk(
+  "configSellout/exportarExcelAvanced",
+  async (calculateDate, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = state.auth.auth.token;
+
+    try {
+      const response = await fetch(
+        `${apiConfig.exportarExcelUrl.url}avanced?calculate_date=${calculateDate}`,
+        {
+          method: "GET",
+          headers: {
+            Accept:
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("❌ Error al descargar el archivo");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.download = `sellout_mercado_${calculateDate}.xlsx`;
+      a.href = url;
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      return { success: true };
+    } catch (error) {
+      return rejectWithValue(error.message || "Error inesperado");
+    }
+  }
+);
+
 export const cargarExcel = createAsyncThunk(
   "config/cargarExcel",
   async (data, { getState, rejectWithValue }) => {

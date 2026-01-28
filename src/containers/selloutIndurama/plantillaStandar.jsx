@@ -16,7 +16,7 @@ import {
   obtenerConsolidatedSellout,
   getConsolidatedAlert,
   sincronizarDatosConsolidated,
-  exportarExcel,
+  exportarExcelAvanced,
   guardarConsolidatedSellout,
   updateArraySellout,
 } from "../../redux/configSelloutSlice";
@@ -269,11 +269,7 @@ const PlantillaStandar = () => {
     setLoading(true);
     try {
       const response = await dispatch(
-        exportarExcel({
-          excel_name: "consolidated_data_stores",
-          nombre: "Plantilla estándar",
-          calculateDate: formatDate(calculateDate),
-        })
+        exportarExcelAvanced(calculateDate),
       );
       if (response.meta.requestStatus === "fulfilled") {
         setLoading(false);
@@ -282,7 +278,7 @@ const PlantillaStandar = () => {
         );
       }
     } catch (error) {
-      showSnackbar(error.message || "Error al descargar el archivo", { severity: "error" });
+      showSnackbar(error.payload.message || "Error al descargar el archivo", { severity: "error" });
     } finally {
       setLoading(false);
     }
