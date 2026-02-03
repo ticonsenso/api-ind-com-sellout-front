@@ -1,5 +1,4 @@
 
-import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import TabGestionGeneral from "../../atoms/AtomContentTab";
 import ProductosNoHomologados from "./productos";
 import AlmacenesNoHomologados from "./almacenes";
@@ -27,11 +26,7 @@ const NoConsolidado = () => {
     ];
 
     return (
-        <AtomContainerGeneral
-            children={
-                <TabGestionGeneral tabs={tabs} />
-            }
-        />
+        <TabGestionGeneral tabs={tabs} />
     );
 };
 

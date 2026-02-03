@@ -35,8 +35,9 @@ const TabGestionMatriculacion = () => {
           <Box
             sx={{
               position: "fixed",
+              width: "200px",
               top: 80,
-              right: 115,
+              right: 105,
               zIndex: 1000,
             }}
           >
@@ -64,8 +65,9 @@ const TabGestionMatriculacion = () => {
           <Box
             sx={{
               position: "fixed",
+              width: "200px",
               top: 80,
-              right: 115,
+              right: 105,
               zIndex: 1000,
             }}
           >

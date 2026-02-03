@@ -10,7 +10,8 @@ import {
     obtenerConsolidatedSelloutUnique,
     subirExcelMaestrosStores,
     exportarExcel,
-    cargarExcel
+    cargarExcel,
+    sincronizarDatosConsolidated
 } from "../../redux/configSelloutSlice";
 import { debounce, timeSearch, formatDate, isMonthClosed } from "../constantes";
 import { DataGrid } from "@mui/x-data-grid";
@@ -101,27 +102,14 @@ const AlmacenesNoHomologados = () => {
         }
 
         setLoading(true);
-        const chunkSize = 2000;
-
-        const splitInChunks = (array, size) => {
-            const result = [];
-            for (let i = 0; i < array.length; i += size) {
-                result.push(array.slice(i, i + size));
-            }
-            return result;
-        };
 
         try {
-            const chunks = splitInChunks(resultadosActualizados, chunkSize);
+            const response = await dispatch(subirExcelMaestrosStores(resultadosActualizados));
 
-            for (const [index, chunk] of chunks.entries()) {
-                const response = await dispatch(subirExcelMaestrosStores(chunk));
-
-                if (response.meta.requestStatus !== "fulfilled") {
-                    throw new Error(
-                        response.payload?.message || `Error al subir el chunk ${index + 1}`
-                    );
-                }
+            if (response.meta.requestStatus !== "fulfilled") {
+                throw new Error(
+                    response.payload?.message || `Error al subir el chunk ${index + 1}`
+                );
             }
 
             showSnackbar("Cambios guardados correctamente", { severity: "success" });
@@ -129,7 +117,9 @@ const AlmacenesNoHomologados = () => {
         } catch (error) {
             showSnackbar(error.message || "Ocurrió un error al guardar", { severity: "error" });
         } finally {
-            buscarLista(search);
+            setLoading(false);
+            handleSincronizar();
+
         }
     };
 
@@ -199,10 +189,12 @@ const AlmacenesNoHomologados = () => {
                 throw response.payload || 'Error al subir el archivo.';
             }
             showSnackbar("Archivo cargado correctamente", { severity: "success" });
-            buscarLista(search);
         } catch (error) {
             setLoading(false);
             showSnackbar(error || "Error al cargar archivo", { severity: "error" });
+        } finally {
+            setLoading(false);
+            handleSincronizar();
         }
     };
 
@@ -211,11 +203,52 @@ const AlmacenesNoHomologados = () => {
         enviarArchivo(file);
     }
 
+    const handleSincronizar = async () => {
+        setLoading(true);
+        const [year, month] = calculateDate.split("-");
+        const dataSincronizar = {
+            month: month,
+            year: year,
+        }
+        const response = await dispatch(
+            sincronizarDatosConsolidated(dataSincronizar)
+        );
+        if (response.meta.requestStatus === "fulfilled") {
+            showSnackbar(response.payload.message, { severity: "success" });
+            setLoading(false);
+            buscarLista(search);
+        } else {
+            showSnackbar(response.payload.message, { severity: "error" });
+            setLoading(false);
+        }
+    };
+
     return (
         <>
             <AtomContainerGeneral
                 children={
                     <>
+                        <Box sx={{
+                            position: "fixed",
+                            top: 80,
+                            right: 130,
+                            zIndex: 1000,
+                        }}>
+                            <AtomDatePicker
+                                id="calculateDate"
+                                required={true}
+                                mode="month"
+                                label="Fecha de búsqueda"
+                                color="#ffffff"
+                                height="45px"
+                                value={calculateDate}
+                                onChange={(e) => {
+                                    dispatch(setCalculateDate(e));
+                                    setResultadosActualizados(null);
+                                }}
+                            />
+                        </Box>
+
                         {matriculacionCerrada === "abierto" && (
                             <>
                                 <IconoFlotante
@@ -224,6 +257,7 @@ const AlmacenesNoHomologados = () => {
                                     iconName="SaveAlt"
                                     color="#5ab9f6"
                                     right={70}
+                                    top={97}
                                 />
                                 <IconoFlotante
                                     handleButtonClick={() =>
@@ -233,6 +267,7 @@ const AlmacenesNoHomologados = () => {
                                     title="Subir archivo excel productos no homologados"
                                     id="input-excel-productos"
                                     iconName="DriveFolderUploadOutlined"
+                                    top={97}
                                 />
                             </>
                         )}
@@ -253,23 +288,8 @@ const AlmacenesNoHomologados = () => {
                             children={
                                 <>
                                     <Grid container spacing={2} sx={{ justifyContent: "flex-end", display: "flex" }}>
-                                        <Grid size={3}>
-                                            <AtomDatePicker
-                                                id="calculateDate"
-                                                required={true}
-                                                mode="month"
-                                                label="Fecha de búsqueda"
-                                                color="#ffffff"
-                                                height="45px"
-                                                value={calculateDate}
-                                                onChange={(e) => {
-                                                    dispatch(setCalculateDate(e));
-                                                    setResultadosActualizados(null);
-                                                }}
-                                            />
-                                        </Grid>
                                         {resultadosActualizados != null && (
-                                            <Grid size={1.5} mt={1.5}>
+                                            <Grid size={1.5} mt={-6}>
                                                 <AtomButtonPrimary
                                                     label="Guardar"
                                                     onClick={handleGuardarExcel}
@@ -282,7 +302,7 @@ const AlmacenesNoHomologados = () => {
                                             {loading ? (
                                                 <AtomCircularProgress />
                                             ) : (
-                                                <Box sx={{ width: "100%", borderRadius: 3 }}>
+                                                <Box sx={{ width: "100%", maxWidth: "100%", overflow: "hidden", borderRadius: 3 }}>
                                                     <DataGrid
                                                         rows={data}
                                                         columns={columnsStoreNull.map(col => ({
@@ -307,8 +327,8 @@ const AlmacenesNoHomologados = () => {
                                                             pagination: { paginationModel: { pageSize: 10, page: 0 } },
                                                         }}
                                                     />
-
                                                 </Box>
+
                                             )}
                                         </Grid>
                                     </Grid>

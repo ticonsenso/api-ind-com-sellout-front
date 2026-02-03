@@ -20,7 +20,7 @@ const AtomContainerGeneral = ({
         </Grid>
       )}
 
-      <Grid>
+      <Grid size={12}>
         <Box
           sx={{
             backgroundColor: color,

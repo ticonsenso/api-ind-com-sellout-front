@@ -247,7 +247,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
               }}
               title="Actualizar lista"
               iconName="Refresh"
-              right={60}
+              right={50}
               color="#63B6FF"
               top={95}
             />
@@ -257,7 +257,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
                 title="Descargar lista matriculaciones por mes"
                 iconName="SaveAlt"
                 color="#01960eff"
-                right={20}
+                right={10}
                 top={95}
               />
             )}

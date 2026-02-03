@@ -473,7 +473,7 @@ const Matriculacion = ({ calculateDate }) => {
                 }}
                 title="Actualizar lista"
                 iconName="Refresh"
-                right={60}
+                right={50}
                 color="#63B6FF"
                 top={95}
               />
@@ -491,7 +491,7 @@ const Matriculacion = ({ calculateDate }) => {
                     title="Crear clientes por mes"
                     iconName="Add"
                     color="#0c9200ff"
-                    right={20}
+                    right={10}
                     top={95}
                   />
                   {/* <Menu

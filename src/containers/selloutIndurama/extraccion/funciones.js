@@ -1,7 +1,7 @@
 import { PALABRAS_INVALIDAS, normalizarTexto } from "./constantes.js";
 import * as XLSX from "xlsx";
 
-export const repartirValoresNumerico = (registroOriginal) => {
+export const repartirValoresNumerico = (registroOriginal, simbolo, dividirCantidad) => {
     const descripcion = registroOriginal.descriptionDistributor || "";
 
 
@@ -17,7 +17,9 @@ export const repartirValoresNumerico = (registroOriginal) => {
     const codigoOriginal = registroOriginal.codeProductDistributor || "";
     const codigoEsValido = esCodigoValido(codigoOriginal);
 
-    const separadores = ["\\t", "[\\r\\n]+", "\\+", "\\/"];
+    const separadores = simbolo
+        ? [simbolo.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')]
+        : ["\\t", "[\\r\\n]+", "\\+", "\\/"];
     const regexSeparador = new RegExp(separadores.join("|"), "g");
 
     const productos = descripcion
@@ -36,12 +38,12 @@ export const repartirValoresNumerico = (registroOriginal) => {
     }
 
 
-    if (cantidadOriginal === 1) {
+    if (cantidadOriginal === 1 || !dividirCantidad) {
         return productos.map((prod) => ({
             ...registroOriginal,
             descriptionDistributor: prod,
             codeProductDistributor: codigoEsValido ? codigoOriginal : prod,
-            unitsSoldDistributor: 1,
+            unitsSoldDistributor: !dividirCantidad ? cantidadOriginal : 1,
         }));
     }
 

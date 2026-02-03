@@ -117,28 +117,28 @@ export const columnsStoreNull = [
 
 export const styleTableData = {
     width: "100%",
-    boxShadow: "none", // Remove default shadow
+    boxShadow: "none",
     backgroundColor: "transparent",
     border: "none",
+    borderRadius: 4,
 
-    // Header Styling
     "& .MuiDataGrid-columnHeaders": {
-        backgroundColor: "#0072CE", // Brand Blue
+        backgroundColor: "#0072CE",
         color: "#ffffff",
         fontWeight: 700,
         fontSize: "0.85rem",
         borderBottom: "none",
-        borderRadius: "8px 8px 0 0", // Rounded top corners
+        borderRadius: "8px 8px 0 0",
     },
     "& .MuiDataGrid-columnHeader": {
-        backgroundColor: "#0072CE", // Ensure bg color covers all
+        backgroundColor: "#0072CE",
         color: "#ffffff",
     },
     "& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader:focus-within": {
         outline: "none",
     },
     "& .MuiDataGrid-iconSeparator": {
-        display: "none", // Clean look
+        display: "none",
     },
     "& .MuiDataGrid-menuIcon": {
         color: "#ffffff",
@@ -148,13 +148,12 @@ export const styleTableData = {
         opacity: 0.8,
     },
 
-    // Row & Cell Styling
     "& .MuiDataGrid-row": {
         backgroundColor: "#ffffff",
         marginBottom: "2px",
         boxShadow: "0 2px 4px rgba(0,0,0,0.02)",
         borderBottom: "1px solid #f1f5f9",
-        minHeight: "60px !important", // Enforce taller appearance
+        minHeight: "60px !important",
         "&:hover": {
             backgroundColor: "#f8fafc",
             transform: "translateY(-1px)",
@@ -167,7 +166,7 @@ export const styleTableData = {
         color: "#334155",
         fontSize: "0.875rem",
         borderBottom: "none",
-        padding: "18px 16px", // Increased padding for height
+        padding: "18px 16px",
         display: "flex",
         alignItems: "center",
         whiteSpace: "normal !important",
@@ -178,7 +177,6 @@ export const styleTableData = {
         outline: "none",
     },
 
-    // Pagination
     "& .MuiDataGrid-footerContainer": {
         borderTop: "none",
         justifyContent: "flex-end",

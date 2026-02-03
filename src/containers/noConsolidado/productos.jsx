@@ -11,7 +11,8 @@ import {
     obtenerConsolidatedSelloutUnique,
     subirExcelMaestrosProducts,
     exportarExcel,
-    cargarExcel
+    cargarExcel,
+    sincronizarDatosConsolidated
 } from "../../redux/configSelloutSlice";
 import { debounce, timeSearch, formatDate, isMonthClosed } from "../constantes";
 import { DataGrid } from "@mui/x-data-grid";
@@ -98,34 +99,20 @@ const ProductosNoHomologados = () => {
         setOpenMatriculacion(true);
     };
 
-    const handleGuardarExcel = async () => {
+    const handleGuardarMaestros = async () => {
         if (resultadosActualizados.length === 0) {
             showSnackbar("No hay cambios para guardar", { severity: "info" });
             return;
         }
 
         setLoading(true);
-        const chunkSize = 2000;
-
-        const splitInChunks = (array, size) => {
-            const result = [];
-            for (let i = 0; i < array.length; i += size) {
-                result.push(array.slice(i, i + size));
-            }
-            return result;
-        };
-
         try {
-            const chunks = splitInChunks(resultadosActualizados, chunkSize);
+            const response = await dispatch(subirExcelMaestrosProducts(resultadosActualizados));
 
-            for (const [index, chunk] of chunks.entries()) {
-                const response = await dispatch(subirExcelMaestrosProducts(chunk));
-
-                if (response.meta.requestStatus !== "fulfilled") {
-                    throw new Error(
-                        response.payload?.message || `Error al subir el chunk ${index + 1}`
-                    );
-                }
+            if (response.meta.requestStatus !== "fulfilled") {
+                throw new Error(
+                    response.payload?.message || `Error al subir el archivo`
+                );
             }
 
             showSnackbar("Cambios guardados correctamente", { severity: "success" });
@@ -133,7 +120,8 @@ const ProductosNoHomologados = () => {
         } catch (error) {
             showSnackbar(error.message || "Ocurrió un error al guardar", { severity: "error" });
         } finally {
-            buscarLista(search);
+            setLoading(false);
+            handleSincronizar();
         }
     };
 
@@ -197,11 +185,10 @@ const ProductosNoHomologados = () => {
     };
 
     const enviarArchivo = async (file) => {
-
         try {
             const response = await dispatch(
                 cargarExcel({
-                    type: "noHomologadosStore",
+                    type: "noHomologadosProducts",
                     date: calculateDate,
                     file
                 })
@@ -211,10 +198,12 @@ const ProductosNoHomologados = () => {
                 throw response.payload || 'Error al subir el archivo.';
             }
             showSnackbar("Archivo cargado correctamente", { severity: "success" });
-            buscarLista(search);
         } catch (error) {
             setLoading(false);
             showSnackbar(error || "Error al cargar archivo", { severity: "error" });
+        } finally {
+            setLoading(false);
+            handleSincronizar();
         }
     };
 
@@ -223,11 +212,51 @@ const ProductosNoHomologados = () => {
         enviarArchivo(file);
     }
 
+    const handleSincronizar = async () => {
+        setLoading(true);
+        const [year, month] = calculateDate.split("-");
+        const dataSincronizar = {
+            month: month,
+            year: year,
+        }
+        const response = await dispatch(
+            sincronizarDatosConsolidated(dataSincronizar)
+        );
+        if (response.meta.requestStatus === "fulfilled") {
+            showSnackbar(response.payload.message, { severity: "success" });
+            setLoading(false);
+            buscarLista(search);
+        } else {
+            showSnackbar(response.payload.message, { severity: "error" });
+            setLoading(false);
+        }
+    };
+
     return (
         <>
             <AtomContainerGeneral
                 children={
                     <>
+                        <Box sx={{
+                            position: "fixed",
+                            top: 80,
+                            right: 130,
+                            zIndex: 1000,
+                        }}>
+                            <AtomDatePicker
+                                id="calculateDate"
+                                required={true}
+                                mode="month"
+                                label="Fecha de búsqueda"
+                                color="#ffffff"
+                                height="45px"
+                                value={calculateDate}
+                                onChange={(e) => {
+                                    dispatch(setCalculateDate(e));
+                                    setResultadosActualizados(null);
+                                }}
+                            />
+                        </Box>
                         {matriculacionCerrada === "abierto" && (
                             <>
                                 <IconoFlotante
@@ -236,6 +265,7 @@ const ProductosNoHomologados = () => {
                                     iconName="SaveAlt"
                                     color="#5ab9f6"
                                     right={70}
+                                    top={97}
                                 />
                                 <IconoFlotante
                                     handleButtonClick={() =>
@@ -245,6 +275,7 @@ const ProductosNoHomologados = () => {
                                     title="Subir archivo excel productos no homologados"
                                     id="input-excel-productos"
                                     iconName="DriveFolderUploadOutlined"
+                                    top={97}
                                 />
                             </>
                         )}
@@ -265,26 +296,11 @@ const ProductosNoHomologados = () => {
                             children={
                                 <>
                                     <Grid container spacing={2} sx={{ justifyContent: "flex-end", display: "flex" }}>
-                                        <Grid size={3}>
-                                            <AtomDatePicker
-                                                id="calculateDate"
-                                                required={true}
-                                                mode="month"
-                                                label="Fecha de búsqueda"
-                                                color="#ffffff"
-                                                height="45px"
-                                                value={calculateDate}
-                                                onChange={(e) => {
-                                                    dispatch(setCalculateDate(e));
-                                                    setResultadosActualizados(null);
-                                                }}
-                                            />
-                                        </Grid>
                                         {resultadosActualizados != null && (
-                                            <Grid size={1.5} mt={1.5}>
+                                            <Grid size={2} mt={-6}>
                                                 <AtomButtonPrimary
                                                     label="Guardar"
-                                                    onClick={handleGuardarExcel}
+                                                    onClick={handleGuardarMaestros}
 
                                                 />
                                             </Grid>
@@ -294,33 +310,31 @@ const ProductosNoHomologados = () => {
                                             {loading ? (
                                                 <AtomCircularProgress />
                                             ) : (
-                                                <Box sx={{ width: "100%", borderRadius: 3 }}>
-                                                    <DataGrid
-                                                        rows={data}
-                                                        columns={columnsProductNull.map(col => ({
-                                                            ...col,
-                                                            editable: matriculacionCerrada === "abierto" ? true : false
-                                                        }))}
-                                                        getRowHeight={() => "auto"}
-                                                        disableSelectionOnClick
-                                                        sx={styleTableData}
-                                                        processRowUpdate={(newRow) => {
-                                                            handleActualizarProducto(newRow);
-                                                            return newRow;
-                                                        }}
-                                                        localeText={{
-                                                            ...esES.components.MuiDataGrid.defaultProps.localeText,
-                                                            noRowsLabel: "No existen datos registrados",
-                                                            errorOverlayDefaultLabel: "Ha ocurrido un error.",
-                                                        }}
-                                                        pagination
-                                                        pageSizeOptions={[10, 50, 100]}
-                                                        initialState={{
-                                                            pagination: { paginationModel: { pageSize: 10, page: 0 } },
-                                                        }}
-                                                    />
+                                                <DataGrid
+                                                    rows={data}
+                                                    columns={columnsProductNull.map(col => ({
+                                                        ...col,
+                                                        editable: matriculacionCerrada === "abierto" ? true : false
+                                                    }))}
+                                                    getRowHeight={() => "auto"}
+                                                    disableSelectionOnClick
+                                                    sx={styleTableData}
+                                                    processRowUpdate={(newRow) => {
+                                                        handleActualizarProducto(newRow);
+                                                        return newRow;
+                                                    }}
+                                                    localeText={{
+                                                        ...esES.components.MuiDataGrid.defaultProps.localeText,
+                                                        noRowsLabel: "No existen datos registrados",
+                                                        errorOverlayDefaultLabel: "Ha ocurrido un error.",
+                                                    }}
+                                                    pagination
+                                                    pageSizeOptions={[10, 50, 100]}
+                                                    initialState={{
+                                                        pagination: { paginationModel: { pageSize: 10, page: 0 } },
+                                                    }}
+                                                />
 
-                                                </Box>
                                             )}
                                         </Grid>
                                     </Grid>

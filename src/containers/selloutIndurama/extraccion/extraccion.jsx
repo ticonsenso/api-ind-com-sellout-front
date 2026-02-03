@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import AtomCard from "../../../atoms/AtomCard";
 import {
   Box,
   Typography,
@@ -196,6 +195,7 @@ const ExtraccionDatos = () => {
     codeStoreDistributor: null,
     extraerTodos: false,
     hasNegativeValue: false,
+    dividirCantidad: false,
   });
   const [openDialogoConfirmacionNegativo, setOpenDialogoConfirmacionNegativo] =
     useState(false);
@@ -713,6 +713,7 @@ const ExtraccionDatos = () => {
           extraerTodos: false,
           distributor: "",
           codeStoreDistributor: "",
+          dividirCantidad: false,
         });
       } else {
         showSnackbar(response.payload.message || "Error al guardar", { severity: "error" });
@@ -1001,7 +1002,7 @@ const ExtraccionDatos = () => {
     );
 
     const separados = seleccionados
-      .flatMap((item) => repartirValoresNumerico(item, configuracion.simbolo))
+      .flatMap((item) => repartirValoresNumerico(item, configuracion.simbolo, configuracion.dividirCantidad))
       .map((item) => ({
         ...item,
         observation: "Dato separado",
@@ -1814,8 +1815,8 @@ const ExtraccionDatos = () => {
         handleCloseDialog={() => { handleCloseDialogSeparation(); }}
         maxWidth="xl"
         dialogContentComponent={
-          < Box sx={{ height: "100%", width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-            <Box sx={{ width: "450px", justifyContent: "center" }}>
+          < Grid container spacing={1} justifyContent="space-between" alignItems="center">
+            <Grid size={4} mt={2}>
               <AtomTextField
                 id="busqueda"
                 placeholder="Buscar descripción..."
@@ -1826,8 +1827,24 @@ const ExtraccionDatos = () => {
                   setPage(0);
                 }}
               />
-            </Box>
-            <Box sx={{ height: "100%", width: "100%" }}>
+            </Grid>
+            <Grid size={3} >
+              <AtomSwitch
+                height={"45px"}
+                id="dividirCantidad"
+                title="Dividir cantidad"
+                tooltip="Define si se divide la cantidad"
+                checked={configuracion.dividirCantidad || false}
+                onChange={(e) =>
+                  setConfiguracion({
+                    ...configuracion,
+                    dividirCantidad: e.target.checked,
+                  })
+                }
+              />
+            </Grid>
+
+            <Grid size={12} sx={{ height: "100%", width: "100%" }}>
               <TablaSeleccionProductos
                 columns={[
                   { label: "Descripción", field: "descriptionDistributor", type: "TEXT" },
@@ -1845,8 +1862,8 @@ const ExtraccionDatos = () => {
                 setPage={setPage}
                 setLimit={setLimit}
               />
-            </Box>
-          </Box >
+            </Grid>
+          </Grid >
         }
       />
     </>
