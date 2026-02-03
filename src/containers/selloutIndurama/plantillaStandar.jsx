@@ -186,7 +186,7 @@ const PlantillaStandar = () => {
   const handleCloseDialogoSincronizar = () => {
     setOpenDialogoSincronizar(false);
     setDataSincronizar({
-      year: 2025,
+      year: new Date().getFullYear(),
       month: null,
     });
   };
