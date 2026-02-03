@@ -464,7 +464,7 @@ const ExtraccionDatos = () => {
         if (tieneSeparadores(registro.descriptionDistributor, simboloConfig)) {
           registrosConSeparadores.push(registroFinal);
         } else {
-          registrosSinSeparar.push(...repartirValoresNumerico(registroFinal, simboloConfig));
+          registrosSinSeparar.push(...repartirValoresNumerico(registroFinal, simboloConfig, configuracion.dividirCantidad));
         }
       }
     }
