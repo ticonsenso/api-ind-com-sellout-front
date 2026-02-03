@@ -287,9 +287,9 @@ const AlmacenesNoHomologados = () => {
                             }}
                             children={
                                 <>
-                                    <Grid container spacing={2} sx={{ justifyContent: "flex-end", display: "flex" }}>
+                                    <Grid container spacing={2} sx={{ justifyContent: "right" }}>
                                         {resultadosActualizados != null && (
-                                            <Grid size={1.5} mt={-6}>
+                                            <Grid size={1.5} mt={-1}>
                                                 <AtomButtonPrimary
                                                     label="Guardar"
                                                     onClick={handleGuardarExcel}
@@ -302,32 +302,30 @@ const AlmacenesNoHomologados = () => {
                                             {loading ? (
                                                 <AtomCircularProgress />
                                             ) : (
-                                                <Box sx={{ width: "100%", maxWidth: "100%", overflow: "hidden", borderRadius: 3 }}>
-                                                    <DataGrid
-                                                        rows={data}
-                                                        columns={columnsStoreNull.map(col => ({
-                                                            ...col,
-                                                            editable: matriculacionCerrada === "abierto" ? true : false
-                                                        }))}
-                                                        getRowHeight={() => "auto"}
-                                                        disableSelectionOnClick
-                                                        sx={styleTableData}
-                                                        processRowUpdate={(newRow) => {
-                                                            handleActualizarProducto(newRow);
-                                                            return newRow;
-                                                        }}
-                                                        localeText={{
-                                                            ...esES.components.MuiDataGrid.defaultProps.localeText,
-                                                            noRowsLabel: "No existen datos registrados",
-                                                            errorOverlayDefaultLabel: "Ha ocurrido un error.",
-                                                        }}
-                                                        pagination
-                                                        pageSizeOptions={[10, 50, 100]}
-                                                        initialState={{
-                                                            pagination: { paginationModel: { pageSize: 10, page: 0 } },
-                                                        }}
-                                                    />
-                                                </Box>
+                                                <DataGrid
+                                                    rows={data}
+                                                    columns={columnsStoreNull.map(col => ({
+                                                        ...col,
+                                                        editable: matriculacionCerrada === "abierto" ? true : false
+                                                    }))}
+                                                    getRowHeight={() => "auto"}
+                                                    disableSelectionOnClick
+                                                    sx={styleTableData}
+                                                    processRowUpdate={(newRow) => {
+                                                        handleActualizarProducto(newRow);
+                                                        return newRow;
+                                                    }}
+                                                    localeText={{
+                                                        ...esES.components.MuiDataGrid.defaultProps.localeText,
+                                                        noRowsLabel: "No existen datos registrados",
+                                                        errorOverlayDefaultLabel: "Ha ocurrido un error.",
+                                                    }}
+                                                    pagination
+                                                    pageSizeOptions={[10, 50, 100]}
+                                                    initialState={{
+                                                        pagination: { paginationModel: { pageSize: 10, page: 0 } },
+                                                    }}
+                                                />
 
                                             )}
                                         </Grid>

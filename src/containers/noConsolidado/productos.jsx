@@ -295,9 +295,9 @@ const ProductosNoHomologados = () => {
                             }}
                             children={
                                 <>
-                                    <Grid container spacing={2} sx={{ justifyContent: "flex-end", display: "flex" }}>
+                                    <Grid container spacing={2} justifyContent="right">
                                         {resultadosActualizados != null && (
-                                            <Grid size={2} mt={-6}>
+                                            <Grid size={2} mt={-1}>
                                                 <AtomButtonPrimary
                                                     label="Guardar"
                                                     onClick={handleGuardarMaestros}
