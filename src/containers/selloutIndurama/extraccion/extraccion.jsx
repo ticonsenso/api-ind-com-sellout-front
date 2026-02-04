@@ -605,7 +605,7 @@ const ExtraccionDatos = () => {
       const warnings = [];
       registrosFiltrados.forEach(r => {
         if (r._undividedWarning) {
-          warnings.push(`No se dividió la cantidad para el producto: ${r.descriptionDistributor}`);
+          warnings.push(`${r.descriptionDistributor}`);
           delete r._undividedWarning;
         }
       });
@@ -1019,7 +1019,7 @@ const ExtraccionDatos = () => {
     const warnings = [];
     separados.forEach(item => {
       if (item._undividedWarning) {
-        warnings.push(`No se dividió la cantidad para el producto: ${item.descriptionDistributor}`);
+        warnings.push(`${item.descriptionDistributor}`);
         delete item._undividedWarning;
       }
     });
@@ -1655,7 +1655,7 @@ const ExtraccionDatos = () => {
         }
       />
       <AtomDialogForm
-        maxWidth="md"
+        maxWidth="lg"
         openDialog={openDialogDefaults}
         buttonCancel={false}
         buttonSubmit={true}
@@ -1664,106 +1664,114 @@ const ExtraccionDatos = () => {
         handleSubmit={() => setOpenDialogDefaults(false)}
         titleCrear="Detalles de extracción"
         dialogContentComponent={
-          <Box
-            sx={{
-              p: 3,
-              borderRadius: 3,
-              backgroundColor: "#f5f7fa",
-              width: "80%",
-              margin: "0 auto",
-            }}
-          >
-            {/* Sección: Valores por Defecto */}
-            {defaultsContent.defaults.length > 0 && (
-              <Box sx={{ mb: 3 }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    mb: 1,
-                    gap: 1,
-                    backgroundColor: "#e3f2fd",
-                    p: 1.5,
-                    borderRadius: 2,
-                    borderLeft: "4px solid #2196f3",
-                  }}
-                >
-                  <InfoOutlinedIcon color="primary" />
-                  <Typography variant="subtitle1" fontWeight="600" color="primary.main">
-                    Valores por Defecto Aplicados
-                  </Typography>
-                </Box>
-                <Typography variant="body2" sx={{ mb: 1, color: "text.secondary", ml: 1 }}>
-                  Se han aplicado valores por defecto a los siguientes campos faltantes:
-                </Typography>
-                <List dense>
-                  {defaultsContent.defaults.map((field, index) => (
-                    <ListItem key={`def-${index}`} sx={{ py: 0.5 }}>
-                      <ListItemIcon sx={{ minWidth: 32 }}>
-                        <LabelImportantIcon color="info" fontSize="small" />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={field}
-                        primaryTypographyProps={{
-                          variant: "body2",
-                          fontWeight: 500,
-                          color: "text.primary",
-                        }}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
+          < Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box
+              sx={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "row",
+                gap: 2,
+              }}
+            >
+              <Box sx={{ boxShadow: 2, borderRadius: 3, p: 2, width: "50%" }} >
+                {defaultsContent.defaults.length > 0 && (
+                  <Box sx={{ mb: 3 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        mb: 1,
+                        gap: 1,
+                        backgroundColor: "#e3f2fd",
+                        p: 1.5,
+                        borderRadius: 2,
+                        borderLeft: "4px solid #2196f3",
+                      }}
+                    >
+                      <InfoOutlinedIcon color="primary" />
+                      <Typography variant="subtitle1" fontWeight="600" color="primary.main">
+                        Valores por Defecto Aplicados
+                      </Typography>
+                    </Box>
+                    <Typography
+                      variant="body2"
+                      fontWeight={600}
+                      sx={{
+                        mb: 1,
+                        color: "#5f5f5fff",
+                      }}>
+                      Se han aplicado valores por defecto a los siguientes campos faltantes:
+                    </Typography>
+                    <List dense>
+                      {defaultsContent.defaults.map((field, index) => (
+                        <ListItem key={`def-${index}`} sx={{ py: 0.5 }}>
+                          <ListItemIcon sx={{ minWidth: 32 }}>
+                            <LabelImportantIcon color="info" fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={field}
+                            sx={{
+                              fontWeight: 500,
+                              color: "text.secondary",
+                            }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                )}
               </Box>
-            )}
 
-            {/* Separador si hay ambas secciones */}
-            {defaultsContent.defaults.length > 0 && defaultsContent.warnings.length > 0 && (
-              <Divider sx={{ my: 2 }} />
-            )}
-
-            {/* Sección: Advertencias / No Divididos */}
-            {defaultsContent.warnings.length > 0 && (
-              <Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    mb: 1,
-                    gap: 1,
-                    backgroundColor: "#fff3e0",
-                    p: 1.5,
-                    borderRadius: 2,
-                    borderLeft: "4px solid #ff9800",
-                  }}
-                >
-                  <InfoOutlinedIcon color="warning" />
-                  <Typography variant="subtitle1" fontWeight="600" color="warning.dark">
-                    Advertencias de Lógica
-                  </Typography>
-                </Box>
-                <Typography variant="body2" sx={{ mb: 1, color: "text.secondary", ml: 1 }}>
-                  Los siguientes productos no fueron divididos (Cantidad ≠ # Items):
-                </Typography>
-                <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
-                  {defaultsContent.warnings.map((msg, index) => (
-                    <ListItem key={`warn-${index}`} sx={{ py: 0.5 }}>
-                      <ListItemIcon sx={{ minWidth: 32 }}>
-                        <LabelImportantIcon color="warning" fontSize="small" />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={msg}
-                        primaryTypographyProps={{
-                          variant: "body2",
-                          fontWeight: 500,
-                          color: "text.primary",
-                        }}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
+              <Box sx={{ boxShadow: 2, borderRadius: 3, p: 2, width: "50%" }}>
+                {defaultsContent.warnings.length > 0 && (
+                  <Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        mb: 1,
+                        gap: 1,
+                        backgroundColor: "#fff3e0",
+                        p: 1.5,
+                        borderRadius: 2,
+                        borderLeft: "4px solid #ff9800",
+                      }}
+                    >
+                      <InfoOutlinedIcon color="warning" />
+                      <Typography variant="subtitle1" fontWeight="600" color="warning.dark">
+                        Advertencias de Cantidad
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2"
+                      fontWeight={600}
+                      sx={{
+                        mb: 1,
+                        color: "#5f5f5fff",
+                        textAlign: "center"
+                      }}>
+                      No se pudo dividir la cantidad para los siguientes productos:
+                    </Typography>
+                    <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
+                      {defaultsContent.warnings.map((msg, index) => (
+                        <ListItem key={`warn-${index}`} sx={{ py: 0.5 }}>
+                          <ListItemIcon sx={{ minWidth: 32 }}>
+                            <LabelImportantIcon color="warning" fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={msg}
+                            sx={{
+                              variant: "body2",
+                              fontWeight: 400,
+                              color: "text.secondary",
+                            }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                )}
               </Box>
-            )}
-
+            </Box>
             <Typography
               variant="caption"
               color="text.secondary"
@@ -1778,6 +1786,7 @@ const ExtraccionDatos = () => {
             >
               * Por favor revise que estos valores sean correctos para su reporte.
             </Typography>
+
           </Box>
         }
       />

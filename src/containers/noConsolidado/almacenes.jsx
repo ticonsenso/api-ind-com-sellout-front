@@ -298,7 +298,7 @@ const AlmacenesNoHomologados = () => {
                                             </Grid>
                                         )}
 
-                                        <Grid size={12} >
+                                        <Grid size={12} sx={{ height: styleTableData.height }}>
                                             {loading ? (
                                                 <AtomCircularProgress />
                                             ) : (

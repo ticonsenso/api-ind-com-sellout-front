@@ -117,6 +117,7 @@ export const columnsStoreNull = [
 
 export const styleTableData = {
     width: "100%",
+    height: "70vh",
     boxShadow: "none",
     backgroundColor: "transparent",
     border: "none",
