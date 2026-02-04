@@ -38,23 +38,30 @@ export const repartirValoresNumerico = (registroOriginal, simbolo, dividirCantid
     }
 
 
-    if (cantidadOriginal === 1 || !dividirCantidad) {
+    if (!dividirCantidad) {
         return productos.map((prod) => ({
             ...registroOriginal,
             descriptionDistributor: prod,
             codeProductDistributor: codigoEsValido ? codigoOriginal : prod,
-            unitsSoldDistributor: !dividirCantidad ? cantidadOriginal : 1,
+            unitsSoldDistributor: cantidadOriginal,
         }));
     }
 
-    let cantidadDividida = Math.round(cantidadOriginal / productos.length);
-    if (cantidadDividida < 1) cantidadDividida = 1;
+    if (cantidadOriginal === productos.length) {
+        return productos.map((prod) => ({
+            ...registroOriginal,
+            descriptionDistributor: prod,
+            codeProductDistributor: codigoEsValido ? codigoOriginal : prod,
+            unitsSoldDistributor: 1,
+        }));
+    }
 
     return productos.map((prod) => ({
         ...registroOriginal,
         descriptionDistributor: prod,
         codeProductDistributor: codigoEsValido ? codigoOriginal : prod,
-        unitsSoldDistributor: cantidadDividida,
+        unitsSoldDistributor: cantidadOriginal,
+        _undividedWarning: true
     }));
 };
 

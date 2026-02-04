@@ -200,7 +200,7 @@ const ExtraccionDatos = () => {
   const [openDialogoConfirmacionNegativo, setOpenDialogoConfirmacionNegativo] =
     useState(false);
   const [openDialogDefaults, setOpenDialogDefaults] = useState(false);
-  const [defaultsContent, setDefaultsContent] = useState([]);
+  const [defaultsContent, setDefaultsContent] = useState({ defaults: [], warnings: [] });
 
   const [filteredData, setFilteredData] = useState(
     dataMatriculacionRegistrados
@@ -602,7 +602,15 @@ const ExtraccionDatos = () => {
         }))
       );
 
-      mostrarAvisoDefaults(columnsFaltantes, DEFAULT_FIELD_LABELS);
+      const warnings = [];
+      registrosFiltrados.forEach(r => {
+        if (r._undividedWarning) {
+          warnings.push(`No se dividió la cantidad para el producto: ${r.descriptionDistributor}`);
+          delete r._undividedWarning;
+        }
+      });
+
+      mostrarAvisoDefaults(columnsFaltantes, DEFAULT_FIELD_LABELS, warnings);
 
     } catch (error) {
       showSnackbar(`Error al procesar archivo: ${error.message}`, { severity: "error" });
@@ -1008,6 +1016,14 @@ const ExtraccionDatos = () => {
         observation: "Dato separado",
       }));
 
+    const warnings = [];
+    separados.forEach(item => {
+      if (item._undividedWarning) {
+        warnings.push(`No se dividió la cantidad para el producto: ${item.descriptionDistributor}`);
+        delete item._undividedWarning;
+      }
+    });
+
     const finalData = [
       ...temporalRegistrosSinSeparar,
       ...separados,
@@ -1064,22 +1080,33 @@ const ExtraccionDatos = () => {
     setDialogSeparation(false);
     setPreSplitInfo([]);
     setSelectedToSplitIds([]);
-    mostrarAvisoDefaults(defaultsAplicados, DEFAULT_FIELD_LABELS);
+    mostrarAvisoDefaults(defaultsAplicados, DEFAULT_FIELD_LABELS, warnings);
   };
+
 
   const mostrarAvisoDefaults = (
     defaultsAplicados,
     DEFAULT_FIELD_LABELS,
+    warnings = []
   ) => {
-    if (!defaultsAplicados || defaultsAplicados.size === 0) return;
+    const newDefaults = [];
+    const newWarnings = [];
 
-    const camposLegibles = [...defaultsAplicados]
-      .map(key => DEFAULT_FIELD_LABELS[key])
-      .filter(Boolean);
+    if (defaultsAplicados && defaultsAplicados.size > 0) {
+      newDefaults.push(
+        ...[...defaultsAplicados]
+          .map((key) => DEFAULT_FIELD_LABELS[key])
+          .filter(Boolean)
+      );
+    }
 
-    if (camposLegibles.length === 0) return;
+    if (warnings.length > 0) {
+      newWarnings.push(...warnings);
+    }
 
-    setDefaultsContent(camposLegibles);
+    if (newDefaults.length === 0 && newWarnings.length === 0) return;
+
+    setDefaultsContent({ defaults: newDefaults, warnings: newWarnings });
     setOpenDialogDefaults(true);
   };
 
@@ -1637,50 +1664,121 @@ const ExtraccionDatos = () => {
         handleSubmit={() => setOpenDialogDefaults(false)}
         titleCrear="Detalles de extracción"
         dialogContentComponent={
-          <Box sx={{
-            p: 3,
-            borderRadius: 3,
-            backgroundColor: '#ecf6ffff',
-            width: '80%'
-          }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
-              <InfoOutlinedIcon color="primary" />
-              <Typography variant="subtitle1" fontWeight="400">
-                Se han aplicado valores por defecto a los siguientes campos:
-              </Typography>
-            </Box>
-            <List>
-              {defaultsContent.map((field, index) => (
-                <React.Fragment key={index}>
-                  <ListItem>
-                    <ListItemIcon sx={{ minWidth: 36 }}>
-                      <LabelImportantIcon color="info" fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={field}
-                      sx={{
-                        fontWeight: 400,
-                        color: 'text.secondary'
-                      }}
-                    />
-                  </ListItem>
-                  {index < defaultsContent.length - 1 && <Divider component="li" variant="inset" marginLeft={0} />}
-                </React.Fragment>
-              ))}
-            </List>
+          <Box
+            sx={{
+              p: 3,
+              borderRadius: 3,
+              backgroundColor: "#f5f7fa",
+              width: "80%",
+              margin: "0 auto",
+            }}
+          >
+            {/* Sección: Valores por Defecto */}
+            {defaultsContent.defaults.length > 0 && (
+              <Box sx={{ mb: 3 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: 1,
+                    gap: 1,
+                    backgroundColor: "#e3f2fd",
+                    p: 1.5,
+                    borderRadius: 2,
+                    borderLeft: "4px solid #2196f3",
+                  }}
+                >
+                  <InfoOutlinedIcon color="primary" />
+                  <Typography variant="subtitle1" fontWeight="600" color="primary.main">
+                    Valores por Defecto Aplicados
+                  </Typography>
+                </Box>
+                <Typography variant="body2" sx={{ mb: 1, color: "text.secondary", ml: 1 }}>
+                  Se han aplicado valores por defecto a los siguientes campos faltantes:
+                </Typography>
+                <List dense>
+                  {defaultsContent.defaults.map((field, index) => (
+                    <ListItem key={`def-${index}`} sx={{ py: 0.5 }}>
+                      <ListItemIcon sx={{ minWidth: 32 }}>
+                        <LabelImportantIcon color="info" fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={field}
+                        primaryTypographyProps={{
+                          variant: "body2",
+                          fontWeight: 500,
+                          color: "text.primary",
+                        }}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            )}
+
+            {/* Separador si hay ambas secciones */}
+            {defaultsContent.defaults.length > 0 && defaultsContent.warnings.length > 0 && (
+              <Divider sx={{ my: 2 }} />
+            )}
+
+            {/* Sección: Advertencias / No Divididos */}
+            {defaultsContent.warnings.length > 0 && (
+              <Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: 1,
+                    gap: 1,
+                    backgroundColor: "#fff3e0",
+                    p: 1.5,
+                    borderRadius: 2,
+                    borderLeft: "4px solid #ff9800",
+                  }}
+                >
+                  <InfoOutlinedIcon color="warning" />
+                  <Typography variant="subtitle1" fontWeight="600" color="warning.dark">
+                    Advertencias de Lógica
+                  </Typography>
+                </Box>
+                <Typography variant="body2" sx={{ mb: 1, color: "text.secondary", ml: 1 }}>
+                  Los siguientes productos no fueron divididos (Cantidad ≠ # Items):
+                </Typography>
+                <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
+                  {defaultsContent.warnings.map((msg, index) => (
+                    <ListItem key={`warn-${index}`} sx={{ py: 0.5 }}>
+                      <ListItemIcon sx={{ minWidth: 32 }}>
+                        <LabelImportantIcon color="warning" fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={msg}
+                        primaryTypographyProps={{
+                          variant: "body2",
+                          fontWeight: 500,
+                          color: "text.primary",
+                        }}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            )}
+
             <Typography
               variant="caption"
               color="text.secondary"
               sx={{
-                mt: 2,
-                textAlign: 'center',
-                display: 'block',
-                fontStyle: 'italic',
+                mt: 3,
+                textAlign: "center",
+                display: "block",
+                fontStyle: "italic",
+                borderTop: "1px dashed #ccc",
+                pt: 1
               }}
             >
-              * Revise que estos valores sean correctos para su reporte.
+              * Por favor revise que estos valores sean correctos para su reporte.
             </Typography>
-          </Box >
+          </Box>
         }
       />
 
