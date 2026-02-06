@@ -15,7 +15,7 @@ import { useState } from "react";
 import Grid from "@mui/material/Grid";
 import { useSnackbar } from "../../../context/SnacbarContext";
 import { useDialog } from "../../../context/DialogDeleteContext";
-import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
+import CustomLinearProgress from "../../../atoms/CustomLinearProgress";
 import { usePermission } from "../../../context/PermisosComtext";
 import { limitGeneral } from "../../constantes";
 import AtomDatePicker from "../../../atoms/AtomDatePicker";
@@ -309,23 +309,20 @@ const ConfiguracionMatriculacion = () => {
               }}
               children={
                 <>
-                  {loading ? (
-                    <AtomCircularProgress />
-                  ) : (
-                    <AtomTableForm
-                      columns={columns}
-                      data={dataMatriculacionConfig}
-                      actions={namePermission ? actions : []}
-                      pagination={true}
-                      page={page}
-                      limit={limit}
-                      count={totalMatriculacionConfig}
-                      setPage={setPage}
-                      setLimit={setLimit}
-                      handleChangePage={handleChangePage}
-                      handleChangeRowsPerPage={handleChangeRowsPerPage}
-                    />
-                  )}
+                  <AtomTableForm
+                    columns={columns}
+                    data={dataMatriculacionConfig}
+                    actions={namePermission ? actions : []}
+                    pagination={true}
+                    page={page}
+                    limit={limit}
+                    count={totalMatriculacionConfig}
+                    setPage={setPage}
+                    setLimit={setLimit}
+                    handleChangePage={handleChangePage}
+                    handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    loading={loading}
+                  />
                 </>
               }
             />

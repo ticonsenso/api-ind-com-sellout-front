@@ -9,7 +9,7 @@ import { useState } from "react";
 import Grid from "@mui/material/Grid";
 import ExcelJS from "exceljs";
 import { useSnackbar } from "../../../context/SnacbarContext";
-import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
+import CustomLinearProgress from "../../../atoms/CustomLinearProgress";
 import {
   obtenerProductsSic,
   updateProductsSic,
@@ -351,24 +351,21 @@ const ProductsSic = () => {
               }}
               children={
                 <>
-                  {loading ? (
-                    <AtomCircularProgress />
-                  ) : (
-                    <AtomTableForm
-                      columns={columnsProductsSic}
-                      data={dataProductsSic}
-                      showIcons={true}
-                      actions={actions}
-                      pagination={true}
-                      page={page}
-                      limit={limit}
-                      count={totalProductsSic}
-                      setPage={setPage}
-                      setLimit={setLimit}
-                      handleChangePage={handleChangePage}
-                      handleChangeRowsPerPage={handleChangeRowsPerPage}
-                    />
-                  )}
+                  <AtomTableForm
+                    columns={columnsProductsSic}
+                    data={dataProductsSic}
+                    showIcons={true}
+                    actions={actions}
+                    pagination={true}
+                    page={page}
+                    limit={limit}
+                    count={totalProductsSic}
+                    setPage={setPage}
+                    setLimit={setLimit}
+                    handleChangePage={handleChangePage}
+                    handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    loading={loading}
+                  />
                 </>
               }
             />

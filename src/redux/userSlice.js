@@ -13,6 +13,7 @@ const initialState = {
   asignarRol: [],
   optionsRoles: [],
   optionsPermisos: [],
+  loading: false,
 };
 
 const setUserObject = (state, action) => {
@@ -291,11 +292,19 @@ export const asignarRolUsuario = createAsyncThunk(
 
 const extraReducers = (builder) => {
   builder
+    .addCase(obtenerUsuarios.pending, (state) => {
+      state.loading = true;
+    })
     .addCase(obtenerUsuarios.fulfilled, (state, action) => {
       state.users = action.payload;
+      state.loading = false;
     })
     .addCase(obtenerUsuarios.rejected, (state, action) => {
       state.users = [];
+      state.loading = false;
+    })
+    .addCase(obtenerRoles.pending, (state) => {
+      state.loading = true;
     })
     .addCase(obtenerRoles.fulfilled, (state, action) => {
       state.roles = action.payload;
@@ -303,10 +312,15 @@ const extraReducers = (builder) => {
         id: rol.id,
         label: rol.name,
       }));
+      state.loading = false;
     })
     .addCase(obtenerRoles.rejected, (state, action) => {
       state.roles = [];
       state.optionsRoles = [];
+      state.loading = false;
+    })
+    .addCase(obtenerPermissions.pending, (state) => {
+      state.loading = true;
     })
     .addCase(obtenerPermissions.fulfilled, (state, action) => {
       if (action.payload.length > 0) {
@@ -322,10 +336,12 @@ const extraReducers = (builder) => {
         state.permissions = [];
         state.optionsPermisos = [];
       }
+      state.loading = false;
     })
     .addCase(obtenerPermissions.rejected, (state, action) => {
       state.permissions = [];
       state.optionsPermisos = [];
+      state.loading = false;
     });
 };
 

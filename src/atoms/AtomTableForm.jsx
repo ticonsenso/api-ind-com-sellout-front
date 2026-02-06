@@ -16,6 +16,7 @@ import {
   alpha,
   Paper
 } from "@mui/material";
+import CustomLinearProgress from "./CustomLinearProgress";
 import {
   DeleteForever as DeleteForeverIcon,
   FactCheck as FactCheckIcon,
@@ -172,7 +173,8 @@ const AtomTableForm = (props) => {
     selectable = false,
     selectedRows = [],
     onSelectionChange = () => { },
-    onDeleteSelected
+    onDeleteSelected,
+    loading = false
   } = props;
 
   const [expandedRow, setExpandedRow] = useState(null);
@@ -231,6 +233,7 @@ const AtomTableForm = (props) => {
 
   return (
     <RootContainer>
+      {loading && <CustomLinearProgress />}
       <StyledTableContainer component={Paper}>
         <Table stickyHeader aria-label="custom table">
           <TableHead>

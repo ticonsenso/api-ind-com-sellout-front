@@ -8,7 +8,7 @@ import { useState } from "react";
 import Grid from "@mui/material/Grid";
 import ExcelJS from "exceljs";
 import { useSnackbar } from "../../../context/SnacbarContext";
-import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
+import CustomLinearProgress from "../../../atoms/CustomLinearProgress";
 import {
   obtenerMaestrosProducts,
   updateMaestrosProducts,
@@ -19,7 +19,7 @@ import {
 } from "../../../redux/configSelloutSlice";
 import { columnsMaestrosProducts } from "../constantes";
 import { useDispatch, useSelector } from "react-redux";
-import { Typography, IconButton, Box, CircularProgress } from "@mui/material";
+import { Typography, IconButton, Box } from "@mui/material";
 import { useDialog } from "../../../context/DialogDeleteContext";
 import AtomSwitch from "../../../atoms/AtomSwitch";
 import { DriveFolderUploadOutlined as DriveFolderUploadOutlinedIcon } from "@mui/icons-material";
@@ -428,24 +428,21 @@ const MasterProducts = () => {
               }}
               children={
                 <>
-                  {loading ? (
-                    <AtomCircularProgress />
-                  ) : (
-                    <AtomTableForm
-                      columns={columnsMaestrosProducts}
-                      data={dataMaestrosProducts}
-                      showIcons={true}
-                      actions={actions}
-                      pagination={true}
-                      page={page}
-                      limit={limit}
-                      count={totalMaestrosProducts}
-                      setPage={setPage}
-                      setLimit={setLimit}
-                      handleChangePage={handleChangePage}
-                      handleChangeRowsPerPage={handleChangeRowsPerPage}
-                    />
-                  )}
+                  <AtomTableForm
+                    columns={columnsMaestrosProducts}
+                    data={dataMaestrosProducts}
+                    showIcons={true}
+                    actions={actions}
+                    pagination={true}
+                    page={page}
+                    limit={limit}
+                    count={totalMaestrosProducts}
+                    setPage={setPage}
+                    setLimit={setLimit}
+                    handleChangePage={handleChangePage}
+                    handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    loading={loading}
+                  />
                 </>
               }
             />
@@ -591,8 +588,8 @@ const MasterProducts = () => {
       />
       <AtomDialogForm
         openDialog={openUploadExcel}
-        titleCrear={"Datos Extraídos"}
-        buttonCancel={true}
+        titleCrear={loading ? "Estamos procesando su solicitud, por favor espere..." : "Datos Extraídos"}
+        buttonCancel={loading ? false : true}
         buttonSubmit={loading ? false : true}
         maxWidth="xl"
         handleSubmit={handleGuardarExcel}
@@ -600,7 +597,7 @@ const MasterProducts = () => {
         dialogContentComponent={
           <Box sx={{ width: "100%", justifyContent: "center" }}>
             {loading ? (
-              <AtomCircularProgress />
+              <CustomLinearProgress />
             ) : (
               <>
                 {datosExcel.length > 0 ? (

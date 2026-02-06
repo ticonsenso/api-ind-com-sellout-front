@@ -573,3 +573,33 @@ export const optionsRegional = [
   { id: "COSTA", label: "Costa" },
   { id: "SIERRA", label: "Sierra" },
 ];
+
+export const columnsConfLines = [
+  {
+    field: "name",
+    label: "Nombre",
+    type: "string",
+  },
+  {
+    field: "lineName",
+    label: "Nombre Linea",
+    type: "string",
+  },
+];
+
+export const camposConfLines = [
+  {
+    id: "name",
+    headerTitle: "Nombre",
+    placeholder: "Ingrese el nombre",
+    size: 6,
+    required: true,
+  },
+  {
+    id: "lineName",
+    headerTitle: "Descripción",
+    placeholder: "Ingrese la descripción",
+    size: 6,
+    required: true,
+  },
+];

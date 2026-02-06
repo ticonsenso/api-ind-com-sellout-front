@@ -43,6 +43,7 @@ const TabRoles = () => {
   const asignarPermiso = useSelector(
     (state) => state?.users?.asignarPermiso || []
   );
+  const loading = useSelector((state) => state.users.loading);
 
   const optionsPermisos = useSelector(
     (state) => state?.users?.optionsPermisos || []
@@ -250,6 +251,7 @@ const TabRoles = () => {
                   columns={columnsRoles}
                   data={roles}
                   actions={namePermission ? actions : []}
+                  loading={loading}
                 />
               </Box>
             }

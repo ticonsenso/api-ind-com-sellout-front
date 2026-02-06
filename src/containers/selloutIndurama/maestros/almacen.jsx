@@ -7,7 +7,7 @@ import AtomContainerGeneral from "../../../atoms/AtomContainerGeneral";
 import { useState } from "react";
 import Grid from "@mui/material/Grid";
 import { useSnackbar } from "../../../context/SnacbarContext";
-import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
+import CustomLinearProgress from "../../../atoms/CustomLinearProgress";
 import {
   obtenerMaestrosStores,
   updateMaestrosStores,
@@ -373,24 +373,19 @@ const MasterAlmacen = () => {
               }}
               children={
                 <>
-                  {loading ? (
-                    <AtomCircularProgress />
-                  ) : (
-                    <AtomTableForm
-                      columns={columnsMaestrosStores}
-                      data={dataMaestrosStores}
-                      showIcons={true}
-                      actions={actions}
-                      pagination={true}
-                      page={page}
-                      limit={limit}
-                      count={totalMaestrosStores}
-                      setPage={setPage}
-                      setLimit={setLimit}
-                      handleChangePage={handleChangePage}
-                      handleChangeRowsPerPage={handleChangeRowsPerPage}
-                    />
-                  )}
+                  <AtomTableForm
+                    columns={columnsMaestrosStores}
+                    data={dataMaestrosStores}
+                    showIcons={true}
+                    actions={actions}
+                    pagination={true}
+                    page={page}
+                    limit={limit}
+                    count={totalMaestrosStores}
+                    handleChangePage={handleChangePage}
+                    handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    loading={loading}
+                  />
                 </>
               }
             />
@@ -473,7 +468,7 @@ const MasterAlmacen = () => {
       />
       <AtomDialogForm
         openDialog={openUploadExcel}
-        titleCrear={"Datos Extraídos"}
+        titleCrear={loading ? "Estamos procesando su solicitud, por favor espere..." : "Datos Extraídos"}
         buttonCancel={loading ? false : true}
         handleSubmit={handleGuardarExcel}
         buttonSubmit={loading ? false : true}
@@ -482,7 +477,7 @@ const MasterAlmacen = () => {
         dialogContentComponent={
           <Box sx={{ width: "100%", justifyContent: "center" }}>
             {loading ? (
-              <AtomCircularProgress />
+              <CustomLinearProgress />
             ) : (
               <>
                 {datosExcel.length > 0 ? (

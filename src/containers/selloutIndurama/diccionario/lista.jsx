@@ -16,7 +16,7 @@ import { useState } from "react";
 import Grid from "@mui/material/Grid";
 import { useSnackbar } from "../../../context/SnacbarContext";
 import { useDialog } from "../../../context/DialogDeleteContext";
-import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
+import CustomLinearProgress from "../../../atoms/CustomLinearProgress";
 import { usePermission } from "../../../context/PermisosComtext";
 import { limitGeneral } from "../../constantes";
 import AtomDatePicker from "../../../atoms/AtomDatePicker";
@@ -198,23 +198,20 @@ const ListaCategorias = () => {
                             }}
                             children={
                                 <>
-                                    {loading ? (
-                                        <AtomCircularProgress />
-                                    ) : (
-                                        <AtomTableForm
-                                            columns={columnsListaDiccionario}
-                                            data={data}
-                                            actions={namePermission ? actions : []}
-                                            pagination={false}
-                                            page={page}
-                                            limit={limit}
-                                            count={totalLista}
-                                            setPage={setPage}
-                                            setLimit={setLimit}
-                                            handleChangePage={handleChangePage}
-                                            handleChangeRowsPerPage={handleChangeRowsPerPage}
-                                        />
-                                    )}
+                                    <AtomTableForm
+                                        columns={columnsListaDiccionario}
+                                        data={data}
+                                        actions={namePermission ? actions : []}
+                                        pagination={false}
+                                        page={page}
+                                        limit={limit}
+                                        count={totalLista}
+                                        setPage={setPage}
+                                        setLimit={setLimit}
+                                        handleChangePage={handleChangePage}
+                                        handleChangeRowsPerPage={handleChangeRowsPerPage}
+                                        loading={loading}
+                                    />
                                 </>
                             }
                         />

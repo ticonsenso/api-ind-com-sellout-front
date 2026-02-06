@@ -129,6 +129,15 @@ const initialStateMenu = [
     menuSellout: false,
     nameInfo: "No Homologados",
   },
+  {
+    id: 10,
+    name: "Configuración de líneas",
+    icon: "mui:DatasetLinked",
+    visible: true,
+    name_server: "CONFIGURACION LINEAS",
+    menuSellout: false,
+    nameInfo: "Configuración de líneas",
+  },
 ];
 
 export default initialStateMenu;

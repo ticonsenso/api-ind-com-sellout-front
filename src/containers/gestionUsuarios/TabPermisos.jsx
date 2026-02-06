@@ -28,6 +28,7 @@ const TabPermisos = () => {
   const hasPermission = usePermission();
   const namePermission = hasPermission("ACCIONES PERMISOS");
   const permissions = useSelector((state) => state.users.permissions);
+  const loading = useSelector((state) => state.users.loading);
   const permiso = useSelector((state) => state.users.permiso);
   const [openPermission, setOpenPermission] = useState(false);
 
@@ -154,6 +155,7 @@ const TabPermisos = () => {
                   actions={namePermission ? actions : []}
                   columns={columnsPermisos}
                   data={permissions}
+                  loading={loading}
                 />
               </Box>
             }

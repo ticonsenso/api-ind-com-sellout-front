@@ -15,7 +15,7 @@ import { useState } from "react";
 import Grid from "@mui/material/Grid";
 import { useSnackbar } from "../../../context/SnacbarContext";
 import { useDialog } from "../../../context/DialogDeleteContext";
-import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
+import CustomLinearProgress from "../../../atoms/CustomLinearProgress";
 import { usePermission } from "../../../context/PermisosComtext";
 import { limitGeneral } from "../../constantes";
 import AtomDatePicker from "../../../atoms/AtomDatePicker";
@@ -232,17 +232,13 @@ const ColumnsCategorias = ({ id }) => {
 
                                         </Grid>
                                         <Grid size={12}>
-                                            {loading ? (
-                                                <AtomCircularProgress />
-                                            ) : (
-                                                <AtomTableForm
-                                                    columns={columns}
-                                                    data={data}
-                                                    actions={namePermission ? actions : []}
-                                                    pagination={false}
-
-                                                />
-                                            )}
+                                            <AtomTableForm
+                                                columns={columns}
+                                                data={data}
+                                                actions={namePermission ? actions : []}
+                                                pagination={false}
+                                                loading={loading}
+                                            />
                                         </Grid>
                                     </Grid>
 

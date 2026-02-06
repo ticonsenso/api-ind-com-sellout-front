@@ -20,7 +20,7 @@ import { Box, Typography, Menu, MenuItem, ListItemIcon } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useSnackbar } from "../../../context/SnacbarContext";
 import { useDialog } from "../../../context/DialogDeleteContext";
-import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
+import CustomLinearProgress from "../../../atoms/CustomLinearProgress";
 import { usePermission } from "../../../context/PermisosComtext";
 import { limitGeneral, pageGeneral } from "../../constantes";
 import AtomSwitch from "../../../atoms/AtomSwitch";
@@ -592,34 +592,27 @@ const Matriculacion = ({ calculateDate }) => {
               }}
               children={
                 <>
-                  {loading ? (
-                    <AtomCircularProgress />
-                  ) : (
-                    <AtomTableForm
-                      columns={columns}
-                      data={dataMatriculacion}
-                      // actions={
-                      //   matriculacionCerrada === "abierto" && namePermission
-                      //     ? actions
-                      //     : []
-                      // }
-
-                      pagination={true}
-                      page={page}
-                      limit={limit}
-                      count={totalMatriculacion}
-                      selectable={matriculacionCerrada === "abierto" ? true : false}
-                      selectedRows={selectedIds}
-                      onSelectionChange={(ids) => {
-                        setSelectedIds(ids);
-                      }}
-                      onDeleteSelected={handleDeleteSelected}
-                      setPage={setPage}
-                      setLimit={setLimit}
-                      handleChangePage={handleChangePage}
-                      handleChangeRowsPerPage={handleChangeRowsPerPage}
-                    />
-                  )}
+                  <AtomTableForm
+                    columns={columns}
+                    data={dataMatriculacion}
+                    showIcons={true}
+                    actions={actions}
+                    pagination={true}
+                    page={page}
+                    limit={limit}
+                    count={totalMatriculacion}
+                    selectable={matriculacionCerrada === "abierto" ? true : false}
+                    selectedRows={selectedIds}
+                    onSelectionChange={(ids) => {
+                      setSelectedIds(ids);
+                    }}
+                    onDeleteSelected={handleDeleteSelected}
+                    setPage={setPage}
+                    setLimit={setLimit}
+                    handleChangePage={handleChangePage}
+                    handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    loading={loading}
+                  />
                 </>
               }
             />
@@ -714,7 +707,7 @@ const Matriculacion = ({ calculateDate }) => {
         dialogContentComponent={
           <Box sx={{ width: "100%", justifyContent: "center" }}>
             {loading ? (
-              <AtomCircularProgress />
+              <CustomLinearProgress />
             ) : (
               <>
                 {datosExcel.length > 0 ? (

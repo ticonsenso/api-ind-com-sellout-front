@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import { useSnackbar } from "../../../context/SnacbarContext";
 import { useDialog } from "../../../context/DialogDeleteContext";
-import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
+import CustomLinearProgress from "../../../atoms/CustomLinearProgress";
 import { usePermission } from "../../../context/PermisosComtext";
 import IconoFlotante from "../../../atoms/IconActionPage";
 import { columnsMatriculacion, columnsDetallesMatriculacion } from "../extraccion/constantes";
@@ -273,20 +273,17 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
               }}
               children={
                 <>
-                  {loading ? (
-                    <AtomCircularProgress />
-                  ) : (
-                    <AtomTableForm
-                      columns={columnsMatriculacion}
-                      data={dataMatriculacionRegistrados || []}
-                      pagination={false}
-                      actions={matriculacionCerrada === "abierto" ? actions : []}
-                      page={page}
-                      limit={limit}
-                      handleChangePage={handleChangePage}
-                      handleChangeRowsPerPage={handleChangeRowsPerPage}
-                    />
-                  )}
+                  <AtomTableForm
+                    columns={columnsMatriculacion}
+                    data={dataMatriculacionRegistrados || []}
+                    pagination={false}
+                    actions={matriculacionCerrada === "abierto" ? actions : []}
+                    page={page}
+                    limit={limit}
+                    handleChangePage={handleChangePage}
+                    handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    loading={loading}
+                  />
                 </>
               }
             />

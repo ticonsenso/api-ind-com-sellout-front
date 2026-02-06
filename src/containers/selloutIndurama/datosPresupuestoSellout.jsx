@@ -7,7 +7,7 @@ import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import { useState } from "react";
 import Grid from "@mui/material/Grid";
 import { useSnackbar } from "../../context/SnacbarContext";
-import AtomCircularProgress from "../../atoms/AtomCircularProgress";
+import CustomLinearProgress from "../../atoms/CustomLinearProgress";
 import {
   obtenerPresupuestoSellout,
   updatePresupuestoSellout,
@@ -382,24 +382,21 @@ const DatosPresupuestoSellout = () => {
               }}
               children={
                 <>
-                  {loading ? (
-                    <AtomCircularProgress />
-                  ) : (
-                    <AtomTableForm
-                      columns={[]}
-                      data={dataPresupuestoSellout}
-                      showIcons={true}
-                      actions={actions}
-                      pagination={true}
-                      page={page}
-                      limit={limit}
-                      count={totalPresupuestoSellout}
-                      setPage={setPage}
-                      setLimit={setLimit}
-                      handleChangePage={handleChangePage}
-                      handleChangeRowsPerPage={handleChangeRowsPerPage}
-                    />
-                  )}
+                  <AtomTableForm
+                    columns={[]}
+                    data={dataPresupuestoSellout}
+                    showIcons={true}
+                    actions={actions}
+                    pagination={true}
+                    page={page}
+                    limit={limit}
+                    count={totalPresupuestoSellout}
+                    setPage={setPage}
+                    setLimit={setLimit}
+                    handleChangePage={handleChangePage}
+                    handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    loading={loading}
+                  />
                 </>
               }
             />
@@ -491,7 +488,7 @@ const DatosPresupuestoSellout = () => {
         dialogContentComponent={
           <Box sx={{ width: "100%", justifyContent: "center" }}>
             {loading ? (
-              <AtomCircularProgress />
+              <CustomLinearProgress />
             ) : (
               <>
                 {datosExcel.length > 0 ? (

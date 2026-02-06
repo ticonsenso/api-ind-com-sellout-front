@@ -40,6 +40,7 @@ const ListUsers = () => {
   const userObject = useSelector((state) => state.users.user);
   const asignarRol = useSelector((state) => state.users.asignarRol);
   const optionsRoles = useSelector((state) => state.users.optionsRoles);
+  const loading = useSelector((state) => state.users.loading);
 
   const paramsValidate = ["dni", "name", "email", "phone"];
   const [rolesSeleccionados, setRolesSeleccionados] = useState([]);
@@ -195,6 +196,7 @@ const ListUsers = () => {
                 columns={columnsUsuarios}
                 data={users}
                 actions={namePermission ? actions : []}
+                loading={loading}
               />
             }
           />

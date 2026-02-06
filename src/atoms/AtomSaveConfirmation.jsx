@@ -11,7 +11,7 @@ import {
   TableContainer,
   Paper,
 } from "@mui/material";
-import AtomCircularProgress from "./AtomCircularProgress";
+import CustomLinearProgress from "./CustomLinearProgress";
 import AtomAlert from "./AtomAlert";
 
 const styles = {
@@ -68,7 +68,7 @@ const AtomSaveConfirmationDetailDialog = ({
   return (
     <Box sx={{ height: "100%" }}>
       {loading ? (
-        <AtomCircularProgress />
+        <CustomLinearProgress />
       ) : (
         <Grid
           container

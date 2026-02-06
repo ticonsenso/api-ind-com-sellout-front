@@ -5,7 +5,7 @@ import { useEffect, useCallback } from "react";
 import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import { useState } from "react";
 import Grid from "@mui/material/Grid";
-import AtomCircularProgress from "../../atoms/AtomCircularProgress";
+import CustomLinearProgress from "../../atoms/CustomLinearProgress";
 import { columnsProductNull, styleTableData } from "./constantes";
 import {
     obtenerConsolidatedSelloutUnique,
@@ -307,35 +307,34 @@ const ProductosNoHomologados = () => {
                                         )}
 
                                         <Grid size={12} sx={{ height: styleTableData.height }}>
-                                            {loading ? (
-                                                <AtomCircularProgress />
-                                            ) : (
-                                                <DataGrid
-                                                    rows={data}
-                                                    columns={columnsProductNull.map(col => ({
-                                                        ...col,
-                                                        editable: matriculacionCerrada === "abierto" ? true : false
-                                                    }))}
-                                                    getRowHeight={() => "auto"}
-                                                    disableSelectionOnClick
-                                                    sx={styleTableData}
-                                                    processRowUpdate={(newRow) => {
-                                                        handleActualizarProducto(newRow);
-                                                        return newRow;
-                                                    }}
-                                                    localeText={{
-                                                        ...esES.components.MuiDataGrid.defaultProps.localeText,
-                                                        noRowsLabel: "No existen datos registrados",
-                                                        errorOverlayDefaultLabel: "Ha ocurrido un error.",
-                                                    }}
-                                                    pagination
-                                                    pageSizeOptions={[10, 50, 100]}
-                                                    initialState={{
-                                                        pagination: { paginationModel: { pageSize: 10, page: 0 } },
-                                                    }}
-                                                />
-
-                                            )}
+                                            <DataGrid
+                                                rows={data}
+                                                columns={columnsProductNull.map(col => ({
+                                                    ...col,
+                                                    editable: matriculacionCerrada === "abierto" ? true : false
+                                                }))}
+                                                getRowHeight={() => "auto"}
+                                                disableSelectionOnClick
+                                                sx={styleTableData}
+                                                processRowUpdate={(newRow) => {
+                                                    handleActualizarProducto(newRow);
+                                                    return newRow;
+                                                }}
+                                                localeText={{
+                                                    ...esES.components.MuiDataGrid.defaultProps.localeText,
+                                                    noRowsLabel: "No existen datos registrados",
+                                                    errorOverlayDefaultLabel: "Ha ocurrido un error.",
+                                                }}
+                                                pagination
+                                                pageSizeOptions={[10, 50, 100]}
+                                                initialState={{
+                                                    pagination: { paginationModel: { pageSize: 10, page: 0 } },
+                                                }}
+                                                loading={loading}
+                                                slots={{
+                                                    loadingOverlay: CustomLinearProgress,
+                                                }}
+                                            />
                                         </Grid>
                                     </Grid>
 

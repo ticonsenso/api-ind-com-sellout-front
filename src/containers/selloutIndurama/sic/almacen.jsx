@@ -8,7 +8,7 @@ import AtomContainerGeneral from "../../../atoms/AtomContainerGeneral";
 import { useState } from "react";
 import Grid from "@mui/material/Grid";
 import { useSnackbar } from "../../../context/SnacbarContext";
-import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
+import CustomLinearProgress from "../../../atoms/CustomLinearProgress";
 import {
   obtenerStoresSic,
   updateStoresSic,
@@ -399,24 +399,21 @@ const AlmacenSic = () => {
               }}
               children={
                 <>
-                  {loading ? (
-                    <AtomCircularProgress />
-                  ) : (
-                    <AtomTableForm
-                      columns={columnsStoresSic}
-                      data={dataStoresSic}
-                      showIcons={true}
-                      actions={actions}
-                      pagination={true}
-                      page={page}
-                      limit={limit}
-                      count={totalStoresSic}
-                      setPage={setPage}
-                      setLimit={setLimit}
-                      handleChangePage={handleChangePage}
-                      handleChangeRowsPerPage={handleChangeRowsPerPage}
-                    />
-                  )}
+                  <AtomTableForm
+                    columns={columnsStoresSic}
+                    data={dataStoresSic}
+                    showIcons={true}
+                    actions={actions}
+                    pagination={true}
+                    page={page}
+                    limit={limit}
+                    count={totalStoresSic}
+                    setPage={setPage}
+                    setLimit={setLimit}
+                    handleChangePage={handleChangePage}
+                    handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    loading={loading}
+                  />
                 </>
               }
             />
@@ -489,7 +486,7 @@ const AlmacenSic = () => {
             }}
           >
             {loading ? (
-              <AtomCircularProgress />
+              <CustomLinearProgress />
             ) : (
               <>
                 {datosExcel.length > 0 ? (

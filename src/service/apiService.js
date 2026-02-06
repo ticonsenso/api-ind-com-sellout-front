@@ -7,7 +7,7 @@ class ApiService {
       url: '',
       headers: {
       },
-      data: null,
+      data: undefined,
       params: null,
     };
 

@@ -33,6 +33,8 @@ const initialState = {
   totalMatriculacionRegistrados: 0,
   optionsMatriculacion: [],
   calculateDate: null,
+  dataLines: [],
+  totalLines: 0,
 };
 
 //maestrosProducts
@@ -807,6 +809,97 @@ export const sincronizarDatosConsolidated = createAsyncThunk(
   }
 );
 
+//confLines
+export const obtenerLines = createAsyncThunk(
+  "configSellout/obtenerLines",
+  async (data, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = state.auth.auth.token;
+    const { sortBy = "id", sortOrder = "ASC", ...rest } = data;
+    try {
+      return await apiService
+        .setUrl(apiConfig.confLinesUrl.url + "/paginated/all")
+        .setMethod("GET")
+        .setParams({ sortBy, sortOrder, ...rest })
+        .send(token);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const createLines = createAsyncThunk(
+  "configSellout/createLines",
+  async (data, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = state.auth.auth.token;
+    try {
+      return await apiService
+        .setUrl(apiConfig.confLinesUrl.url)
+        .setMethod("POST")
+        .setData(data)
+        .send(token);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const updateLines = createAsyncThunk(
+  "configSellout/updateLines",
+  async (data, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = state.auth.auth.token;
+    const { id, ...rest } = data;
+    try {
+      return await apiService
+        .setUrl(apiConfig.confLinesUrl.url + "/" + id)
+        .setMethod("PUT")
+        .setData(rest)
+        .send(token);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteLines = createAsyncThunk(
+  "configSellout/deleteLines",
+  async (id, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = state.auth.auth.token;
+    try {
+      return await apiService
+        .setUrl(apiConfig.confLinesUrl.url + "/" + id)
+        .setMethod("DELETE")
+        .send(token);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const subirExcelLines = createAsyncThunk(
+  "configSellout/subirExcelLines",
+  async (data, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = state.auth.auth.token;
+
+    try {
+      const response = await apiService
+        .setUrl(apiConfig.confLinesUrl.url + "/charge/all")
+        .setMethod("POST")
+        .setHeaders({ Accept: "application/json" })
+        .setData(data)
+        .send(token);
+
+      return response?.data || response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 //matriculacion
 export const obtenerMatriculacion = createAsyncThunk(
   "configSellout/obtenerMatriculacion",
@@ -1250,6 +1343,19 @@ const extraReducers = (builder) => {
       } else {
         state.dataMatriculacionRegistrados = [];
         state.totalMatriculacionRegistrados = 0;
+      }
+    })
+    .addCase(obtenerLines.rejected, (state, action) => {
+      state.dataLines = [];
+      state.totalLines = 0;
+    })
+    .addCase(obtenerLines.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.dataLines = action.payload.data;
+        state.totalLines = action.payload.total;
+      } else {
+        state.dataLines = [];
+        state.totalLines = 0;
       }
     });
 };

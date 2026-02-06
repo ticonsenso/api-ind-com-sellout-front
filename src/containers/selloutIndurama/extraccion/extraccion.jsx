@@ -56,7 +56,7 @@ import AtomAutocompleteLabel from "../../../atoms/AtomAutocomplete";
 import * as XLSX from "xlsx";
 import { camposMaestrosStores } from "../maestros/constantes";
 import AtomAlert from "../../../atoms/AtomAlert";
-import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
+import CustomLinearProgress from "../../../atoms/CustomLinearProgress";
 import { mensajeExtraccion, normalizeSpaces } from "../../constantes";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -408,7 +408,7 @@ const ExtraccionDatos = () => {
           }
 
           registro.unitsSoldDistributor = hasNegativeValue
-            ? Math.abs(cantidadNumerica)
+            ? (cantidadNumerica * -1)
             : cantidadNumerica;
         }
 
@@ -949,7 +949,7 @@ const ExtraccionDatos = () => {
         const valorExtraido = extraerTextoCelda(fila[mapeo.unitsSoldDistributor]);
         const cantidadNumerica = parseFloat(valorExtraido);
         if (isNaN(cantidadNumerica) || cantidadNumerica === 0) continue;
-        rawCantidad = hasNegativeValue ? Math.abs(cantidadNumerica) : cantidadNumerica;
+        rawCantidad = hasNegativeValue ? (cantidadNumerica * -1) : cantidadNumerica;
       }
 
       let saleDate;
@@ -1626,7 +1626,7 @@ const ExtraccionDatos = () => {
 
               <Box>
                 {loading ? (
-                  <AtomCircularProgress />
+                  <CustomLinearProgress />
                 ) : (
                   <AtomTableExtraccion
                     loading={loading}
@@ -1673,104 +1673,101 @@ const ExtraccionDatos = () => {
                 gap: 2,
               }}
             >
-              <Box sx={{ boxShadow: 2, borderRadius: 3, p: 2, width: "50%" }} >
-                {defaultsContent.defaults.length > 0 && (
-                  <Box sx={{ mb: 3 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        mb: 1,
-                        gap: 1,
-                        backgroundColor: "#e3f2fd",
-                        p: 1.5,
-                        borderRadius: 2,
-                        borderLeft: "4px solid #2196f3",
-                      }}
-                    >
-                      <InfoOutlinedIcon color="primary" />
-                      <Typography variant="subtitle1" fontWeight="600" color="primary.main">
-                        Valores por Defecto Aplicados
-                      </Typography>
-                    </Box>
-                    <Typography
-                      variant="body2"
-                      fontWeight={600}
-                      sx={{
-                        mb: 1,
-                        color: "#5f5f5fff",
-                      }}>
-                      Se han aplicado valores por defecto a los siguientes campos faltantes:
-                    </Typography>
-                    <List dense>
-                      {defaultsContent.defaults.map((field, index) => (
-                        <ListItem key={`def-${index}`} sx={{ py: 0.5 }}>
-                          <ListItemIcon sx={{ minWidth: 32 }}>
-                            <LabelImportantIcon color="info" fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={field}
-                            sx={{
-                              fontWeight: 500,
-                              color: "text.secondary",
-                            }}
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Box>
-                )}
-              </Box>
+              {defaultsContent.defaults.length > 0 && (
+                <Box sx={{ boxShadow: 2, borderRadius: 3, p: 2, }} >
 
-              <Box sx={{ boxShadow: 2, borderRadius: 3, p: 2, width: "50%" }}>
-                {defaultsContent.warnings.length > 0 && (
-                  <Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        mb: 1,
-                        gap: 1,
-                        backgroundColor: "#fff3e0",
-                        p: 1.5,
-                        borderRadius: 2,
-                        borderLeft: "4px solid #ff9800",
-                      }}
-                    >
-                      <InfoOutlinedIcon color="warning" />
-                      <Typography variant="subtitle1" fontWeight="600" color="warning.dark">
-                        Advertencias de Cantidad
-                      </Typography>
-                    </Box>
-                    <Typography variant="body2"
-                      fontWeight={600}
-                      sx={{
-                        mb: 1,
-                        color: "#5f5f5fff",
-                        textAlign: "center"
-                      }}>
-                      No se pudo dividir la cantidad para los siguientes productos:
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mb: 1,
+                      gap: 1,
+                      backgroundColor: "#e3f2fd",
+                      p: 1.5,
+                      borderRadius: 2,
+                      borderLeft: "4px solid #2196f3",
+                    }}
+                  >
+                    <InfoOutlinedIcon color="primary" />
+                    <Typography variant="subtitle1" fontWeight="600" color="primary.main">
+                      Valores por Defecto Aplicados
                     </Typography>
-                    <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
-                      {defaultsContent.warnings.map((msg, index) => (
-                        <ListItem key={`warn-${index}`} sx={{ py: 0.5 }}>
-                          <ListItemIcon sx={{ minWidth: 32 }}>
-                            <LabelImportantIcon color="warning" fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={msg}
-                            sx={{
-                              variant: "body2",
-                              fontWeight: 400,
-                              color: "text.secondary",
-                            }}
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
                   </Box>
-                )}
-              </Box>
+                  <Typography
+                    variant="body2"
+                    fontWeight={600}
+                    sx={{
+                      mb: 1,
+                      color: "#5f5f5fff",
+                    }}>
+                    Se han aplicado valores por defecto a los siguientes campos faltantes:
+                  </Typography>
+                  <List dense>
+                    {defaultsContent.defaults.map((field, index) => (
+                      <ListItem key={`def-${index}`} sx={{ py: 0.5 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          <LabelImportantIcon color="info" fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={field}
+                          sx={{
+                            fontWeight: 500,
+                            color: "text.secondary",
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              )}
+
+              {defaultsContent.warnings.length > 0 && (
+                <Box sx={{ boxShadow: 2, borderRadius: 3, p: 2 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mb: 1,
+                      gap: 1,
+                      backgroundColor: "#fff3e0",
+                      p: 1.5,
+                      borderRadius: 2,
+                      borderLeft: "4px solid #ff9800",
+                    }}
+                  >
+                    <InfoOutlinedIcon color="warning" />
+                    <Typography variant="subtitle1" fontWeight="600" color="warning.dark">
+                      Advertencias de Cantidad
+                    </Typography>
+                  </Box>
+                  <Typography variant="body2"
+                    fontWeight={600}
+                    sx={{
+                      mb: 1,
+                      color: "#5f5f5fff",
+                      textAlign: "center"
+                    }}>
+                    No se pudo dividir la cantidad para los siguientes productos:
+                  </Typography>
+                  <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
+                    {defaultsContent.warnings.map((msg, index) => (
+                      <ListItem key={`warn-${index}`} sx={{ py: 0.5 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          <LabelImportantIcon color="warning" fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={msg}
+                          sx={{
+                            variant: "body2",
+                            fontWeight: 400,
+                            color: "text.secondary",
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              )}
             </Box>
             <Typography
               variant="caption"
@@ -1868,10 +1865,10 @@ const ExtraccionDatos = () => {
       />
       < AtomDialogForm
         openDialog={openDialogoConfirmacion}
-        titleCrear="Confirmación de guardado"
+        titleCrear={loading ? "Estamos procesando su solicitud, por favor espere..." : "Confirmación de guardado"}
         buttonSubmit={loading ? false : true}
         textButtonSubmit="Confirmar"
-        maxWidth="xl"
+        maxWidth="lg"
         buttonCancel={loading ? false : true}
         handleSubmit={handleGuardar}
         handleCloseDialog={() => {
@@ -1880,10 +1877,10 @@ const ExtraccionDatos = () => {
           setData([...data]);
         }}
         dialogContentComponent={
-          < Box sx={{ height: "100%" }}>
+          < Box sx={{ height: "100%", justifyContent: "center", alignItems: "center" }}>
             {
               loading ? (
-                <AtomCircularProgress />
+                <CustomLinearProgress />
               ) : (
                 <Grid
                   container

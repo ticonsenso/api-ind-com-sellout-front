@@ -3,19 +3,17 @@ import {
   Table,
   TableBody,
   TableCell,
+  TablePagination,
   TableContainer,
   TableHead,
   TableRow,
   Grid,
-  CircularProgress,
-  TableFooter,
-  TablePagination,
-  styled,
   Paper,
   Box
 } from "@mui/material";
+import CustomLinearProgress from "./CustomLinearProgress";
+import { styled } from "@mui/material/styles";
 
-// --- Styled Components echoing AtomTableForm ---
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   backgroundColor: "transparent",
   boxShadow: "none",
@@ -109,9 +107,7 @@ const AtomTableExtraccion = ({
 
   if (loading) {
     return (
-      <Grid container justifyContent="center" sx={{ mt: 4 }}>
-        <CircularProgress />
-      </Grid>
+      <CustomLinearProgress />
     );
   }
 

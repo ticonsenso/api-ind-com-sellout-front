@@ -5,7 +5,7 @@ import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import { useState } from "react";
 import AtomButtonPrimary from "../../atoms/AtomButtonPrimary";
 import { useSnackbar } from "../../context/SnacbarContext";
-import AtomCircularProgress from "../../atoms/AtomCircularProgress";
+import CustomLinearProgress from "../../atoms/CustomLinearProgress";
 import AtomDatePicker from "../../atoms/AtomDatePicker";
 import {
   Search as SearchIcon,
@@ -490,23 +490,19 @@ const PlantillaStandar = () => {
                     </Grid>
                   </Grid>
 
-                  {loading ? (
-                    <AtomCircularProgress />
-                  ) : (
-                    <AtomTableForm
-                      columns={columnsPlantillaStandar}
-                      data={dataConsolidatedSellout}
-                      showIcons={true}
-                      pagination={true}
-                      page={page}
-                      limit={limit}
-                      count={totalConsolidatedSellout}
-                      setPage={setPage}
-                      setLimit={setLimit}
-                      handleChangePage={handleChangePage}
-                      handleChangeRowsPerPage={handleChangeRowsPerPage}
-                    />
-                  )}
+                  <AtomTableForm
+                    columns={columnsPlantillaStandar}
+                    data={dataConsolidatedSellout}
+                    showIcons={true}
+                    actions={[]}
+                    pagination={true}
+                    page={page}
+                    limit={limit}
+                    count={totalConsolidatedSellout}
+                    handleChangePage={handleChangePage}
+                    handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    loading={loading}
+                  />
                 </>
               }
             />
@@ -526,7 +522,7 @@ const PlantillaStandar = () => {
         dialogContentComponent={
           <>
             {loading ? (
-              <AtomCircularProgress />
+              <CustomLinearProgress />
             ) : (
               <Grid
                 container

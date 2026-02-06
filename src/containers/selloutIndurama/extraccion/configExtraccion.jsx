@@ -13,7 +13,7 @@ import {
 import { columnsConfiguracion } from "../constantes";
 import { useDialog } from "../../../context/DialogDeleteContext";
 import { useSnackbar } from "../../../context/SnacbarContext";
-import AtomCircularProgress from "../../../atoms/AtomCircularProgress";
+
 import { usePermission } from "../../../context/PermisosComtext";
 
 const ConfiguracionExtraccion = () => {
@@ -119,23 +119,20 @@ const ConfiguracionExtraccion = () => {
       onClick={() => setOpenDialogCrear(true)}
       children={
         <>
-          {loading ? (
-            <AtomCircularProgress />
-          ) : (
-            <AtomTableForm
-              columns={columnsConfiguracion}
-              data={configuracionesExtraidas}
-              actions={namePermission ? actions : []}
-              pagination={true}
-              page={page}
-              limit={limit}
-              setPage={setPage}
-              setLimit={setLimit}
-              handleChangePage={handleChangePage}
-              handleChangeRowsPerPage={handleChangeRowsPerPage}
-              count={totalExtracciones}
-            />
-          )}
+          <AtomTableForm
+            columns={columnsConfiguracion}
+            data={configuracionesExtraidas}
+            actions={namePermission ? actions : []}
+            pagination={true}
+            page={page}
+            limit={limit}
+            setPage={setPage}
+            setLimit={setLimit}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
+            count={totalExtracciones}
+            loading={loading}
+          />
           <AtomDialogForm
             maxWidth="xl"
             closeButton={true}
