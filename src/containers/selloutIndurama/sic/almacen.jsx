@@ -108,7 +108,7 @@ const AlmacenSic = () => {
   const buscarStoresSic = async (value, page, limit) => {
     setLoading(true);
     try {
-      await dispatch(obtenerStoresSic({ search: value, page, limit }));
+      await dispatch(obtenerStoresSic({ page, limit, search: value }));
     } finally {
       setLoading(false);
     }
@@ -369,7 +369,7 @@ const AlmacenSic = () => {
       <AtomContainerGeneral
         children={
           <>
-            <IconoFlotante
+            {/* <IconoFlotante
               handleButtonClick={confirmarExportarExcel}
               title="Descargar lista almacenes SIC"
               iconName="SaveAlt"
@@ -383,9 +383,9 @@ const AlmacenSic = () => {
               handleChangeFile={handleFileChange}
               title="Subir archivo excel almacenes SIC"
               id="input-excel-almacen-sic"
-            />
+            /> */}
             <AtomCard
-              title="Almacenes SIC"
+              title=""
               nameButton=""
               border={true}
               onClick={handleOpenCreateStoresSic}

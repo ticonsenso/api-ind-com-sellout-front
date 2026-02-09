@@ -111,7 +111,7 @@ const ProductsSic = () => {
   const buscarProductsSic = async (value, page, limit) => {
     setLoading(true);
     try {
-      await dispatch(obtenerProductsSic({ search: value, page, limit }));
+      await dispatch(obtenerProductsSic({ page, limit, search: value }));
     } finally {
       setLoading(false);
     }
@@ -320,7 +320,7 @@ const ProductsSic = () => {
       <AtomContainerGeneral
         children={
           <>
-            <IconoFlotante
+            {/* <IconoFlotante
               handleButtonClick={confirmarExportarExcel}
               title="Descargar lista productos SIC"
               iconName="SaveAlt"
@@ -334,10 +334,10 @@ const ProductsSic = () => {
               }
               handleChangeFile={handleFileChange}
               title="Subir excel de productos SIC"
-            />
+            /> */}
 
             <AtomCard
-              title="Productos SIC"
+              title=""
               nameButton=""
               border={true}
               onClick={handleOpenCreateProductsSic}

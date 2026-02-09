@@ -167,213 +167,88 @@ export const camposStoresSic = [
 
 export const columnsProductsSic = [
   {
-    field: "idProductSic",
-    label: "ID",
+    field: "codigoJde",
+    label: "Código JDE",
     type: "string",
   },
   {
-    field: "jdeCode",
-    label: "Codigo JDE",
-    type: "string",
-  },
-  {
-    field: "jdeName",
-    label: "Nombre JDE",
-    type: "string",
-  },
-  {
-    field: "imeName",
+    field: "nombreIme",
     label: "Nombre IME",
     type: "string",
   },
   {
-    field: "sapCode",
-    label: "Codigo SAP",
+    field: "codigoSap",
+    label: "Código SAP",
     type: "string",
   },
   {
-    field: "sapName",
-    label: "Nombre Sap",
+    field: "nombreSap",
+    label: "Nombre SAP",
     type: "string",
   },
   {
-    field: "companyLine",
-    label: "Linea De Negocio",
+    field: "lineaNegocioSap",
+    label: "Linea de Negocio SAP",
     type: "string",
   },
   {
-    field: "category",
-    label: "Categoria",
-    type: "string",
-  },
-  {
-    field: "subCategory",
-    label: "Subcategoria",
-    type: "string",
-  },
-  {
-    field: "marModelLm",
-    label: "Mar Modelo Im",
-    type: "string",
-  },
-  {
-    field: "model",
+    field: "marModeloIm",
     label: "Modelo",
     type: "string",
   },
   {
-    field: "designLine",
-    label: "Linea Diseño",
-    type: "string",
-  },
-  {
-    field: "brand",
-    label: "Marca",
-    type: "string",
-  },
-  {
-    field: "discontinued",
-    label: "Descontinuado",
-    type: "string",
-  },
-  {
-    field: "status",
-    label: "Estado",
-    type: "string",
-  },
-  {
-    field: "sheetVisit",
-    label: "Hojas Vis",
-    type: "string",
-  },
-  {
-    field: "equivalentProId",
+    field: "proIdEquivalencia",
     label: "Pro Id Equivalencia",
     type: "string",
   },
   {
-    field: "equivalent",
+    field: "equivalencia",
     label: "Equivalencia",
     type: "string",
   },
   {
-    field: "validity",
-    label: "Vigencia",
+    field: "descontinuado",
+    label: "Desc.",
     type: "string",
   },
-  {
-    field: "repeatedNumbers",
-    label: "Num repetidos",
-    type: "string",
-  }
 
 ];
 
 export const columnsStoresSic = [
   {
-    field: "storeCode",
-    label: "Cod Almacen",
+    field: "codAlmacen",
+    label: "Código Almacén",
     type: "string",
   },
   {
-    field: "storeName",
-    label: "Nombre Almacen",
+    field: "nombreAlmacen",
+    label: "Nombre Almacén",
     type: "string",
   },
   {
-    field: "storeAddress",
-    label: "Direccion Almacen",
-    type: "string",
-  },
-  {
-    field: "distributor",
-    label: "Distribuidor",
-    type: "string",
-  },
-  {
-    field: "distributor2",
-    label: "Distribuidor2",
-    type: "string",
-  },
-  {
-    field: "phone",
-    label: "Teléfono",
-    type: "string",
-  },
-  {
-    field: "agencyManager",
-    label: "Jefe Agencia",
-    type: "string",
-  },
-  {
-    field: "size",
-    label: "Tamanio",
-    type: "string",
-  },
-  {
-    field: "ubication",
-    label: "Ubicacion",
-    type: "string",
-  },
-  {
-    field: "sales",
-    label: "Ventas",
-    type: "string",
-  },
-  {
-    field: "channel",
-    label: "Canal Final",
-    type: "string",
-  },
-  {
-    field: "distributorSap",
+    field: "distribSap",
     label: "Distribuidor SAP",
     type: "string",
   },
   {
-    field: "endChannel",
-    label: "Canal Final 2",
+    field: "distribuidor",
+    label: "Distribuidor",
     type: "string",
   },
   {
-    field: "supervisor",
-    label: "Supervisor",
-    type: "string",
-  },
-
-  {
-    field: "wholesaleRegion",
-    label: "Region Mayoreo",
-    type: "string",
-  },
-  {
-    field: "city",
-    label: "Ciudad",
-    type: "string",
-  },
-  {
-    field: "region",
-    label: "Region",
-    type: "string",
-  },
-  {
-    field: "category",
+    field: "categoria",
     label: "Categoria",
     type: "string",
   },
   {
-    field: "province",
-    label: "Provincia",
+    field: "ciudad",
+    label: "Subcategoria",
     type: "string",
   },
   {
-    field: "zone",
-    label: "Zona ok",
+    field: "region",
+    label: "Mar Modelo Im",
     type: "string",
-  },
-  {
-    field: "status",
-    label: "Estado",
   },
 ];
 

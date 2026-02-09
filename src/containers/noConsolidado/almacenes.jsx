@@ -298,7 +298,7 @@ const AlmacenesNoHomologados = () => {
                                             </Grid>
                                         )}
 
-                                        <Grid size={12} sx={{ height: styleTableData.height }}>
+                                        <Grid size={12} >
                                             <DataGrid
                                                 rows={data}
                                                 columns={columnsStoreNull.map(col => ({
