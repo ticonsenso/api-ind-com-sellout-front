@@ -132,15 +132,17 @@ const AtomCard = (props) => {
           </Button>
         )}
       </Grid>
-      <Grid
-        size={12}
-        sx={{
-          width: "100%",
-          borderRadius: 4,
-        }}
-      >
-        {children}
-      </Grid>
+      {children && (
+        <Grid
+          size={12}
+          sx={{
+            width: "100%",
+            borderRadius: 4,
+          }}
+        >
+          {children}
+        </Grid>
+      )}
     </Grid>
   );
 };

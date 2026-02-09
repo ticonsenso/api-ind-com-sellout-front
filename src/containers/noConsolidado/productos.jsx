@@ -241,7 +241,6 @@ const ProductosNoHomologados = () => {
                             position: "fixed",
                             top: 80,
                             right: 130,
-                            zIndex: 1000,
                         }}>
                             <AtomDatePicker
                                 id="calculateDate"
@@ -295,7 +294,7 @@ const ProductosNoHomologados = () => {
                             }}
                             children={
                                 <>
-                                    <Grid container spacing={2} justifyContent="right">
+                                    <Grid container spacing={2} justifyContent="right" sx={{ width: "100%" }}>
                                         {resultadosActualizados != null && (
                                             <Grid size={2} mt={-1}>
                                                 <AtomButtonPrimary
@@ -306,7 +305,8 @@ const ProductosNoHomologados = () => {
                                             </Grid>
                                         )}
 
-                                        <Grid size={12} sx={{ height: styleTableData.height }}>
+                                        <Grid size={12}>
+                                            {loading && <CustomLinearProgress />}
                                             <DataGrid
                                                 rows={data}
                                                 columns={columnsProductNull.map(col => ({
@@ -329,10 +329,6 @@ const ProductosNoHomologados = () => {
                                                 pageSizeOptions={[10, 50, 100]}
                                                 initialState={{
                                                     pagination: { paginationModel: { pageSize: 10, page: 0 } },
-                                                }}
-                                                loading={loading}
-                                                slots={{
-                                                    loadingOverlay: CustomLinearProgress,
                                                 }}
                                             />
                                         </Grid>

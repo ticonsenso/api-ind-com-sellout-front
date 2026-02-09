@@ -12,6 +12,7 @@ const AtomContainerGeneral = ({
       sx={{
         height: "100%",
         justifyContent: "center",
+        width: "100%",
       }}
     >
       {encabezado && (

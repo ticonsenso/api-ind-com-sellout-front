@@ -26,6 +26,7 @@ const NoConsolidado = () => {
     ];
 
     return (
+
         <TabGestionGeneral tabs={tabs} />
     );
 };

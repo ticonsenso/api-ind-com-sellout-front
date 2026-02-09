@@ -10,7 +10,7 @@ const TabsContainer = styled(Box)(({ theme }) => ({
   zIndex: 10,
   padding: "3px",
   background: "rgba(255, 255, 255, 0.7)",
-  backdropFilter: "blur(20px)",
+  backdropFilter: "blur(50px)",
   boxShadow: "0 10px 20px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0,0,0,0.05)",
   borderRadius: "50px",
   marginBottom: 1,

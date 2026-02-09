@@ -74,6 +74,7 @@ export const tieneSeparadores = (descripcion, simboloConfig) => {
         /\r?\n/,
         /\//,
         /\+/,
+        // /\ - /,
     ];
 
     if (simboloConfig) {
@@ -466,10 +467,9 @@ export const validarAlmacen = (valor) => {
 export const detectarSiDebeSepararse = (registroOriginal, simbolo) => {
     const descripcion = (registroOriginal?.descriptionDistributor || "").toString();
 
-    // Si no hay símbolo definido en la configuración, usa los separadores por defecto.
     const separadores = simbolo
-        ? [simbolo.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')] // Escapar el símbolo si existe
-        : ["\\t", "[\\r\\n]+", "\\+", "\\/"];
+        ? [simbolo.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')]
+        : ["\\t", "[\\r\\n]+", "\\+", "\\/", "\\-"];
 
     const regexSeparador = new RegExp(separadores.join("|"), "g");
     const shouldSplit = regexSeparador.test(descripcion);

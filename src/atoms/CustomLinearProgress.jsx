@@ -14,9 +14,6 @@ const CustomLinearProgress = ({ ...props }) => {
                 '& .MuiLinearProgress-bar': {
                     background: `linear-gradient(90deg, #91e9f5ff 0%, #189aceff 100%)`
                 },
-                '& .MuiLinearProgress-bar1Determinate': {
-                    transition: 'width 0.2s ease-in-out',
-                },
             }}
             {...props}
         />

@@ -232,7 +232,6 @@ const AlmacenesNoHomologados = () => {
                             position: "fixed",
                             top: 80,
                             right: 130,
-                            zIndex: 1000,
                         }}>
                             <AtomDatePicker
                                 id="calculateDate"
@@ -299,13 +298,13 @@ const AlmacenesNoHomologados = () => {
                                         )}
 
                                         <Grid size={12} sx={{ height: styleTableData.height }}>
+                                            {loading && <CustomLinearProgress />}
                                             <DataGrid
                                                 rows={data}
                                                 columns={columnsStoreNull.map(col => ({
                                                     ...col,
                                                     editable: matriculacionCerrada === "abierto" ? true : false
                                                 }))}
-                                                getRowHeight={() => "auto"}
                                                 disableSelectionOnClick
                                                 sx={styleTableData}
                                                 processRowUpdate={(newRow) => {
@@ -322,10 +321,7 @@ const AlmacenesNoHomologados = () => {
                                                 initialState={{
                                                     pagination: { paginationModel: { pageSize: 10, page: 0 } },
                                                 }}
-                                                loading={loading}
-                                                slots={{
-                                                    loadingOverlay: CustomLinearProgress,
-                                                }}
+
                                             />
                                         </Grid>
                                     </Grid>

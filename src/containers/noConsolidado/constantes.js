@@ -167,9 +167,6 @@ export const styleTableData = {
         padding: "18px 16px",
         display: "flex",
         alignItems: "center",
-        whiteSpace: "normal !important",
-        wordWrap: "break-word !important",
-        lineHeight: "1.5",
     },
     "& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within": {
         outline: "none",
@@ -178,11 +175,9 @@ export const styleTableData = {
     "& .MuiDataGrid-footerContainer": {
         borderTop: "none",
         justifyContent: "flex-end",
-        marginTop: "16px",
+        marginTop: "10px",
         backgroundColor: "#ffffff",
         borderRadius: "16px",
-        padding: "8px 16px",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-        width: "100%",
+        padding: 1,
     },
 };

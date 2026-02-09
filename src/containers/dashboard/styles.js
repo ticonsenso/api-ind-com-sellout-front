@@ -18,9 +18,8 @@ const styles = {
   },
   contentBox: {
     flex: 1,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "start",
+    display: "block",
+    width: "100%",
     borderRadius: 4,
     backgroundColor: "transparent",
     height: "100vh",
