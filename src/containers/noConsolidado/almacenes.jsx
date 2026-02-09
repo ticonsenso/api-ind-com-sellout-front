@@ -287,7 +287,7 @@ const AlmacenesNoHomologados = () => {
                             }}
                             children={
                                 <>
-                                    <Grid container spacing={2} sx={{ justifyContent: "right" }}>
+                                    <Grid container spacing={2} sx={{ justifyContent: "right", width: "100%" }}>
                                         {resultadosActualizados != null && (
                                             <Grid size={1.5} mt={-1}>
                                                 <AtomButtonPrimary
@@ -298,7 +298,7 @@ const AlmacenesNoHomologados = () => {
                                             </Grid>
                                         )}
 
-                                        <Grid size={12} >
+                                        <Grid size={12} sx={{ height: styleTableData.height }}>
                                             <DataGrid
                                                 rows={data}
                                                 columns={columnsStoreNull.map(col => ({

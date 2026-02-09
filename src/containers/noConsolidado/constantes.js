@@ -88,21 +88,18 @@ export const columnsStoreNull = [
     {
         field: "distributor",
         headerName: "Distribuidor",
-        width: 200,
         flex: 1,
         editable: false,
     },
     {
         field: "codeStoreDistributor",
         headerName: "Almacén Distribuidor",
-        width: 200,
         flex: 1,
         editable: false,
     },
     {
         field: "codeStore",
         headerName: "Cod. Almacen SIC",
-        width: 200,
         flex: 1,
         editable: true,
     },
@@ -118,7 +115,7 @@ export const columnsStoreNull = [
 export const styleTableData = {
     width: "100%",
     height: "70vh",
-    boxShadow: 1,
+    boxShadow: "none",
     backgroundColor: "transparent",
     border: "none",
     borderRadius: 4,
@@ -161,7 +158,7 @@ export const styleTableData = {
             boxShadow: "0 4px 6px rgba(0,0,0,0.05)",
             zIndex: 1,
         },
-        transition: "all 0.2s ease",
+        transition: "background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease",
     },
     "& .MuiDataGrid-cell": {
         color: "#334155",
@@ -186,5 +183,6 @@ export const styleTableData = {
         borderRadius: "16px",
         padding: "8px 16px",
         boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+        width: "100%",
     },
 };

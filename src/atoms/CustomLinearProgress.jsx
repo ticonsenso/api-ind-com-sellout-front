@@ -1,4 +1,3 @@
-import React from 'react';
 import { LinearProgress } from '@mui/material';
 
 const CustomLinearProgress = ({ ...props }) => {
@@ -14,6 +13,9 @@ const CustomLinearProgress = ({ ...props }) => {
                 backgroundColor: '#e0e0e0',
                 '& .MuiLinearProgress-bar': {
                     background: `linear-gradient(90deg, #91e9f5ff 0%, #189aceff 100%)`
+                },
+                '& .MuiLinearProgress-bar1Determinate': {
+                    transition: 'width 0.2s ease-in-out',
                 },
             }}
             {...props}
