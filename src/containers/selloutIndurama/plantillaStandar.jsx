@@ -72,6 +72,11 @@ const PlantillaStandar = () => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(pageGeneral);
   const [limit, setLimit] = useState(limitGeneral);
+  const [fullScreen, setFullScreen] = useState(false);
+
+  const handleFullScreen = () => {
+    setFullScreen(!fullScreen);
+  };
   const [errors, setErrors] = useState({});
   const [edit, setEdit] = useState(false);
   const [dataConsolidado, setDataConsolidado] = useState({
@@ -384,6 +389,8 @@ const PlantillaStandar = () => {
             </Box> */}
 
             <AtomCard
+              fullScreen={fullScreen}
+              handleFullScreen={handleFullScreen}
               title=""
               nameButton=""
               border={true}
@@ -396,100 +403,101 @@ const PlantillaStandar = () => {
                 setFiltroBusqueda(null);
 
               }}
-              children={
-                <>
-                  <Grid
-                    container
-                    spacing={2}
-                    sx={{ justifyContent: "center" }}
-                  >
-                    <Grid size={3}>
-                      <AtomDatePicker
-                        required={true}
-                        mode="month"
-                        color="#ffffff"
-                        height="45px"
-                        label="Fecha de carga"
-                        value={calculateDate}
-                        onChange={(value) => dispatch(setCalculateDate(value))}
-                      />
-                    </Grid>
-                    <Grid size={3}>
-                      <AtomSelect
-                        color="#ffffff"
-                        height="45px"
-                        headerTitle="Seleccionar filtro"
-                        options={optionsFiltros}
-                        placeholder="Seleccionar..."
-                        onChange={(e) => {
-                          setFiltroBusqueda(e.target.value);
-                        }}
-                        value={filtroBusqueda}
-                      />
-                    </Grid>
-
-                    <Grid size={4} mt={2.8}>
-                      <Tooltip title="Buscar por distribuidor, código almacén, código producto y descripción">
-                        <TextField
-                          variant="outlined"
-                          value={search}
-                          onChange={(e) => {
-                            setPage(1);
-                            setLimit(limitGeneral);
-                            setSearch(e.target.value);
-                            debounceSearch(e.target.value);
-                          }}
-                          placeholder="Buscar..."
-                          slotProps={{
-                            input: {
-                              endAdornment: (
-                                <InputAdornment position="end">
-                                  <IconButton aria-label="buscar">
-                                    <SearchIcon />
-                                  </IconButton>
-                                </InputAdornment>
-                              ),
-                              style: {
-                                backgroundColor: "#ffffffff",
-                                borderRadius: "8px",
-                                fontSize: "15px",
-                                height: "45px",
-                              },
-                            },
-                          }}
-                          sx={{
-                            fontFamily:
-                              "Visby Round CF, Arial, sans-serif,bold",
-                            fontSize: "14px",
-                            width: "100%",
-                            maxWidth: "500px",
-                            minWidth: "200px",
-                            height: "40px",
-                            "& .MuiOutlinedInput-root": {
-                              "& fieldset": {
-                                borderColor: "transparent",
-                              },
-                              "&:hover fieldset": {
-                                borderColor: "gray",
-                              },
-                            },
-                            "& .MuiInputLabel-root": {
-                              color: "#757575",
-                            },
-                          }}
-                        />
-                      </Tooltip>
-                    </Grid>
-                    <Grid size={2} mt={2.8}>
-                      <AtomButtonPrimary
-                        label="Sincronizar"
-                        height="45px"
-                        icon={<SyncIcon />}
-                        onClick={handleOpenDialogoSincronizar}
-                      />
-                    </Grid>
+              extra={
+                <Grid
+                  container
+                  spacing={2}
+                  sx={{ justifyContent: "center", mt: -6 }}
+                >
+                  <Grid size={2.5}>
+                    <AtomDatePicker
+                      required={true}
+                      mode="month"
+                      color="#ffffff"
+                      height="45px"
+                      label="Fecha de carga"
+                      value={calculateDate}
+                      onChange={(value) => dispatch(setCalculateDate(value))}
+                    />
+                  </Grid>
+                  <Grid size={2.5}>
+                    <AtomSelect
+                      color="#ffffff"
+                      height="45px"
+                      headerTitle="Seleccionar filtro"
+                      options={optionsFiltros}
+                      placeholder="Seleccionar..."
+                      onChange={(e) => {
+                        setFiltroBusqueda(e.target.value);
+                      }}
+                      value={filtroBusqueda}
+                    />
                   </Grid>
 
+                  <Grid size={3} mt={2.8}>
+                    <Tooltip title="Buscar por distribuidor, código almacén, código producto y descripción">
+                      <TextField
+                        variant="outlined"
+                        value={search}
+                        onChange={(e) => {
+                          setPage(1);
+                          setLimit(limitGeneral);
+                          setSearch(e.target.value);
+                          debounceSearch(e.target.value);
+                        }}
+                        placeholder="Buscar..."
+                        slotProps={{
+                          input: {
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton aria-label="buscar">
+                                  <SearchIcon />
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                            style: {
+                              backgroundColor: "#ffffffff",
+                              borderRadius: "8px",
+                              fontSize: "15px",
+                              height: "45px",
+                            },
+                          },
+                        }}
+                        sx={{
+                          fontFamily:
+                            "Visby Round CF, Arial, sans-serif,bold",
+                          fontSize: "14px",
+                          width: "100%",
+                          maxWidth: "500px",
+                          minWidth: "200px",
+                          height: "40px",
+                          "& .MuiOutlinedInput-root": {
+                            "& fieldset": {
+                              borderColor: "transparent",
+                            },
+                            "&:hover fieldset": {
+                              borderColor: "gray",
+                            },
+                          },
+                          "& .MuiInputLabel-root": {
+                            color: "#757575",
+                          },
+                        }}
+                      />
+                    </Tooltip>
+                  </Grid>
+                  <Grid size={1.8} mt={2.8}>
+                    <AtomButtonPrimary
+                      label="Sincronizar"
+                      height="45px"
+                      icon={<SyncIcon />}
+                      onClick={handleOpenDialogoSincronizar}
+                    />
+                  </Grid>
+                </Grid>
+              }
+              children={
+                <>
                   <AtomTableForm
                     columns={columnsPlantillaStandar}
                     data={dataConsolidatedSellout}

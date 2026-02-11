@@ -7,7 +7,7 @@ const TabsContainer = styled(Box)(({ theme }) => ({
   left: 0,
   right: 0,
   textAlign: "center",
-  zIndex: 10,
+  zIndex: 9,
   padding: "3px",
   background: "rgba(255, 255, 255, 0.7)",
   backdropFilter: "blur(50px)",

@@ -9,6 +9,7 @@ import ValoresSellout from "../selloutIndurama/valoresSellout.jsx";
 import TabGestionMatriculacion from "../selloutIndurama/matriculacion/index.jsx";
 import NoConsolidado from "../noConsolidado/index.jsx";
 import ConfigLineas from "../selloutIndurama/configLineas.jsx";
+import NoVisita from "../noVisita/index.jsx";
 
 const componentMap = {
   //0: <HomePrincipal />,
@@ -22,7 +23,7 @@ const componentMap = {
   7: <DatosPresupuestoSellout />,
   8: <ValoresSellout />,
   9: <NoConsolidado />,
-  10: <ConfigLineas />,
+  10: <NoVisita />,
 };
 
 export default componentMap;

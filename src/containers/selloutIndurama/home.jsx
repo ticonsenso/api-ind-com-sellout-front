@@ -22,11 +22,10 @@ const SelloutIndurama = () => {
   dispatch(setCalculateDate(calculateDate));
 
   const MainContainer = styled(Box)(({ theme }) => ({
-    width: "100%",
     height: "100vh",
     overflow: "auto",
     margin: 20,
-    backgroundImage: `linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)`, // Subtle neat background
+    backgroundImage: `linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)`,
     padding: 20,
     borderRadius: "24px",
   }));

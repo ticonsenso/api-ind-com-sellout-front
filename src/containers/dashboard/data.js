@@ -131,12 +131,12 @@ const initialStateMenu = [
   },
   {
     id: 10,
-    name: "Configuración de líneas",
+    name: "Listas No Homologados",
     icon: "mui:DatasetLinked",
     visible: true,
-    name_server: "CONFIGURACION LINEAS",
+    name_server: "LISTAS NO HOMOLOGADOS",
     menuSellout: false,
-    nameInfo: "Configuración de líneas",
+    nameInfo: "Listas No Homologados",
   },
 ];
 

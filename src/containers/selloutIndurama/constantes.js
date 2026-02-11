@@ -310,10 +310,71 @@ export const columnsPlantillaStandar = [
     label: "Modelo Producto",
     type: "string"
   },
-  // {
-  //   field: "calculateDate",
-  //   label: "Fecha Calculo",
-  // },
+  {
+    field: "lineaNegocio",
+    label: "Linea Negocio",
+    type: "string"
+  },
+  {
+    field: "categoria",
+    label: "Categoria",
+    type: "string"
+  },
+  {
+    field: "subCategoria",
+    label: "Sub Categoria",
+    type: "string"
+  },
+  {
+    field: "modelo",
+    label: "Modelo",
+    type: "string"
+  },
+  {
+    field: "nombreIme",
+    label: "Nombre Ime",
+    type: "string"
+  },
+  {
+    field: "canal",
+    label: "Canal",
+    type: "string"
+  },
+  {
+    field: "grupoComercial",
+    label: "Grupo Comercial",
+    type: "string"
+  },
+  {
+    field: "nombreAlmacen",
+    label: "Nombre Almacen",
+    type: "string"
+  },
+  {
+    field: "grupoZona",
+    label: "Grupo Zona",
+    type: "string"
+  },
+  {
+    field: "zona",
+    label: "Zona",
+    type: "string"
+  },
+  {
+    field: "categoriaAlmacen",
+    label: "Categoria Almacen",
+    type: "string"
+  },
+  {
+    field: "supervisor",
+    label: "Supervisor",
+    type: "string"
+  },
+  {
+    field: "observation",
+    label: "Observación",
+    type: "string"
+  },
 ];
 
 export const stylesPlantillaStandar = {

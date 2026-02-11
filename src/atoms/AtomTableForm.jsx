@@ -33,31 +33,30 @@ import {
 import { pageOptions, limitGeneral, formatValueByType } from "../containers/constantes";
 
 const decimalesCantidad = 2;
-const colorSortActive = "#0072CE"; // Brand Blue
+const colorSortActive = "#0072CE";
 const colorSortInactive = "#B0B0B0";
 
 
-// --- Styled Components for Clean Floating Table ---
 const RootContainer = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(0),
   width: "100%",
   display: "flex",
   flexDirection: "column",
-  height: "100%", // Adapts to container
+  height: "100%",
 }));
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   backgroundColor: "transparent",
   boxShadow: "none",
-  flex: 1, // Fill available space
-  overflowY: "auto", // Scroll internally
+  flex: 1,
+  width: "100%",
   overflowX: "auto",
   "& .MuiTable-root": {
     borderCollapse: "separate",
-    borderSpacing: "0 8px", // Reduced spacing for tighter look
-    width: "100%", // Force full width
-    minWidth: "1000px", // Ensure it doesn't squish too much on small screens (scrolls instead)
-    tableLayout: "fixed", // Better control over column widths
+    borderSpacing: "0 8px",
+    width: "max-content",
+    minWidth: "100%",
+    tableLayout: "fixed",
   },
 }));
 

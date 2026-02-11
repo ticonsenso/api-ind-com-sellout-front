@@ -157,7 +157,6 @@ export const styles = {
   container: {
     p: 2,
     borderRadius: 2,
-    backgroundColor: "#f9f9f9",
   },
   table: {
     borderRadius: 3,

@@ -33,8 +33,9 @@ const initialState = {
   totalMatriculacionRegistrados: 0,
   optionsMatriculacion: [],
   calculateDate: null,
-  dataLines: [],
-  totalLines: 0,
+  dataNoDefinidos: {},
+  totalNoDefinidos: 0,
+
 };
 
 //maestrosProducts
@@ -1153,6 +1154,24 @@ export const cargarExcel = createAsyncThunk(
   }
 );
 
+export const obtenerNoDefinidos = createAsyncThunk(
+  "configSellout/obtenerNoDefinidos",
+  async (data, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = state.auth.auth.token;
+    const { page, limit, calculateDate, ...rest } = data;
+    try {
+      return await apiService
+        .setUrl(apiConfig.consolidatedSelloutUrl.url + "/product-indefinido")
+        .setMethod("POST")
+        .setParams({ page, limit, calculateDate })
+        .setData(rest || {})
+        .send(token);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 
 const extraReducers = (builder) => {
   builder
@@ -1345,18 +1364,13 @@ const extraReducers = (builder) => {
         state.totalMatriculacionRegistrados = 0;
       }
     })
-    .addCase(obtenerLines.rejected, (state, action) => {
-      state.dataLines = [];
-      state.totalLines = 0;
+    .addCase(obtenerNoDefinidos.rejected, (state, action) => {
+      state.dataNoDefinidos = [];
+      state.totalNoDefinidos = 0;
     })
-    .addCase(obtenerLines.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.dataLines = action.payload.data;
-        state.totalLines = action.payload.total;
-      } else {
-        state.dataLines = [];
-        state.totalLines = 0;
-      }
+    .addCase(obtenerNoDefinidos.fulfilled, (state, action) => {
+      state.dataNoDefinidos = action?.payload?.items || {};
+      state.totalNoDefinidos = action?.payload?.total || 0;
     });
 };
 

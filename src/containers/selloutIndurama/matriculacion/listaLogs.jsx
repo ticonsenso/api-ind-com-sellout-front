@@ -20,6 +20,7 @@ import {
   TableHead,
   TableRow,
   Typography,
+  TextField,
 } from "@mui/material";
 import { useSnackbar } from "../../../context/SnacbarContext";
 import { useDialog } from "../../../context/DialogDeleteContext";
@@ -38,7 +39,7 @@ import { deleteClientesCargados } from "../../../redux/extraccionSlice"
 import {
   obtenerMatriculacionConfig,
 } from "../../../redux/selloutDatosSlic";
-
+import AtomTextFielInputForm from "../../../atoms/AtomTextField";
 const ListaLogsMatriculacion = ({ calculateDate }) => {
   const hasPermission = usePermission();
   const namePermission = hasPermission("ACCIONES MATRICULACION SELLOUT");
@@ -66,6 +67,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
   const [limit, setLimit] = useState(10);
   const [detallesData, setDetallesData] = useState([]);
   const [search, setSearch] = useState('');
+  const [searchAlmacen, setSearchAlmacen] = useState('');
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -224,8 +226,13 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
   const handleClose = () => {
     setOpen(false);
     setDetallesData([]);
+    setSearchAlmacen('');
     buscarMatriculacionRegistrados(search);
   };
+
+  const filteredLogs = detallesData?.logs?.filter((log) =>
+    log.storeName?.toLowerCase().includes(searchAlmacen.toLowerCase())
+  ) || [];
 
   const NOMBRES_CAMPOS = {
     distributor: "DISTRIBUIDOR",
@@ -291,12 +298,12 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
               openDialog={open}
               handleCloseDialog={handleClose}
               title="Detalles de la matriculación"
-              maxWidth="lg"
+              maxWidth="xl"
               buttonCancel="Cerrar"
               dialogContentComponent={
                 <Box sx={{ width: "100%" }}>
                   <Box sx={styles.container} mb={2}>
-                    <Typography variant="subtitle2" color="primary">
+                    <Typography color="primary" sx={{ fontWeight: 500 }}>
                       Datos de la matriculación
                     </Typography>
 
@@ -338,16 +345,29 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
                   </Box>
                   {detallesData?.logs?.length > 0 && (
                     <Box sx={styles.container}>
-                      <Typography
-                        variant="subtitle2"
-                        color="primary"
-                        gutterBottom
-                      >
-                        Detalles de Almacenes
-                      </Typography>
+                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                        <Typography
+                          color="primary"
+                          gutterBottom
+                          sx={{ width: "50%", fontWeight: 500, }}
+                        >
+                          Detalles de Almacenes
+                        </Typography>
+                        <Box sx={{ width: "40%" }}>
+                          <AtomTextFielInputForm
+                            id="searchAlmacen"
+                            height="40px"
+                            color="#ecf3ffff"
+                            placeholder="Buscar almacén..."
+                            headerTitle=""
+                            value={searchAlmacen}
+                            onChange={(e) => setSearchAlmacen(e.target.value)}
+                          />
+                        </Box>
+                      </Box>
                       <AtomTableForm
                         columns={columnsDetallesMatriculacion}
-                        data={detallesData.logs || []}
+                        data={filteredLogs}
                         pagination={false}
                         actions={actionsDetalles}
                         page={page}
