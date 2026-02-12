@@ -13,17 +13,13 @@ import { columnsProductosOtros } from "./constantes";
 import { useDispatch, useSelector } from "react-redux";
 import { useDialog } from "../../context/DialogDeleteContext";
 import { limitGeneral } from "../constantes";
-import IconoFlotante from "../../atoms/IconActionPage";
 import AtomSelect from "../../atoms/AtomSelect";
 import AtomDatePicker from "../../atoms/AtomDatePicker";
-import { Search as SearchIcon } from "@mui/icons-material";
 import {
     Grid,
     Tooltip,
-    TextField,
-    IconButton,
-    InputAdornment
 } from "@mui/material";
+import AtomTextFielInputForm from "../../atoms/AtomTextField";
 
 const formatDate = (fechaISO) => {
     const fecha = new Date(fechaISO);
@@ -201,7 +197,7 @@ const ProductosOtros = () => {
 
                                     <Grid size={4} mt={2.8}>
                                         <Tooltip title="Buscar por distribuidor, código almacén, código producto y descripción">
-                                            <TextField
+                                            <AtomTextFielInputForm
                                                 variant="outlined"
                                                 value={search}
                                                 onChange={(e) => {
@@ -211,40 +207,6 @@ const ProductosOtros = () => {
                                                     debounceSearchAddress(e.target.value);
                                                 }}
                                                 placeholder="Buscar..."
-                                                InputProps={{
-                                                    endAdornment: (
-                                                        <InputAdornment position="end">
-                                                            <IconButton aria-label="buscar">
-                                                                <SearchIcon />
-                                                            </IconButton>
-                                                        </InputAdornment>
-                                                    ),
-                                                    style: {
-                                                        backgroundColor: "#ffffffff",
-                                                        borderRadius: "8px",
-                                                        fontSize: "15px",
-                                                        height: "45px",
-                                                    },
-                                                }}
-                                                sx={{
-                                                    fontFamily: "Visby Round CF, Arial, sans-serif,bold",
-                                                    fontSize: "14px",
-                                                    width: "100%",
-                                                    maxWidth: "500px",
-                                                    minWidth: "200px",
-                                                    height: "40px",
-                                                    "& .MuiOutlinedInput-root": {
-                                                        "& fieldset": {
-                                                            borderColor: "transparent",
-                                                        },
-                                                        "&:hover fieldset": {
-                                                            borderColor: "gray",
-                                                        },
-                                                    },
-                                                    "& .MuiInputLabel-root": {
-                                                        color: "#757575",
-                                                    },
-                                                }}
                                             />
                                         </Tooltip>
                                     </Grid>

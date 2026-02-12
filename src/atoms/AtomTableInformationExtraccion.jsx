@@ -14,6 +14,8 @@ import {
   CheckCircle as CheckCircleIcon,
   Unpublished as UnpublishedIcon,
 } from "@mui/icons-material";
+import { formatValueByType } from "../containers/constantes";
+
 const AtomTableInformationExtraccion = ({
   columns = [],
   data = [],
@@ -31,37 +33,6 @@ const AtomTableInformationExtraccion = ({
     setPage(0);
   };
 
-  const formatValueByType = (value, type) => {
-    if (value === null || value === undefined || value === "") return "N/A";
-
-    if (type === "string") {
-      return value;
-    }
-    const number = parseFloat(value);
-    if (number) {
-      return number.toLocaleString("es-EC", {
-        minimumFractionDigits: 2,
-      });
-    }
-
-    if (type === "dinero") {
-      return number.toLocaleString("es-EC", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 2,
-      });
-    }
-
-    if (type === "porcentaje") {
-      return (
-        number.toLocaleString("es-EC", {
-          minimumFractionDigits: 2,
-        }) + "%"
-      );
-    }
-
-    return value;
-  };
   return (
     <TableContainer
       sx={{

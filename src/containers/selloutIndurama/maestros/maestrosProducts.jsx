@@ -16,17 +16,20 @@ import {
   createMaestrosProducts,
   subirExcelMaestrosProducts,
   exportarExcel,
+  setCalculateDate,
 } from "../../../redux/configSelloutSlice";
 import { columnsMaestrosProducts } from "../constantes";
 import { useDispatch, useSelector } from "react-redux";
-import { Typography, IconButton, Box } from "@mui/material";
+import { Typography, Tooltip, Box } from "@mui/material";
 import { useDialog } from "../../../context/DialogDeleteContext";
 import AtomSwitch from "../../../atoms/AtomSwitch";
-import { DriveFolderUploadOutlined as DriveFolderUploadOutlinedIcon } from "@mui/icons-material";
 import { limitGeneral, normalizeEncabezados } from "../../constantes";
 import AtomTableInformationExtraccion from "../../../atoms/AtomTableInformationExtraccion";
 import { useCallback } from "react";
 import IconoFlotante from "../../../atoms/IconActionPage";
+import AtomDatePicker from "../../../atoms/AtomDatePicker";
+import AtomTextFielInputForm from "../../../atoms/AtomTextField";
+import AtomButtonPrimary from "../../../atoms/AtomButtonPrimary";
 
 function debounce(func, delay) {
   let timer;
@@ -46,7 +49,9 @@ const MasterProducts = () => {
   const totalMaestrosProducts = useSelector(
     (state) => state?.configSellout?.totalMaestrosProducts || 0
   );
-
+  const calculateDate = useSelector(
+    (state) => state?.configSellout?.calculateDate || formatDate(new Date())
+  );
   const [openCreateMaestrosProducts, setOpenCreateMaestrosProducts] =
     useState(false);
   const [errors, setErrors] = useState({});
@@ -65,6 +70,7 @@ const MasterProducts = () => {
     searchProductStore: "",
     codeProductSic: "",
     status: true,
+    periodo: calculateDate,
   });
   const paramsValidate = [
     "distributor",
@@ -127,7 +133,7 @@ const MasterProducts = () => {
   const buscarMaestrosProducts = async (value, page, limit) => {
     setLoading(true);
     try {
-      await dispatch(obtenerMaestrosProducts({ search: value, page, limit }));
+      await dispatch(obtenerMaestrosProducts({ search: value, page, limit, periodo: calculateDate }));
     } finally {
       setLoading(false);
     }
@@ -135,7 +141,7 @@ const MasterProducts = () => {
 
   useEffect(() => {
     buscarMaestrosProducts(search, page, limit);
-  }, [page, limit]);
+  }, [page, limit, calculateDate]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -219,7 +225,10 @@ const MasterProducts = () => {
       });
     } else {
       handleGuardarEntidad({
-        data: cleanedData,
+        data: {
+          ...cleanedData,
+          periodo: calculateDate,
+        },
         dispatchFunction: createMaestrosProducts,
         onSuccessCallback: () => buscarMaestrosProducts(),
         onResetForm: handleCloseCreateMaestrosProducts,
@@ -365,6 +374,7 @@ const MasterProducts = () => {
         exportarExcel({
           excel_name: "mt prod",
           nombre: "Maestros Productos",
+          calculateDate: calculateDate,
         })
       );
       if (response.meta.requestStatus === "fulfilled") {
@@ -413,19 +423,45 @@ const MasterProducts = () => {
             />
             <AtomCard
               title=""
-              nameButton="Crear"
-              border={true}
-              onClick={handleOpenCreateMaestrosProducts}
-              search={true}
-              labelBuscador="Búsqueda por código SIC, distribuidor, producto almacen y descripción"
-              placeholder="Buscar por:"
-              valueSearch={search}
-              onChange={(e) => {
-                setPage(1);
-                setLimit(5);
-                setSearch(e.target.value);
-                debounceSearchAddress(e.target.value);
-              }}
+              nameButton=""
+              search={false}
+              extra={
+                <Grid container spacing={2} justifyContent="flex-end">
+                  <Grid size={3}>
+                    <AtomDatePicker
+                      required={true}
+                      mode="month"
+                      color="#ffffff"
+                      height="45px"
+                      label="Período"
+                      value={calculateDate}
+                      onChange={(value) => dispatch(setCalculateDate(value))}
+                    />
+                  </Grid>
+                  <Grid size={4} mt={2.8}>
+                    <Tooltip title="Buscar por distribuidor, almacén y código SIC">
+                      <AtomTextFielInputForm
+                        value={search}
+                        onChange={(e) => {
+                          setPage(1);
+                          setLimit(5);
+                          setSearch(e.target.value);
+                          debounceSearchAddress(e.target.value);
+                        }}
+                        placeholder="Buscar por distribuidor, almacén y código SIC"
+                        color="#ffffff"
+                        height="45px"
+                      />
+                    </Tooltip>
+                  </Grid>
+                  <Grid size={2.5} mt={2.3}>
+                    <AtomButtonPrimary
+                      label="Crear"
+                      onClick={handleOpenCreateMaestrosProducts}
+                    />
+                  </Grid>
+                </Grid>
+              }
               children={
                 <>
                   <AtomTableForm
@@ -566,6 +602,16 @@ const MasterProducts = () => {
                     ? "La busqueda de producto tienda es requerida"
                     : ""
                 }
+              />
+            </Grid>
+            <Grid size={6}>
+              <AtomDatePicker
+                required={true}
+                mode="month"
+                height="45px"
+                label="Período"
+                value={calculateDate}
+                onChange={(value) => dispatch(setCalculateDate(value))}
               />
             </Grid>
             <Grid size={4} mt={0.6}>

@@ -42,7 +42,7 @@ const AtomDialogCreate = (props) => {
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography
             variant="h7"
-            sx={{ color: "textSecondary.main", fontWeight: 600 }}
+            sx={{ color: "#707070ff", fontWeight: 600 }}
           >
             {editDialog ? titleEditar : titleCrear}
           </Typography>

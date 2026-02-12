@@ -15,7 +15,7 @@ import {
   updateUser,
 } from "../../redux/userSlice";
 import { useSnackbar } from "../../context/SnacbarContext";
-import { Autocomplete, Checkbox, TextField, Button } from "@mui/material";
+import { Autocomplete, Checkbox, TextField, Button, FormGroup, FormControlLabel, Card, CardActionArea, IconButton, Tooltip, Typography, InputAdornment } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import {
   asignarRolUsuario,
@@ -25,6 +25,15 @@ import {
 import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import { usePermission } from "../../context/PermisosComtext";
 import { columnsUsuarios } from "./constantes";
+import AtomTextFieldInputForm from "../../atoms/AtomTextField";
+import {
+  CheckCircle as CheckCircleIcon,
+  RadioButtonUnchecked as RadioButtonUncheckedIcon,
+  Search as SearchIcon,
+  SelectAll as SelectAllIcon,
+  Deselect as DeselectIcon,
+} from "@mui/icons-material";
+import { alpha } from "@mui/material/styles";
 
 const ListUsers = () => {
   const { showSnackbar } = useSnackbar();
@@ -49,6 +58,19 @@ const ListUsers = () => {
   const [openRoles, setOpenRoles] = useState(false);
   const [userId, setUserId] = useState(null);
   const [editUser, setEditUser] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredRoles = optionsRoles.filter((option) =>
+    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleSelectAll = () => {
+    setRolesSeleccionados(optionsRoles.map((r) => r.id));
+  };
+
+  const handleDeselectAll = () => {
+    setRolesSeleccionados([]);
+  };
 
   const validForm = () => {
     const newErrors = {};
@@ -96,7 +118,25 @@ const ListUsers = () => {
     setUserId(row.id);
     const roles = row.roles.map((rol) => ({ id: rol.id, label: rol.name }));
     dispatch(updateAsignarRol(roles));
+    setRolesSeleccionados(row.roles.map((rol) => rol.id));
     setOpenRoles(true);
+  };
+
+  const handleToggleRole = (role) => {
+    const isSelected = rolesSeleccionados.includes(role.id);
+    let newSelectedIds;
+    let newSelectedObjects;
+
+    if (isSelected) {
+      newSelectedIds = rolesSeleccionados.filter((id) => id !== role.id);
+      newSelectedObjects = asignarRol.filter((r) => r.id !== role.id);
+    } else {
+      newSelectedIds = [...rolesSeleccionados, role.id];
+      newSelectedObjects = [...asignarRol, role];
+    }
+
+    setRolesSeleccionados(newSelectedIds);
+    dispatch(updateAsignarRol(newSelectedObjects));
   };
 
   const handleCloseRoles = () => {
@@ -175,13 +215,6 @@ const ListUsers = () => {
     buscarRoles();
   }, []);
 
-  const onChangeAsignarRol = (id, value) => {
-    const selectedIds = value.map((option) => option.id);
-    setRolesSeleccionados(selectedIds);
-    dispatch(updateAsignarRol(value));
-  };
-
-
   return (
     <AtomContainerGeneral
       children={
@@ -220,7 +253,7 @@ const ListUsers = () => {
             }
           />
           <AtomDialogForm
-            maxWidth="md"
+            maxWidth="lg"
             openDialog={openRoles}
             buttonCancel={true}
             buttonSubmit={true}
@@ -228,56 +261,88 @@ const ListUsers = () => {
             handleCloseDialog={handleCloseRoles}
             titleCrear="Asignar roles"
             dialogContentComponent={
-              <Box sx={{ height: "100%", width: "100%" }}>
-                <Grid container spacing={2} justifyContent="center">
-                  <Grid size={10} sx={{ mt: 2 }}>
-                    <Autocomplete
-                      multiple
-                      id="roles"
-                      value={asignarRol}
-                      options={optionsRoles}
-                      disableCloseOnSelect
-                      onChange={onChangeAsignarRol}
-                      getOptionLabel={(option) => option?.label}
-                      renderOption={(props, option, { selected }) => {
-                        const { key, ...optionProps } = props;
-
-                        return (
-                          <li key={key} {...optionProps}>
-                            <Checkbox
-                              style={{ marginRight: 8 }}
-                              checked={asignarRol.some(
-                                (rol) => rol.id === option.id
-                              )}
-                              value={asignarRol}
-                            />
-                            {option.label}
-                          </li>
-                        );
-                      }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Roles asignados"
-                          variant="outlined"
-                          fullWidth
-                          placeholder="Seleccionar roles"
-                        />
-                      )}
+              <Box sx={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box sx={{ display: "flex", gap: 2, justifyContent: "right" }}>
+                  <Box sx={{ width: "40%" }}>
+                    <AtomTextFieldInputForm
+                      id="search-roles"
+                      color="#eeeeeeff"
+                      height="45px"
+                      placeholder="Buscar roles..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
+                  </Box>
+                  <Tooltip title="Seleccionar todos">
+                    <IconButton onClick={handleSelectAll} color="primary" sx={{ bgcolor: alpha("#0072CE", 0.1), height: "45px", width: "45px" }}>
+                      <SelectAllIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Deseleccionar todos">
+                    <IconButton onClick={handleDeselectAll} color="error" sx={{ bgcolor: alpha("#d32f2f", 0.1), height: "45px", width: "45px" }}>
+                      <DeselectIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+
+                <Box sx={{ flexGrow: 1, overflowY: "auto", pr: 1, maxHeight: "60vh" }}>
+                  <Grid container spacing={2}>
+                    {filteredRoles.map((option) => {
+                      const isSelected = rolesSeleccionados.includes(option.id);
+                      return (
+                        <Grid item size={{ xs: 12, sm: 6, md: 4 }} key={option.id}>
+                          <Card
+                            elevation={0}
+                            sx={{
+                              height: "90px", // Fixed height
+                              borderRadius: "16px",
+                              border: isSelected ? "2px solid" : "1px solid",
+                              borderColor: isSelected ? "primary.main" : "divider",
+                              backgroundColor: isSelected ? alpha("#0072CE", 0.08) : "#ffffff",
+                              transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                              boxShadow: isSelected
+                                ? "0px 4px 20px rgba(0, 114, 206, 0.15)"
+                                : "0px 2px 8px rgba(0,0,0,0.05)",
+                              "&:hover": {
+                                borderColor: "primary.main",
+                                transform: "translateY(-4px)",
+                                boxShadow: "0px 12px 24px rgba(0,0,0,0.1)",
+                              }
+                            }}
+                          >
+                            <CardActionArea
+                              onClick={() => handleToggleRole(option)}
+                              sx={{ height: "100%", p: 2, display: "flex", justifyContent: "center" }} // Center content
+                            >
+                              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, width: "100%" }}>
+                                <Typography
+                                  variant="body1"
+                                  fontWeight={isSelected ? 600 : 500}
+                                  color={isSelected ? "primary.main" : "text.secondary"}
+                                  sx={{ transition: "color 0.3s ease" }}
+                                >
+                                  {option.label}
+                                </Typography>
+                                {isSelected ? (
+                                  <CheckCircleIcon color="primary" sx={{ fontSize: 28, filter: "drop-shadow(0px 2px 4px rgba(0, 114, 206, 0.3))" }} />
+                                ) : (
+                                  <RadioButtonUncheckedIcon sx={{ color: "action.disabled", fontSize: 28 }} />
+                                )}
+                              </Box>
+                            </CardActionArea>
+                          </Card>
+                        </Grid>
+                      );
+                    })}
+                    {filteredRoles.length === 0 && (
+                      <Grid size={12}>
+                        <Box sx={{ p: 4, textAlign: "center", color: "text.secondary" }}>
+                          <Typography>No se encontraron roles</Typography>
+                        </Box>
+                      </Grid>
+                    )}
                   </Grid>
-                  {/* <Grid size={3} sx={{ mt: 2 }}>
-                    <Button
-                      variant="contained"
-                      sx={{ height: "53px" }}
-                      color="success"
-                      startIcon={<AddIcon />}
-                      onClick={guardarRoles}
-                    >
-                      Asignar roles
-                    </Button>
-                  </Grid> */}
-                </Grid>
+                </Box>
               </Box>
             }
           />

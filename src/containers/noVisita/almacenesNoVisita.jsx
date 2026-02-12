@@ -149,8 +149,7 @@ const AlmacenNoVisita = () => {
 
                                     <Grid size={4} mt={2.8}>
                                         <Tooltip title="Buscar por distribuidor, código almacén, código producto y descripción">
-                                            <TextField
-                                                variant="outlined"
+                                            <AtomTextFielInputForm
                                                 value={search}
                                                 onChange={(e) => {
                                                     setPage(1);
@@ -159,40 +158,6 @@ const AlmacenNoVisita = () => {
                                                     debounceSearchAddress(e.target.value);
                                                 }}
                                                 placeholder="Buscar..."
-                                                InputProps={{
-                                                    endAdornment: (
-                                                        <InputAdornment position="end">
-                                                            <IconButton aria-label="buscar">
-                                                                <SearchIcon />
-                                                            </IconButton>
-                                                        </InputAdornment>
-                                                    ),
-                                                    style: {
-                                                        backgroundColor: "#ffffffff",
-                                                        borderRadius: "8px",
-                                                        fontSize: "15px",
-                                                        height: "45px",
-                                                    },
-                                                }}
-                                                sx={{
-                                                    fontFamily: "Visby Round CF, Arial, sans-serif,bold",
-                                                    fontSize: "14px",
-                                                    width: "100%",
-                                                    maxWidth: "500px",
-                                                    minWidth: "200px",
-                                                    height: "40px",
-                                                    "& .MuiOutlinedInput-root": {
-                                                        "& fieldset": {
-                                                            borderColor: "transparent",
-                                                        },
-                                                        "&:hover fieldset": {
-                                                            borderColor: "gray",
-                                                        },
-                                                    },
-                                                    "& .MuiInputLabel-root": {
-                                                        color: "#757575",
-                                                    },
-                                                }}
                                             />
                                         </Tooltip>
                                     </Grid>

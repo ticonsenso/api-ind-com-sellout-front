@@ -19,6 +19,11 @@ export const columnsMaestrosStores = [
     type: "string",
   },
   {
+    field: "periodo",
+    label: "Periodo",
+    type: "string",
+  },
+  {
     field: "status",
     label: "Estado",
     type: "string",
@@ -68,6 +73,11 @@ export const columnsMaestrosProducts = [
     field: "codeProductSic",
     label: "Cod. Producto SIC",
     type: "string",
+  },
+  {
+    field: "periodo",
+    label: "Periodo",
+    type: "date",
   },
   {
     field: "status",

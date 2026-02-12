@@ -499,6 +499,21 @@ const AtomTableForm = (props) => {
                 paddingBottom: '6px'
               }
             }}
+            SelectProps={{
+              inputProps: {
+                'aria-label': 'rows per page',
+              },
+              native: false,
+              MenuProps: {
+                container: () => document.fullscreenElement || document.body,
+                disablePortal: false, // Ensure portal is used but directed to correct container
+                PaperProps: {
+                  style: {
+                    maxHeight: 200, // Limit height to avoid overflow issues
+                  },
+                },
+              },
+            }}
           />
         </Box>
       )}

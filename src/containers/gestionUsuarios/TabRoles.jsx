@@ -6,7 +6,23 @@ import {
   Checkbox,
   TextField,
   Typography,
+  FormGroup,
+  FormControlLabel,
+  Card,
+  CardActionArea,
+  CardContent,
+  IconButton,
+  Tooltip,
+  InputAdornment,
 } from "@mui/material";
+import {
+  CheckCircle as CheckCircleIcon,
+  RadioButtonUnchecked as RadioButtonUncheckedIcon,
+  Search as SearchIcon,
+  SelectAll as SelectAllIcon,
+  Deselect as DeselectIcon,
+} from "@mui/icons-material";
+import { alpha } from "@mui/material/styles";
 import AtomTableForm from "../../atoms/AtomTableForm";
 import AtomCard from "../../atoms/AtomCard";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,6 +47,7 @@ import AtomCheckBox from "../../atoms/AtomCheckBox";
 import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import { usePermission } from "../../context/PermisosComtext";
 import { columnsRoles, columnsPermisos } from "./constantes";
+import AtomTextFieldInputForm from "../../atoms/AtomTextField";
 
 const TabRoles = () => {
   const { showDialog } = useDialog();
@@ -52,6 +69,19 @@ const TabRoles = () => {
   const [rolId, setRolId] = useState(null);
   const [permisosSeleccionados, setPermisosSeleccionados] = useState([]);
   const [openRole, setOpenRole] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredPermisos = optionsPermisos.filter((option) =>
+    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleSelectAll = () => {
+    setPermisosSeleccionados([...optionsPermisos]);
+  };
+
+  const handleDeselectAll = () => {
+    setPermisosSeleccionados([]);
+  };
 
   const actions = [
     {
@@ -150,11 +180,11 @@ const TabRoles = () => {
   };
 
   const guardarPermisos = async () => {
-    if (!permisosSeleccionados.length > 0) {
+    /* if (!permisosSeleccionados.length > 0) {
       showSnackbar("No hay permisos seleccionados", { severity: "error" });
       return;
-    }
-    const permisosFinales = permisosFinalesVisuales.map((p) => p.id);
+    } */
+    const permisosFinales = permisosSeleccionados.map((p) => p.id);
 
     const data = {
       rolId: rolId,
@@ -191,48 +221,21 @@ const TabRoles = () => {
     setRolId(row.id);
     const permisos = row?.permissions || [];
     dispatch(updateAsignarPermiso(permisos));
-    setPermisosSeleccionados([]);
+    setPermisosSeleccionados(permisos);
     setOpenPermisos(true);
   };
 
-  const handleClosePermisos = () => {
-    setOpenPermisos(false);
-    dispatch(updateAsignarPermiso([]));
-    buscarRoles();
-  };
+  const handleTogglePermission = (permission) => {
+    const isSelected = permisosSeleccionados.some((p) => p.id === permission.id);
+    let newSelected;
 
-  const onChangePermiso = (permiso) => {
-    const yaAsignado = asignarPermiso.some((p) => p.id === permiso.id);
-    const yaSeleccionado = permisosSeleccionados.some(
-      (p) => p.id === permiso.id
-    );
-
-    let actualizados = [...permisosSeleccionados];
-    if (yaAsignado) {
-      if (!yaSeleccionado) {
-        actualizados.push(permiso);
-      } else {
-        actualizados = actualizados.filter((p) => p.id !== permiso.id);
-      }
+    if (isSelected) {
+      newSelected = permisosSeleccionados.filter((p) => p.id !== permission.id);
     } else {
-      if (!yaSeleccionado) {
-        actualizados.push(permiso);
-      } else {
-        actualizados = actualizados.filter((p) => p.id !== permiso.id);
-      }
+      newSelected = [...permisosSeleccionados, permission];
     }
-
-    setPermisosSeleccionados(actualizados);
+    setPermisosSeleccionados(newSelected);
   };
-
-  const permisosFinalesVisuales = [
-    ...asignarPermiso.filter(
-      (p) => !permisosSeleccionados.some((c) => c.id === p.id)
-    ),
-    ...permisosSeleccionados.filter(
-      (c) => !asignarPermiso.some((p) => p.id === c.id)
-    ),
-  ];
 
   return (
     <AtomContainerGeneral
@@ -290,7 +293,7 @@ const TabRoles = () => {
             }
           />
           <AtomDialogForm
-            maxWidth="md"
+            maxWidth="lg"
             openDialog={openPermisos}
             buttonCancel={true}
             handleCloseDialog={() => setOpenPermisos(false)}
@@ -299,101 +302,89 @@ const TabRoles = () => {
             handleSubmit={guardarPermisos}
             textButtonCancel="Cerrar"
             dialogContentComponent={
-              <Grid
-                container
-                spacing={2}
-                justifyContent="center"
-                height="100%"
-                sx={{ width: "100%" }}
-              >
-                <Grid size={10} sx={{ mt: 1 }}>
-                  <Typography
-                    sx={{
-                      fontWeight: 500,
-                      fontSize: "14px",
-                      color: "primary.main",
-                      mt: 1,
-                      ml: 1,
-                      mb: 1,
-                      textAlign: "left",
-                      width: "80%",
-                    }}
-                  >
-                    Permisos disponibles
-                  </Typography>
-                  <Autocomplete
-                    multiple
-                    fullWidth
-                    id="roles"
-                    value={permisosSeleccionados}
-                    options={optionsPermisos}
-                    disableCloseOnSelect
-                    getOptionLabel={(option) => option.label}
-                    onChange={() => { }}
-                    renderOption={(props, option) => {
-                      const estaAsignado = asignarPermiso.some(
-                        (p) => p.id === option.id
-                      );
-                      const estaSeleccionado = permisosSeleccionados.some(
-                        (p) => p.id === option.id
-                      );
+              <Box sx={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box sx={{ display: "flex", gap: 2, justifyContent: "right" }}>
+                  <Box sx={{ width: "40%" }}>
+                    <AtomTextFieldInputForm
+                      id="search"
+                      color="#eeeeeeff"
+                      height="45px"
+                      placeholder="Buscar permisos..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </Box>
+                  <Tooltip title="Seleccionar todos">
+                    <IconButton onClick={handleSelectAll} color="primary" sx={{ bgcolor: alpha("#0072CE", 0.1), height: "45px", width: "45px" }}>
+                      <SelectAllIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Deseleccionar todos">
+                    <IconButton onClick={handleDeselectAll} color="error" sx={{ bgcolor: alpha("#d32f2f", 0.1), height: "45px", width: "45px" }}>
+                      <DeselectIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
 
-                      const checked =
-                        (estaAsignado && !estaSeleccionado) ||
-                        (!estaAsignado && estaSeleccionado);
-
+                <Box sx={{ p: 3 }}>
+                  <Grid container spacing={2}>
+                    {filteredPermisos.map((option) => {
+                      const isSelected = permisosSeleccionados.some((p) => p.id === option.id);
                       return (
-                        <li
-                          {...props}
-                          key={option.id}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            onChangePermiso(option);
-                          }}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            cursor: "pointer",
-                          }}
-                        >
-                          <Checkbox
-                            style={{ marginRight: 8 }}
-                            checked={checked}
-                          />
-                          {option.label}
-                        </li>
+                        <Grid item size={{ xs: 12, sm: 6, md: 4 }} key={option.id}>
+                          <Card
+                            elevation={0}
+                            sx={{
+                              height: "90px",
+                              borderRadius: "16px",
+                              border: isSelected ? "2px solid" : "1px solid",
+                              borderColor: isSelected ? "primary.main" : "divider",
+                              backgroundColor: isSelected ? alpha("#0072CE", 0.08) : "#ffffff",
+                              transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                              boxShadow: isSelected
+                                ? "0px 4px 20px rgba(0, 114, 206, 0.15)"
+                                : "0px 2px 8px rgba(0,0,0,0.05)",
+                              "&:hover": {
+                                borderColor: "primary.main",
+                                transform: "translateY(-4px)",
+                                boxShadow: "0px 12px 24px rgba(0,0,0,0.1)",
+                              }
+                            }}
+                          >
+                            <CardActionArea
+                              onClick={() => handleTogglePermission(option)}
+                              sx={{ height: "100%", p: 2, display: "flex", justifyContent: "center" }} // Center content
+                            >
+                              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, width: "100%" }}>
+                                <Typography
+                                  variant="body1" // Slightly larger text
+                                  fontWeight={isSelected ? 600 : 500}
+                                  color={isSelected ? "primary.main" : "text.secondary"}
+                                  sx={{ transition: "color 0.3s ease" }}
+                                >
+                                  {option.label}
+                                </Typography>
+                                {isSelected ? (
+                                  <CheckCircleIcon color="primary" sx={{ fontSize: 28, filter: "drop-shadow(0px 2px 4px rgba(0, 114, 206, 0.3))" }} />
+                                ) : (
+                                  <RadioButtonUncheckedIcon sx={{ color: "action.disabled", fontSize: 28 }} />
+                                )}
+                              </Box>
+                            </CardActionArea>
+                          </Card>
+                        </Grid>
                       );
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        // label="Seleccionar permisos"
-                        placeholder="Seleccionar permisos"
-                      />
+                    })}
+                    {filteredPermisos.length === 0 && (
+                      <Grid size={12}>
+                        <Box sx={{ p: 4, textAlign: "center", color: "text.secondary" }}>
+                          <Typography>No se encontraron permisos</Typography>
+                        </Box>
+                      </Grid>
                     )}
-                  />
-                </Grid>
-                <Typography
-                  sx={{
-                    fontWeight: 500,
-                    fontSize: "14px",
-                    color: "primary.main",
-                    mt: 1,
-                    mb: -1,
-                    textAlign: "left",
-                    width: "80%",
-                  }}
-                >
-                  Permisos asignados
-                </Typography>
-                <Grid size={10}>
-                  <AtomTableForm
-                    actions={[]}
-                    columns={columnsPermisos}
-                    data={asignarPermiso}
-                  />
-                </Grid>
-              </Grid>
+                  </Grid>
+                </Box>
+              </Box>
             }
           />
         </>
