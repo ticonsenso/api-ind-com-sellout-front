@@ -346,6 +346,11 @@ export const columnsPlantillaStandar = [
     type: "string"
   },
   {
+    field: "prodId",
+    label: "Prod Id",
+    type: "string"
+  },
+  {
     field: "canal",
     label: "Canal",
     type: "string"
