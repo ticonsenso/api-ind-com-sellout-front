@@ -19,6 +19,7 @@ import {
   exportarExcelAvanced,
   guardarConsolidatedSellout,
   updateArraySellout,
+  exportarExcelBasicInfo,
 } from "../../redux/configSelloutSlice";
 import { columnsPlantillaStandar } from "./constantes";
 import { useDispatch, useSelector } from "react-redux";
@@ -93,6 +94,10 @@ const PlantillaStandar = () => {
     year: 2025,
     month: null,
   });
+
+  const handleDownloadBasicInfo = () => {
+    dispatch(exportarExcelBasicInfo(calculateDate));
+  }
 
   const handleOpenCreateProducts = () => {
     setOpenDialogProduct(true);
@@ -296,18 +301,25 @@ const PlantillaStandar = () => {
         children={
           <>
             <IconoFlotante
+              handleButtonClick={handleDownloadBasicInfo}
+              title="Descargar información básica"
+              iconName="PlayForWork"
+              color="#0262a1ff"
+              right={160}
+            />
+            <IconoFlotante
               handleButtonClick={handleOpenCreateProducts}
               title="Nuevo registro plantilla stdr"
               iconName="Add"
               color="green"
-              right={125}
+              right={115}
             />
             <IconoFlotante
               handleButtonClick={exportExcel}
-              title="Descargar excel"
+              title="Descargar consolidado"
               iconName="SaveAlt"
               color="#5ab9f6"
-              right={77}
+              right={70}
             />
 
             <IconoFlotante

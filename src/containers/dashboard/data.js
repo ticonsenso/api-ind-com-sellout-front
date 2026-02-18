@@ -132,7 +132,7 @@ const initialStateMenu = [
   {
     id: 10,
     name: "Listas No Homologados",
-    icon: "mui:DatasetLinked",
+    icon: "mui:Ballot",
     visible: true,
     name_server: "LISTAS NO HOMOLOGADOS",
     menuSellout: false,
