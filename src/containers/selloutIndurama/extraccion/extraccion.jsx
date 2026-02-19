@@ -201,6 +201,7 @@ const ExtraccionDatos = () => {
     useState(false);
   const [openDialogDefaults, setOpenDialogDefaults] = useState(false);
   const [defaultsContent, setDefaultsContent] = useState({ defaults: [], warnings: [] });
+  const [isDateDefaulted, setIsDateDefaulted] = useState(false);
 
   const [filteredData, setFilteredData] = useState(
     dataMatriculacionRegistrados
@@ -287,6 +288,7 @@ const ExtraccionDatos = () => {
   ) => {
     const registrosConSeparadores = [];
     const registrosSinSeparar = [];
+    let dateDefaulted = false;
 
     const totalHojas = workbook.SheetNames.length;
 
@@ -424,10 +426,17 @@ const ExtraccionDatos = () => {
             anioTexto,
           });
 
-          registro.saleDate =
-            normalizarFechaISO(registro.saleDate) ||
-            fechaConstruida ||
-            getUltimoDiaMesActual(calculateDate);
+          const fechaNormalizada = normalizarFechaISO(registro.saleDate);
+
+
+          if (fechaNormalizada) {
+            registro.saleDate = fechaNormalizada;
+          } else if (fechaConstruida) {
+            registro.saleDate = fechaConstruida;
+          } else {
+            registro.saleDate = getUltimoDiaMesActual(calculateDate);
+            dateDefaulted = true;
+          }
         }
 
         delete registro.saleDay;
@@ -472,12 +481,14 @@ const ExtraccionDatos = () => {
     return {
       registrosSinSeparar,
       registrosConSeparadores,
+      dateDefaulted,
     };
   };
 
 
-  const handleFileChange = async (event) => {
+  const handleFileChange = (event) => {
     const file = event.target.files?.[0];
+    const target = event.target;
     if (!file) {
       showSnackbar("⚠️ No se seleccionó archivo", { severity: "error" });
       return;
@@ -485,142 +496,146 @@ const ExtraccionDatos = () => {
 
     setLoading(true);
 
-    const nombreSinExtension = file.name.replace(/\.[^/.]+$/, "");
-    setDocumento(nombreSinExtension);
+    setTimeout(async () => {
+      const nombreSinExtension = file.name.replace(/\.[^/.]+$/, "");
+      setDocumento(nombreSinExtension);
 
-    try {
-      const data = await file.arrayBuffer();
-      const workbook = XLSX.read(data, { type: "array" });
+      try {
+        const data = await file.arrayBuffer();
+        const workbook = XLSX.read(data, { type: "array" });
 
-      if (columns.length === 0) {
-        showSnackbar("⚠️ No se encontraron columnas en la configuración", { severity: "error" });
-        return;
-      }
+        if (columns.length === 0) {
+          showSnackbar("⚠️ No se encontraron columnas en la configuración", { severity: "error" });
+          return;
+        }
 
-      const mappingFields = new Set(
-        columns.map(col => col.mappingToField)
-      );
-
-      const columnsFaltantes = new Set();
-
-      if (!mappingFields.has("unitsSoldDistributor")) {
-        columnsFaltantes.add("unitsSoldDistributor");
-      }
-
-      if (!mappingFields.has("codeStoreDistributor")) {
-        columnsFaltantes.add("codeStoreDistributor");
-      }
-
-      if (!mappingFields.has("codeProductDistributor")) {
-        columnsFaltantes.add("codeProductDistributor");
-      }
-
-      setDefaultsAplicados(columnsFaltantes);
-
-
-      const {
-        registrosSinSeparar,
-        registrosConSeparadores
-      } = procesarExtraccionDesdeConfiguracion(
-        workbook,
-        configuracionId,
-        columns,
-        configuracionId?.distributor,
-        configuracion.hasNegativeValue,
-        calculateDate,
-        configuracion.simbolo
-      );
-
-      if (
-        registrosSinSeparar.length === 0 &&
-        registrosConSeparadores.length === 0
-      ) {
-        showSnackbar("⚠️ Error al obtener los detalles del producto", { severity: "error" });
-        return;
-      }
-
-      if (registrosConSeparadores.length > 0) {
-        setPreSplitInfo(registrosConSeparadores);
-        setTemporalRegistrosSinSeparar(registrosSinSeparar);
-        setDialogSeparation(true);
-        return;
-      }
-
-      const registrosFiltrados = filterByCurrentMonth(
-        registrosSinSeparar,
-        calculateDate
-      );
-
-      if (registrosFiltrados.length === 0) {
-        showSnackbar(
-          "⚠️ No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo.",
-          { severity: "info" }
+        const mappingFields = new Set(
+          columns.map(col => col.mappingToField)
         );
+
+        const columnsFaltantes = new Set();
+
+        if (!mappingFields.has("unitsSoldDistributor")) {
+          columnsFaltantes.add("unitsSoldDistributor");
+        }
+
+        if (!mappingFields.has("codeStoreDistributor")) {
+          columnsFaltantes.add("codeStoreDistributor");
+        }
+
+        if (!mappingFields.has("codeProductDistributor")) {
+          columnsFaltantes.add("codeProductDistributor");
+        }
+
+        setDefaultsAplicados(columnsFaltantes);
+
+
+        const {
+          registrosSinSeparar,
+          registrosConSeparadores,
+          dateDefaulted
+        } = procesarExtraccionDesdeConfiguracion(
+          workbook,
+          configuracionId,
+          columns,
+          configuracionId?.distributor,
+          configuracion.hasNegativeValue,
+          calculateDate,
+          configuracion.simbolo
+        );
+
+        if (
+          registrosSinSeparar.length === 0 &&
+          registrosConSeparadores.length === 0
+        ) {
+          showSnackbar("⚠️ Error al obtener los detalles del producto", { severity: "error" });
+          return;
+        }
+
+        if (registrosConSeparadores.length > 0) {
+          setPreSplitInfo(registrosConSeparadores);
+          setTemporalRegistrosSinSeparar(registrosSinSeparar);
+          setIsDateDefaulted(dateDefaulted);
+          setDialogSeparation(true);
+          return;
+        }
+        setIsDateDefaulted(dateDefaulted);
+
+        const registrosFiltrados = filterByCurrentMonth(
+          registrosSinSeparar,
+          calculateDate
+        );
+
+        if (registrosFiltrados.length === 0) {
+          showSnackbar(
+            "⚠️ No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo.",
+            { severity: "info" }
+          );
+          setData([]);
+          setCeldas([]);
+          return;
+        }
+
+        const agrupados = registrosFiltrados.reduce((acc, item) => {
+          const key = `${item.distributor}_${item.codeStoreDistributor}`;
+
+          if (!acc[key]) {
+            acc[key] = {
+              distributor: item.distributor,
+              storeName: item.codeStoreDistributor,
+              rowsCount: 0,
+              productCount: 0,
+            };
+          }
+
+          acc[key].rowsCount += 1;
+
+          const unidades = Number(item.unitsSoldDistributor);
+
+          acc[key].productCount += isNaN(unidades) ? 0 : unidades;
+
+          return acc;
+        }, {});
+
+        setDetallesData(Object.values(agrupados));
+
+        setData(registrosFiltrados);
+
+        const camposDetectados = Object.keys(registrosFiltrados[0] || {});
+        const ordenColumnas = Object.keys(etiquetasColumnas);
+
+        const columnasOrdenadas = [
+          ...ordenColumnas.filter((key) => camposDetectados.includes(key)),
+          ...camposDetectados.filter((key) => !ordenColumnas.includes(key)),
+        ];
+
+        setCeldas(
+          columnasOrdenadas.map((key) => ({
+            label: etiquetasColumnas[key] || key,
+            field: key,
+            type: key === "unitsSoldDistributor" ? "NUMBER" : "TEXT",
+          }))
+        );
+
+        const warnings = [];
+        const finalDefaults = new Set(columnsFaltantes);
+        if (dateDefaulted) {
+          finalDefaults.add("saleDate");
+        }
+        setDefaultsAplicados(finalDefaults);
+
+        mostrarAvisoDefaults(finalDefaults, DEFAULT_FIELD_LABELS, warnings);
+
+      } catch (error) {
+        showSnackbar(`Error al procesar archivo: ${error.message}`, { severity: "error" });
         setData([]);
         setCeldas([]);
-        return;
+        setDetallesData([]);
+      } finally {
+        setLoading(false);
+        target.value = null;
       }
-
-      const agrupados = registrosFiltrados.reduce((acc, item) => {
-        const key = `${item.distributor}_${item.codeStoreDistributor}`;
-
-        if (!acc[key]) {
-          acc[key] = {
-            distributor: item.distributor,
-            storeName: item.codeStoreDistributor,
-            rowsCount: 0,
-            productCount: 0,
-          };
-        }
-
-        acc[key].rowsCount += 1;
-
-        const unidades = Number(item.unitsSoldDistributor);
-
-        acc[key].productCount += isNaN(unidades) ? 0 : unidades;
-
-        return acc;
-      }, {});
-
-      setDetallesData(Object.values(agrupados));
-
-      setData(registrosFiltrados);
-
-      const camposDetectados = Object.keys(registrosFiltrados[0] || {});
-      const ordenColumnas = Object.keys(etiquetasColumnas);
-
-      const columnasOrdenadas = [
-        ...ordenColumnas.filter((key) => camposDetectados.includes(key)),
-        ...camposDetectados.filter((key) => !ordenColumnas.includes(key)),
-      ];
-
-      setCeldas(
-        columnasOrdenadas.map((key) => ({
-          label: etiquetasColumnas[key] || key,
-          field: key,
-          type: key === "unitsSoldDistributor" ? "NUMBER" : "TEXT",
-        }))
-      );
-
-      const warnings = [];
-      registrosFiltrados.forEach(r => {
-        if (r._undividedWarning) {
-          warnings.push(`${r.descriptionDistributor}`);
-          delete r._undividedWarning;
-        }
-      });
-
-      mostrarAvisoDefaults(columnsFaltantes, DEFAULT_FIELD_LABELS, warnings);
-
-    } catch (error) {
-      showSnackbar(`Error al procesar archivo: ${error.message}`, { severity: "error" });
-      setData([]);
-      setCeldas([]);
-      setDetallesData([]);
-    } finally {
-      setLoading(false);
-      event.target.value = null;
-    }
+    }, 200);
   };
 
 
@@ -764,6 +779,7 @@ const ExtraccionDatos = () => {
     setConfiguracionId(null);
     setMatriculacionData(null);
     setMensajeAlerta("");
+    setIsDateDefaulted(false);
   };
 
   const downloadEmptyExcel = () => {
@@ -795,133 +811,147 @@ const ExtraccionDatos = () => {
     setLoading(false);
   };
 
-  const handleExtraccionStandar = async (event) => {
+  const handleExtraccionStandar = (event) => {
     const file = event.target.files?.[0];
+    const target = event.target;
     setLoading(true);
 
-    const nombreSinExtension = file.name.replace(/\.[^/.]+$/, "");
-    setDocumento(nombreSinExtension);
-    try {
-      const data = await file.arrayBuffer();
-      const workbook = XLSX.read(data, { type: "array" });
+    setTimeout(async () => {
+      const nombreSinExtension = file.name.replace(/\.[^/.]+$/, "");
+      setDocumento(nombreSinExtension);
+      try {
+        const data = await file.arrayBuffer();
+        const workbook = XLSX.read(data, { type: "array" });
 
-      const totalHojas = workbook.SheetNames.length;
-      const { hojaInicio, hojaFin, extraerTodos } = configuracion;
+        const totalHojas = workbook.SheetNames.length;
+        const { hojaInicio, hojaFin, extraerTodos } = configuracion;
 
-      const sheetIndexes = getSheetIndexes({
-        hojaInicio,
-        hojaFin,
-        extraerTodos,
-        totalHojas,
-      });
+        const sheetIndexes = getSheetIndexes({
+          hojaInicio,
+          hojaFin,
+          extraerTodos,
+          totalHojas,
+        });
 
-      let registrosSinSeparar = [];
-      let registrosConSeparadores = [];
+        let registrosSinSeparar = [];
+        let registrosConSeparadores = [];
+        let dateDefaultedTotal = false;
 
-      for (const index of sheetIndexes) {
-        const hojaName = workbook.SheetNames[index];
-        const worksheet = workbook.Sheets[hojaName];
+        for (const index of sheetIndexes) {
+          const hojaName = workbook.SheetNames[index];
+          const worksheet = workbook.Sheets[hojaName];
 
-        const rows = extractRowsFromWorksheet(worksheet);
-        const headerInfo = detectHeader(rows, COLUMN_KEYWORDS);
-        setDefaultsAplicados(headerInfo.defaultsAplicados);
+          const rows = extractRowsFromWorksheet(worksheet);
+          const headerInfo = detectHeader(rows, COLUMN_KEYWORDS);
+          setDefaultsAplicados(headerInfo.defaultsAplicados);
 
-        if (!headerInfo.header) {
-          avisoCritico(`Encabezados no encontrados en hoja: ${hojaName}`);
-          continue;
+          if (!headerInfo.header) {
+            avisoCritico(`Encabezados no encontrados en hoja: ${hojaName}`);
+            continue;
+          }
+
+          const { registrosSinSeparar: sinSep, registrosConSeparadores: conSep, dateDefaulted } =
+            processRows(
+              rows.slice(headerInfo.rowIndex + 1),
+              headerInfo.header,
+              hojaName,
+              configuracion.distributor || null,
+              configuracion.simbolo || null,
+              configuracion.hasNegativeValue || false,
+            );
+
+          registrosSinSeparar.push(...sinSep);
+          registrosConSeparadores.push(...conSep);
+          if (dateDefaulted) dateDefaultedTotal = true;
         }
 
-        const { registrosSinSeparar: sinSep, registrosConSeparadores: conSep } =
-          processRows(
-            rows.slice(headerInfo.rowIndex + 1),
-            headerInfo.header,
-            hojaName,
-            configuracion.distributor || null,
-            configuracion.simbolo || null,
-            configuracion.hasNegativeValue || false,
+
+        if (registrosSinSeparar.length === 0 && registrosConSeparadores.length === 0) {
+          avisoCritico("Error al obtener los detalles del producto");
+          return;
+        }
+
+        if (registrosConSeparadores.length > 0) {
+
+          setPreSplitInfo(registrosConSeparadores);
+          setTemporalRegistrosSinSeparar(registrosSinSeparar);
+
+          setIsDateDefaulted(dateDefaultedTotal);
+          setDialogSeparation(true);
+
+          return;
+        }
+
+        setIsDateDefaulted(dateDefaultedTotal);
+
+        const registrosFiltrados = filterByCurrentMonth(registrosSinSeparar, calculateDate);
+        if (registrosFiltrados.length === 0) {
+          avisoCritico(
+            "No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo."
           );
+          setData([]);
+          setCeldas([]);
+          return;
+        }
 
-        registrosSinSeparar.push(...sinSep);
-        registrosConSeparadores.push(...conSep);
-      }
+        const camposDetectados = Object.keys(registrosFiltrados[0] || {});
+        const ordenColumnas = Object.keys(etiquetasColumnas);
+
+        const columnasOrdenadas = [
+          ...ordenColumnas.filter((key) => camposDetectados.includes(key)),
+          ...camposDetectados.filter((key) => !ordenColumnas.includes(key)),
+        ];
+
+        const agrupados = registrosFiltrados.reduce((acc, item) => {
+          const key = `${item.distributor}_${item.codeStoreDistributor}`;
+
+          if (!acc[key]) {
+            acc[key] = {
+              distributor: item.distributor,
+              storeName: item.codeStoreDistributor,
+              rowsCount: 0,
+              productCount: 0,
+            };
+          }
+
+          acc[key].rowsCount += 1;
+
+          const unidades = Number(item.unitsSoldDistributor);
+          acc[key].productCount += isNaN(unidades) ? 0 : unidades;
+
+          return acc;
+        }, {});
 
 
-      if (registrosSinSeparar.length === 0 && registrosConSeparadores.length === 0) {
-        avisoCritico("Error al obtener los detalles del producto");
-        return;
-      }
+        setDetallesData(Object.values(agrupados));
 
-      if (registrosConSeparadores.length > 0) {
+        setData(registrosFiltrados);
 
-        setPreSplitInfo(registrosConSeparadores);
-        setTemporalRegistrosSinSeparar(registrosSinSeparar);
-
-        setDialogSeparation(true);
-
-        return;
-      }
-
-      const registrosFiltrados = filterByCurrentMonth(registrosSinSeparar, calculateDate);
-      if (registrosFiltrados.length === 0) {
-        avisoCritico(
-          "No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo."
+        setCeldas(
+          columnasOrdenadas.map((key) => ({
+            label: etiquetasColumnas[key] || key,
+            field: key,
+            type: key === "unitsSoldDistributor" ? "number" : "TEXT",
+          }))
         );
+
+        const finalDefaults = new Set(defaultsAplicados || []);
+        if (dateDefaultedTotal) {
+          finalDefaults.add("saleDate");
+        }
+        setDefaultsAplicados(finalDefaults);
+
+        mostrarAvisoDefaults(finalDefaults, DEFAULT_FIELD_LABELS);
+
+      } catch (error) {
+        avisoCritico(`Error al procesar archivo: ${error.message}`);
         setData([]);
         setCeldas([]);
-        return;
+      } finally {
+        setLoading(false);
+        target.value = null;
       }
-
-      const camposDetectados = Object.keys(registrosFiltrados[0] || {});
-      const ordenColumnas = Object.keys(etiquetasColumnas);
-
-      const columnasOrdenadas = [
-        ...ordenColumnas.filter((key) => camposDetectados.includes(key)),
-        ...camposDetectados.filter((key) => !ordenColumnas.includes(key)),
-      ];
-
-      const agrupados = registrosFiltrados.reduce((acc, item) => {
-        const key = `${item.distributor}_${item.codeStoreDistributor}`;
-
-        if (!acc[key]) {
-          acc[key] = {
-            distributor: item.distributor,
-            storeName: item.codeStoreDistributor,
-            rowsCount: 0,
-            productCount: 0,
-          };
-        }
-
-        acc[key].rowsCount += 1;
-
-        const unidades = Number(item.unitsSoldDistributor);
-        acc[key].productCount += isNaN(unidades) ? 0 : unidades;
-
-        return acc;
-      }, {});
-
-
-      setDetallesData(Object.values(agrupados));
-
-      setData(registrosFiltrados);
-
-      setCeldas(
-        columnasOrdenadas.map((key) => ({
-          label: etiquetasColumnas[key] || key,
-          field: key,
-          type: key === "unitsSoldDistributor" ? "number" : "TEXT",
-        }))
-      );
-
-      mostrarAvisoDefaults(defaultsAplicados, DEFAULT_FIELD_LABELS);
-
-    } catch (error) {
-      avisoCritico(`Error al procesar archivo: ${error.message}`);
-      setData([]);
-      setCeldas([]);
-    } finally {
-      setLoading(false);
-      event.target.value = null;
-    }
+    }, 200);
   };
 
   const filterByCurrentMonth = (registros, calculateDate) => {
@@ -937,6 +967,7 @@ const ExtraccionDatos = () => {
   const processRows = (rows, encabezados, hojaName, defaultDistributorId, simbolo, hasNegativeValue) => {
     const registrosSinSeparar = [];
     const registrosConSeparadores = [];
+    let dateDefaulted = false;
 
     const mapeo = detectarColumnasAutomaticamente(encabezados, COLUMN_KEYWORDS);
 
@@ -957,7 +988,10 @@ const ExtraccionDatos = () => {
         const val = extraerTextoCelda(fila[mapeo.saleDate]);
         saleDate = normalizarFechaISO(val);
       }
-      if (!saleDate) saleDate = getUltimoDiaMesActual(calculateDate);
+      if (!saleDate) {
+        saleDate = getUltimoDiaMesActual(calculateDate);
+        dateDefaulted = true;
+      }
 
       const codeProductDistributor =
         mapeo.codeProductDistributor !== undefined
@@ -990,13 +1024,14 @@ const ExtraccionDatos = () => {
       }
     }
 
-    return { registrosSinSeparar, registrosConSeparadores };
+    return { registrosSinSeparar, registrosConSeparadores, dateDefaulted };
   };
 
   const DEFAULT_FIELD_LABELS = {
     unitsSoldDistributor: "Cantidad",
     codeStoreDistributor: "Almacén",
     codeProductDistributor: "Código de producto",
+    saleDate: "Fecha",
   };
   const [selectedToSplitIds, setSelectedToSplitIds] = useState([]);
 
@@ -1009,20 +1044,16 @@ const ExtraccionDatos = () => {
       (_, idx) => !selectedToSplitIds.includes(idx)
     );
 
+    const warnings = [];
     const separados = seleccionados
       .flatMap((item) => repartirValoresNumerico(item, configuracion.simbolo, configuracion.dividirCantidad))
-      .map((item) => ({
-        ...item,
-        observation: "Dato separado",
-      }));
-
-    const warnings = [];
-    separados.forEach(item => {
-      if (item._undividedWarning) {
-        warnings.push(`${item.descriptionDistributor}`);
-        delete item._undividedWarning;
-      }
-    });
+      .map((item) => {
+        if (item._undividedWarning) {
+          warnings.push(`${item.descriptionDistributor}`);
+          delete item._undividedWarning;
+        }
+        return item;
+      });
 
     const finalData = [
       ...temporalRegistrosSinSeparar,
@@ -1080,7 +1111,15 @@ const ExtraccionDatos = () => {
     setDialogSeparation(false);
     setPreSplitInfo([]);
     setSelectedToSplitIds([]);
-    mostrarAvisoDefaults(defaultsAplicados, DEFAULT_FIELD_LABELS, warnings);
+
+    // Check separated items too
+
+    const finalDefaults = new Set(defaultsAplicados);
+    if (isDateDefaulted) { // Added for instruction 4
+      finalDefaults.add("saleDate");
+    }
+
+    mostrarAvisoDefaults(finalDefaults, DEFAULT_FIELD_LABELS, warnings);
   };
 
 
@@ -1311,6 +1350,7 @@ const ExtraccionDatos = () => {
     setDialogSeparation(false);
     setPreSplitInfo([]);
     setSelectedToSplitIds([]);
+    setIsDateDefaulted(false);
   }
 
   return (
@@ -1760,6 +1800,53 @@ const ExtraccionDatos = () => {
                           sx={{
                             variant: "body2",
                             fontWeight: 400,
+                            color: "text.secondary",
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              )}
+
+              {defaultsContent.dateWarnings && defaultsContent.dateWarnings.length > 0 && (
+                <Box sx={{ boxShadow: 2, borderRadius: 3, p: 2 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mb: 1,
+                      gap: 1,
+                      backgroundColor: "#fff3e0",
+                      p: 1.5,
+                      borderRadius: 2,
+                      borderLeft: "4px solid #ff9800",
+                    }}
+                  >
+                    <InfoOutlinedIcon color="warning" />
+                    <Typography variant="subtitle1" fontWeight="600" color="warning.dark">
+                      Advertencia de Fecha
+                    </Typography>
+                  </Box>
+                  <Typography
+                    variant="body2"
+                    fontWeight={600}
+                    sx={{
+                      mb: 1,
+                      color: "#5f5f5fff",
+                    }}>
+                    Se ha asignado la fecha por defecto (último día del mes) a los siguientes registros:
+                  </Typography>
+                  <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
+                    {defaultsContent.dateWarnings.map((msg, index) => (
+                      <ListItem key={`date-warn-${index}`} sx={{ py: 0.5 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          <LabelImportantIcon color="warning" fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={msg}
+                          sx={{
+                            fontWeight: 500,
                             color: "text.secondary",
                           }}
                         />

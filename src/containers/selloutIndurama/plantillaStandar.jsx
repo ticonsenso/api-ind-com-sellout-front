@@ -95,9 +95,16 @@ const PlantillaStandar = () => {
     month: null,
   });
 
-  const handleDownloadBasicInfo = () => {
-    dispatch(exportarExcelBasicInfo(calculateDate));
-  }
+  const handleDownloadBasicInfo = async () => {
+    setLoading(true);
+    try {
+      await dispatch(exportarExcelBasicInfo(calculateDate));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleOpenCreateProducts = () => {
     setOpenDialogProduct(true);
@@ -306,6 +313,7 @@ const PlantillaStandar = () => {
               iconName="PlayForWork"
               color="#0262a1ff"
               right={160}
+              disabled={loading}
             />
             <IconoFlotante
               handleButtonClick={handleOpenCreateProducts}
@@ -320,6 +328,7 @@ const PlantillaStandar = () => {
               iconName="SaveAlt"
               color="#5ab9f6"
               right={70}
+              disabled={loading}
             />
 
             <IconoFlotante
