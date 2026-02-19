@@ -46,9 +46,17 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
   const { showDialog } = useDialog();
-  const dataMatriculacionRegistrados = useSelector(
+
+  const dataMatriculacionRegistradosUser = useSelector(
     (state) => state.configSellout?.dataMatriculacionRegistrados
   );
+
+  const dataMatriculacionRegistrados = dataMatriculacionRegistradosUser?.map((item) => {
+    return {
+      ...item,
+      user: [...new Set(item?.logs?.map((log) => log.user))].filter(Boolean).join(" - "),
+    };
+  });
 
   const dataMatriculacionConfig = useSelector(
     (state) => state.selloutDatos.dataMatriculacionConfig

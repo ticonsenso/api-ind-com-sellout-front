@@ -111,6 +111,11 @@ export const columnsMatriculacion = [
     field: "rowCountTotal",
     type: "string"
   },
+  {
+    label: "Usuario carga",
+    field: "user",
+    type: "string"
+  }
 ];
 
 export const columnsDetallesMatriculacion = [
