@@ -271,7 +271,7 @@ const AtomTableForm = (props) => {
                     sx={{
                       cursor: column.field ? "pointer" : "default",
                       width: column.width || "auto",
-                      maxWidth: "250px"
+                      maxWidth: "210px"
                     }}
                   >
                     <Box display="flex" alignItems="center" justifyContent={column.align === 'right' ? 'flex-end' : 'flex-start'}>
@@ -335,7 +335,7 @@ const AtomTableForm = (props) => {
                           align={column?.align || "left"}
                           sx={{
                             textAlign: ["dinero", "porcentaje", "number"].includes(column?.type) ? "right" : "left",
-                            maxWidth: "250px"
+                            maxWidth: "210px"
                           }}
                         >
                           {column?.render ? (

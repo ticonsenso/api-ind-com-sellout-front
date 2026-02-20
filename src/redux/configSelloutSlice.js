@@ -1200,7 +1200,7 @@ export const exportarExcelBasicInfo = createAsyncThunk(
       const url = window.URL.createObjectURL(blob);
 
       const a = document.createElement("a");
-      a.download = `sellout_basic_info_${calculateDate}.xlsx`;
+      a.download = `sellout_mercado.xlsx`;
       a.href = url;
       a.click();
       window.URL.revokeObjectURL(url);
