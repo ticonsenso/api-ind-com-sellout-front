@@ -21,7 +21,25 @@ export const mensajeExtraccion =
   "Antes de guardar la extracción, confirme que los datos incluyen tanto la primera como la última fila de su archivo Excel.";
 
 export const formatDate = (fechaISO) => {
-  const fecha = new Date(fechaISO);
+  if (!fechaISO) return "-";
+
+  let fecha;
+  if (fechaISO instanceof Date) {
+    fecha = fechaISO;
+  } else if (typeof fechaISO === "string" && fechaISO.includes("/") && fechaISO.split("/").length === 3) {
+    const parts = fechaISO.split("/");
+    // Asumimos DD/MM/YYYY
+    if (parts[0].length <= 2 && parts[2].length === 4) {
+      fecha = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+    } else {
+      fecha = new Date(fechaISO);
+    }
+  } else {
+    fecha = new Date(fechaISO);
+  }
+
+  if (isNaN(fecha.getTime())) return "-";
+
   const dia = String(fecha.getUTCDate()).padStart(2, "0");
   const mes = String(fecha.getUTCMonth() + 1).padStart(2, "0");
   const anio = fecha.getUTCFullYear();
@@ -31,8 +49,29 @@ export const formatDate = (fechaISO) => {
 export const formatValueByType = (value, type) => {
   if (value === null || value === undefined || value === "") return "-";
 
+  // Si el valor es una instancia de Date, lo formateamos inmediatamente para evitar Error #31 de React
+  if (value instanceof Date) {
+    if (isNaN(value.getTime())) return "-";
+    const year = value.getUTCFullYear();
+    const month = String(value.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(value.getUTCDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
   if (type === "date") {
-    const date = new Date(value);
+    let date;
+    // Si es un string con formato DD/MM/YYYY, intentamos convertirlo a YYYY-MM-DD para que Date() lo entienda mejor
+    if (typeof value === "string" && value.includes("/") && value.split("/").length === 3) {
+      const parts = value.split("/");
+      // Asumimos DD/MM/YYYY
+      if (parts[0].length <= 2 && parts[2].length === 4) {
+        date = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+      } else {
+        date = new Date(value);
+      }
+    } else {
+      date = new Date(value);
+    }
 
     if (isNaN(date.getTime())) return "-";
 

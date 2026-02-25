@@ -21,7 +21,7 @@ export const columnsMaestrosStores = [
   {
     field: "periodo",
     label: "Periodo",
-    type: "string",
+    type: "date",
   },
   {
     field: "status",
