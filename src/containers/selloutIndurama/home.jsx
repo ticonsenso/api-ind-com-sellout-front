@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Box, Typography, styled, Container, Grid, Paper, alpha } from "@mui/material";
 import {
   Public as PublicIcon,
@@ -18,8 +19,10 @@ const SelloutIndurama = () => {
   const dispatch = useDispatch();
   const namePermission = usePermission();
 
-  const calculateDate = getPreviousMonthStart();
-  dispatch(setCalculateDate(calculateDate));
+  useEffect(() => {
+    const calculateDate = getPreviousMonthStart();
+    dispatch(setCalculateDate(calculateDate));
+  }, [dispatch]);
 
   const MainContainer = styled(Box)(({ theme }) => ({
     height: "100vh",
@@ -118,7 +121,7 @@ const SelloutIndurama = () => {
       permiso: "MATRICULACION SELLOUT",
       subpasos: [
         {
-          id: 2,
+          id: 101,
           titulo: "Lista de Clientes",
           permiso: "EXTRACCION SELLOUT",
           menuSellout: true,
@@ -127,7 +130,7 @@ const SelloutIndurama = () => {
           nameInfo: 'Clientes a cargar',
         },
         {
-          id: 2,
+          id: 102,
           titulo: "Clientes Cargados",
           permiso: "EXTRACCION SELLOUT",
           menuSellout: true,
@@ -150,7 +153,7 @@ const SelloutIndurama = () => {
       nameInfo: "Carga de archivos excel",
       subpasos: [
         {
-          id: 5,
+          id: 201,
           name: "Configuración de Extracción",
           permiso: "EXTRACCION SELLOUT",
           menuSellout: true,
@@ -173,7 +176,7 @@ const SelloutIndurama = () => {
       permiso: "PLANTILLA CONSOLIDADO SELLOUT",
       subpasos: [
         {
-          id: 9,
+          id: 301,
           numero: "3.1",
           titulo: "Base no Homologada",
           name: "Base no Homologada",
@@ -185,7 +188,7 @@ const SelloutIndurama = () => {
           nameInfo: "Almacenes-Productos no homologados",
         },
         {
-          id: 4,
+          id: 302,
           numero: "3.2",
           titulo: "Maestros",
           name: "Maestros",
@@ -199,7 +202,7 @@ const SelloutIndurama = () => {
       ]
     },
     {
-      id: 4,
+      id: 41,
       numero: "04",
       titulo: "SIC",
       descripcion: "Gestión avanzada de productos y almacenes SIC.",
@@ -231,7 +234,7 @@ const SelloutIndurama = () => {
       {pasos.length > 0 ? (
         <Grid container spacing={5} >
           {pasos.map((paso, index) => (
-            <Grid size={3} key={index} sx={{ display: 'flex' }}>
+            <Grid size={3} key={paso.id} sx={{ display: 'flex' }}>
               <GlassCard
                 bgcolor={paso.color}
                 onClick={() => dispatch(handleMenu(paso))}

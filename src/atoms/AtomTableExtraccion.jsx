@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import CustomLinearProgress from "./CustomLinearProgress";
 import { styled } from "@mui/material/styles";
+import { formatValueByType } from "../containers/constantes";
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   backgroundColor: "transparent",
@@ -110,24 +111,6 @@ const AtomTableExtraccion = ({
       <CustomLinearProgress />
     );
   }
-
-  // if (data.length === 0) return null; // Removed check to show headers always
-
-  const formatValueByType = (value, type) => {
-    if (value === null || value === undefined) return "-";
-    const number = parseFloat(value || 0);
-
-    if (type === "number" || type === "numero") {
-      return number.toLocaleString("es-EC", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-    if (type === "dinero") {
-      return number.toLocaleString("es-EC", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-    if (type === "porcentaje") {
-      return number.toLocaleString("es-EC", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
-    }
-    return value;
-  };
 
   return (
     <div style={{ width: '100%', overflow: 'hidden' }}>

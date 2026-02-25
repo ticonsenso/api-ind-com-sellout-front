@@ -613,7 +613,7 @@ const ExtraccionDatos = () => {
           columnasOrdenadas.map((key) => ({
             label: etiquetasColumnas[key] || key,
             field: key,
-            type: key === "unitsSoldDistributor" ? "NUMBER" : "TEXT",
+            type: key === "unitsSoldDistributor" ? "number" : key === "saleDate" ? "date" : "TEXT",
           }))
         );
 
@@ -931,7 +931,7 @@ const ExtraccionDatos = () => {
           columnasOrdenadas.map((key) => ({
             label: etiquetasColumnas[key] || key,
             field: key,
-            type: key === "unitsSoldDistributor" ? "number" : "TEXT",
+            type: key === "unitsSoldDistributor" ? "number" : key === "saleDate" ? "date" : "TEXT",
           }))
         );
 
@@ -1105,7 +1105,7 @@ const ExtraccionDatos = () => {
       columnasOrdenadas.map((key) => ({
         label: etiquetasColumnas[key] || key,
         field: key,
-        type: "TEXT",
+        type: key === "unitsSoldDistributor" ? "number" : key === "saleDate" ? "date" : "TEXT",
       }))
     );
     setDialogSeparation(false);

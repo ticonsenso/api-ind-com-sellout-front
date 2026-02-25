@@ -23,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Typography, Tooltip, Box } from "@mui/material";
 import { useDialog } from "../../../context/DialogDeleteContext";
 import AtomSwitch from "../../../atoms/AtomSwitch";
-import { limitGeneral, normalizeEncabezados } from "../../constantes";
+import { limitGeneral, normalizeEncabezados, formatDate } from "../../constantes";
 import AtomTableInformationExtraccion from "../../../atoms/AtomTableInformationExtraccion";
 import { useCallback } from "react";
 import IconoFlotante from "../../../atoms/IconActionPage";
@@ -321,7 +321,17 @@ const MasterProducts = () => {
           } else {
             const colIndex = headers.indexOf(normalizeEncabezados(label));
 
-            item[field] = colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
+            let val = colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
+
+            if (field === "periodo" && val) {
+              const date = new Date(val);
+              if (!isNaN(date.getTime())) {
+                const year = date.getUTCFullYear();
+                const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+                val = `${year}-${month}-01`;
+              }
+            }
+            item[field] = val;
           }
         });
 

@@ -43,27 +43,30 @@ export const formatDate = (fechaISO) => {
   const dia = String(fecha.getUTCDate()).padStart(2, "0");
   const mes = String(fecha.getUTCMonth() + 1).padStart(2, "0");
   const anio = fecha.getUTCFullYear();
-  return `${anio}-${mes}-${dia}`;
+  return `${dia}-${mes}-${anio}`;
 };
 
 export const formatValueByType = (value, type) => {
   if (value === null || value === undefined || value === "") return "-";
 
-  // Si el valor es una instancia de Date, lo formateamos inmediatamente para evitar Error #31 de React
-  if (value instanceof Date) {
+  const isDate = Object.prototype.toString.call(value) === '[object Date]' || value instanceof Date;
+
+  if (isDate) {
     if (isNaN(value.getTime())) return "-";
     const year = value.getUTCFullYear();
     const month = String(value.getUTCMonth() + 1).padStart(2, "0");
     const day = String(value.getUTCDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+    return `${day}-${month}-${year}`;
+  }
+
+  if (typeof value === 'object' && typeof value.format === 'function') {
+    return value.format("DD-MM-YYYY");
   }
 
   if (type === "date") {
     let date;
-    // Si es un string con formato DD/MM/YYYY, intentamos convertirlo a YYYY-MM-DD para que Date() lo entienda mejor
     if (typeof value === "string" && value.includes("/") && value.split("/").length === 3) {
       const parts = value.split("/");
-      // Asumimos DD/MM/YYYY
       if (parts[0].length <= 2 && parts[2].length === 4) {
         date = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
       } else {
@@ -79,24 +82,24 @@ export const formatValueByType = (value, type) => {
     const month = String(date.getUTCMonth() + 1).padStart(2, "0");
     const day = String(date.getUTCDate()).padStart(2, "0");
 
-    return `${year}-${month}-${day}`;
+    return `${day}-${month}-${year}`;
   }
 
   const number = parseFloat(value);
 
   if (type === "string") {
-    return value;
+    return String(value);
   }
 
   if (type === "number") {
-    return number.toLocaleString("es-EC", {
+    return isNaN(number) ? value : number.toLocaleString("es-EC", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
   }
 
   if (type === "dinero") {
-    return number.toLocaleString("es-EC", {
+    return isNaN(number) ? value : number.toLocaleString("es-EC", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 2,
@@ -105,20 +108,21 @@ export const formatValueByType = (value, type) => {
   }
 
   if (type === "porcentaje") {
+    return isNaN(number) ? value : number.toLocaleString("es-EC", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+
+  if (!isNaN(number) && typeof value !== 'string') {
     return number.toLocaleString("es-EC", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
   }
 
-  if (!isNaN(number)) {
-    return number.toLocaleString("es-EC", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-  }
-
-  return value;
+  // Fallback final: si el valor sigue siendo un objeto, lo convertimos a string para evitar Error #31
+  return typeof value === "object" ? String(value) : value;
 };
 
 

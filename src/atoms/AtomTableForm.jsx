@@ -118,7 +118,9 @@ const StyledBodyCell = styled(TableCell)(({ theme }) => ({
 
 import { Tooltip } from "@mui/material";
 
-const ActionButton = styled(Button)(({ theme, colorKey, isIconOnly }) => {
+const ActionButton = styled(Button, {
+  shouldForwardProp: (prop) => prop !== "colorKey" && prop !== "isIconOnly",
+})(({ theme, colorKey, isIconOnly }) => {
   const colors = {
     success: { main: "#2e7d32", bg: "#e8f5e9" },
     error: { main: "#c62828", bg: "#ffebee" },

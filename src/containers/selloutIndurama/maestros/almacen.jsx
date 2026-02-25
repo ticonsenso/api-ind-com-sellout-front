@@ -24,7 +24,7 @@ import AtomSwitch from "../../../atoms/AtomSwitch";
 import { SaveAlt as SaveAltIcon } from "@mui/icons-material";
 import ExcelJS from "exceljs";
 import { Box, Typography, Tooltip } from "@mui/material";
-import { limitGeneral } from "../../constantes";
+import { limitGeneral, normalizeEncabezados, formatDate } from "../../constantes";
 import AtomTableInformationExtraccion from "../../../atoms/AtomTableInformationExtraccion";
 import { camposMaestrosStores } from "./constantes";
 import IconoFlotante from "../../../atoms/IconActionPage";
@@ -268,8 +268,17 @@ const MasterAlmacen = () => {
 
             const colIndex = headers.indexOf(normalizedLabel);
 
-            item[field] =
-              colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
+            let val = colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
+
+            if (field === "periodo" && val) {
+              const date = new Date(val);
+              if (!isNaN(date.getTime())) {
+                const year = date.getUTCFullYear();
+                const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+                val = `${year}-${month}-01`;
+              }
+            }
+            item[field] = val;
           }
         });
 

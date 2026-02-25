@@ -1,4 +1,4 @@
-import * as XLSX from "https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.mjs";
+import * as XLSX from "xlsx";
 
 self.onmessage = function (e) {
   const { arrayBuffer, columns } = e.data;
