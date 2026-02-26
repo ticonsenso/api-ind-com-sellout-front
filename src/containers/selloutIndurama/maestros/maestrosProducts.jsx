@@ -501,7 +501,7 @@ const MasterProducts = () => {
         editDialog={editMaestrosProducts}
         titleEditar={"Editar producto"}
         buttonCancel={true}
-        maxWidth="md"
+        maxWidth="lg"
         buttonSubmit={true}
         handleSubmit={handleGuardarMaestrosProducts}
         handleCloseDialog={handleCloseCreateMaestrosProducts}
@@ -509,18 +509,15 @@ const MasterProducts = () => {
           <Grid
             container
             spacing={2}
-            sx={{ width: "80%", justifyContent: "center" }}
+            sx={{ width: "90%", justifyContent: "center" }}
           >
-            <Grid size={12}>
-              <Typography sx={styles.title}>Datos generales</Typography>
-            </Grid>
+
             <Grid size={6}>
               <AtomTextField
                 id="codeProductSic"
                 required={true}
                 headerTitle="Código SIC"
                 value={maestrosProducts.codeProductSic}
-                disabled={editMaestrosProducts}
                 onChange={(e) => {
                   setMaestrosProducts({
                     ...maestrosProducts,
@@ -545,7 +542,7 @@ const MasterProducts = () => {
                     ...maestrosProducts,
                     distributor: value,
                     searchProductStore:
-                      value + maestrosProducts.productDistributor,
+                      (value + maestrosProducts.productDistributor + maestrosProducts.productStore).replace(/\s+/g, ""),
                   });
                 }}
                 error={errors.distributor}
@@ -565,7 +562,7 @@ const MasterProducts = () => {
                   setMaestrosProducts({
                     ...maestrosProducts,
                     productDistributor: value,
-                    searchProductStore: maestrosProducts.distributor + value,
+                    searchProductStore: (maestrosProducts.distributor + value + maestrosProducts.productStore).replace(/\s+/g, ""),
                   });
                 }}
                 error={errors.productDistributor}
@@ -588,9 +585,9 @@ const MasterProducts = () => {
                     ...maestrosProducts,
                     productStore: value,
                     searchProductStore:
-                      maestrosProducts.distributor +
-                      maestrosProducts.productDistributor +
-                      value,
+                      (maestrosProducts.distributor +
+                        maestrosProducts.productDistributor +
+                        value).replace(/\s+/g, ""),
                   });
                 }}
                 error={errors.productStore}
@@ -599,7 +596,7 @@ const MasterProducts = () => {
                 }
               />
             </Grid>
-            <Grid size={8}>
+            <Grid size={12}>
               <AtomTextField
                 id="searchProductStore"
                 required={true}
@@ -624,7 +621,7 @@ const MasterProducts = () => {
                 onChange={(value) => dispatch(setCalculateDate(value))}
               />
             </Grid>
-            <Grid size={4} mt={0.6}>
+            <Grid size={6} mt={0.6}>
               <AtomSwitch
                 id="status"
                 required={true}

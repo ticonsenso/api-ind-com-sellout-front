@@ -445,7 +445,7 @@ const MasterAlmacen = () => {
         editDialog={editMaestrosStores}
         titleEditar={"Editar almacén"}
         buttonCancel={true}
-        maxWidth="md"
+        maxWidth="lg"
         buttonSubmit={true}
         handleSubmit={handleGuardarMaestrosStores}
         handleCloseDialog={handleCloseCreateMaestrosStores}
@@ -453,7 +453,10 @@ const MasterAlmacen = () => {
           <Grid
             container
             spacing={2}
-            sx={{ width: "80%", justifyContent: "right" }}
+            sx={{
+              width: "80%",
+              justifyContent: "right",
+            }}
           >
             {camposMaestrosStores.map((campo) => (
               <Grid size={campo.size} key={campo.id}>
@@ -493,17 +496,17 @@ const MasterAlmacen = () => {
                   }
                 />
               </Grid>
-            ))}
-            <Grid size={6}>
+            ))
+            }
+            < Grid size={6} >
               <AtomDatePicker
                 required={true}
                 mode="month"
-                height="45px"
                 label="Período"
                 value={calculateDate}
                 onChange={(value) => dispatch(setCalculateDate(value))}
               />
-            </Grid>
+            </Grid >
 
             <Grid size={6}>
               <AtomSwitch
@@ -520,10 +523,10 @@ const MasterAlmacen = () => {
                 }
               />
             </Grid>
-          </Grid>
+          </Grid >
         }
       />
-      <AtomDialogForm
+      < AtomDialogForm
         openDialog={openUploadExcel}
         titleCrear={loading ? "Estamos procesando su solicitud, por favor espere..." : "Datos Extraídos"}
         buttonCancel={loading ? false : true}
@@ -532,23 +535,24 @@ const MasterAlmacen = () => {
         maxWidth="xl"
         handleCloseDialog={handleCloseUploadExcel}
         dialogContentComponent={
-          <Box sx={{ width: "100%", justifyContent: "center" }}>
-            {loading ? (
-              <CustomLinearProgress />
-            ) : (
-              <>
-                {datosExcel.length > 0 ? (
-                  <AtomTableInformationExtraccion
-                    columns={columnsMaestrosStores}
-                    data={datosExcel}
-                    pagination={true}
-                  />
-                ) : (
-                  <Typography>No hay datos extraídos</Typography>
-                )}
-              </>
-            )}
-          </Box>
+          < Box sx={{ width: "100%", justifyContent: "center" }}>
+            {
+              loading ? (
+                <CustomLinearProgress />
+              ) : (
+                <>
+                  {datosExcel.length > 0 ? (
+                    <AtomTableInformationExtraccion
+                      columns={columnsMaestrosStores}
+                      data={datosExcel}
+                      pagination={true}
+                    />
+                  ) : (
+                    <Typography>No hay datos extraídos</Typography>
+                  )}
+                </>
+              )}
+          </Box >
         }
       />
     </>
