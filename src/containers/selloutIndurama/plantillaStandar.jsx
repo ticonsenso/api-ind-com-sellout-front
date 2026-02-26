@@ -91,8 +91,8 @@ const PlantillaStandar = () => {
   const [openDialogProduct, setOpenDialogProduct] = useState(false);
   const [openDialogoSincronizar, setOpenDialogoSincronizar] = useState(false);
   const [dataSincronizar, setDataSincronizar] = useState({
-    year: 2025,
-    month: null,
+    year: new Date().getFullYear(),
+    month: new Date().getMonth(),
   });
 
   const handleDownloadBasicInfo = async () => {
@@ -204,7 +204,7 @@ const PlantillaStandar = () => {
     setOpenDialogoSincronizar(false);
     setDataSincronizar({
       year: new Date().getFullYear(),
-      month: null,
+      month: new Date().getMonth(),
     });
   };
 
@@ -252,7 +252,7 @@ const PlantillaStandar = () => {
     if (calculateDate) {
       buscarConsolidado(search);
     }
-  }, [calculateDate, page, limit]);
+  }, [calculateDate, page, limit, filtroBusqueda]);
 
 
   const optionsFiltros = [
@@ -540,9 +540,8 @@ const PlantillaStandar = () => {
       />
       <AtomDialogForm
         openDialog={openDialogoSincronizar}
-        titleCrear={""}
-        buttonCancel={true}
-        textButtonSubmit="Sincronizar"
+        titleCrear={loading ? "Estamos sincronizando los datos, por favor espere..." : ""}
+        buttonCancel={!loading}
         maxWidth="md"
         handleCloseDialog={() => {
           setOpenDialogoSincronizar(false);
