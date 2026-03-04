@@ -289,6 +289,7 @@ const ExtraccionDatos = () => {
     const registrosConSeparadores = [];
     const registrosSinSeparar = [];
     let dateDefaulted = false;
+    let totalProcesadas = 0;
 
     const totalHojas = workbook.SheetNames.length;
 
@@ -341,6 +342,10 @@ const ExtraccionDatos = () => {
       letra: col.columnLetter,
       tipo: col.dataType,
     }));
+
+    const mesCalculo = calculateDate
+      ? new Date(calculateDate).toISOString().slice(0, 7)
+      : null;
 
     for (const sheetName of hojasAProcesar) {
       const worksheet = workbook.Sheets[sheetName];
@@ -439,6 +444,17 @@ const ExtraccionDatos = () => {
           }
         }
 
+        // Contar como fila procesada válida (pasó validación de descripción y cantidad)
+        totalProcesadas++;
+
+        // Verificar si la fecha del registro coincide con el mes de cálculo
+        if (mesCalculo && registro.saleDate) {
+          const saleDateMes = registro.saleDate.slice(0, 7);
+          if (saleDateMes !== mesCalculo) {
+            continue; // Saltar registros que no corresponden a la fecha de cálculo
+          }
+        }
+
         delete registro.saleDay;
         delete registro.saleMonth;
         delete registro.saleYear;
@@ -482,6 +498,7 @@ const ExtraccionDatos = () => {
       registrosSinSeparar,
       registrosConSeparadores,
       dateDefaulted,
+      totalProcesadas,
     };
   };
 
@@ -533,7 +550,8 @@ const ExtraccionDatos = () => {
         const {
           registrosSinSeparar,
           registrosConSeparadores,
-          dateDefaulted
+          dateDefaulted,
+          totalProcesadas
         } = procesarExtraccionDesdeConfiguracion(
           workbook,
           configuracionId,
@@ -548,7 +566,16 @@ const ExtraccionDatos = () => {
           registrosSinSeparar.length === 0 &&
           registrosConSeparadores.length === 0
         ) {
-          showSnackbar("⚠️ Error al obtener los detalles del producto", { severity: "error" });
+          if (totalProcesadas > 0) {
+            showSnackbar(
+              "⚠️ Los registros no se procesaron ya que no corresponden a la fecha de cálculo seleccionada. Verifica las fechas del archivo.",
+              { severity: "warning" }
+            );
+          } else {
+            showSnackbar("⚠️ Error al obtener los detalles del producto", { severity: "error" });
+          }
+          setData([]);
+          setCeldas([]);
           return;
         }
 
@@ -561,20 +588,8 @@ const ExtraccionDatos = () => {
         }
         setIsDateDefaulted(dateDefaulted);
 
-        const registrosFiltrados = filterByCurrentMonth(
-          registrosSinSeparar,
-          calculateDate
-        );
-
-        if (registrosFiltrados.length === 0) {
-          showSnackbar(
-            "⚠️ No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo.",
-            { severity: "info" }
-          );
-          setData([]);
-          setCeldas([]);
-          return;
-        }
+        // Los registros ya fueron filtrados por fecha dentro de procesarExtraccionDesdeConfiguracion
+        const registrosFiltrados = registrosSinSeparar;
 
         const agrupados = registrosFiltrados.reduce((acc, item) => {
           const key = `${item.distributor}_${item.codeStoreDistributor}`;
@@ -836,6 +851,7 @@ const ExtraccionDatos = () => {
         let registrosSinSeparar = [];
         let registrosConSeparadores = [];
         let dateDefaultedTotal = false;
+        let totalFilasProcesadas = 0;
 
         for (const index of sheetIndexes) {
           const hojaName = workbook.SheetNames[index];
@@ -850,7 +866,7 @@ const ExtraccionDatos = () => {
             continue;
           }
 
-          const { registrosSinSeparar: sinSep, registrosConSeparadores: conSep, dateDefaulted } =
+          const { registrosSinSeparar: sinSep, registrosConSeparadores: conSep, dateDefaulted, totalProcesadas } =
             processRows(
               rows.slice(headerInfo.rowIndex + 1),
               headerInfo.header,
@@ -863,11 +879,18 @@ const ExtraccionDatos = () => {
           registrosSinSeparar.push(...sinSep);
           registrosConSeparadores.push(...conSep);
           if (dateDefaulted) dateDefaultedTotal = true;
+          totalFilasProcesadas += totalProcesadas;
         }
 
 
         if (registrosSinSeparar.length === 0 && registrosConSeparadores.length === 0) {
-          avisoCritico("Error al obtener los detalles del producto");
+          if (totalFilasProcesadas > 0) {
+            avisoCritico(
+              "Los registros no se procesaron ya que no corresponden a la fecha de cálculo seleccionada. Verifica las fechas del archivo."
+            );
+          } else {
+            avisoCritico("Error al obtener los detalles del producto");
+          }
           return;
         }
 
@@ -884,15 +907,8 @@ const ExtraccionDatos = () => {
 
         setIsDateDefaulted(dateDefaultedTotal);
 
-        const registrosFiltrados = filterByCurrentMonth(registrosSinSeparar, calculateDate);
-        if (registrosFiltrados.length === 0) {
-          avisoCritico(
-            "No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo."
-          );
-          setData([]);
-          setCeldas([]);
-          return;
-        }
+        // Los registros ya fueron filtrados por fecha dentro de processRows
+        const registrosFiltrados = registrosSinSeparar;
 
         const camposDetectados = Object.keys(registrosFiltrados[0] || {});
         const ordenColumnas = Object.keys(etiquetasColumnas);
@@ -968,8 +984,13 @@ const ExtraccionDatos = () => {
     const registrosSinSeparar = [];
     const registrosConSeparadores = [];
     let dateDefaulted = false;
+    let totalProcesadas = 0;
 
     const mapeo = detectarColumnasAutomaticamente(encabezados, COLUMN_KEYWORDS);
+
+    const mesCalculo = calculateDate
+      ? new Date(calculateDate).toISOString().slice(0, 7)
+      : null;
 
     for (const fila of rows) {
       const rawDescripcion = extraerTextoCelda(fila[mapeo.descriptionDistributor] || "");
@@ -991,6 +1012,17 @@ const ExtraccionDatos = () => {
       if (!saleDate) {
         saleDate = getUltimoDiaMesActual(calculateDate);
         dateDefaulted = true;
+      }
+
+      // Contar como fila procesada válida (pasó validación de descripción y cantidad)
+      totalProcesadas++;
+
+      // Verificar si la fecha del registro coincide con el mes de cálculo
+      if (mesCalculo && saleDate) {
+        const saleDateMes = saleDate.slice(0, 7);
+        if (saleDateMes !== mesCalculo) {
+          continue; // Saltar registros que no corresponden a la fecha de cálculo
+        }
       }
 
       const codeProductDistributor =
@@ -1024,7 +1056,7 @@ const ExtraccionDatos = () => {
       }
     }
 
-    return { registrosSinSeparar, registrosConSeparadores, dateDefaulted };
+    return { registrosSinSeparar, registrosConSeparadores, dateDefaulted, totalProcesadas };
   };
 
   const DEFAULT_FIELD_LABELS = {
@@ -1061,10 +1093,11 @@ const ExtraccionDatos = () => {
       ...noSeleccionados
     ];
 
-    const registrosFiltrados = filterByCurrentMonth(finalData, calculateDate);
+    // Los registros ya fueron filtrados por fecha dentro de processRows
+    const registrosFiltrados = finalData;
     if (registrosFiltrados.length === 0) {
       avisoCritico(
-        "No se encontraron registros para el mes seleccionado. Verifica las fechas del archivo."
+        "Los registros no se procesaron ya que no corresponden a la fecha de cálculo seleccionada. Verifica las fechas del archivo."
       );
       setData([]);
       setCeldas([]);
