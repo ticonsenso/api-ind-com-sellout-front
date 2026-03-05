@@ -133,7 +133,19 @@ const ConfiguracionExtraccion = () => {
             count={totalExtracciones}
             loading={loading}
           />
-
+          <AtomDialogForm
+            maxWidth="xl"
+            closeButton={true}
+            openDialog={openDialogCrear}
+            buttonCancel={true}
+            textButtonCancel="Configuración terminada"
+            handleCloseDialog={handleCloseDialogCrear}
+            handleSubmit={handleSubmit}
+            titleCrear="Crear configuracion de extracción sellout"
+            dialogContentComponent={
+              <CrearConfiguracionExtraccion config={configuracion} />
+            }
+          />
         </>
       }
     />

@@ -252,6 +252,15 @@ const CrearConfiguracionExtraccion = ({ config }) => {
       showSnackbar("Por favor, complete todos los campos", { severity: "error" });
       return;
     }
+
+    const isDuplicate = params.some(
+      (p) => p.mappingToField === param.mappingToField && p.id !== param.id
+    );
+
+    if (isDuplicate) {
+      showSnackbar("Este dato a extraer ya ha sido configurado", { severity: "warning" });
+      return;
+    }
     if (param.id) {
       handleEditColumn();
     } else {
@@ -508,7 +517,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
           >
             <Grid size={12}>
               <Grid container spacing={1}>
-                <Grid
+                {/* <Grid
                   size={6}
                   sx={{
                     border: "1px solid #e8e8e8",
@@ -650,7 +659,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
                       </Grid>
                     )}
                   </Grid>
-                </Grid>
+                </Grid> */}
                 <Grid
                   size={6}
                   sx={{
@@ -693,7 +702,14 @@ const CrearConfiguracionExtraccion = ({ config }) => {
                                 mappingToField: e.target.value,
                               });
                             }}
-                            options={optionsMappingToField}
+                            options={optionsMappingToField.filter(
+                              (option) =>
+                                !params.some(
+                                  (p) =>
+                                    p.mappingToField === option.id &&
+                                    p.id !== param.id
+                                )
+                            )}
                           />
                         </Grid>
                         {camposParam.map((campo) => (
@@ -738,24 +754,26 @@ const CrearConfiguracionExtraccion = ({ config }) => {
                     )}
                   </Grid>
                 </Grid>
+                <Grid
+                  size={6}
+                  sx={{
+                    height: "400px",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+
+                  <AtomTableForm
+                    data={params}
+                    showIcons={true}
+                    actions={buttonMenu}
+                    columns={columnsExtraccion}
+                    pagination={false}
+                  />
+                </Grid>
               </Grid>
             </Grid>
-            <Grid
-              size={12}
-              sx={{
-                border: "1px solid #e8e8e8",
-                borderRadius: 4,
-                boxShadow: 2,
-              }}
-            >
-              <AtomTableForm
-                data={params}
-                showIcons={true}
-                actions={buttonMenu}
-                columns={columnsExtraccion}
-                pagination={false}
-              />
-            </Grid>
+
           </Grid>
         </>
       ),

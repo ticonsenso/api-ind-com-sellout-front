@@ -35,14 +35,7 @@ export const columnsConfiguracion = [
     field: "name",
     label: "Nombre",
   },
-  {
-    field: "description",
-    label: "Descripción",
-  },
-  {
-    field: "sourceType",
-    label: "Tipo de fuente",
-  },
+
   {
     field: "codeStoreDistributor",
     label: "Código Almacén Distribuidor",
@@ -51,6 +44,14 @@ export const columnsConfiguracion = [
     field: "distributorCompanyName",
     label: "Nombre Distribuidor",
   },
+  {
+    field: "sheetName",
+    label: "Nombre Hoja Excel",
+  },
+  // {
+  //   field: "sourceType",
+  //   label: "Tipo de fuente",
+  // },
 ];
 
 export const columnsMaestrosProducts = [
