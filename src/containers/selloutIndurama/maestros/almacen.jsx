@@ -381,7 +381,7 @@ const MasterAlmacen = () => {
               nameButton=""
               search={false}
               extra={
-                <Grid container spacing={2} justifyContent="flex-end">
+                <Grid container spacing={2} justifyContent="flex-end" mt={-2}>
                   <Grid size={3}>
                     <AtomDatePicker
                       required={true}

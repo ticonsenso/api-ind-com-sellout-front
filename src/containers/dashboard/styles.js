@@ -2,7 +2,6 @@ const styles = {
   mainContainer: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
     background: "#F2F4F8",
     height: "100vh",
     overflow: "hidden",
@@ -18,12 +17,13 @@ const styles = {
   },
   contentBox: {
     flex: 1,
-    display: "block",
+    display: "flex",
+    flexDirection: "column",
     width: "100%",
     borderRadius: 4,
     backgroundColor: "transparent",
-    height: "100vh",
-    overflow: "auto",
+    overflow: "hidden",
+    minHeight: 0,
   },
   header: {
     justifyContent: "center",

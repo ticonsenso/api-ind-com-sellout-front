@@ -23,6 +23,7 @@ import {
   ExpandMore as ExpandMoreIcon,
   InfoOutlined as InfoOutlinedIcon,
   LabelImportant as LabelImportantIcon,
+  Tune as TuneIcon,
 } from "@mui/icons-material";
 import {
   List,
@@ -1394,6 +1395,8 @@ const ExtraccionDatos = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
+              flex: 1,
+              minHeight: 0,
             }}>
             <>
               <IconoFlotante
@@ -1455,67 +1458,54 @@ const ExtraccionDatos = () => {
                 disableGutters
                 elevation={0}
                 sx={{
-                  backgroundColor: "#ffffff",
-                  borderRadius: "24px !important",
-                  border: "none",
-                  boxShadow: "0 10px 40px -10px rgba(0,0,0,0.08)",
-                  width: "95vw",
-                  margin: "0 auto",
+                  backgroundColor: "#ffffffff",
+                  borderRadius: "12px !important",
+                  width: "100%",
                   mb: 1,
                   "&:before": { display: "none" },
                   overflow: "hidden",
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    boxShadow: "0 15px 50px -10px rgba(0,0,0,0.12)",
-                  }
                 }}
               >
                 <AccordionSummary
-                  expandIcon={
-                    <Box sx={{
-                      backgroundColor: "rgba(0, 114, 206, 0.1)",
-                      borderRadius: "50%",
-                      display: "flex"
-                    }}>
-                      <ExpandMoreIcon sx={{ color: "#0072CE", fontSize: "1.2rem" }} />
-                    </Box>
-                  }
+                  expandIcon={<ExpandMoreIcon sx={{ color: "primary.main" }} />}
                   aria-controls="panel-content"
                   id="panel-header"
                   sx={{
-                    background: "linear-gradient(90deg, #ffffff 0%, #f8faff 100%)", // Very subtle gradient
-                    minHeight: "72px", // Taller header
-                    padding: "0 32px",
-                    "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-                      transform: "rotate(180deg)",
-                    },
+                    minHeight: "48px !important",
+                    height: "48px",
+                    px: 3,
+                    background: "#e4ebfdff",
+                    borderBottom: "1px solid #e2e8f0",
                     "& .MuiAccordionSummary-content": {
-                      margin: "12px 0",
+                      margin: "0 !important",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1
                     },
                   }}
                 >
-                  <Box display="flex" flexDirection="column">
-                    <Typography sx={{
-                      fontSize: "1.1rem",
-                      fontWeight: 700,
-                      color: "primary.main",
-                      letterSpacing: "-0.5px"
-                    }}>
-                      Parámetros de Carga
-                    </Typography>
-                  </Box>
+                  <TuneIcon sx={{ color: "primary.main", fontSize: "1.2rem" }} />
+                  <Typography sx={{
+                    fontSize: "0.95rem",
+                    fontWeight: 700,
+                    color: "#707070ff",
+                  }}>
+                    Parámetros de Extracción
+                  </Typography>
                 </AccordionSummary>
 
-                <AccordionDetails sx={{ padding: 2 }}>
+                <AccordionDetails >
                   <Grid
                     container
-                    spacing={2}
+                    spacing={1}
                   >
-                    <Grid size={{ xs: 12, md: 2.5 }}>
+                    <Grid size={2}>
                       <AtomDatePicker
                         id="calculateDate"
                         required={true}
                         mode="month"
+                        height="45px"
+                        color="#e4ebfdff"
                         label="Fecha de carga"
                         value={calculateDate || null}
                         onChange={(e) => {
@@ -1525,17 +1515,19 @@ const ExtraccionDatos = () => {
                       />
                     </Grid>
                     {mostrarAlerta && mensajeAlerta ? (
-                      <Grid size={{ xs: 12, md: 9 }}>
+                      <Grid size={2.5}>
                         <AtomAlert text={mensajeAlerta} severity="error" />
                       </Grid>
                     ) : (
                       <>
                         {calculateDate && (
-                          <Grid size={{ xs: 12, md: 2.5 }}>
+                          <Grid size={2.5}>
                             <AtomAutocompleteLabel
                               id="matriculacionId"
                               label="Matriculación"
                               required={true}
+                              height="45px"
+                              color="#e4ebfdff"
                               inputValue={searchMatriculacion}
                               onInputChange={(event, newValue) => {
                                 setSearchMatriculacion(newValue);
@@ -1562,10 +1554,12 @@ const ExtraccionDatos = () => {
                           </Grid>
                         )}
                         {matriculacionData && (
-                          <Grid size={{ xs: 12, md: 2.5 }}>
+                          <Grid size={2.5}>
                             <AtomAutocompleteLabel
                               id="configuracionId"
                               required={true}
+                              height="45px"
+                              color="#e4ebfdff"
                               placeholder="Seleccionar..."
                               label="Configuración"
                               value={configuracionId}
@@ -1584,10 +1578,12 @@ const ExtraccionDatos = () => {
                         )}
                         {configuracionId?.label === "CONFIGURACION ESTANDAR" && (
                           <>
-                            <Grid size={{ xs: 12, md: 3, }}>
+                            <Grid size={2.5}>
                               <AtomTextField
                                 id="distributor"
                                 disabled
+                                height="45px"
+                                color="#e4ebfdff"
                                 headerTitle="Distribuidor"
                                 onBlur={handleChangeDistributorData}
                                 value={configuracion?.distributor || ""}
@@ -1599,9 +1595,11 @@ const ExtraccionDatos = () => {
                                 }}
                               />
                             </Grid>
-                            <Grid size={{ xs: 12, md: 2.5 }}>
+                            <Grid size={2.5}>
                               <AtomTextField
                                 id="codeStoreDistributor"
+                                height="45px"
+                                color="#e4ebfdff"
                                 headerTitle="Almacén Distribuidor"
                                 value={configuracion?.codeStoreDistributor || ""}
                                 onChange={(e) => {
@@ -1622,6 +1620,8 @@ const ExtraccionDatos = () => {
                                   type={campo.type}
                                   multiline={campo.multiline}
                                   rows={campo.rows}
+                                  height="45px"
+                                  color="#e4ebfdff"
                                   value={configuracion[campo.id] || ""}
                                   placeholder={campo.placeholder}
                                   onChange={(e) =>
@@ -1633,10 +1633,12 @@ const ExtraccionDatos = () => {
                                 />
                               </Grid>
                             ))}
-                            <Grid size={{ xs: 12, md: 1.5 }}>
+                            <Grid size={1.5} mt={0.5}>
                               <AtomSwitch
                                 id="extraerTodos"
                                 title="Todas"
+                                height="45px"
+                                color="#e4ebfdff"
                                 tooltip="Define si se extraen todas las hojas"
                                 checked={configuracion.extraerTodos || false}
                                 onChange={(e) =>
@@ -1651,10 +1653,12 @@ const ExtraccionDatos = () => {
                         )}
                         {configuracionId && (
                           <>
-                            <Grid size={{ xs: 12, md: 3 }}>
+                            <Grid size={2.5}>
                               <AtomTextFielInputForm
                                 id="documento"
                                 required
+                                height="45px"
+                                color="#e4ebfdff"
                                 headerTitle="Seleccionar Excel"
                                 placeholder="Seleccionar"
                                 value={documento}
@@ -1669,10 +1673,11 @@ const ExtraccionDatos = () => {
                           </>
                         )}
                         {data.length > 0 && (
-                          <Grid mt={2.5} size={{ xs: 12, md: 1.3, }}>
+                          <Grid mt={2.5} size={1.5}>
                             <AtomButtonPrimary
                               onClick={handleOpenDialogoConfirmacion}
                               label="Guardar"
+                              height="43px"
                               disabled={loading}
                             />
                           </Grid>
@@ -1697,19 +1702,21 @@ const ExtraccionDatos = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Box>
+              <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
                 {loading ? (
                   <CustomLinearProgress />
                 ) : (
-                  <AtomTableExtraccion
-                    loading={loading}
-                    data={data}
-                    setData={setData}
-                    celdas={celdas}
-                    errors={errores}
-                    setErrores={setErrores}
-                    showIndex={true}
-                  />
+                  data.length > 0 && (
+                    <AtomTableExtraccion
+                      loading={loading}
+                      data={data}
+                      setData={setData}
+                      celdas={celdas}
+                      errors={errores}
+                      setErrores={setErrores}
+                      showIndex={true}
+                    />
+                  )
                 )}
               </Box>
             </>

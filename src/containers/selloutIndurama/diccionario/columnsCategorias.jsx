@@ -226,23 +226,15 @@ const ColumnsCategorias = ({ id }) => {
                                 debounceSearch(e.target.value);
                             }}
                             children={
-                                <>
-                                    <Grid container spacing={2}>
-                                        <Grid size={12}>
-
-                                        </Grid>
-                                        <Grid size={12}>
-                                            <AtomTableForm
-                                                columns={columns}
-                                                data={data}
-                                                actions={namePermission ? actions : []}
-                                                pagination={false}
-                                                loading={loading}
-                                            />
-                                        </Grid>
-                                    </Grid>
-
-                                </>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+                                    <AtomTableForm
+                                        columns={columns}
+                                        data={data}
+                                        actions={namePermission ? actions : []}
+                                        pagination={false}
+                                        loading={loading}
+                                    />
+                                </Box>
                             }
                         />
                     </>

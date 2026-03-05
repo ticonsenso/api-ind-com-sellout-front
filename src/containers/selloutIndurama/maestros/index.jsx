@@ -10,7 +10,7 @@ const TabGestionMaestros = () => {
     { label: "Productos", component: <MaestrosProducts key="productos" /> },
   ];
 
-  return <AtomContainerGeneral children={<TabGestionGeneral tabs={tabs} />} />;
+  return <TabGestionGeneral tabs={tabs} />;
 };
 
 export default TabGestionMaestros;

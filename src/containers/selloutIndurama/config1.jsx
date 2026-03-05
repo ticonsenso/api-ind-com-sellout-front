@@ -30,7 +30,7 @@ const Config1 = () => {
   return (
     <AtomContainerGeneral
       children={
-        <Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
           <TabGestionGeneral tabs={tabs} num={currentTab} />
         </Box>
       }

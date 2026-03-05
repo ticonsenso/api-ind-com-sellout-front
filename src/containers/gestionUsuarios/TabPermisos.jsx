@@ -148,16 +148,12 @@ const TabPermisos = () => {
             nameButton={showCreateButton ? "Crear" : ""}
             onClick={handleOpenPermission}
             children={
-              <Box
-                sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
-              >
-                <AtomTableForm
-                  actions={namePermission ? actions : []}
-                  columns={columnsPermisos}
-                  data={permissions}
-                  loading={loading}
-                />
-              </Box>
+              <AtomTableForm
+                actions={namePermission ? actions : []}
+                columns={columnsPermisos}
+                data={permissions}
+                loading={loading}
+              />
             }
           />
           <AtomDialogForm

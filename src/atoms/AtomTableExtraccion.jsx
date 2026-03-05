@@ -40,6 +40,9 @@ const StyledHeaderCell = styled(TableCell)(({ theme }) => ({
   wordWrap: "break-word",
   verticalAlign: "bottom",
   lineHeight: "1.2",
+  position: "sticky",
+  top: 0,
+  zIndex: 10,
   "&:first-of-type": {
     borderTopLeftRadius: "8px",
     borderBottomLeftRadius: "8px",
@@ -113,7 +116,7 @@ const AtomTableExtraccion = ({
   }
 
   return (
-    <div style={{ width: '100%', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden' }}>
       <StyledTableContainer component={Paper}>
         <Table stickyHeader>
           <TableHead>
@@ -151,6 +154,7 @@ const AtomTableExtraccion = ({
                           return (
                             <StyledBodyCell
                               key={index}
+                              align={"left"} // Default align left
                               sx={{
                                 color: hasError ? "#d32f2f" : "inherit",
                                 backgroundColor: hasError ? "#ffebee" : "inherit",
@@ -170,9 +174,7 @@ const AtomTableExtraccion = ({
                   <TableRow>
                     <TableCell colSpan={showIndex ? celdas.length + 1 : celdas.length} style={{ padding: 0, border: "none" }}>
                       <Box sx={{
-                        mt: 3,
-                        mb: 1,
-                        mr: 2,
+                        m: 0,
                         ml: "auto",
                         width: "fit-content",
                         background: "linear-gradient(135deg, #0072CE 0%, #00569d 100%)", // Rich gradient
@@ -221,16 +223,14 @@ const AtomTableExtraccion = ({
 
       {/* Pagination Styled */}
       <Box sx={{
-        mt: 2,
         display: 'flex',
         justifyContent: 'flex-end',
         px: 2,
-        py: 1,
-        backgroundColor: '#fff',
-        borderRadius: '16px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-        border: '1px solid rgba(0,0,0,0.05)',
-        marginBottom: 2
+        py: 0.5,
+        backgroundColor: '#ffffffff',
+        borderRadius: '8px',
+        mt: 0.5,
+        flexShrink: 0,
       }}>
         <TablePagination
           component="div"
@@ -257,7 +257,7 @@ const AtomTableExtraccion = ({
           }}
         />
       </Box>
-    </div>
+    </Box>
   );
 };
 

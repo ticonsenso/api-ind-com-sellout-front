@@ -21,29 +21,7 @@ const DetallesExtraccion = ({ data, detallesData }) => {
 
     const totalUnitsSoldDistributor = lista.reduce(
         (acc, row) => acc + Number(row.unitsSoldDistributor || 0),
-        0
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    );
-
-
-
-
+        0);
 
     return (
         <>

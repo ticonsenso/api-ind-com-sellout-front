@@ -12,22 +12,29 @@ const AtomContainerGeneral = ({
       sx={{
         height: "100%",
         justifyContent: "center",
+        flex: 1,
+        minHeight: 0,
         width: "100%",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       {encabezado && (
-        <Grid>
+        <Grid sx={{ flexShrink: 0 }}>
           {encabezado}
         </Grid>
       )}
 
-      <Grid size={12}>
+      <Grid sx={{ flex: 1, minHeight: 0, width: "100%", mb: 1.5 }}>
         <Box
           sx={{
+            mt: -1.2,
             backgroundColor: color,
-            padding: 2,
-            justifyContent: "center",
-            alignItems: "center",
+            padding: 1,
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
           }}
         >
           {children}

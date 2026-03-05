@@ -104,6 +104,10 @@ const TabGestionGeneral = ({ tabs, num = 0 }) => {
       <Box sx={{
         position: 'relative',
         zIndex: 1,
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: 0,
         animation: 'fadeIn 0.5s ease-out',
         "@keyframes fadeIn": {
           "0%": { opacity: 0, transform: "translateY(10px)" },

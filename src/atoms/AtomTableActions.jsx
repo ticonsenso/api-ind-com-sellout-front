@@ -120,14 +120,15 @@ const AtomTableActions = (props) => {
 
   const styles = {
     tableCell: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: 12,
-      color: "#A0A0A0",
-      backgroundColor: "#f9f9f9",
+      color: "#FFFFFF",
+      backgroundColor: "#0072CE", // Solid primary color for header
       position: "sticky",
       top: 0,
-      zIndex: 1,
+      zIndex: 10,
       textTransform: "uppercase",
+      padding: "12px 16px",
     },
     cellNumber: {
       fontWeight: 500,
@@ -241,346 +242,345 @@ const AtomTableActions = (props) => {
   };
 
   return (
-    <TableContainer
-      variant="outlined"
-      component={Paper}
-      sx={{
-        borderRadius: "8px",
-        width: "100%",
-        mt: 1,
-        mb: 2,
-        maxHeight: "62vh",
-        overflow: "auto",
-      }}
-    >
-      <Table stickyHeader size="small">
-        <TableHead>
-          <TableRow>
-            {mostrarIndice && <TableCell sx={styles.tableCell}></TableCell>}
-            {columnsToShow?.map((column, index) => (
-              <TableCell
-                key={`column-${index}`}
-                align="left"
-                sx={styles.tableCell}
-              >
-                {column}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows?.length > 0 ? (
-            <>
-              {rows?.map((row, rowIndex) => (
-                <React.Fragment key={row.id || rowIndex}>
-                  <TableRow
-                    key={rowIndex}
-                    sx={{
-                      fontSize: 13,
-                      backgroundColor:
-                        rowIndex % 2 === 0 ? "#f5f5ff" : "#ffffff",
-                      cursor: row.details ? "pointer" : "default",
-                    }}
-                    onClick={() => row.details && toggleRowExpansion(rowIndex)}
-                  >
-                    {mostrarIndice && (
-                      <TableCell align="left" sx={styles.cellNumber}>
-                        {(page - 1) * limit + rowIndex + 1}
-                      </TableCell>
-                    )}
-                    {columnsToMap?.map((column, index) => {
-                      const value = row.id;
-
-                      return (
-                        <TableCell
-                          key={`${row.id}-${index}`}
-                          align="left"
-                          sx={{
-                            fontSize: 12,
-                          }}
-                        >
-                          {Object.keys(row)[index] === "state" &&
-                          (row[column] === 1 || row[column] === 0) ? (
-                            <Box
-                              sx={{
-                                width: 10,
-                                height: 10,
-                                borderRadius: "50%",
-                                backgroundColor:
-                                  row[column] === 1 ? "green" : "red",
-                              }}
-                            />
-                          ) : row[column] === true || row[column] === false ? (
-                            row[column] === true ? (
-                              "SI"
-                            ) : (
-                              "NO"
-                            )
-                          ) : (
-                            formatValueByType(
-                              getNestedValue(row, column),
-                              column
-                            )
-                          )}
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden' }}>
+      <TableContainer
+        variant="outlined"
+        component={Paper}
+        sx={{
+          borderRadius: "8px",
+          width: "100%",
+          mt: 1,
+          mb: 0,
+          flex: 1,
+          minHeight: 0,
+          overflow: "auto",
+        }}
+      >
+        <Table stickyHeader size="small">
+          <TableHead>
+            <TableRow>
+              {mostrarIndice && <TableCell sx={styles.tableCell}>#</TableCell>}
+              {columnsToShow?.map((column, index) => (
+                <TableCell
+                  key={`column-${index}`}
+                  align="left"
+                  sx={styles.tableCell}
+                >
+                  {column}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows?.length > 0 ? (
+              <>
+                {rows?.map((row, rowIndex) => (
+                  <React.Fragment key={row.id || rowIndex}>
+                    <TableRow
+                      key={rowIndex}
+                      sx={{
+                        fontSize: 13,
+                        backgroundColor:
+                          rowIndex % 2 === 0 ? "#f5f5ff" : "#ffffff",
+                        cursor: row.details ? "pointer" : "default",
+                        "&:hover": {
+                          backgroundColor: alpha("#0072CE", 0.05),
+                        }
+                      }}
+                      onClick={() => row.details && toggleRowExpansion(rowIndex)}
+                    >
+                      {mostrarIndice && (
+                        <TableCell align="left" sx={styles.cellNumber}>
+                          {(page - 1) * limit + rowIndex + 1}
                         </TableCell>
-                      );
-                    })}
-                    {columnsToShow?.includes("Acciones") && (
-                      <TableCell>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          {menuItems(row)}
-                          {row.details && (
-                            <IconButton size="small">
-                              {expandedRow ? (
-                                <ExpandLessIcon
-                                  sx={{
-                                    color: "#149f1a",
-                                    borderRadius: "50%",
-                                  }}
-                                />
+                      )}
+                      {columnsToMap?.map((column, index) => {
+                        return (
+                          <TableCell
+                            key={`${row.id}-${index}`}
+                            align="left"
+                            sx={{
+                              fontSize: 12,
+                            }}
+                          >
+                            {Object.keys(row)[index] === "state" &&
+                              (row[column] === 1 || row[column] === 0) ? (
+                              <Box
+                                sx={{
+                                  width: 10,
+                                  height: 10,
+                                  borderRadius: "50%",
+                                  backgroundColor:
+                                    row[column] === 1 ? "green" : "red",
+                                }}
+                              />
+                            ) : row[column] === true || row[column] === false ? (
+                              row[column] === true ? (
+                                "SI"
                               ) : (
-                                <ExpandMoreIcon
-                                  sx={{
-                                    color: "#149f1a",
-                                    borderRadius: "50%",
-                                  }}
-                                />
-                              )}
-                            </IconButton>
-                          )}
-                        </Box>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                  {row?.details && (
-                    <TableRow sx={{ backgroundColor: "#f9f9f9" }}>
-                      <TableCell colSpan={columnsToShow.length + 1}>
-                        <Collapse
-                          in={expandedRow === rowIndex}
-                          timeout="auto"
-                          unmountOnExit
-                        >
-                          <Box>
-                            <Typography
-                              sx={{
-                                color: "text.secondary",
-                                fontSize: 13,
-                                fontWeight: 500,
-                              }}
-                              gutterBottom
-                            >
-                              Detalles:
-                            </Typography>
-                            <Table size="small">
-                              <TableHead>
-                                <TableRow>
-                                  {detailsColumns.map((col, idx) => (
-                                    <TableCell
-                                      sx={styles.tableCellDetails}
-                                      key={idx}
-                                    >
-                                      {col.label}
-                                    </TableCell>
-                                  ))}
-                                  {actionsDetails && (
-                                    <TableCell sx={styles.tableCell}>
-                                      Acciones
-                                    </TableCell>
-                                  )}
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {row?.details?.map((detalle, idx) => (
-                                  <TableRow
-                                    key={idx}
-                                    sx={{ backgroundColor: "white" }}
-                                  >
-                                    {detailsColumns.map((col, i) => (
+                                "NO"
+                              )
+                            ) : (
+                              formatValueByType(
+                                getNestedValue(row, column),
+                                column
+                              )
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                      {columnsToShow?.includes("Acciones") && (
+                        <TableCell>
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            {menuItems(row)}
+                            {row.details && (
+                              <IconButton size="small">
+                                {expandedRow === rowIndex ? (
+                                  <ExpandLessIcon
+                                    sx={{
+                                      color: "#149f1a",
+                                      borderRadius: "50%",
+                                    }}
+                                  />
+                                ) : (
+                                  <ExpandMoreIcon
+                                    sx={{
+                                      color: "#149f1a",
+                                      borderRadius: "50%",
+                                    }}
+                                  />
+                                )}
+                              </IconButton>
+                            )}
+                          </Box>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                    {row?.details && (
+                      <TableRow sx={{ backgroundColor: "#f9f9f9" }}>
+                        <TableCell colSpan={columnsToShow.length + 1}>
+                          <Collapse
+                            in={expandedRow === rowIndex}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            <Box sx={{ p: 2 }}>
+                              <Typography
+                                sx={{
+                                  color: "primary.main",
+                                  fontSize: 13,
+                                  fontWeight: 600,
+                                  mb: 1
+                                }}
+                              >
+                                Detalles:
+                              </Typography>
+                              <Table size="small">
+                                <TableHead>
+                                  <TableRow>
+                                    {detailsColumns.map((col, idx) => (
                                       <TableCell
-                                        sx={{
-                                          fontSize: 12,
-                                          color: "#575757",
-                                        }}
-                                        key={i}
+                                        sx={{ ...styles.tableCellDetails, zIndex: 5 }}
+                                        key={idx}
                                       >
-                                        {detalle[col.field]}
+                                        {col.label}
                                       </TableCell>
                                     ))}
                                     {actionsDetails && (
-                                      <TableCell>
-                                        {actionsDetails.map((item, index) => (
-                                          <IconButton
-                                            key={index}
-                                            color={item.color}
-                                            onClick={() =>
-                                              item.onClick(detalle, index)
-                                            }
-                                          >
-                                            {item.icon}
-                                          </IconButton>
-                                        ))}
+                                      <TableCell sx={styles.tableCell}>
+                                        Acciones
                                       </TableCell>
                                     )}
                                   </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
+                                </TableHead>
+                                <TableBody>
+                                  {row?.details?.map((detalle, idx) => (
+                                    <TableRow
+                                      key={idx}
+                                      sx={{ backgroundColor: "white" }}
+                                    >
+                                      {detailsColumns.map((col, i) => (
+                                        <TableCell
+                                          sx={{
+                                            fontSize: 12,
+                                            color: "#575757",
+                                          }}
+                                          key={i}
+                                        >
+                                          {detalle[col.field]}
+                                        </TableCell>
+                                      ))}
+                                      {actionsDetails && (
+                                        <TableCell>
+                                          {actionsDetails.map((item, index) => (
+                                            <IconButton
+                                              key={index}
+                                              color={item.color}
+                                              onClick={() =>
+                                                item.onClick(detalle, index)
+                                              }
+                                            >
+                                              {item.icon}
+                                            </IconButton>
+                                          ))}
+                                        </TableCell>
+                                      )}
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            </Box>
+                          </Collapse>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </React.Fragment>
+                ))}
+
+                {footer && (
+                  <TableRow sx={{ backgroundColor: "white", position: 'sticky', bottom: 0, zIndex: 5 }}>
+                    <TableCell
+                      colSpan={footer.colspan}
+                      sx={{
+                        textAlign: "center",
+                        fontSize: "13px",
+                        textTransform: "capitalize",
+                        fontWeight: "600",
+                        backgroundColor: "#f1f5f9",
+                        color: "primary.main",
+                      }}
+                    >
+                      {footer?.title}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        textAlign: "left",
+                        fontSize: "13px",
+                        textTransform: "capitalize",
+                        fontWeight: "600",
+                        backgroundColor: "#f1f5f9",
+                        color: "primary.main",
+                      }}
+                    >
+                      {(() => {
+                        const valor = footer?.field;
+                        const total = formatValueByType(
+                          rows.reduce(
+                            (sum, item) => sum + parseFloat(item[valor] || 0),
+                            0
+                          ),
+                          footer?.type
+                        );
+                        const esCommissionWeight =
+                          valor === "commissionWeight" || valor === "weight";
+                        const esMayorA100 = total > 100;
+
+                        const contenido = (
+                          <Box
+                            sx={{
+                              color:
+                                esCommissionWeight && esMayorA100
+                                  ? "red"
+                                  : "inherit",
+                              fontWeight:
+                                esCommissionWeight && esMayorA100
+                                  ? "bold"
+                                  : "inherit",
+                            }}
+                          >
+                            {formatValueByType(total, footer?.type)}
                           </Box>
-                        </Collapse>
+                        );
+
+                        return esCommissionWeight && esMayorA100 ? (
+                          <Tooltip title="El peso es mayor a 100">
+                            {contenido}
+                          </Tooltip>
+                        ) : (
+                          contenido
+                        );
+                      })()}
+                    </TableCell>
+                    {footer?.field1 && (
+                      <TableCell
+                        sx={{
+                          textAlign: "left",
+                          fontSize: "14px",
+                          fontWeight: "600",
+                          backgroundColor: "#f1f5f9",
+                        }}
+                      >
+                        $
+                        {(() => {
+                          const valor = footer.field1;
+                          return formatValueByType(
+                            rows.reduce(
+                              (sum, item) => sum + parseFloat(item[valor] || 0),
+                              0
+                            ),
+                            footer?.type
+                          );
+                        })()}
                       </TableCell>
-                    </TableRow>
-                  )}
-                </React.Fragment>
-              ))}
-
-              {footer && (
-                <TableRow sx={{ backgroundColor: "white" }}>
-                  <TableCell
-                    colSpan={footer.colspan}
-                    sx={{
-                      textAlign: "center",
-                      fontSize: "13px",
-                      textTransform: "capitalize",
-                      fontWeight: "500",
-                      lineHeight: "28px",
-                      height: "50px",
-                      color: "primary.main",
-                    }}
-                  >
-                    {footer?.title}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      textAlign: "left",
-                      fontSize: "13px",
-                      textTransform: "capitalize",
-                      fontWeight: "500",
-                      lineHeight: "28px",
-                      color: "primary.main",
-                    }}
-                  >
-                    {(() => {
-                      const valor = footer?.field;
-                      const total = formatValueByType(
-                        rows.reduce(
-                          (sum, item) => sum + parseFloat(item[valor]),
-                          0
-                        ),
-                        footer?.type
-                      );
-                      const esCommissionWeight =
-                        valor === "commissionWeight" || valor === "weight";
-                      const esMayorA100 = total > 100;
-
-                      const contenido = (
-                        <Box
-                          sx={{
-                            color:
-                              esCommissionWeight && esMayorA100
-                                ? "red"
-                                : "inherit",
-                            fontWeight:
-                              esCommissionWeight && esMayorA100
-                                ? "bold"
-                                : "inherit",
-                          }}
-                        >
-                          {formatValueByType(total, footer?.type)}
-                        </Box>
-                      );
-
-                      return esCommissionWeight && esMayorA100 ? (
-                        <Tooltip title="El peso es mayor a 100">
-                          {contenido}
-                        </Tooltip>
-                      ) : (
-                        contenido
-                      );
-                    })()}
-                  </TableCell>
-                  {footer?.field1 && (
-                    <TableCell
-                      sx={{
-                        textAlign: "left",
-                        fontSize: "14px",
-                        textTransform: "capitalize",
-                        fontWeight: "500",
-                        lineHeight: "28px",
-                      }}
-                    >
-                      $
-                      {(() => {
-                        const valor = footer.field1;
-                        return formatValueByType(
-                          rows.reduce(
-                            (sum, item) => sum + parseFloat(item[valor]),
-                            0
-                          ),
-                          footer?.type
-                        );
-                      })()}
-                    </TableCell>
-                  )}
-                  {footer?.field2 && (
-                    <TableCell
-                      sx={{
-                        textAlign: "left",
-                        fontSize: "14px",
-                        textTransform: "capitalize",
-                        fontWeight: "500",
-                        lineHeight: "28px",
-                      }}
-                    >
-                      $
-                      {(() => {
-                        const valor = footer?.field2;
-                        return formatValueByType(
-                          rows.reduce(
-                            (sum, item) => sum + parseFloat(item[valor]),
-                            0
-                          ),
-                          footer?.type
-                        );
-                      })()}
-                    </TableCell>
-                  )}
-                  <TableCell></TableCell>
-                </TableRow>
-              )}
-            </>
-          ) : (
-            <TableRow>
-              <TableCell
-                colSpan={columnsToShow?.length + (buttonMenu?.length ? 1 : 0)}
-              >
-                <Box textAlign="center" py={2}>
-                  <Typography variant="body1" color="textSecondary">
-                    No existen datos registrados.
-                  </Typography>
-                </Box>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+                    )}
+                    {footer?.field2 && (
+                      <TableCell
+                        sx={{
+                          textAlign: "left",
+                          fontSize: "14px",
+                          fontWeight: "600",
+                          backgroundColor: "#f1f5f9",
+                        }}
+                      >
+                        $
+                        {(() => {
+                          const valor = footer?.field2;
+                          return formatValueByType(
+                            rows.reduce(
+                              (sum, item) => sum + parseFloat(item[valor] || 0),
+                              0
+                            ),
+                            footer?.type
+                          );
+                        })()}
+                      </TableCell>
+                    )}
+                    <TableCell sx={{ backgroundColor: "#f1f5f9" }}></TableCell>
+                  </TableRow>
+                )}
+              </>
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columnsToShow?.length + (buttonMenu?.length ? 1 : 0)}
+                >
+                  <Box textAlign="center" py={4}>
+                    <Typography variant="body1" color="textSecondary">
+                      No existen datos registrados.
+                    </Typography>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
       {pagination && (
-        <TableRow
-          sx={{
-            fontWeight: "bold",
-            color: "#A0A0A0",
-            backgroundColor: "#f9f9f9",
-            position: "sticky",
-            bottom: -1,
-            zIndex: 1,
-          }}
-        >
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          backgroundColor: '#f8fafc',
+          borderTop: '1px solid #e2e8f0',
+          borderRadius: "0 0 8px 8px",
+          flexShrink: 0
+        }}>
           <TablePagination
             rowsPerPageOptions={rowsPerPageOptions}
             count={totalData}
             rowsPerPage={limit}
             page={page - 1}
             onPageChange={(event, newPage) =>
-              handleChangePage(event, newPage + 1)
+              handleChangePage(newPage + 1)
             }
             onRowsPerPageChange={handleChangeRowsPerPage}
             labelRowsPerPage="Filas por página:"
@@ -588,9 +588,9 @@ const AtomTableActions = (props) => {
               `${from}-${to} de ${count}`
             }
           />
-        </TableRow>
+        </Box>
       )}
-    </TableContainer>
+    </Box>
   );
 };
 

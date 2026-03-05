@@ -62,15 +62,28 @@ const AtomCard = (props) => {
       sx={{
         width: "100%",
         display: "flex",
-        alignItems: "center",
-        flexDirection: "row",
+        flexDirection: "column",
+        flex: 1,
+        minHeight: 0,
         borderRadius: 5,
-        justifyContent: "right",
         backgroundColor: color,
+        height: "100%",
+        overflow: "hidden",
       }}
     >
       {!fullScreen && (
-        <>
+        <Grid
+          container
+          sx={{
+            flexShrink: 0,
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "row",
+            width: "100%",
+            p: 1,
+            justifyContent: "right",
+          }}
+        >
           <Grid size={4}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, paddingLeft: 2 }}>
               <Typography
@@ -105,8 +118,7 @@ const AtomCard = (props) => {
                       input: {
                         endAdornment: (
                           <InputAdornment position="end">
-                            <IconButton
-                            >
+                            <IconButton>
                               <SearchIcon />
                             </IconButton>
                           </InputAdornment>
@@ -174,14 +186,14 @@ const AtomCard = (props) => {
               </Button>
             )}
           </Grid>
-        </>
+        </Grid>
       )}
       {extra && (
         <Grid
           size={12}
           sx={{
             width: "100%",
-
+            flexShrink: 0,
           }}
         >
           {extra}
@@ -194,19 +206,22 @@ const AtomCard = (props) => {
           sx={{
             width: "100%",
             borderRadius: 4,
+            flex: 1,
+            minHeight: 0,
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
             ...(fullScreen && {
               height: "100vh",
               width: "100vw",
               overflow: "auto",
               padding: 2,
               backgroundColor: "white",
-              display: "flex",
-              flexDirection: "column",
             }),
           }}
         >
           {fullScreen && (
-            <Box sx={{ width: "100%", display: "flex", justifyContent: "flex-end", mb: 1 }}>
+            <Box sx={{ width: "100%", display: "flex", justifyContent: "flex-end", mb: 1, flexShrink: 0 }}>
               <Tooltip title="Salir de pantalla completa">
                 <IconButton onClick={handleToggleFullscreen} color="primary">
                   <FullscreenExitIcon />
@@ -214,7 +229,9 @@ const AtomCard = (props) => {
               </Tooltip>
             </Box>
           )}
-          {children}
+          <Box sx={{ flex: 1, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+            {children}
+          </Box>
         </Grid>
       )}
     </Grid>

@@ -42,7 +42,9 @@ const RootContainer = styled(Box)(({ theme }) => ({
   width: "100%",
   display: "flex",
   flexDirection: "column",
-  height: "100%",
+  flex: 1,
+  minHeight: 0,
+  overflow: "hidden",
 }));
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
@@ -50,7 +52,8 @@ const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   boxShadow: "none",
   flex: 1,
   width: "100%",
-  overflowX: "auto",
+  maxHeight: "100%",
+  overflow: "auto",
   "& .MuiTable-root": {
     borderCollapse: "separate",
     borderSpacing: "0 8px",
@@ -65,12 +68,15 @@ const StyledHeaderCell = styled(TableCell)(({ theme }) => ({
   color: theme.palette.common.white,
   fontWeight: 700,
   fontSize: "0.85rem",
-  padding: "16px",
+  padding: "15px",
   borderBottom: "none",
   whiteSpace: "normal",
   wordWrap: "break-word",
   verticalAlign: "bottom",
-  lineHeight: "1.2",
+  lineHeight: "1",
+  position: "sticky",
+  top: 0,
+  zIndex: 10,
   "&:first-of-type": {
     borderTopLeftRadius: "8px",
     borderBottomLeftRadius: "8px",
@@ -235,292 +241,293 @@ const AtomTableForm = (props) => {
   return (
     <RootContainer>
       {loading && <CustomLinearProgress />}
-      <StyledTableContainer component={Paper}>
-        <Table stickyHeader aria-label="custom table">
-          <TableHead>
-            <TableRow>
-              {selectable && (
-                <StyledHeaderCell sx={{ width: "60px" }}>
-                  <input
-                    type="checkbox"
-                    checked={selectedRows.length === data.length && data.length > 0}
-                    onChange={handleSelectAll}
-                    style={{ cursor: "pointer", width: "18px", height: "18px", accentColor: "#0072CE" }}
-                  />
-                  {selectedRows.length > 0 && (
-                    <IconButton
-                      onClick={() => onDeleteSelected?.(selectedRows)}
-                      size="small"
-                      color="error"
-                      sx={{ ml: 1, padding: 0 }}
-                    >
-                      <DeleteForeverIcon fontSize="small" />
-                    </IconButton>
-                  )}
-                </StyledHeaderCell>
-              )}
-
-              {showRowNumber && <StyledHeaderCell sx={{ width: "60px" }}>#</StyledHeaderCell>}
-              {detailsColumns?.length > 0 && <StyledHeaderCell sx={{ width: "50px" }} />}
-
-              {columns?.map((column, index) => {
-                const isActive = orderBy === column.field;
-                return (
-                  <StyledHeaderCell
-                    key={index}
-                    align={column?.align || "left"}
-                    onClick={() => column.field && handleSort(column.field)}
-                    sx={{
-                      cursor: column.field ? "pointer" : "default",
-                      width: column.width || "auto",
-                      maxWidth: "210px"
-                    }}
-                  >
-                    <Box display="flex" alignItems="center" justifyContent={column.align === 'right' ? 'flex-end' : 'flex-start'}>
-                      {column.label}
-                      {column.field && (
-                        <Box component="span" sx={{ ml: 1, display: 'flex', alignItems: 'center', color: isActive ? "#fff" : "rgba(255,255,255,0.6)" }}>
-                          {isActive ? (
-                            order === "asc" ? <ArrowUpwardIcon fontSize="small" /> : <ArrowDownwardIcon fontSize="small" />
-                          ) : (
-                            <ArrowUpwardIcon fontSize="small" sx={{ opacity: 0.5, "&:hover": { opacity: 1, color: "#fff" } }} />
-                          )}
-                        </Box>
-                      )}
-                    </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden' }}>
+        <StyledTableContainer component={Paper}>
+          <Table stickyHeader size="small">
+            <TableHead>
+              <TableRow>
+                {selectable && (
+                  <StyledHeaderCell sx={{ width: "60px" }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedRows.length === data.length && data.length > 0}
+                      onChange={handleSelectAll}
+                      style={{ cursor: "pointer", width: "18px", height: "18px", accentColor: "#0072CE" }}
+                    />
+                    {selectedRows.length > 0 && (
+                      <IconButton
+                        onClick={() => onDeleteSelected?.(selectedRows)}
+                        size="small"
+                        color="error"
+                        sx={{ ml: 1, padding: 0 }}
+                      >
+                        <DeleteForeverIcon fontSize="small" />
+                      </IconButton>
+                    )}
                   </StyledHeaderCell>
-                );
-              })}
+                )}
 
-              {actions?.length > 0 && (
-                <StyledHeaderCell align="center" sx={{ minWidth: "100px", width: "auto" }}>Acciones</StyledHeaderCell>
-              )}
-            </TableRow>
-          </TableHead>
+                {showRowNumber && <StyledHeaderCell sx={{ width: "60px" }}>#</StyledHeaderCell>}
+                {detailsColumns?.length > 0 && <StyledHeaderCell sx={{ width: "50px" }} />}
 
-          <TableBody>
-            {data?.length > 0 ? (
-              <>
-                {getSortedData()?.map((row, rowIndex) => (
-                  <React.Fragment key={row.id || rowIndex}>
-                    <StyledBodyRow>
-                      {selectable && (
-                        <StyledBodyCell padding="checkbox">
-                          <input
-                            type="checkbox"
-                            checked={selectedRows.includes(row.id)}
-                            onChange={() => handleSelectRow(row.id)}
-                            style={{ cursor: "pointer", width: "18px", height: "18px", margin: "auto", display: "block", accentColor: "#0072CE" }}
-                          />
-                        </StyledBodyCell>
-                      )}
-                      {showRowNumber && <StyledBodyCell>{rowIndex + 1}</StyledBodyCell>}
-
-                      {detailsColumns?.length > 0 && (
-                        <StyledBodyCell>
-                          <IconButton
-                            size="small"
-                            onClick={() => row.details && toggleRowExpansion(rowIndex)}
-                            sx={{
-                              color: expandedRow === rowIndex ? "#0072CE" : "inherit",
-                              background: expandedRow === rowIndex ? alpha("#0072CE", 0.1) : "transparent"
-                            }}
-                          >
-                            {expandedRow === rowIndex ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                          </IconButton>
-                        </StyledBodyCell>
-                      )}
-
-                      {columns?.map((column, colIndex) => (
-                        <StyledBodyCell
-                          key={colIndex}
-                          align={column?.align || "left"}
-                          sx={{
-                            textAlign: ["dinero", "porcentaje", "number"].includes(column?.type) ? "right" : "left",
-                            maxWidth: "210px"
-                          }}
-                        >
-                          {column?.render ? (
-                            column?.render(row)
-                          ) : typeof row[column?.field] === "boolean" ? (
-                            row[column?.field] ? (
-                              <CheckCircleIcon fontSize="small" sx={{ color: "#2e7d32" }} />
+                {columns?.map((column, index) => {
+                  const isActive = orderBy === column.field;
+                  return (
+                    <StyledHeaderCell
+                      key={index}
+                      align={column?.align || "left"}
+                      onClick={() => column.field && handleSort(column.field)}
+                      sx={{
+                        cursor: column.field ? "pointer" : "default",
+                        width: column.width || "auto",
+                        maxWidth: "210px"
+                      }}
+                    >
+                      <Box display="flex" alignItems="center" justifyContent={column.align === 'right' ? 'flex-end' : 'flex-start'}>
+                        {column.label}
+                        {column.field && (
+                          <Box component="span" sx={{ ml: 1, display: 'flex', alignItems: 'center', color: isActive ? "#fff" : "rgba(255,255,255,0.6)" }}>
+                            {isActive ? (
+                              order === "asc" ? <ArrowUpwardIcon fontSize="small" /> : <ArrowDownwardIcon fontSize="small" />
                             ) : (
-                              <UnpublishedIcon fontSize="small" sx={{ color: "#d32f2f" }} />
-                            )
-                          ) : ["valor", "amount", "estimated_value"].includes(column?.field) ? (
-                            parseFloat(row[column?.field]).toFixed(decimalesCantidad)
-                          ) : (
-                            formatValueByType(row[column?.field], column?.type)
-                          )}
-                        </StyledBodyCell>
-                      ))}
+                              <ArrowUpwardIcon fontSize="small" sx={{ opacity: 0.5, "&:hover": { opacity: 1, color: "#fff" } }} />
+                            )}
+                          </Box>
+                        )}
+                      </Box>
+                    </StyledHeaderCell>
+                  );
+                })}
 
-                      {actions?.length > 0 && (
-                        <StyledBodyCell align="center">
-                          <Box
-                            display="flex"
-                            justifyContent="center"
+                {actions?.length > 0 && (
+                  <StyledHeaderCell align="center" sx={{ minWidth: "100px", width: "auto" }}>Acciones</StyledHeaderCell>
+                )}
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {data?.length > 0 ? (
+                <>
+                  {getSortedData()?.map((row, rowIndex) => (
+                    <React.Fragment key={row.id || rowIndex}>
+                      <StyledBodyRow>
+                        {selectable && (
+                          <StyledBodyCell padding="checkbox">
+                            <input
+                              type="checkbox"
+                              checked={selectedRows.includes(row.id)}
+                              onChange={() => handleSelectRow(row.id)}
+                              style={{ cursor: "pointer", width: "18px", height: "18px", margin: "auto", display: "block", accentColor: "#0072CE" }}
+                            />
+                          </StyledBodyCell>
+                        )}
+                        {showRowNumber && <StyledBodyCell>{rowIndex + 1}</StyledBodyCell>}
+
+                        {detailsColumns?.length > 0 && (
+                          <StyledBodyCell>
+                            <IconButton
+                              size="small"
+                              onClick={() => row.details && toggleRowExpansion(rowIndex)}
+                              sx={{
+                                color: expandedRow === rowIndex ? "#0072CE" : "inherit",
+                                background: expandedRow === rowIndex ? alpha("#0072CE", 0.1) : "transparent"
+                              }}
+                            >
+                              {expandedRow === rowIndex ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                            </IconButton>
+                          </StyledBodyCell>
+                        )}
+
+                        {columns?.map((column, colIndex) => (
+                          <StyledBodyCell
+                            key={colIndex}
+                            align={column?.align || "left"}
                             sx={{
-                              flexWrap: 'wrap',
-                              width: '100%',
-                              margin: '0 auto',
-                              gap: '4px'
+                              textAlign: ["dinero", "porcentaje", "number"].includes(column?.type) ? "right" : "left",
+                              maxWidth: "210px"
                             }}
                           >
-                            {actions?.map((action, actionIndex) => {
-                              if (
-                                action.label === "Descargar formato" &&
-                                row.sourceType !== "FILE"
-                              ) return null;
-                              if (action.visible && !action.visible(row)) return null;
-
-                              const colorKey = action.color || "info";
-
-                              const buttonContent = (
-                                <ActionButton
-                                  key={actionIndex}
-                                  colorKey={colorKey}
-                                  onClick={() => action?.onClick(row, rowIndex)}
-                                  size="small"
-                                  isIconOnly={showIcons}
-                                >
-                                  {showIcons ? (
-                                    action?.color === "success" ? <FactCheckIcon fontSize="small" /> :
-                                      action?.color === "info" ? <EditSquareIcon fontSize="small" /> :
-                                        action?.color === "error" ? <DeleteForeverIcon fontSize="small" /> :
-                                          action?.color === "setting" ? <SettingsIcon fontSize="small" /> :
-                                            action?.color === "warning" ? <WarningIcon fontSize="small" /> : null
-                                  ) : action.label}
-                                </ActionButton>
-                              );
-
-                              return showIcons ? (
-                                <Tooltip key={actionIndex} title={action.label} arrow placement="top">
-                                  <span>{buttonContent}</span>
-                                </Tooltip>
+                            {column?.render ? (
+                              column?.render(row)
+                            ) : typeof row[column?.field] === "boolean" ? (
+                              row[column?.field] ? (
+                                <CheckCircleIcon fontSize="small" sx={{ color: "#2e7d32" }} />
                               ) : (
-                                buttonContent
-                              );
-                            })}
-                          </Box>
-                        </StyledBodyCell>
-                      )}
-                    </StyledBodyRow>
+                                <UnpublishedIcon fontSize="small" sx={{ color: "#d32f2f" }} />
+                              )
+                            ) : ["valor", "amount", "estimated_value"].includes(column?.field) ? (
+                              parseFloat(row[column?.field]).toFixed(decimalesCantidad)
+                            ) : (
+                              formatValueByType(row[column?.field], column?.type)
+                            )}
+                          </StyledBodyCell>
+                        ))}
 
-                    {row?.details && (
-                      <TableRow>
-                        <TableCell
-                          style={{ paddingBottom: 0, paddingTop: 0, border: 'none' }}
-                          colSpan={columns.length + 2 + (selectable ? 1 : 0)}
-                        >
-                          <Collapse in={expandedRow === rowIndex} timeout="auto" unmountOnExit>
-                            <Box sx={{
-                              margin: "10px 24px 24px 24px",
-                              padding: 3,
-                              background: "#f8fafc",
-                              borderRadius: '12px',
-                              border: '1px solid #e2e8f0',
-                            }}>
-                              <Typography variant="subtitle2" gutterBottom component="div" sx={{ color: '#0072CE', fontWeight: 700, fontSize: "0.95rem" }}>
-                                {textDetails}:
-                              </Typography>
-                              <Table size="small" aria-label="details">
-                                <TableHead>
-                                  <TableRow>
-                                    {detailsColumns?.map((col, idx) => (
-                                      <TableCell key={idx} sx={{ fontWeight: 600, color: '#555', borderBottom: '1px solid #cbd5e1' }}>{col.label}</TableCell>
-                                    ))}
-                                  </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                  {row?.details?.map((detail, idx) => (
-                                    <TableRow key={idx}>
-                                      {detailsColumns?.map((col, i) => (
-                                        <TableCell key={i} component="th" scope="row" sx={{ borderBottom: '1px solid #e2e8f0' }}>
-                                          {detail[col.field]}
-                                        </TableCell>
+                        {actions?.length > 0 && (
+                          <StyledBodyCell align="center">
+                            <Box
+                              display="flex"
+                              justifyContent="center"
+                              sx={{
+                                flexWrap: 'wrap',
+                                width: '100%',
+                                margin: '0 auto',
+                                gap: '4px'
+                              }}
+                            >
+                              {actions?.map((action, actionIndex) => {
+                                if (
+                                  action.label === "Descargar formato" &&
+                                  row.sourceType !== "FILE"
+                                ) return null;
+                                if (action.visible && !action.visible(row)) return null;
+
+                                const colorKey = action.color || "info";
+
+                                const buttonContent = (
+                                  <ActionButton
+                                    key={actionIndex}
+                                    colorKey={colorKey}
+                                    onClick={() => action?.onClick(row, rowIndex)}
+                                    size="small"
+                                    isIconOnly={showIcons}
+                                  >
+                                    {showIcons ? (
+                                      action?.color === "success" ? <FactCheckIcon fontSize="small" /> :
+                                        action?.color === "info" ? <EditSquareIcon fontSize="small" /> :
+                                          action?.color === "error" ? <DeleteForeverIcon fontSize="small" /> :
+                                            action?.color === "setting" ? <SettingsIcon fontSize="small" /> :
+                                              action?.color === "warning" ? <WarningIcon fontSize="small" /> : null
+                                    ) : action.label}
+                                  </ActionButton>
+                                );
+
+                                return showIcons ? (
+                                  <Tooltip key={actionIndex} title={action.label} arrow placement="top">
+                                    <span>{buttonContent}</span>
+                                  </Tooltip>
+                                ) : (
+                                  buttonContent
+                                );
+                              })}
+                            </Box>
+                          </StyledBodyCell>
+                        )}
+                      </StyledBodyRow>
+
+                      {row?.details && (
+                        <TableRow>
+                          <TableCell
+                            style={{ paddingBottom: 0, paddingTop: 0, border: 'none' }}
+                            colSpan={columns.length + 2 + (selectable ? 1 : 0)}
+                          >
+                            <Collapse in={expandedRow === rowIndex} timeout="auto" unmountOnExit>
+                              <Box sx={{
+                                margin: "10px 24px 24px 24px",
+                                padding: 3,
+                                background: "#f8fafc",
+                                borderRadius: '12px',
+                                border: '1px solid #e2e8f0',
+                              }}>
+                                <Typography variant="subtitle2" gutterBottom component="div" sx={{ color: '#0072CE', fontWeight: 700, fontSize: "0.95rem" }}>
+                                  {textDetails}:
+                                </Typography>
+                                <Table size="small" aria-label="details">
+                                  <TableHead>
+                                    <TableRow>
+                                      {detailsColumns?.map((col, idx) => (
+                                        <TableCell key={idx} sx={{ fontWeight: 600, color: '#555', borderBottom: '1px solid #cbd5e1' }}>{col.label}</TableCell>
                                       ))}
                                     </TableRow>
-                                  ))}
-                                </TableBody>
-                              </Table>
-                            </Box>
-                          </Collapse>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </React.Fragment>
-                ))}
-              </>
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={(columns?.length || 0) + (selectable ? 1 : 0) + (showRowNumber ? 1 : 0) + (detailsColumns?.length > 0 ? 1 : 0) + (actions?.length > 0 ? 1 : 0)}
-                  align="center"
-                  sx={{ py: 8, color: 'text.secondary', fontSize: '1.2rem', fontStyle: 'italic', background: 'transparent' }}
-                >
-                  No existen datos registrados.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </StyledTableContainer>
+                                  </TableHead>
+                                  <TableBody>
+                                    {row?.details?.map((detail, idx) => (
+                                      <TableRow key={idx}>
+                                        {detailsColumns?.map((col, i) => (
+                                          <TableCell key={i} component="th" scope="row" sx={{ borderBottom: '1px solid #e2e8f0' }}>
+                                            {detail[col.field]}
+                                          </TableCell>
+                                        ))}
+                                      </TableRow>
+                                    ))}
+                                  </TableBody>
+                                </Table>
+                              </Box>
+                            </Collapse>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </>
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={(columns?.length || 0) + (selectable ? 1 : 0) + (showRowNumber ? 1 : 0) + (detailsColumns?.length > 0 ? 1 : 0) + (actions?.length > 0 ? 1 : 0)}
+                    align="center"
+                    sx={{ py: 8, color: 'text.secondary', fontSize: '1.2rem', fontStyle: 'italic', background: 'transparent' }}
+                  >
+                    No existen datos registrados.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </StyledTableContainer>
 
-      {data?.length > 0 && pagination && (
-        <Box sx={{
-          mt: 2,
-          display: 'flex',
-          justifyContent: 'flex-end',
-          px: 2,
-          py: 1,
-          backgroundColor: '#fff',
-          borderRadius: '16px',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-          border: '1px solid rgba(0,0,0,0.05)'
-        }}>
-          <TablePagination
-            component="div"
-            rowsPerPageOptions={rowsPerPageOptions}
-            count={count}
-            rowsPerPage={limit}
-            page={page - 1}
-            onPageChange={(event, newPage) => handleChangePage(event, newPage + 1)}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            labelRowsPerPage="Filas por página:"
-            labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
-            sx={{
-              color: '#334155',
-              '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
-                fontWeight: 600,
-                fontSize: '0.85rem'
-              },
-              '& .MuiTablePagination-select': {
-                backgroundColor: '#F7F9FC',
-                borderRadius: '8px',
-                paddingTop: '6px',
-                paddingBottom: '6px'
-              }
-            }}
-            SelectProps={{
-              inputProps: {
-                'aria-label': 'rows per page',
-              },
-              native: false,
-              MenuProps: {
-                container: () => document.fullscreenElement || document.body,
-                disablePortal: false, // Ensure portal is used but directed to correct container
-                PaperProps: {
-                  style: {
-                    maxHeight: 200, // Limit height to avoid overflow issues
+        {data?.length > 0 && pagination && (
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            px: 2,
+            py: 0.5,
+            backgroundColor: '#ffffffff',
+            borderRadius: '8px',
+            mt: 0.5,
+            flexShrink: 0,
+          }}>
+            <TablePagination
+              component="div"
+              rowsPerPageOptions={rowsPerPageOptions}
+              count={count}
+              rowsPerPage={limit}
+              page={page - 1}
+              onPageChange={(event, newPage) => handleChangePage(event, newPage + 1)}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              labelRowsPerPage="Filas por página:"
+              labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
+              sx={{
+                color: '#334155',
+                '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
+                  fontWeight: 600,
+                  fontSize: '0.85rem'
+                },
+                '& .MuiTablePagination-select': {
+                  backgroundColor: '#F7F9FC',
+                  borderRadius: '8px',
+                  paddingTop: '6px',
+                  paddingBottom: '6px'
+                }
+              }}
+              SelectProps={{
+                inputProps: {
+                  'aria-label': 'rows per page',
+                },
+                native: false,
+                MenuProps: {
+                  container: () => document.fullscreenElement || document.body,
+                  disablePortal: false,
+                  PaperProps: {
+                    style: {
+                      maxHeight: 150,
+                    },
                   },
                 },
-              },
-            }}
-          />
-        </Box>
-      )}
+              }}
+            />
+          </Box>
+        )}
+      </Box>
     </RootContainer>
   );
 };
