@@ -342,6 +342,90 @@ const extraReducers = (builder) => {
       state.permissions = [];
       state.optionsPermisos = [];
       state.loading = false;
+    })
+    // Role actions
+    .addCase(createRole.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(createRole.fulfilled, (state) => {
+      state.loading = false;
+    })
+    .addCase(createRole.rejected, (state) => {
+      state.loading = false;
+    })
+    .addCase(updateRole.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(updateRole.fulfilled, (state) => {
+      state.loading = false;
+    })
+    .addCase(updateRole.rejected, (state) => {
+      state.loading = false;
+    })
+    .addCase(asignarPermisoRol.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(asignarPermisoRol.fulfilled, (state) => {
+      state.loading = false;
+    })
+    .addCase(asignarPermisoRol.rejected, (state) => {
+      state.loading = false;
+    })
+    // User actions
+    .addCase(createUser.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(createUser.fulfilled, (state) => {
+      state.loading = false;
+    })
+    .addCase(createUser.rejected, (state) => {
+      state.loading = false;
+    })
+    .addCase(updateUser.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(updateUser.fulfilled, (state) => {
+      state.loading = false;
+    })
+    .addCase(updateUser.rejected, (state) => {
+      state.loading = false;
+    })
+    .addCase(asignarRolUsuario.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(asignarRolUsuario.fulfilled, (state) => {
+      state.loading = false;
+    })
+    .addCase(asignarRolUsuario.rejected, (state) => {
+      state.loading = false;
+    })
+    // Permission actions
+    .addCase(createPermission.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(createPermission.fulfilled, (state) => {
+      state.loading = false;
+    })
+    .addCase(createPermission.rejected, (state) => {
+      state.loading = false;
+    })
+    .addCase(updatePermission.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(updatePermission.fulfilled, (state) => {
+      state.loading = false;
+    })
+    .addCase(updatePermission.rejected, (state) => {
+      state.loading = false;
+    })
+    .addCase(deletePermission.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(deletePermission.fulfilled, (state) => {
+      state.loading = false;
+    })
+    .addCase(deletePermission.rejected, (state) => {
+      state.loading = false;
     });
 };
 

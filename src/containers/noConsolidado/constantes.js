@@ -114,11 +114,17 @@ export const columnsStoreNull = [
 
 export const styleTableData = {
     width: "100%",
-    height: "70vh",
+    height: "auto",
+    maxHeight: {
+        xs: "450px",
+        sm: "550px",
+        md: "75vh"
+    },
     boxShadow: "none",
     backgroundColor: "transparent",
     border: "none",
     borderRadius: 4,
+    overflow: "hidden",
 
     "& .MuiDataGrid-columnHeaders": {
         backgroundColor: "#0072CE",
@@ -164,7 +170,10 @@ export const styleTableData = {
         color: "#334155",
         fontSize: "0.875rem",
         borderBottom: "none",
-        padding: "18px 16px",
+        padding: {
+            xs: "8px",
+            sm: "18px 16px"
+        },
         display: "flex",
         alignItems: "center",
     },
@@ -175,9 +184,66 @@ export const styleTableData = {
     "& .MuiDataGrid-footerContainer": {
         borderTop: "none",
         justifyContent: "flex-end",
-        marginTop: "10px",
+        marginTop: {
+            xs: "0px",
+            md: "10px"
+        },
         backgroundColor: "#ffffff",
-        borderRadius: "16px",
-        padding: 1,
+        borderRadius: {
+            xs: "0 0 8px 8px",
+            md: "16px"
+        },
+        padding: {
+            xs: 0,
+            md: 1
+        },
+        minHeight: {
+            xs: "48px",
+            md: "52px"
+        },
+        "& .MuiTablePagination-root": {
+            width: "100%",
+            color: "#64748b",
+        },
+        "& .MuiTablePagination-toolbar": {
+            justifyContent: "center",
+            padding: {
+                xs: "0 8px",
+                sm: "0 16px"
+            }
+        },
+        "& .MuiTablePagination-selectLabel, & .MuiTablePagination-select": {
+            display: {
+                xs: "none",
+                sm: "block"
+            }
+        },
+        "& .MuiTablePagination-displayedRows": {
+            margin: 0,
+            fontSize: "0.8125rem",
+        },
+        "& .MuiTablePagination-actions": {
+            marginLeft: {
+                xs: 1,
+                sm: 2
+            }
+        }
+    },
+
+    // Customize scrollbar for a more premium look
+    "& ::-webkit-scrollbar": {
+        width: "8px",
+        height: "8px",
+    },
+    "& ::-webkit-scrollbar-track": {
+        background: "#f1f5f9",
+    },
+    "& ::-webkit-scrollbar-thumb": {
+        background: "#cbd5e1",
+        borderRadius: "10px",
+    },
+    "& ::-webkit-scrollbar-thumb:hover": {
+        background: "#94a3b8",
     },
 };
+

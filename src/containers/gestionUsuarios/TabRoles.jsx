@@ -225,6 +225,13 @@ const TabRoles = () => {
     setOpenPermisos(true);
   };
 
+  const handleClosePermisos = () => {
+    setOpenPermisos(false);
+    setRolId(null);
+    setPermisosSeleccionados([]);
+    setSearchTerm("");
+  };
+
   const handleTogglePermission = (permission) => {
     const isSelected = permisosSeleccionados.some((p) => p.id === permission.id);
     let newSelected;
@@ -264,6 +271,7 @@ const TabRoles = () => {
             openDialog={openRole}
             buttonCancel={true}
             buttonSubmit={true}
+            loading={loading}
             handleCloseDialog={handleCloseRole}
             handleSubmit={handleSubmit}
             titleCrear="Crear rol"
@@ -284,7 +292,7 @@ const TabRoles = () => {
                   <AtomCheckBox
                     id="status"
                     label="Estado"
-                    checked={role.status}
+                    checked={Boolean(role.status)}
                     name="status"
                     onChange={(e) => onChange(e.target.id, e.target.checked)}
                   />
@@ -296,9 +304,10 @@ const TabRoles = () => {
             maxWidth="lg"
             openDialog={openPermisos}
             buttonCancel={true}
-            handleCloseDialog={() => setOpenPermisos(false)}
+            handleCloseDialog={handleClosePermisos}
             titleCrear="Asignar permisos"
             buttonSubmit={true}
+            loading={loading}
             handleSubmit={guardarPermisos}
             textButtonCancel="Cerrar"
             dialogContentComponent={

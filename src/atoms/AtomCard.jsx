@@ -87,6 +87,7 @@ const AtomCard = (props) => {
           <Grid size={4}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, paddingLeft: 2 }}>
               <Typography
+                component="div"
                 sx={{
                   fontSize: "18px",
                   fontWeight: 600,

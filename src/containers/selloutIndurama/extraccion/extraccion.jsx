@@ -1068,7 +1068,7 @@ const ExtraccionDatos = () => {
   };
   const [selectedToSplitIds, setSelectedToSplitIds] = useState([]);
 
-  const handleConfirmarSeparacion = () => {
+  const handleConfirmSeparation = () => {
     if (!preSplitInfo) return;
 
     const seleccionados = selectedToSplitIds.map((idx) => preSplitInfo[idx]);
@@ -1380,7 +1380,7 @@ const ExtraccionDatos = () => {
     buscarMatriculacion("");
   }, [calculateDate]);
 
-  const handleCloseDialogSeparation = () => {
+  const handleCloseSeparation = () => {
     setDialogSeparation(false);
     setPreSplitInfo([]);
     setSelectedToSplitIds([]);
@@ -1725,24 +1725,24 @@ const ExtraccionDatos = () => {
       />
       <AtomDialogForm
         openDialog={dialogInformation}
-        titleCrear="Información de carga de extracción"
-        buttonSubmit={true}
-        maxWidth="md"
-        handleSubmit={limpiarErrores}
-        textButtonSubmit="Aceptar"
+        titleCrear={"Resultado de la extracción"}
+        maxWidth="xl"
+        loading={loading}
+        buttonSubmit={false}
+        buttonCancel={true}
+        handleCloseDialog={limpiarErrores}
         dialogContentComponent={
           <Informacion dataResponse={dataResponse} />
         }
       />
       <AtomDialogForm
-        maxWidth="lg"
         openDialog={openDialogDefaults}
-        buttonCancel={false}
-        buttonSubmit={true}
-        textButtonSubmit="Aceptar"
+        titleCrear="Información de la Extracción"
+        maxWidth="md"
+        loading={loading}
+        buttonSubmit={false}
+        buttonCancel={true}
         handleCloseDialog={() => setOpenDialogDefaults(false)}
-        handleSubmit={() => setOpenDialogDefaults(false)}
-        titleCrear="Detalles de extracción"
         dialogContentComponent={
           < Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <Box
@@ -1915,12 +1915,13 @@ const ExtraccionDatos = () => {
         }
       />
 
-      < AtomDialogForm
+      <AtomDialogForm
         openDialog={openCreateStores}
-        titleCrear={"Crear almacén"}
-        buttonCancel={true}
+        titleCrear={"Registrar nuevo almacén"}
         maxWidth="md"
+        loading={loading}
         buttonSubmit={true}
+        buttonCancel={true}
         handleSubmit={handleGuardarMaestrosStores}
         handleCloseDialog={handleCloseCreateStores}
         dialogContentComponent={
@@ -1978,7 +1979,7 @@ const ExtraccionDatos = () => {
                 required={true}
                 title="Estado"
                 tooltip="Define si el almacén está activo"
-                checked={maestrosStores.status}
+                checked={Boolean(maestrosStores.status)}
                 onChange={(e) =>
                   setMaestrosStores({
                     ...maestrosStores,
@@ -1994,6 +1995,7 @@ const ExtraccionDatos = () => {
         openDialog={openDialogoConfirmacion}
         titleCrear={loading ? "Estamos procesando su solicitud, por favor espere..." : "Confirmación de guardado"}
         buttonSubmit={loading ? false : true}
+        loading={loading}
         textButtonSubmit="Confirmar"
         maxWidth="lg"
         buttonCancel={loading ? false : true}
@@ -2038,13 +2040,13 @@ const ExtraccionDatos = () => {
       />
       < AtomDialogForm
         openDialog={dialogSeparation}
-        titleCrear="Productos detectados para separación"
-        buttonSubmit={true}
-        textButtonSubmit="Continuar"
-        handleSubmit={handleConfirmarSeparacion}
-        buttonCancel={true}
-        handleCloseDialog={() => { handleCloseDialogSeparation(); }}
+        titleCrear={"Separación de registros"}
         maxWidth="xl"
+        loading={loading}
+        buttonSubmit={true}
+        buttonCancel={true}
+        handleSubmit={handleConfirmSeparation}
+        handleCloseDialog={handleCloseSeparation}
         dialogContentComponent={
           < Grid container spacing={1} justifyContent="space-between" alignItems="center">
             <Grid size={4} mt={2}>
@@ -2065,7 +2067,7 @@ const ExtraccionDatos = () => {
                 id="dividirCantidad"
                 title="Dividir cantidad"
                 tooltip="Define si se divide la cantidad"
-                checked={configuracion.dividirCantidad || false}
+                checked={Boolean(configuracion.dividirCantidad)}
                 onChange={(e) =>
                   setConfiguracion({
                     ...configuracion,

@@ -84,7 +84,7 @@ const CreateUser = ({ userObject, onChange, errors, editUser }) => {
           <Checkbox
             id="status"
             label="Estado"
-            checked={userObject.status}
+            checked={Boolean(userObject.status)}
             onChange={(e) => onChange(e.target.id, e.target.checked)}
           />
         </Grid>

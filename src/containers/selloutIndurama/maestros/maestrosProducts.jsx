@@ -14,7 +14,6 @@ import {
   updateMaestrosProducts,
   deleteMaestrosProducts,
   createMaestrosProducts,
-  subirExcelMaestrosProducts,
   exportarExcel,
   setCalculateDate,
 } from "../../../redux/configSelloutSlice";
@@ -198,14 +197,19 @@ const MasterProducts = () => {
     onSuccessCallback,
     onResetForm,
   }) => {
-    const response = await dispatch(dispatchFunction(data));
+    setLoading(true);
+    try {
+      const response = await dispatch(dispatchFunction(data));
 
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
-      onSuccessCallback?.();
-      onResetForm?.();
-    } else {
-      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
+        onSuccessCallback?.();
+        onResetForm?.();
+      } else {
+        showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -358,7 +362,8 @@ const MasterProducts = () => {
     setLoading(true);
 
     try {
-      const response = await dispatch(subirExcelMaestrosProducts(datosExcel));
+      console.log("Guardando maestros productos (bulk):", datosExcel);
+      const response = await dispatch(createMaestrosProducts(datosExcel));
 
       if (response.meta.requestStatus !== "fulfilled") {
         throw new Error(
@@ -501,6 +506,7 @@ const MasterProducts = () => {
         editDialog={editMaestrosProducts}
         titleEditar={"Editar producto"}
         buttonCancel={true}
+        loading={loading}
         maxWidth="lg"
         buttonSubmit={true}
         handleSubmit={handleGuardarMaestrosProducts}
@@ -644,6 +650,7 @@ const MasterProducts = () => {
         titleCrear={loading ? "Estamos procesando su solicitud, por favor espere..." : "Datos Extraídos"}
         buttonCancel={loading ? false : true}
         buttonSubmit={loading ? false : true}
+        loading={loading}
         maxWidth="xl"
         handleSubmit={handleGuardarExcel}
         handleCloseDialog={handleCloseUploadExcel}

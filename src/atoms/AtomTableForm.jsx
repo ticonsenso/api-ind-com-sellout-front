@@ -42,7 +42,6 @@ const RootContainer = styled(Box)(({ theme }) => ({
   width: "100%",
   display: "flex",
   flexDirection: "column",
-  flex: 1,
   minHeight: 0,
   overflow: "hidden",
 }));
@@ -50,9 +49,8 @@ const RootContainer = styled(Box)(({ theme }) => ({
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   backgroundColor: "transparent",
   boxShadow: "none",
-  flex: 1,
   width: "100%",
-  maxHeight: "100%",
+  maxHeight: "70vh", // Prevent the table from taking too much vertical space
   overflow: "auto",
   "& .MuiTable-root": {
     borderCollapse: "separate",
@@ -116,6 +114,9 @@ const StyledBodyCell = styled(TableCell)(({ theme }) => ({
   color: "#334155",
   borderBottom: "none",
   padding: "12px 16px",
+  [theme.breakpoints.down('sm')]: {
+    padding: "8px 10px",
+  },
   wordWrap: "break-word",
   whiteSpace: "normal",
   overflow: "hidden",
@@ -478,13 +479,14 @@ const AtomTableForm = (props) => {
         {data?.length > 0 && pagination && (
           <Box sx={{
             display: 'flex',
-            justifyContent: 'flex-end',
-            px: 2,
+            justifyContent: { xs: 'center', sm: 'flex-end' },
+            px: { xs: 1, sm: 2 },
             py: 0.5,
             backgroundColor: '#ffffffff',
             borderRadius: '8px',
             mt: 0.5,
             flexShrink: 0,
+            width: '100%',
           }}>
             <TablePagination
               component="div"
@@ -498,15 +500,28 @@ const AtomTableForm = (props) => {
               labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
               sx={{
                 color: '#334155',
+                width: '100%',
                 '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
                   fontWeight: 600,
-                  fontSize: '0.85rem'
+                  fontSize: { xs: '0.75rem', sm: '0.85rem' }
+                },
+                '& .MuiTablePagination-selectLabel': {
+                  display: { xs: 'none', sm: 'inline-block' }
+                },
+                '& .MuiTablePagination-toolbar': {
+                  minHeight: '48px',
+                  justifyContent: 'center',
+                  padding: { xs: 0, sm: '0 16px' }
                 },
                 '& .MuiTablePagination-select': {
+                  display: { xs: 'none', sm: 'inline-block' },
                   backgroundColor: '#F7F9FC',
                   borderRadius: '8px',
                   paddingTop: '6px',
                   paddingBottom: '6px'
+                },
+                '& .MuiTablePagination-actions': {
+                  ml: { xs: 0.5, sm: 2 }
                 }
               }}
               SelectProps={{

@@ -116,24 +116,34 @@ const ListaCategorias = () => {
             description: matricula.description,
             name: matricula.name,
         };
-        const response = await dispatch(updateCategorias(data));
-        if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message, { severity: "success" });
-            buscarLista();
-            handleCloseMatriculacion();
-        } else {
-            showSnackbar(response.payload.message, { severity: "error" });
+        setLoading(true);
+        try {
+            const response = await dispatch(updateCategorias(data));
+            if (response.meta.requestStatus === "fulfilled") {
+                showSnackbar(response.payload.message, { severity: "success" });
+                buscarLista();
+                handleCloseMatriculacion();
+            } else {
+                showSnackbar(response.payload.message, { severity: "error" });
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
     const crearMatriculacion = async () => {
-        const response = await dispatch(createCategorias(matricula));
-        if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message, { severity: "success" });
-            handleCloseMatriculacion();
-            buscarLista();
-        } else {
-            showSnackbar(response.payload.message, { severity: "error" });
+        setLoading(true);
+        try {
+            const response = await dispatch(createCategorias(matricula));
+            if (response.meta.requestStatus === "fulfilled") {
+                showSnackbar(response.payload.message, { severity: "success" });
+                handleCloseMatriculacion();
+                buscarLista();
+            } else {
+                showSnackbar(response.payload.message, { severity: "error" });
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -223,6 +233,7 @@ const ListaCategorias = () => {
                 titleCrear="Crear Configuración de Cierre"
                 editDialog={edit}
                 buttonCancel={true}
+                loading={loading}
                 maxWidth="md"
                 buttonSubmit={true}
                 handleSubmit={handleSubmit}
@@ -273,6 +284,7 @@ const ListaCategorias = () => {
                 openDialog={openColumns}
                 titleCrear=""
                 buttonCancel={true}
+                loading={loading}
                 maxWidth="md"
                 handleCloseDialog={handleCloseColumns}
                 titleEditar="Editar Configuración de Palabras"

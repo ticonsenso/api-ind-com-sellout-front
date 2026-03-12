@@ -123,24 +123,34 @@ const ColumnsCategorias = ({ id }) => {
             keyword: matricula.keyword,
             categoryId: id,
         };
-        const response = await dispatch(updateColumns(data));
-        if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message, { severity: "success" });
-            buscarLista();
-            handleCloseMatriculacion();
-        } else {
-            showSnackbar(response.payload.message, { severity: "error" });
+        setLoading(true);
+        try {
+            const response = await dispatch(updateColumns(data));
+            if (response.meta.requestStatus === "fulfilled") {
+                showSnackbar(response.payload.message, { severity: "success" });
+                buscarLista();
+                handleCloseMatriculacion();
+            } else {
+                showSnackbar(response.payload.message, { severity: "error" });
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
     const crearMatriculacion = async () => {
-        const response = await dispatch(createColumns(matricula));
-        if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message, { severity: "success" });
-            handleCloseMatriculacion();
-            buscarLista();
-        } else {
-            showSnackbar(response.payload.message, { severity: "error" });
+        setLoading(true);
+        try {
+            const response = await dispatch(createColumns(matricula));
+            if (response.meta.requestStatus === "fulfilled") {
+                showSnackbar(response.payload.message, { severity: "success" });
+                handleCloseMatriculacion();
+                buscarLista();
+            } else {
+                showSnackbar(response.payload.message, { severity: "error" });
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -149,11 +159,11 @@ const ColumnsCategorias = ({ id }) => {
     };
 
     const actions = [
-        {
-            label: "Editar",
-            color: "info",
-            onClick: (row) => handleEdit(row),
-        },
+        // {
+        //     label: "Editar",
+        //     color: "info",
+        //     onClick: (row) => handleEdit(row),
+        // },
         {
             label: "Eliminar",
             color: "error",
@@ -177,6 +187,7 @@ const ColumnsCategorias = ({ id }) => {
             title: "Eliminar registro",
             message: "¿Estás seguro de que deseas eliminar este registro?",
             onConfirm: async () => {
+                setLoading(true);
                 try {
                     const response = await dispatch(deleteColumns(row.id));
                     if (response.meta.requestStatus === "fulfilled") {
@@ -187,6 +198,8 @@ const ColumnsCategorias = ({ id }) => {
                     }
                 } catch (error) {
                     showSnackbar(error || "Error al eliminar registro", { severity: "error" });
+                } finally {
+                    setLoading(false);
                 }
             },
             onCancel: () => { },
@@ -245,6 +258,7 @@ const ColumnsCategorias = ({ id }) => {
                 titleCrear="Nueva Palabra"
                 editDialog={edit}
                 buttonCancel={true}
+                loading={loading}
                 maxWidth="sm"
                 buttonSubmit={true}
                 handleSubmit={handleSubmit}

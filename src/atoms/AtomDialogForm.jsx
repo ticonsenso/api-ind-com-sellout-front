@@ -8,6 +8,7 @@ import {
   DialogTitle,
   Typography,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 // import AtomInfoView from './AtomInfoView.jsx';
@@ -26,6 +27,7 @@ const AtomDialogCreate = (props) => {
     textInfo,
     buttonCancel,
     buttonSubmit,
+    loading = false,
     textButtonSubmit = "Guardar",
     textButtonCancel = "Cerrar",
     dialogContentComponent,
@@ -46,7 +48,7 @@ const AtomDialogCreate = (props) => {
           >
             {editDialog ? titleEditar : titleCrear}
           </Typography>
-          {closeButton && (
+          {closeButton && !loading && (
             <IconButton
               sx={{
                 backgroundColor: "#ffcbcb",
@@ -85,6 +87,7 @@ const AtomDialogCreate = (props) => {
           {buttonCancel && (
             <Button
               variant="outlined"
+              disabled={loading}
               sx={{
                 color: "primary.main",
                 textTransform: "none",
@@ -107,6 +110,7 @@ const AtomDialogCreate = (props) => {
             <Button
               variant="contained"
               color="primary"
+              disabled={loading}
               sx={{
                 color: "white",
                 fontWeight: 300,
@@ -122,7 +126,7 @@ const AtomDialogCreate = (props) => {
               }}
               onClick={handleSubmit}
             >
-              {textButtonSubmit}
+              {loading ? <CircularProgress size={24} color="inherit" /> : textButtonSubmit}
             </Button>
           )}
         </Box>

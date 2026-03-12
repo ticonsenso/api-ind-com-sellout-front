@@ -9,7 +9,7 @@ import CustomLinearProgress from "../../atoms/CustomLinearProgress";
 import { columnsProductNull, styleTableData } from "./constantes";
 import {
     obtenerConsolidatedSelloutUnique,
-    subirExcelMaestrosProducts,
+    createMaestrosProducts,
     exportarExcel,
     cargarExcel,
     sincronizarDatosConsolidated
@@ -107,11 +107,13 @@ const ProductosNoHomologados = () => {
 
         setLoading(true);
         try {
-            const response = await dispatch(subirExcelMaestrosProducts(resultadosActualizados));
+            const dataToSave = resultadosActualizados.map(({ id, ...rest }) => rest);
+            console.log("Enviando maestros productos:", dataToSave);
+            const response = await dispatch(createMaestrosProducts(dataToSave));
 
             if (response.meta.requestStatus !== "fulfilled") {
                 throw new Error(
-                    response.payload?.message || `Error al subir el archivo`
+                    response.payload?.message || "Error al guardar los maestros"
                 );
             }
 
@@ -142,6 +144,7 @@ const ProductosNoHomologados = () => {
                 productStore: newRow.codeProductDistributor,
                 productDistributor: newRow.descriptionDistributor,
                 codeProductSic: valorNuevo || null,
+                periodo: calculateDate
             };
 
             setResultadosActualizados((prev) => {
@@ -239,8 +242,9 @@ const ProductosNoHomologados = () => {
                     <>
                         <Box sx={{
                             position: "fixed",
-                            top: 80,
-                            right: 130,
+                            top: 85,
+                            maxWidth: "220px",
+                            right: 100,
                         }}>
                             <AtomDatePicker
                                 id="calculateDate"
@@ -248,7 +252,7 @@ const ProductosNoHomologados = () => {
                                 mode="month"
                                 label="Fecha de búsqueda"
                                 color="#ffffff"
-                                height="45px"
+                                height="40px"
                                 value={calculateDate}
                                 onChange={(e) => {
                                     dispatch(setCalculateDate(e));
@@ -263,7 +267,7 @@ const ProductosNoHomologados = () => {
                                     title="Descargar excel"
                                     iconName="SaveAlt"
                                     color="#5ab9f6"
-                                    right={70}
+                                    right={50}
                                     top={97}
                                 />
                                 <IconoFlotante
@@ -275,6 +279,7 @@ const ProductosNoHomologados = () => {
                                     id="input-excel-productos"
                                     iconName="DriveFolderUploadOutlined"
                                     top={97}
+                                    right={10}
                                 />
                             </>
                         )}
@@ -296,9 +301,10 @@ const ProductosNoHomologados = () => {
                                 <>
                                     <Grid container spacing={2} justifyContent="right" sx={{ width: "100%" }}>
                                         {resultadosActualizados != null && (
-                                            <Grid size={2} mt={-1}>
+                                            <Grid size={2}>
                                                 <AtomButtonPrimary
                                                     label="Guardar"
+                                                    loading={loading}
                                                     onClick={handleGuardarMaestros}
 
                                                 />
@@ -308,6 +314,7 @@ const ProductosNoHomologados = () => {
                                         <Grid size={12}>
                                             {loading && <CustomLinearProgress />}
                                             <DataGrid
+                                                autoHeight
                                                 rows={data}
                                                 columns={columnsProductNull.map(col => ({
                                                     ...col,

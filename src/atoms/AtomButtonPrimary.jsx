@@ -1,13 +1,14 @@
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 
 function AtomButtonPrimary({
   label, onClick, mt, icon, nameIcon, disabled,
   height = "48px",
+  loading = false,
 }) {
   return (
     <Button
       fullWidth
-      disabled={disabled}
+      disabled={disabled || loading}
       sx={{
         height: height,
         mt: mt,
@@ -27,12 +28,17 @@ function AtomButtonPrimary({
           transform: "translateY(-2px)",
           boxShadow: "0 8px 25px 0 rgba(0, 114, 206, 0.25)",
         },
+        "&.Mui-disabled": {
+          background: "rgba(0, 0, 0, 0.12)",
+          color: "rgba(0, 0, 0, 0.26)",
+          boxShadow: "none",
+        },
       }}
       onClick={onClick}
-      startIcon={icon}
-      endIcon={nameIcon}
+      startIcon={!loading && icon}
+      endIcon={!loading && nameIcon}
     >
-      {label}
+      {loading ? <CircularProgress size={24} color="inherit" /> : label}
     </Button>
   );
 }

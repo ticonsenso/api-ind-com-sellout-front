@@ -542,6 +542,7 @@ const PlantillaStandar = () => {
         openDialog={openDialogoSincronizar}
         titleCrear={loading ? "Estamos sincronizando los datos, por favor espere..." : ""}
         buttonCancel={!loading}
+        loading={loading}
         maxWidth="md"
         handleCloseDialog={() => {
           setOpenDialogoSincronizar(false);
@@ -634,6 +635,7 @@ const PlantillaStandar = () => {
             : "Crear registro plantilla consolidado"
         }
         buttonCancel={true}
+        loading={loading}
         maxWidth="md"
         buttonSubmit={true}
         handleSubmit={handleGuardarConsolidado}
@@ -689,7 +691,7 @@ const PlantillaStandar = () => {
                     id="codeStore"
                     title="No se visita"
                     tooltip="Define si el almacén se visita"
-                    checked={dataConsolidado.codeStoreStatus}
+                    checked={Boolean(dataConsolidado.codeStoreStatus)}
                     onChange={(e) =>
                       setDataConsolidado({
                         ...dataConsolidado,
@@ -703,7 +705,7 @@ const PlantillaStandar = () => {
                     id="codeProduct"
                     title="Código de producto: OTROS"
                     tooltip="Codigo de producto: OTROS"
-                    checked={dataConsolidado.codeProductStatus}
+                    checked={Boolean(dataConsolidado.codeProductStatus)}
                     onChange={(e) =>
                       setDataConsolidado({
                         ...dataConsolidado,

@@ -307,6 +307,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
               handleCloseDialog={handleClose}
               title="Detalles de la matriculación"
               maxWidth="xl"
+              loading={loading}
               buttonCancel="Cerrar"
               dialogContentComponent={
                 <Box sx={{ width: "100%" }}>

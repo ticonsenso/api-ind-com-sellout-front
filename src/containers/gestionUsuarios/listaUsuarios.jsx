@@ -238,6 +238,7 @@ const ListUsers = () => {
             openDialog={openUser}
             buttonCancel={true}
             buttonSubmit={true}
+            loading={loading}
             handleCloseDialog={handleCloseUser}
             handleSubmit={handleSubmit}
             titleCrear={editUser ? "Editar usuario" : "Crear usuario"}
@@ -257,6 +258,7 @@ const ListUsers = () => {
             openDialog={openRoles}
             buttonCancel={true}
             buttonSubmit={true}
+            loading={loading}
             handleSubmit={guardarRoles}
             handleCloseDialog={handleCloseRoles}
             titleCrear="Asignar roles"

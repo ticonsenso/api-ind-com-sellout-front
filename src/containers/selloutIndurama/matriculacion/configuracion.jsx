@@ -201,24 +201,34 @@ const ConfiguracionMatriculacion = () => {
       month: matricula.month,
       startDate: matricula.startDate,
     };
-    const response = await dispatch(updateMatriculacionConfig(data));
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message, { severity: "success" });
-      buscarMatriculacion();
-      handleCloseMatriculacion();
-    } else {
-      showSnackbar(response.payload.message, { severity: "error" });
+    setLoading(true);
+    try {
+      const response = await dispatch(updateMatriculacionConfig(data));
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message, { severity: "success" });
+        buscarMatriculacion();
+        handleCloseMatriculacion();
+      } else {
+        showSnackbar(response.payload.message, { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   const crearMatriculacion = async () => {
-    const response = await dispatch(createMatriculacionConfig(matricula));
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message, { severity: "success" });
-      handleCloseMatriculacion();
-      buscarMatriculacion();
-    } else {
-      showSnackbar(response.payload.message, { severity: "error" });
+    setLoading(true);
+    try {
+      const response = await dispatch(createMatriculacionConfig(matricula));
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message, { severity: "success" });
+        handleCloseMatriculacion();
+        buscarMatriculacion();
+      } else {
+        showSnackbar(response.payload.message, { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -334,6 +344,7 @@ const ConfiguracionMatriculacion = () => {
         titleCrear="Crear Configuración de Cierre"
         editDialog={edit}
         buttonCancel={true}
+        loading={loading}
         maxWidth="md"
         buttonSubmit={true}
         handleSubmit={handleSubmit}

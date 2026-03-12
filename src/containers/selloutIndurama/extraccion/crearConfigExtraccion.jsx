@@ -107,6 +107,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
     endSheet: config?.endSheet || "",
   });
 
+  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [param, setParam] = useState({
     columnName: "",
@@ -151,12 +152,17 @@ const CrearConfiguracionExtraccion = ({ config }) => {
       ...configuracion,
       companyId: idEmpresaIndurama,
     }
-    const response = await dispatch(createExtractionsConfig(data));
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message, { severity: "success" });
-      setInitialStep(1);
-    } else {
-      showSnackbar(response.payload.message, { severity: "error" });
+    setLoading(true);
+    try {
+      const response = await dispatch(createExtractionsConfig(data));
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message, { severity: "success" });
+        setInitialStep(1);
+      } else {
+        showSnackbar(response.payload.message, { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -175,12 +181,17 @@ const CrearConfiguracionExtraccion = ({ config }) => {
       initialSheet: configuracion?.initialSheet || null,
       endSheet: configuracion?.endSheet || null,
     };
-    const response = await dispatch(updateExtractionsConfig(data));
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message, { severity: "success" });
-      setInitialStep(1);
-    } else {
-      showSnackbar(response.payload.message, { severity: "error" });
+    setLoading(true);
+    try {
+      const response = await dispatch(updateExtractionsConfig(data));
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message, { severity: "success" });
+        setInitialStep(1);
+      } else {
+        showSnackbar(response.payload.message, { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -189,13 +200,18 @@ const CrearConfiguracionExtraccion = ({ config }) => {
       title: "Eliminar Columna",
       message: "¿Estás seguro de que deseas eliminar esta columna?",
       onConfirm: async () => {
-        const response = await dispatch(deleteExtractionsColumn(row.id));
-        if (response.meta.requestStatus === "fulfilled") {
-          showSnackbar(response.payload.message, { severity: "success" });
-          buscarColumnas();
-          setParam({});
-        } else {
-          showSnackbar(response.payload.message, { severity: "error" });
+        setLoading(true);
+        try {
+          const response = await dispatch(deleteExtractionsColumn(row.id));
+          if (response.meta.requestStatus === "fulfilled") {
+            showSnackbar(response.payload.message, { severity: "success" });
+            buscarColumnas();
+            setParam({});
+          } else {
+            showSnackbar(response.payload.message, { severity: "error" });
+          }
+        } finally {
+          setLoading(false);
         }
       },
       onCancel: () => { },
@@ -283,13 +299,18 @@ const CrearConfiguracionExtraccion = ({ config }) => {
       selloutConfigurationId: configuracionExtraccionSelloutId,
       hasNegativeValue: false,
     };
-    const response = await dispatch(updateExtractionsColumn(data));
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message, { severity: "success" });
-      buscarColumnas();
-      setParam({});
-    } else {
-      showSnackbar(response.payload.message, { severity: "error" });
+    setLoading(true);
+    try {
+      const response = await dispatch(updateExtractionsColumn(data));
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message, { severity: "success" });
+        buscarColumnas();
+        setParam({});
+      } else {
+        showSnackbar(response.payload.message, { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -308,13 +329,18 @@ const CrearConfiguracionExtraccion = ({ config }) => {
       hasNegativeValue: param?.hasNegativeValue || false,
 
     };
-    const response = await dispatch(createColumnSellout(data));
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message, { severity: "success" });
-      buscarColumnas();
-      setParam({});
-    } else {
-      showSnackbar(response.payload.message, { severity: "error" });
+    setLoading(true);
+    try {
+      const response = await dispatch(createColumnSellout(data));
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message, { severity: "success" });
+        buscarColumnas();
+        setParam({});
+      } else {
+        showSnackbar(response.payload.message, { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -349,15 +375,20 @@ const CrearConfiguracionExtraccion = ({ config }) => {
       ...rest,
       selloutConfigurationId: configuracionExtraccionSelloutId,
     }));
-    const response = await dispatch(createColumnArraySellout(data));
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message, { severity: "success" });
-      buscarColumnas();
-      setParam({});
-      dispatch(setDataColumnsSearch(null));
-      setMostrarFormulario(false);
-    } else {
-      showSnackbar(response.payload.message, { severity: "error" });
+    setLoading(true);
+    try {
+      const response = await dispatch(createColumnArraySellout(data));
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message, { severity: "success" });
+        buscarColumnas();
+        setParam({});
+        dispatch(setDataColumnsSearch(null));
+        setMostrarFormulario(false);
+      } else {
+        showSnackbar(response.payload.message, { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -489,6 +520,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
             <Grid size={2} mt={1.5}>
               <AtomButtonPrimary
                 id="create"
+                loading={loading}
                 label={"Guardar"}
                 onClick={handleCreate}
               />
@@ -746,6 +778,7 @@ const CrearConfiguracionExtraccion = ({ config }) => {
                         <Grid size={4} mt={3}>
                           <AtomButtonPrimary
                             id="create"
+                            loading={loading}
                             label={param.id ? "Editar" : "Crear"}
                             onClick={handleSaveColumn}
                           />

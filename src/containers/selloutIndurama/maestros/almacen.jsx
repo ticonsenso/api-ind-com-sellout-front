@@ -13,7 +13,6 @@ import {
   updateMaestrosStores,
   deleteMaestrosStores,
   createMaestrosStores,
-  subirExcelMaestrosStores,
   exportarExcel,
   setCalculateDate,
 } from "../../../redux/configSelloutSlice";
@@ -180,14 +179,19 @@ const MasterAlmacen = () => {
     onSuccessCallback,
     onResetForm,
   }) => {
-    const response = await dispatch(dispatchFunction(data));
+    setLoading(true);
+    try {
+      const response = await dispatch(dispatchFunction(data));
 
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message || "Registro exitoso");
-      onSuccessCallback?.();
-      onResetForm?.();
-    } else {
-      showSnackbar(response.payload.message || "Ocurrió un error");
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message || "Registro exitoso");
+        onSuccessCallback?.();
+        onResetForm?.();
+      } else {
+        showSnackbar(response.payload.message || "Ocurrió un error");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -304,7 +308,8 @@ const MasterAlmacen = () => {
     setLoading(true);
 
     try {
-      const response = await dispatch(subirExcelMaestrosStores(datosExcel));
+      console.log("Guardando maestros stores (bulk):", datosExcel);
+      const response = await dispatch(createMaestrosStores(datosExcel));
 
       if (response.meta.requestStatus !== "fulfilled") {
         throw new Error(
@@ -445,6 +450,7 @@ const MasterAlmacen = () => {
         editDialog={editMaestrosStores}
         titleEditar={"Editar almacén"}
         buttonCancel={true}
+        loading={loading}
         maxWidth="lg"
         buttonSubmit={true}
         handleSubmit={handleGuardarMaestrosStores}
@@ -514,7 +520,7 @@ const MasterAlmacen = () => {
                 required={true}
                 title="Estado"
                 tooltip="Define si el almacén está activo"
-                checked={maestrosStores.status}
+                checked={Boolean(maestrosStores.status)}
                 onChange={(e) =>
                   setMaestrosStores({
                     ...maestrosStores,
@@ -532,6 +538,7 @@ const MasterAlmacen = () => {
         buttonCancel={loading ? false : true}
         handleSubmit={handleGuardarExcel}
         buttonSubmit={loading ? false : true}
+        loading={loading}
         maxWidth="xl"
         handleCloseDialog={handleCloseUploadExcel}
         dialogContentComponent={

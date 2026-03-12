@@ -168,14 +168,19 @@ const ConfigLineas = () => {
         onSuccessCallback,
         onResetForm,
     }) => {
-        const response = await dispatch(dispatchFunction(data));
+        setLoading(true);
+        try {
+            const response = await dispatch(dispatchFunction(data));
 
-        if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message || "Registro exitoso");
-            onSuccessCallback?.();
-            onResetForm?.();
-        } else {
-            showSnackbar(response.payload.message || "Ocurrió un error");
+            if (response.meta.requestStatus === "fulfilled") {
+                showSnackbar(response.payload.message || "Registro exitoso");
+                onSuccessCallback?.();
+                onResetForm?.();
+            } else {
+                showSnackbar(response.payload.message || "Ocurrió un error");
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -396,6 +401,7 @@ const ConfigLineas = () => {
                 editDialog={editLines}
                 titleEditar={"Editar línea"}
                 buttonCancel={true}
+                loading={loading}
                 maxWidth="md"
                 buttonSubmit={true}
                 handleSubmit={handleGuardarLines}
@@ -437,6 +443,7 @@ const ConfigLineas = () => {
                 buttonCancel={loading ? false : true}
                 handleSubmit={handleGuardarExcel}
                 buttonSubmit={loading ? false : true}
+                loading={loading}
                 maxWidth="xl"
                 handleCloseDialog={handleCloseUploadExcel}
                 dialogContentComponent={

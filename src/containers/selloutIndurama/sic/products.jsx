@@ -176,14 +176,19 @@ const ProductsSic = () => {
     onSuccessCallback,
     onResetForm,
   }) => {
-    const response = await dispatch(dispatchFunction(data));
+    setLoading(true);
+    try {
+      const response = await dispatch(dispatchFunction(data));
 
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
-      onSuccessCallback?.();
-      onResetForm?.();
-    } else {
-      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
+        onSuccessCallback?.();
+        onResetForm?.();
+      } else {
+        showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -378,6 +383,7 @@ const ProductsSic = () => {
         editDialog={editProductsSic}
         titleEditar={"Editar producto SIC"}
         buttonCancel={true}
+        loading={loading}
         maxWidth="md"
         buttonSubmit={true}
         handleSubmit={handleGuardarProductsSic}

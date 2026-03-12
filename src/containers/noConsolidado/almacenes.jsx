@@ -8,7 +8,7 @@ import CustomLinearProgress from "../../atoms/CustomLinearProgress";
 import { columnsStoreNull, styleTableData } from "./constantes";
 import {
     obtenerConsolidatedSelloutUnique,
-    subirExcelMaestrosStores,
+    createMaestrosStores,
     exportarExcel,
     cargarExcel,
     sincronizarDatosConsolidated
@@ -102,13 +102,14 @@ const AlmacenesNoHomologados = () => {
         }
 
         setLoading(true);
-
         try {
-            const response = await dispatch(subirExcelMaestrosStores(resultadosActualizados));
+            const dataToSave = resultadosActualizados.map(({ id, ...rest }) => rest);
+            console.log("Enviando maestros stores:", dataToSave);
+            const response = await dispatch(createMaestrosStores(dataToSave));
 
             if (response.meta.requestStatus !== "fulfilled") {
                 throw new Error(
-                    response.payload?.message || `Error al subir el chunk ${index + 1}`
+                    response.payload?.message || "Error al guardar los maestros"
                 );
             }
 
@@ -133,6 +134,7 @@ const AlmacenesNoHomologados = () => {
                 distributor: newRow.distributor,
                 storeDistributor: newRow.codeStoreDistributor,
                 codeStoreSic: newRow.codeStore || null,
+                periodo: calculateDate
             };
             setResultadosActualizados((prev) => {
                 const lista = prev || [];
@@ -288,18 +290,20 @@ const AlmacenesNoHomologados = () => {
                                 <>
                                     <Grid container spacing={2} sx={{ justifyContent: "right", width: "100%" }}>
                                         {resultadosActualizados != null && (
-                                            <Grid size={1.5} mt={-1}>
+                                            <Grid size={1.5}>
                                                 <AtomButtonPrimary
                                                     label="Guardar"
+                                                    loading={loading}
                                                     onClick={handleGuardarExcel}
 
                                                 />
                                             </Grid>
                                         )}
 
-                                        <Grid size={12} sx={{ height: styleTableData.height }}>
+                                        <Grid size={12}>
                                             {loading && <CustomLinearProgress />}
                                             <DataGrid
+                                                autoHeight
                                                 rows={data}
                                                 columns={columnsStoreNull.map(col => ({
                                                     ...col,

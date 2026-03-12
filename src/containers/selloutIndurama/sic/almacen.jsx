@@ -173,14 +173,19 @@ const AlmacenSic = () => {
     onSuccessCallback,
     onResetForm,
   }) => {
-    const response = await dispatch(dispatchFunction(data));
+    setLoading(true);
+    try {
+      const response = await dispatch(dispatchFunction(data));
 
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
-      onSuccessCallback?.();
-      onResetForm?.();
-    } else {
-      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
+        onSuccessCallback?.();
+        onResetForm?.();
+      } else {
+        showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -426,6 +431,7 @@ const AlmacenSic = () => {
         editDialog={editStoresSic}
         titleEditar={"Editar almacén"}
         buttonCancel={true}
+        loading={loading}
         maxWidth="md"
         buttonSubmit={true}
         handleSubmit={handleGuardarStoresSic}
@@ -461,9 +467,9 @@ const AlmacenSic = () => {
               <AtomSwitch
                 id="status"
                 title="Estado"
-                value={storesSic.status}
+                checked={Boolean(storesSic.status)}
                 onChange={(e) =>
-                  setStoresSic({ ...storesSic, status: e.target.value })
+                  setStoresSic({ ...storesSic, status: e.target.checked })
                 }
               />
             </Grid>
@@ -475,6 +481,7 @@ const AlmacenSic = () => {
         titleCrear={"Datos Extraídos"}
         buttonCancel={true}
         buttonSubmit={loading ? false : true}
+        loading={loading}
         maxWidth="xl"
         handleSubmit={handleGuardarExcel}
         handleCloseDialog={handleCloseUploadExcel}

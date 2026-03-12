@@ -114,6 +114,12 @@ const TabPermisos = () => {
     dispatch(
       updatePermissionObject({ key: "description", value: row.description })
     );
+    dispatch(
+      updatePermissionObject({
+        key: "shortDescription",
+        value: row.shortDescription,
+      })
+    );
     dispatch(updatePermissionObject({ key: "status", value: row.status }));
     handleOpenPermission();
   };
@@ -161,6 +167,7 @@ const TabPermisos = () => {
             openDialog={openPermission}
             buttonCancel={true}
             buttonSubmit={true}
+            loading={loading}
             handleCloseDialog={handleClosePermission}
             handleSubmit={handleSubmit}
             titleCrear="Crear permiso"
@@ -190,7 +197,7 @@ const TabPermisos = () => {
                   <AtomCheckBox
                     id="status"
                     label="Estado"
-                    checked={permiso.status}
+                    checked={Boolean(permiso.status)}
                     name="status"
                     onChange={(e) => onChange(e.target.id, e.target.checked)}
                   />

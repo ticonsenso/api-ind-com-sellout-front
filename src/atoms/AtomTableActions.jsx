@@ -123,7 +123,7 @@ const AtomTableActions = (props) => {
       fontWeight: 600,
       fontSize: 12,
       color: "#FFFFFF",
-      backgroundColor: "#0072CE", // Solid primary color for header
+      backgroundColor: "#0072CE",
       position: "sticky",
       top: 0,
       zIndex: 10,

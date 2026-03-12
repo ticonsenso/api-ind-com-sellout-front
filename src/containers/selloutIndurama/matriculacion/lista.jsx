@@ -183,13 +183,18 @@ const Matriculacion = ({ calculateDate }) => {
 
   const editMatriculacion = async () => {
     const { multipleDistributors, ...rest } = matricula;
-    const response = await dispatch(updateMatriculacion(rest));
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
-      buscarMatriculacion(search, calculateDate);
-      handleCloseMatriculacion();
-    } else {
-      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+    setLoading(true);
+    try {
+      const response = await dispatch(updateMatriculacion(rest));
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
+        buscarMatriculacion(search, calculateDate);
+        handleCloseMatriculacion();
+      } else {
+        showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -200,13 +205,18 @@ const Matriculacion = ({ calculateDate }) => {
       calculateMonth: matricula.calculateMonth,
       status: matricula.status,
     }
-    const response = await dispatch(createMatriculacion(data));
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
-      handleCloseMatriculacion();
-      buscarMatriculacion(search, calculateDate);
-    } else {
-      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+    setLoading(true);
+    try {
+      const response = await dispatch(createMatriculacion(data));
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
+        handleCloseMatriculacion();
+        buscarMatriculacion(search, calculateDate);
+      } else {
+        showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -445,19 +455,24 @@ const Matriculacion = ({ calculateDate }) => {
       showSnackbar("La fecha de copia de matriculaciones es requerida", { severity: "error" });
       return;
     }
-    const response = await dispatch(
-      createMatriculationBeforeMonth({
-        calculateMonth: calculateDate,
-        copyMonth: copyMonth,
-      })
-    );
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
-      buscarMatriculacion(search, calculateDate);
-      setOpenCreateMatriculacionBeforeMonth(false);
-      setOpen(false);
-    } else {
-      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+    setLoading(true);
+    try {
+      const response = await dispatch(
+        createMatriculationBeforeMonth({
+          calculateMonth: calculateDate,
+          copyMonth: copyMonth,
+        })
+      );
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
+        buscarMatriculacion(search, calculateDate);
+        setOpenCreateMatriculacionBeforeMonth(false);
+        setOpen(false);
+      } else {
+        showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -624,6 +639,7 @@ const Matriculacion = ({ calculateDate }) => {
         titleCrear="Crear matriculación"
         editDialog={edit}
         buttonCancel={true}
+        loading={loading}
         maxWidth="md"
         buttonSubmit={true}
         handleSubmit={handleSubmit}
@@ -684,7 +700,7 @@ const Matriculacion = ({ calculateDate }) => {
               <AtomSwitch
                 id="status"
                 title="Estado"
-                checked={matricula.status}
+                checked={Boolean(matricula.status)}
                 onChange={(e) =>
                   setMatricula({
                     ...matricula,
@@ -702,6 +718,7 @@ const Matriculacion = ({ calculateDate }) => {
         buttonCancel={true}
         handleSubmit={handleGuardarExcel}
         buttonSubmit={loading ? false : true}
+        loading={loading}
         maxWidth="md"
         handleCloseDialog={handleCloseUploadExcel}
         dialogContentComponent={
@@ -745,6 +762,7 @@ const Matriculacion = ({ calculateDate }) => {
         openDialog={openCreateMatriculacionBeforeMonth}
         titleCrear="Crear matriculaciones por mes"
         buttonCancel={true}
+        loading={loading}
         maxWidth="md"
         handleSubmit={handleCreateMatriculacionBeforeMonth}
         buttonSubmit={true}

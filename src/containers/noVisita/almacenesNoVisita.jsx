@@ -152,6 +152,8 @@ const AlmacenNoVisita = () => {
                                         <Tooltip title="Buscar por distribuidor, código almacén, código producto y descripción">
                                             <AtomTextFielInputForm
                                                 value={search}
+                                                height="45px"
+                                                color="#ffffff"
                                                 onChange={(e) => {
                                                     setPage(1);
                                                     setLimit(5);
@@ -166,7 +168,6 @@ const AlmacenNoVisita = () => {
                             }
                             children={
                                 <>
-
                                     <AtomTableForm
                                         columns={columnsAlmacenesNoVisita}
                                         data={dataNoDefinidos}

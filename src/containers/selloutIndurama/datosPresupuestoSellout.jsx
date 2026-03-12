@@ -198,14 +198,19 @@ const DatosPresupuestoSellout = () => {
     onSuccessCallback,
     onResetForm,
   }) => {
-    const response = await dispatch(dispatchFunction(data));
+    setLoading(true);
+    try {
+      const response = await dispatch(dispatchFunction(data));
 
-    if (response.meta.requestStatus === "fulfilled") {
-      showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
-      onSuccessCallback?.();
-      onResetForm?.();
-    } else {
-      showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+      if (response.meta.requestStatus === "fulfilled") {
+        showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
+        onSuccessCallback?.();
+        onResetForm?.();
+      } else {
+        showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -409,6 +414,7 @@ const DatosPresupuestoSellout = () => {
         editDialog={editPresupuestoSellout}
         titleEditar={"Editar presupuesto sellout"}
         buttonCancel={true}
+        loading={loading}
         maxWidth="md"
         buttonSubmit={true}
         handleSubmit={handleGuardarPresupuestoSellout}
@@ -465,7 +471,7 @@ const DatosPresupuestoSellout = () => {
                 required={true}
                 title="Estado"
                 tooltip="Define si el almacén está activo"
-                checked={presupuestoSellout.status}
+                checked={Boolean(presupuestoSellout.status)}
                 onChange={(e) =>
                   setPresupuestoSellout({
                     ...presupuestoSellout,
@@ -483,6 +489,7 @@ const DatosPresupuestoSellout = () => {
         buttonCancel={loading ? false : true}
         handleSubmit={handleGuardarExcel}
         buttonSubmit={loading ? false : true}
+        loading={loading}
         maxWidth="xl"
         handleCloseDialog={handleCloseUploadExcel}
         dialogContentComponent={

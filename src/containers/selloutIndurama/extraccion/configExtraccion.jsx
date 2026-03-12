@@ -138,6 +138,7 @@ const ConfiguracionExtraccion = () => {
             closeButton={true}
             openDialog={openDialogCrear}
             buttonCancel={true}
+            loading={loading}
             textButtonCancel="Configuración terminada"
             handleCloseDialog={handleCloseDialogCrear}
             handleSubmit={handleSubmit}
