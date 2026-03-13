@@ -34,4 +34,4 @@ jobs:
 
       - name: Push Docker images
         run: |
-          docker push registryconsensokb.azurecr.io/${{ env.PROJECT_NAME }}:${{ env.COMMIT_ID }}
+          docker push registryconsensokb.azurecr.io/${{ env.PROJECT_NAME }}:${{ env.COMMIT_ID }}-${{ env.CI_JOB_ID }}
