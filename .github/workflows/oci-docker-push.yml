@@ -18,6 +18,8 @@ jobs:
 
       - name: Generate commit tag
         run: echo "COMMIT_ID=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          printf -v CI_JOB_ID "%04d" "${{ github.run_number }}"
+          echo "CI_JOB_ID=$CI_JOB_ID" >> $GITHUB_ENV
 
       - name: Login to Azure Container Registry
         run: |
