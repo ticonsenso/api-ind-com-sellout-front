@@ -28,7 +28,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-          -t registryconsensokb.azurecr.io/${{ env.PROJECT_NAME }}:${{ env.COMMIT_ID }} \
+          -t registryconsensokb.azurecr.io/${{ env.PROJECT_NAME }}:${{ env.COMMIT_ID }}-$CI_JOB_ID \
           -t registryconsensokb.azurecr.io/${{ env.PROJECT_NAME }}:latest \
           .
 
