@@ -16,6 +16,7 @@ import {
   createMaestrosProducts,
   exportarExcel,
   setCalculateDate,
+  subirExcelMaestrosProducts,
 } from "../../../redux/configSelloutSlice";
 import { columnsMaestrosProducts } from "../constantes";
 import { useDispatch, useSelector } from "react-redux";
@@ -363,7 +364,7 @@ const MasterProducts = () => {
 
     try {
       console.log("Guardando maestros productos (bulk):", datosExcel);
-      const response = await dispatch(createMaestrosProducts(datosExcel));
+      const response = await dispatch(subirExcelMaestrosProducts(datosExcel));
 
       if (response.meta.requestStatus !== "fulfilled") {
         throw new Error(

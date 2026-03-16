@@ -14,6 +14,7 @@ import {
   deleteMaestrosStores,
   createMaestrosStores,
   exportarExcel,
+  subirExcelMaestrosStores,
   setCalculateDate,
 } from "../../../redux/configSelloutSlice";
 import { columnsMaestrosStores } from "../constantes";
@@ -309,7 +310,7 @@ const MasterAlmacen = () => {
 
     try {
       console.log("Guardando maestros stores (bulk):", datosExcel);
-      const response = await dispatch(createMaestrosStores(datosExcel));
+      const response = await dispatch(subirExcelMaestrosStores(datosExcel));
 
       if (response.meta.requestStatus !== "fulfilled") {
         throw new Error(
