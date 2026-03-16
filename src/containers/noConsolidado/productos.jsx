@@ -47,7 +47,8 @@ const ProductosNoHomologados = () => {
         (config) => config.month === monthToCompare
     );
     const matriculacionCerrada = isMonthClosed(
-        matriculacionConfigrada?.closingDate
+        matriculacionConfigrada?.closingDate,
+        matriculacionConfigrada?.startDate
     );
     const { showSnackbar } = useSnackbar();
     const [openMatriculacion, setOpenMatriculacion] = useState(false);

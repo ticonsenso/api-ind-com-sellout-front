@@ -77,15 +77,23 @@ const formatISODateToMesAnio = (fechaISO) => {
   return fecha.toLocaleDateString("es-ES", opciones).replace(" de ", " ");
 };
 
-const isClosed = (closingDate) => {
+const isClosed = (closingDate, startDate) => {
   const hoy = new Date();
-  const cierre = new Date(closingDate);
+  const cierre = new Date(closingDate + "T00:00:00");
 
   hoy.setHours(0, 0, 0, 0);
   cierre.setHours(0, 0, 0, 0);
 
   const cierreMasUno = new Date(cierre);
   cierreMasUno.setDate(cierreMasUno.getDate() + 2);
+
+  if (startDate) {
+    const inicio = new Date(startDate + "T00:00:00");
+    inicio.setHours(0, 0, 0, 0);
+    // Para que esté abierto debe ser mayor o igual al inicio y menor al cierreMasUno
+    if (hoy < inicio || hoy >= cierreMasUno) return "Cerrado ⛔";
+    return "Abierto 🟢";
+  }
 
   return hoy >= cierreMasUno ? "Cerrado ⛔" : "Abierto 🟢";
 };
@@ -134,7 +142,7 @@ const ConfiguracionMatriculacion = () => {
     ...item,
     createdAt: formatDate(item.createdAt),
     monthFormatted: formatISODateToMesAnio(item.month),
-    status: isClosed(item.closingDate),
+    status: isClosed(item.closingDate, item.startDate),
   }));
   const totalMatriculacionConfig = useSelector(
     (state) => state.selloutDatos.totalMatriculacionConfig || 0

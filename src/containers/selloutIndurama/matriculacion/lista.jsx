@@ -77,7 +77,8 @@ const Matriculacion = ({ calculateDate }) => {
     (config) => config.month === monthToCompare
   );
   const matriculacionCerrada = isMonthClosed(
-    matriculacionConfigrada?.closingDate
+    matriculacionConfigrada?.closingDate,
+    matriculacionConfigrada?.startDate
   );
   const [openMatriculacion, setOpenMatriculacion] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
@@ -611,7 +612,7 @@ const Matriculacion = ({ calculateDate }) => {
                     columns={columns}
                     data={dataMatriculacion}
                     showIcons={true}
-                    actions={actions}
+                    actions={matriculacionCerrada === "abierto" ? actions : []}
                     pagination={true}
                     page={page}
                     limit={limit}

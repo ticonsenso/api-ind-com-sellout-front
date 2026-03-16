@@ -136,18 +136,29 @@ export function debounce(func, delay) {
 }
 
 //funcion para fecha de cierre 
-export const isMonthClosed = (closingDate) => {
+export const isMonthClosed = (closingDate, startDate) => {
   if (!closingDate) {
     return "cerrado";
   }
   const hoy = new Date();
-  const cierre = new Date(closingDate);
+  // Fuerza a interpretarlo en hora local agregando la hora 00:00:00
+  const cierre = new Date(closingDate + "T00:00:00");
 
   hoy.setHours(0, 0, 0, 0);
   cierre.setHours(0, 0, 0, 0);
 
   const cierreMasUno = new Date(cierre);
   cierreMasUno.setDate(cierreMasUno.getDate() + 2);
+
+  if (startDate) {
+    // Fuerza a interpretarlo en hora local agregando la hora 00:00:00
+    const inicio = new Date(startDate + "T00:00:00");
+    inicio.setHours(0, 0, 0, 0);
+
+    // Para que esté abierto debe ser mayor o igual al inicio y menor al cierreMasUno
+    if (hoy < inicio || hoy >= cierreMasUno) return "cerrado";
+    return "abierto";
+  }
 
   return hoy >= cierreMasUno ? "cerrado" : "abierto";
 };

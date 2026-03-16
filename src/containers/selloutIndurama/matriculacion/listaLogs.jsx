@@ -66,7 +66,8 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
     (config) => config.month === monthToCompare
   );
   const matriculacionCerrada = isMonthClosed(
-    matriculacionConfigrada?.closingDate
+    matriculacionConfigrada?.closingDate,
+    matriculacionConfigrada?.startDate
   );
 
   const [open, setOpen] = useState(false);
@@ -161,20 +162,22 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
       color: "success",
       onClick: (row) => handleDetailsMatriculacion(row),
     },
-    {
-      label: "Eliminar",
-      color: "error",
-      onClick: (row) => handleDeleteDistribuidor(row),
-    }
+    ...(matriculacionCerrada === "abierto" ? [
+      {
+        label: "Eliminar",
+        color: "error",
+        onClick: (row) => handleDeleteDistribuidor(row),
+      }
+    ] : [])
   ];
 
-  const actionsDetalles = [
+  const actionsDetalles = matriculacionCerrada === "abierto" ? [
     {
       label: "Eliminar",
       color: "error",
       onClick: (row) => handleDeleteDistribuidorAlmacen(row),
     }
-  ];
+  ] : [];
 
 
   const handleDeleteDistribuidor = (row) => {
@@ -292,7 +295,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
                     columns={columnsMatriculacion}
                     data={dataMatriculacionRegistrados || []}
                     pagination={false}
-                    actions={matriculacionCerrada === "abierto" ? actions : []}
+                    actions={actions}
                     page={page}
                     limit={limit}
                     handleChangePage={handleChangePage}

@@ -1345,12 +1345,13 @@ const ExtraccionDatos = () => {
     if (response.meta.requestStatus === "fulfilled") {
       if (response?.payload?.items.length > 0) {
         const status = isClosed(
-          response?.payload?.items[0]?.closingDate || null
+          response?.payload?.items[0]?.closingDate || null,
+          response?.payload?.items[0]?.startDate || null
         );
         setMostrarAlerta(status === "Cerrado ⛔" ? true : false);
         if (status === "Cerrado ⛔") {
           setMensajeAlerta(
-            "Acción no permitida: se ha superado la fecha de cierre."
+            "Acción no permitida: verificar que se encuentre dentro del rango de fechas"
           );
         } else {
           setMensajeAlerta("");
