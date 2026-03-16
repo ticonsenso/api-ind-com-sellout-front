@@ -187,13 +187,13 @@ const AlmacenesNoHomologados = () => {
                 })
             );
 
-            if (response.meta.requestStatus !== 'fulfilled') {
-                throw response.payload || 'Error al subir el archivo.';
+            if (response?.meta?.requestStatus !== 'fulfilled') {
+                throw response?.payload || 'Error al subir el archivo.';
             }
-            showSnackbar("Archivo cargado correctamente", { severity: "success" });
+            showSnackbar(response?.payload?.message || "Archivo cargado correctamente", { severity: "success" });
         } catch (error) {
             setLoading(false);
-            showSnackbar(error || "Error al cargar archivo", { severity: "error" });
+            showSnackbar(error?.message || "Error al cargar archivo", { severity: "error" });
         } finally {
             setLoading(false);
             handleSincronizar();
@@ -215,12 +215,12 @@ const AlmacenesNoHomologados = () => {
         const response = await dispatch(
             sincronizarDatosConsolidated(dataSincronizar)
         );
-        if (response.meta.requestStatus === "fulfilled") {
-            showSnackbar(response.payload.message, { severity: "success" });
+        if (response?.meta?.requestStatus === "fulfilled") {
+            showSnackbar(response?.payload?.message || "Sincronización exitosa", { severity: "success" });
             setLoading(false);
             buscarLista(search);
         } else {
-            showSnackbar(response.payload.message, { severity: "error" });
+            showSnackbar(response?.payload?.message || "Error al sincronizar", { severity: "error" });
             setLoading(false);
         }
     };

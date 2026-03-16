@@ -101,7 +101,7 @@ const ProductosOtros = () => {
 
     useEffect(() => {
         buscarProductos(search, page, limit);
-    }, [page, limit, calculateDate]);
+    }, [page, limit, calculateDate, filtroBusqueda]);
 
     const exportExcel = async () => {
         setLoading(true);

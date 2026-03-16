@@ -58,7 +58,7 @@ import * as XLSX from "xlsx";
 import { camposMaestrosStores } from "../maestros/constantes";
 import AtomAlert from "../../../atoms/AtomAlert";
 import CustomLinearProgress from "../../../atoms/CustomLinearProgress";
-import { mensajeExtraccion, normalizeSpaces } from "../../constantes";
+import { mensajeExtraccion, normalizeSpaces, cleanString } from "../../constantes";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
@@ -375,7 +375,7 @@ const ExtraccionDatos = () => {
 
           } else {
             registro[campoConfig.campo] =
-              typeof valorRaw === "string" ? valorRaw.trim() : valorRaw;
+              typeof valorRaw === "string" ? cleanString(valorRaw) : valorRaw;
           }
 
           if (

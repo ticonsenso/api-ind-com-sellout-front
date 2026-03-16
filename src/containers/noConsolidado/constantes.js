@@ -118,7 +118,12 @@ export const styleTableData = {
     maxHeight: {
         xs: "450px",
         sm: "550px",
-        md: "75vh"
+        md: "70vh"
+    },
+    minHeight: {
+        xs: "350px",
+        sm: "450px",
+        md: "50vh"
     },
     boxShadow: "none",
     backgroundColor: "transparent",
@@ -186,11 +191,11 @@ export const styleTableData = {
         justifyContent: "flex-end",
         marginTop: {
             xs: "0px",
-            md: "10px"
+            md: "5px"
         },
         backgroundColor: "#ffffff",
         borderRadius: {
-            xs: "0 0 8px 8px",
+            xs: "0 0 5px 5px",
             md: "16px"
         },
         padding: {
@@ -198,8 +203,8 @@ export const styleTableData = {
             md: 1
         },
         minHeight: {
-            xs: "48px",
-            md: "52px"
+            xs: "45px",
+            md: "50px"
         },
         "& .MuiTablePagination-root": {
             width: "100%",

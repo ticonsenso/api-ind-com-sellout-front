@@ -23,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Typography, Tooltip, Box } from "@mui/material";
 import { useDialog } from "../../../context/DialogDeleteContext";
 import AtomSwitch from "../../../atoms/AtomSwitch";
-import { limitGeneral, normalizeEncabezados, formatDate } from "../../constantes";
+import { limitGeneral, normalizeEncabezados, formatDate, cleanString } from "../../constantes";
 import AtomTableInformationExtraccion from "../../../atoms/AtomTableInformationExtraccion";
 import { useCallback } from "react";
 import IconoFlotante from "../../../atoms/IconActionPage";
@@ -327,6 +327,7 @@ const MasterProducts = () => {
             const colIndex = headers.indexOf(normalizeEncabezados(label));
 
             let val = colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
+            val = cleanString(val);
 
             if (field === "periodo" && val) {
               const date = new Date(val);

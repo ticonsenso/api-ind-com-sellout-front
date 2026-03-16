@@ -34,7 +34,7 @@ import {
   CheckCircle as CheckCircleIcon,
   Cancel as CancelIcon,
 } from "@mui/icons-material";
-import { formatDate, isMonthClosed, debounce, timeSearch } from "../../constantes";
+import { formatDate, isMonthClosed, debounce, timeSearch, cleanString } from "../../constantes";
 import { deleteClientesCargados } from "../../../redux/extraccionSlice"
 import {
   obtenerMatriculacionConfig,
@@ -208,7 +208,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
       title: "Confirmación de eliminación", message: `¿Está seguro que desea eliminar los registros: Distribuidor: ${row?.distributor} Almacén: ${row?.storeName}?`,
       onConfirm: async () => {
         try {
-          const response = await dispatch(deleteClientesCargados({ distribuidor: row.distributor, storeName: row.storeName, calculateDate: calculateDate }));
+          const response = await dispatch(deleteClientesCargados({ distribuidor: cleanString(row.distributor), storeName: cleanString(row.storeName), calculateDate: calculateDate }));
           if (response.meta.requestStatus === "fulfilled") {
             setDetallesData((prev) => ({
               ...prev,
