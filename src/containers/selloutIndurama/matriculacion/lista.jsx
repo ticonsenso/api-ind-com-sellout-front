@@ -612,7 +612,7 @@ const Matriculacion = ({ calculateDate }) => {
                     columns={columns}
                     data={dataMatriculacion}
                     showIcons={true}
-                    actions={matriculacionCerrada === "abierto" ? actions : []}
+                    actions={[]}
                     pagination={true}
                     page={page}
                     limit={limit}
