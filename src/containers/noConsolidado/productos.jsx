@@ -21,6 +21,7 @@ import { useSnackbar } from "../../context/SnacbarContext";
 import {
     Box,
     Paper,
+    Chip
 } from "@mui/material";
 import { setCalculateDate } from "../../redux/configSelloutSlice";
 import AtomDatePicker from "../../atoms/AtomDatePicker";
@@ -241,6 +242,26 @@ const ProductosNoHomologados = () => {
             <AtomContainerGeneral
                 children={
                     <>
+                        {matriculacionCerrada !== "abierto" && (
+                            <Box
+                                sx={{
+                                    position: "fixed",
+                                    width: "auto",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 2,
+                                    top: 104,
+                                    right: 30,
+                                    zIndex: 1000,
+                                }}
+                            >
+                                <Chip
+                                    label="Mes cerrado"
+                                    color="error"
+                                    sx={{ fontWeight: "500", height: "20px", fontSize: "0.85rem", top: 50, position: "relative", right: 0 }}
+                                />
+                            </Box>
+                        )}
                         <Box sx={{
                             position: "fixed",
                             top: 85,
@@ -261,29 +282,30 @@ const ProductosNoHomologados = () => {
                                 }}
                             />
                         </Box>
-                        {matriculacionCerrada === "abierto" && (
-                            <>
-                                <IconoFlotante
-                                    handleButtonClick={exportExcel}
-                                    title="Descargar excel"
-                                    iconName="SaveAlt"
-                                    color="#5ab9f6"
-                                    right={50}
-                                    top={97}
-                                />
-                                <IconoFlotante
-                                    handleButtonClick={() =>
-                                        document.getElementById("input-excel-productos").click()
-                                    }
-                                    handleChangeFile={handleFileChange}
-                                    title="Subir archivo excel productos no homologados"
-                                    id="input-excel-productos"
-                                    iconName="DriveFolderUploadOutlined"
-                                    top={97}
-                                    right={10}
-                                />
-                            </>
-                        )}
+                        <>
+                            <IconoFlotante
+                                handleButtonClick={exportExcel}
+                                // title={matriculacionCerrada === "abierto" ? "Descargar excel" : "Revise la fecha de cierre"}
+                                title={"Descargar excel"}
+                                iconName="SaveAlt"
+                                color="#5ab9f6"
+                                right={50}
+                                top={97}
+                            // disabled={matriculacionCerrada !== "abierto"}
+                            />
+                            <IconoFlotante
+                                handleButtonClick={() =>
+                                    document.getElementById("input-excel-productos").click()
+                                }
+                                handleChangeFile={handleFileChange}
+                                title={matriculacionCerrada === "abierto" ? "Subir archivo excel productos no homologados" : "Mes cerrado"}
+                                id="input-excel-productos"
+                                iconName="DriveFolderUploadOutlined"
+                                top={97}
+                                right={10}
+                                disabled={matriculacionCerrada !== "abierto"}
+                            />
+                        </>
 
                         <AtomCard
                             title=""
