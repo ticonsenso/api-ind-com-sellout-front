@@ -324,9 +324,10 @@ const ProductosNoHomologados = () => {
                                 <>
                                     <Grid container spacing={2} justifyContent="right" sx={{ width: "100%" }}>
                                         {resultadosActualizados != null && (
-                                            <Grid size={2}>
+                                            <Grid size={2} sx={{ position: "fixed", bottom: 25, right: 10, zIndex: 1000 }}>
                                                 <AtomButtonPrimary
                                                     label="Guardar"
+                                                    height="40px"
                                                     loading={loading}
                                                     onClick={handleGuardarMaestros}
 
@@ -337,7 +338,6 @@ const ProductosNoHomologados = () => {
                                         <Grid size={12}>
                                             {loading && <CustomLinearProgress />}
                                             <DataGrid
-                                                autoHeight
                                                 rows={data}
                                                 columns={columnsProductNull.map(col => ({
                                                     ...col,

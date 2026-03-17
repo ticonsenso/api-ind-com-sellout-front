@@ -114,16 +114,10 @@ export const columnsStoreNull = [
 
 export const styleTableData = {
     width: "100%",
-    height: "auto",
-    maxHeight: {
+    height: {
         xs: "450px",
         sm: "550px",
-        md: "70vh"
-    },
-    minHeight: {
-        xs: "350px",
-        sm: "450px",
-        md: "50vh"
+        md: "62vh"
     },
     boxShadow: "none",
     backgroundColor: "transparent",
@@ -188,6 +182,7 @@ export const styleTableData = {
 
     "& .MuiDataGrid-footerContainer": {
         borderTop: "none",
+        alignItems: "center",
         justifyContent: "flex-end",
         marginTop: {
             xs: "0px",
@@ -198,13 +193,9 @@ export const styleTableData = {
             xs: "0 0 5px 5px",
             md: "16px"
         },
-        padding: {
-            xs: 0,
-            md: 1
-        },
-        minHeight: {
-            xs: "45px",
-            md: "50px"
+        height: {
+            xs: "55px",
+            md: "55px"
         },
         "& .MuiTablePagination-root": {
             width: "100%",

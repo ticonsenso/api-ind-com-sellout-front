@@ -24,6 +24,7 @@ const styles = {
     backgroundColor: "transparent",
     overflow: "hidden",
     minHeight: 0,
+    mb: 0
   },
   header: {
     justifyContent: "center",
