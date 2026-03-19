@@ -72,6 +72,9 @@ const MasterAlmacen = () => {
   });
   const paramsValidate = ["distributor", "storeDistributor", "codeStoreSic"];
   const [loading, setLoading] = useState(false);
+  const [duplicates, setDuplicates] = useState([]);
+  const [openDuplicatesDialog, setOpenDuplicatesDialog] = useState(false);
+  const [summaryMessage, setSummaryMessage] = useState("");
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -103,6 +106,12 @@ const MasterAlmacen = () => {
     setDatosExcel([]);
     setPage(1);
     setLimit(limitGeneral);
+  };
+
+  const handleCloseDuplicatesDialog = () => {
+    setOpenDuplicatesDialog(false);
+    setDuplicates([]);
+    setSummaryMessage("");
   };
 
   const debounceSearchAddress = useCallback(
@@ -320,6 +329,11 @@ const MasterAlmacen = () => {
       }
 
       showSnackbar(response.payload.message || "Se subieron todos los productos exitosamente");
+      if (response.payload.duplicates && response.payload.duplicates.length > 0) {
+        setDuplicates(response.payload.duplicates);
+        setSummaryMessage(response.payload.message);
+        setOpenDuplicatesDialog(true);
+      }
       handleCloseUploadExcel();
       buscarMaestrosStores();
     } catch (error) {
@@ -562,6 +576,42 @@ const MasterAlmacen = () => {
                 </>
               )}
           </Box >
+        }
+      />
+      <AtomDialogForm
+        openDialog={openDuplicatesDialog}
+        titleCrear={"Detalle de carga Maestros Almacenes"}
+        buttonCancel={false}
+        buttonSubmit={true}
+        textButtonSubmit="Aceptar"
+        handleSubmit={handleCloseDuplicatesDialog}
+        maxWidth="lg"
+        handleCloseDialog={handleCloseDuplicatesDialog}
+        dialogContentComponent={
+          <Box sx={{ width: "100%" }}>
+            <Typography sx={{ mb: 0, color: "#5c5c5c", fontWeight: 600 }}>
+              {summaryMessage}
+            </Typography>
+
+            {duplicates.length > 0 && (
+              <>
+                <Typography sx={{ fontSize: "14px", mb: 1, color: "#c51313ff", fontWeight: 500 }}>
+                  Detalles  en la carga: {duplicates.length}
+                </Typography>
+                <AtomTableForm
+                  columns={[
+                    ...columnsMaestrosStores.filter(c => c.field !== 'status'),
+                    { field: "reason", label: "Razón", type: "string" }
+                  ]}
+                  data={duplicates}
+                  pagination={false}
+                  count={duplicates.length}
+                  handleChangePage={() => { }}
+                  handleChangeRowsPerPage={() => { }}
+                />
+              </>
+            )}
+          </Box>
         }
       />
     </>

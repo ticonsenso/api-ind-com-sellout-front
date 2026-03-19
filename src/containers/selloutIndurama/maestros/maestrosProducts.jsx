@@ -79,6 +79,9 @@ const MasterProducts = () => {
     "codeProductSic",
   ];
   const [loading, setLoading] = useState(false);
+  const [duplicates, setDuplicates] = useState([]);
+  const [openDuplicatesDialog, setOpenDuplicatesDialog] = useState(false);
+  const [summaryMessage, setSummaryMessage] = useState("");
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -103,6 +106,12 @@ const MasterProducts = () => {
     setDatosExcel([]);
     setPage(1);
     setLimit(limitGeneral);
+  };
+
+  const handleCloseDuplicatesDialog = () => {
+    setOpenDuplicatesDialog(false);
+    setDuplicates([]);
+    setSummaryMessage("");
   };
 
   const handleOpenCreateMaestrosProducts = () => {
@@ -375,6 +384,11 @@ const MasterProducts = () => {
       }
 
       showSnackbar(response.payload.message || "Se subieron todos los productos exitosamente", { severity: "success" });
+      if (response.payload.duplicates && response.payload.duplicates.length > 0) {
+        setDuplicates(response.payload.duplicates);
+        setSummaryMessage(response.payload.message);
+        setOpenDuplicatesDialog(true);
+      }
       handleCloseUploadExcel();
       buscarMaestrosProducts();
     } catch (error) {
@@ -677,6 +691,43 @@ const MasterProducts = () => {
                 ) : (
                   <Typography>No hay datos extraídos</Typography>
                 )}
+              </>
+            )}
+          </Box>
+        }
+      />
+      <AtomDialogForm
+        openDialog={openDuplicatesDialog}
+        titleCrear={"Detalle de la carga de productos"}
+        buttonCancel={false}
+        buttonSubmit={true}
+        textButtonSubmit="Aceptar"
+        handleSubmit={handleCloseDuplicatesDialog}
+        maxWidth="lg"
+        handleCloseDialog={handleCloseDuplicatesDialog}
+        dialogContentComponent={
+          <Box sx={{ width: "100%" }}>
+            <Typography variant="subtitle1" sx={{ mb: 0, color: "#5c5c5c", fontWeight: 600 }}>
+              {summaryMessage}
+            </Typography>
+            {duplicates.length > 0 && (
+              <>
+                <Typography variant="body2" sx={{ fontSize: "14px", mb: 1, color: "#d32f2f", fontWeight: 600 }}>
+                  Registros duplicados detectados:
+                </Typography>
+                <AtomTableForm
+                  columns={[
+                    ...columnsMaestrosProducts.filter(c => c.field !== 'status'),
+                    { field: "reason", label: "Razón", type: "string" }
+                  ]}
+                  data={duplicates}
+                  pagination={true}
+                  page={1}
+                  limit={10}
+                  count={duplicates.length}
+                  handleChangePage={() => { }}
+                  handleChangeRowsPerPage={() => { }}
+                />
               </>
             )}
           </Box>
