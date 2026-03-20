@@ -712,8 +712,8 @@ const MasterProducts = () => {
             </Typography>
             {duplicates.length > 0 && (
               <>
-                <Typography variant="body2" sx={{ fontSize: "14px", mb: 1, color: "#d32f2f", fontWeight: 600 }}>
-                  Registros duplicados detectados:
+                <Typography sx={{ fontSize: "14px", mb: 1, color: "#c51313ff", fontWeight: 500 }}>
+                  Detalles en la carga: {duplicates.length}
                 </Typography>
                 <AtomTableForm
                   columns={[
@@ -721,9 +721,7 @@ const MasterProducts = () => {
                     { field: "reason", label: "Razón", type: "string" }
                   ]}
                   data={duplicates}
-                  pagination={true}
-                  page={1}
-                  limit={10}
+                  pagination={false}
                   count={duplicates.length}
                   handleChangePage={() => { }}
                   handleChangeRowsPerPage={() => { }}
