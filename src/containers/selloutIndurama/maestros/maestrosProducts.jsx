@@ -336,7 +336,7 @@ const MasterProducts = () => {
             const colIndex = headers.indexOf(normalizeEncabezados(label));
 
             let val = colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
-            val = cleanString(val);
+            val = (val);
 
             if (field === "periodo" && val) {
               const date = new Date(val);

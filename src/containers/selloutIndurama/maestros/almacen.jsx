@@ -283,7 +283,7 @@ const MasterAlmacen = () => {
             const colIndex = headers.indexOf(normalizedLabel);
 
             let val = colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
-            val = cleanString(val);
+            val = (val);
 
             if (field === "periodo" && val) {
               const date = new Date(val);
@@ -319,9 +319,7 @@ const MasterAlmacen = () => {
     setLoading(true);
 
     try {
-      console.log("Guardando maestros stores (bulk):", datosExcel);
       const response = await dispatch(subirExcelMaestrosStores(datosExcel));
-
       if (response.meta.requestStatus !== "fulfilled") {
         throw new Error(
           response.payload?.message || "Ocurrió un error al subir los datos."
