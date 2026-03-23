@@ -220,16 +220,5 @@ export const normalizeSpaces = (value = "") => {
 
 export const cleanString = (value) => {
   if (typeof value !== "string") return value;
-  const dict = {
-    'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
-    'Á': 'A', 'É': 'E', 'Í': 'I', 'Ó': 'O', 'Ú': 'U',
-    'ä': 'a', 'ë': 'e', 'ï': 'i', 'ö': 'o', 'ü': 'u',
-    'Ä': 'A', 'Ë': 'E', 'Ï': 'I', 'Ö': 'O', 'Ü': 'U',
-    'â': 'a', 'ê': 'e', 'î': 'i', 'ô': 'o', 'û': 'u',
-    'Â': 'A', 'Ê': 'E', 'Î': 'I', 'Ô': 'O', 'Û': 'U'
-  };
-  return value
-    .replace(/[áéíóúÁÉÍÓÚäëïöüÄËÏÖÜâêîôûÂÊÎÔÛ]/g, match => dict[match])
-    .replace(/\s+/g, " ")
-    .trim();
+  return value.replace(/\s+/g, "");
 };
