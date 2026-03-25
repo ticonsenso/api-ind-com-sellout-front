@@ -152,7 +152,7 @@ const AlmacenNoVisita = () => {
                                         <Tooltip title="Buscar por distribuidor, código almacén, código producto y descripción">
                                             <AtomTextFielInputForm
                                                 value={search}
-                                                height="45px"
+                                                height="43px"
                                                 color="#ffffff"
                                                 onChange={(e) => {
                                                     setPage(1);

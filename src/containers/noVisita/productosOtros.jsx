@@ -200,7 +200,7 @@ const ProductosOtros = () => {
                                             <AtomTextFielInputForm
                                                 variant="outlined"
                                                 value={search}
-                                                height="45px"
+                                                height="43px"
                                                 color="#ffffff"
                                                 onChange={(e) => {
                                                     setPage(1);

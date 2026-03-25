@@ -424,13 +424,14 @@ const MasterAlmacen = () => {
                         }}
                         placeholder="Buscar por distribuidor, almacén y código SIC"
                         color="#ffffff"
-                        height="45px"
+                        height="42px"
                       />
                     </Tooltip>
                   </Grid>
-                  <Grid size={2.5} mt={2.3}>
+                  <Grid size={2} mt={2.6}>
                     <AtomButtonPrimary
                       label="Crear"
+                      height="42px"
                       onClick={handleOpenCreateMaestrosStores}
 
                     />

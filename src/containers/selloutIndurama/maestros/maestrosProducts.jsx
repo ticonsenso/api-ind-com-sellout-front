@@ -481,13 +481,14 @@ const MasterProducts = () => {
                         }}
                         placeholder="Buscar por distribuidor, almacén y código SIC"
                         color="#ffffff"
-                        height="45px"
+                        height="42px"
                       />
                     </Tooltip>
                   </Grid>
-                  <Grid size={2.5} mt={2.3}>
+                  <Grid size={2} mt={2.6}>
                     <AtomButtonPrimary
                       label="Crear"
+                      height="42px"
                       onClick={handleOpenCreateMaestrosProducts}
                     />
                   </Grid>
@@ -575,28 +576,6 @@ const MasterProducts = () => {
             </Grid>
             <Grid size={6}>
               <AtomTextField
-                id="productDistributor"
-                required={true}
-                headerTitle="Producto Distribuidor"
-                value={maestrosProducts.productDistributor}
-                onChange={(e) => {
-                  const value = e.target.value || "";
-                  setMaestrosProducts({
-                    ...maestrosProducts,
-                    productDistributor: value,
-                    searchProductStore: (maestrosProducts.distributor + value + maestrosProducts.productStore).replace(/\s+/g, ""),
-                  });
-                }}
-                error={errors.productDistributor}
-                helperText={
-                  errors.productDistributor
-                    ? "El producto distribuidor es requerido"
-                    : ""
-                }
-              />
-            </Grid>
-            <Grid size={6}>
-              <AtomTextField
                 id="productStore"
                 required={true}
                 headerTitle="Producto Almacen"
@@ -615,6 +594,28 @@ const MasterProducts = () => {
                 error={errors.productStore}
                 helperText={
                   errors.productStore ? "El producto tienda es requerido" : ""
+                }
+              />
+            </Grid>
+            <Grid size={6}>
+              <AtomTextField
+                id="productDistributor"
+                required={true}
+                headerTitle="Descripción Producto Almacén"
+                value={maestrosProducts.productDistributor}
+                onChange={(e) => {
+                  const value = e.target.value || "";
+                  setMaestrosProducts({
+                    ...maestrosProducts,
+                    productDistributor: value,
+                    searchProductStore: (maestrosProducts.distributor + value + maestrosProducts.productStore).replace(/\s+/g, ""),
+                  });
+                }}
+                error={errors.productDistributor}
+                helperText={
+                  errors.productDistributor
+                    ? "El producto distribuidor es requerido"
+                    : ""
                 }
               />
             </Grid>

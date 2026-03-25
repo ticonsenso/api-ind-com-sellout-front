@@ -254,8 +254,9 @@ const AlmacenesNoHomologados = () => {
                         )}
                         <Box sx={{
                             position: "fixed",
-                            top: 80,
-                            right: 130,
+                            top: 85,
+                            maxWidth: "220px",
+                            right: 100,
                         }}>
                             <AtomDatePicker
                                 id="calculateDate"
@@ -263,7 +264,7 @@ const AlmacenesNoHomologados = () => {
                                 mode="month"
                                 label="Fecha de búsqueda"
                                 color="#ffffff"
-                                height="45px"
+                                height="40px"
                                 value={calculateDate}
                                 onChange={(e) => {
                                     dispatch(setCalculateDate(e));
@@ -279,7 +280,7 @@ const AlmacenesNoHomologados = () => {
                                 title={"Descargar excel"}
                                 iconName="SaveAlt"
                                 color="#5ab9f6"
-                                right={70}
+                                right={50}
                                 top={97}
                             // disabled={matriculacionCerrada !== "abierto"}
                             />
@@ -292,6 +293,7 @@ const AlmacenesNoHomologados = () => {
                                 id="input-excel-productos"
                                 iconName="DriveFolderUploadOutlined"
                                 top={97}
+                                right={10}
                                 disabled={matriculacionCerrada !== "abierto"}
                             />
                         </>
