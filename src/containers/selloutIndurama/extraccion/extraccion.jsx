@@ -2044,6 +2044,8 @@ const ExtraccionDatos = () => {
         titleCrear={"Separación de registros"}
         maxWidth="xl"
         loading={loading}
+        textButtonSubmit="Continuar"
+        textButtonCancel="Cancelar"
         buttonSubmit={true}
         buttonCancel={true}
         handleSubmit={handleConfirmSeparation}
