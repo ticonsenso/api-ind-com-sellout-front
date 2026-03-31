@@ -315,13 +315,13 @@ const PlantillaStandar = () => {
               right={160}
               disabled={loading}
             />
-            <IconoFlotante
+            {/* <IconoFlotante
               handleButtonClick={handleOpenCreateProducts}
               title="Nuevo registro plantilla stdr"
               iconName="Add"
               color="green"
               right={115}
-            />
+            /> */}
             <IconoFlotante
               handleButtonClick={exportExcel}
               title="Descargar consolidado"

@@ -595,12 +595,12 @@ const MasterAlmacen = () => {
             {duplicates.length > 0 && (
               <>
                 <Typography sx={{ fontSize: "14px", mb: 1, color: "#c51313ff", fontWeight: 500 }}>
-                  Detalles  en la carga: {duplicates.length}
+                  Valores duplicados en la carga: {duplicates.length}
                 </Typography>
                 <AtomTableForm
                   columns={[
                     ...columnsMaestrosStores.filter(c => c.field !== 'status'),
-                    { field: "reason", label: "Razón", type: "string" }
+                    // { field: "reason", label: "Razón", type: "string" }
                   ]}
                   data={duplicates}
                   pagination={false}
