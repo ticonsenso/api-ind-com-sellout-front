@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Typography, Box, keyframes, styled } from "@mui/material";
 import AtomButtonPrimary from "../../atoms/AtomButtonPrimary";
 import Grid from "@mui/material/Grid";
@@ -109,6 +109,7 @@ const LogoImage = styled("img")({
 function Login() {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.auth.token);
+  const [loading, setLoading] = useState(false);
 
   const handleLogout = () => {
     dispatch(actionLogoutReducer());
@@ -163,11 +164,12 @@ function Login() {
             letterSpacing: "0.8px"
           }}
         >
-          SISTEMA DE GESTIÓN V 2.2.18
+          SISTEMA DE GESTIÓN V 2.2.19
         </Typography>
 
         <AtomButtonPrimary
           label="Iniciar Sesión"
+          loading={loading}
           sx={{
             width: "100%",
             height: "48px",
@@ -184,6 +186,7 @@ function Login() {
             }
           }}
           onClick={() => {
+            setLoading(true);
             window.location.href =
               import.meta.env.VITE_API_URL + "api/auth/saml/login";
           }}

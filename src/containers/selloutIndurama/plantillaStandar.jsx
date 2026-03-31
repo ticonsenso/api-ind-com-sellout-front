@@ -312,7 +312,7 @@ const PlantillaStandar = () => {
               title="Descargar información básica"
               iconName="PlayForWork"
               color="#0262a1ff"
-              right={160}
+              right={115}
               disabled={loading}
             />
             {/* <IconoFlotante

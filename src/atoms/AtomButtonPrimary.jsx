@@ -4,6 +4,7 @@ function AtomButtonPrimary({
   label, onClick, mt, icon, nameIcon, disabled,
   height = "48px",
   loading = false,
+  sx = {}, // Accept sx prop
 }) {
   return (
     <Button
@@ -33,6 +34,7 @@ function AtomButtonPrimary({
           color: "rgba(0, 0, 0, 0.26)",
           boxShadow: "none",
         },
+        ...sx, // Spread external sx to merge/override
       }}
       onClick={onClick}
       startIcon={!loading && icon}
