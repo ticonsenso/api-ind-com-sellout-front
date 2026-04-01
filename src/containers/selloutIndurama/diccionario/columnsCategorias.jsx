@@ -234,9 +234,10 @@ const ColumnsCategorias = ({ id }) => {
                             placeholder="Buscar por nombre"
                             search={true}
                             valueSearch={search}
+                            toUpperCase={true}
                             onChange={(e) => {
-                                setSearch(e.target.value);
-                                debounceSearch(e.target.value);
+                                setSearch(e.target.value.toUpperCase());
+                                debounceSearch(e.target.value.toUpperCase());
                             }}
                             children={
                                 <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
@@ -246,6 +247,7 @@ const ColumnsCategorias = ({ id }) => {
                                         actions={namePermission ? actions : []}
                                         pagination={false}
                                         loading={loading}
+                                        toUpperCase={true}
                                     />
                                 </Box>
                             }
@@ -272,10 +274,11 @@ const ColumnsCategorias = ({ id }) => {
                                 required={true}
                                 headerTitle="Palabra"
                                 value={matricula.keyword}
+                                toUpperCase={true}
                                 onChange={(e) =>
                                     setMatricula({
                                         ...matricula,
-                                        keyword: e.target.value,
+                                        keyword: e.target.value.toUpperCase(),
                                     })
                                 }
                                 error={errors.keyword}

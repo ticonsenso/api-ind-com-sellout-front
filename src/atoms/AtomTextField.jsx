@@ -30,6 +30,7 @@ const AtomTextFielInputForm = (props) => {
     onDrop,
     color = "#f5f5f5",
     height = "52px",
+    toUpperCase = false,
   } = props;
 
   const handleUserChange = (e) => {
@@ -103,30 +104,17 @@ const AtomTextFielInputForm = (props) => {
         }}
         onDrop={(e) => {
           e.preventDefault();
-          if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            const file = e.dataTransfer.files[0];
-            onChange({
-              target: {
-                name: id,
-                value: file,
-                files: e.dataTransfer.files,
-              },
-            });
-            e.dataTransfer.clearData();
-          }
         }}
         sx={{
           fontSize: "14px",
           flexGrow: 1,
           mb: 1,
           "& .MuiOutlinedInput-root": {
-            // Contenedor principal del input
             height: multiline ? "auto" : height,
             borderRadius: "8px",
             backgroundColor: color,
             padding: 0,
             "& fieldset": {
-              // El borde
               borderColor: error ? "#f44336" : "transparent",
               borderRadius: "8px",
             },
@@ -137,10 +125,10 @@ const AtomTextFielInputForm = (props) => {
               borderColor: error ? "#f44336" : "blue",
             },
             "& .MuiInputBase-input": {
-              // El elemento input real
               padding: multiline ? "8px 14px" : "0 14px",
               height: multiline ? "auto" : "100%",
               boxSizing: "border-box",
+              textTransform: toUpperCase ? "uppercase" : "none",
             },
           },
           "& .MuiInputLabel-root": {
@@ -201,6 +189,7 @@ AtomTextFielInputForm.propTypes = {
   helperText: PropTypes.string,
   multiline: PropTypes.bool,
   acceptsPositiveDecimal: PropTypes.bool,
+  toUpperCase: PropTypes.bool,
 };
 
 export default AtomTextFielInputForm;

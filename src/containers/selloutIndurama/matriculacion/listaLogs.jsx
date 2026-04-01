@@ -40,9 +40,11 @@ import {
   obtenerMatriculacionConfig,
 } from "../../../redux/selloutDatosSlic";
 import AtomTextFielInputForm from "../../../atoms/AtomTextField";
+import { PERMISSIONS } from "../../../constants/permissions";
+
 const ListaLogsMatriculacion = ({ calculateDate }) => {
   const hasPermission = usePermission();
-  const namePermission = hasPermission("ACCIONES MATRICULACION SELLOUT");
+  const namePermission = hasPermission(PERMISSIONS.MATRICULACION.ACTIONS);
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
   const { showDialog } = useDialog();
@@ -167,6 +169,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
         label: "Eliminar",
         color: "error",
         onClick: (row) => handleDeleteDistribuidor(row),
+        visible: (row) => row.rowCountTotal > 0,
       }
     ] : [])
   ];
@@ -185,6 +188,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
       title: "Confirmación de eliminación", message:
         `¿Está seguro que desea eliminar todos los datos registrados a:  Distribuidor: ${row?.distributor}   - Fecha: ${calculateDate}?`,
       onConfirm: async () => {
+        setLoading(true);
         try {
           const data = {
             distribuidor: row.id || null,
@@ -199,6 +203,8 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
           }
         } catch (error) {
           showSnackbar(error || "Error al eliminar la matriculacion", { severity: "error" });
+        } finally {
+          setLoading(false);
         }
       },
       onCancel: () => { },
@@ -209,6 +215,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
     showDialog({
       title: "Confirmación de eliminación", message: `¿Está seguro que desea eliminar los registros: Distribuidor: ${row?.distributor} Almacén: ${row?.storeName}?`,
       onConfirm: async () => {
+        setLoading(true);
         try {
           const response = await dispatch(deleteClientesCargados({ distribuidor: cleanString(row.distributor), storeName: cleanString(row.storeName), calculateDate: calculateDate }));
           if (response.meta.requestStatus === "fulfilled") {
@@ -222,6 +229,8 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
           }
         } catch (error) {
           showSnackbar(error || "Error al eliminar la matriculacion", { severity: "error" });
+        } finally {
+          setLoading(false);
         }
       },
       onCancel: () => { },

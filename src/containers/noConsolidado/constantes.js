@@ -175,6 +175,7 @@ export const styleTableData = {
         },
         display: "flex",
         alignItems: "center",
+        textTransform: "uppercase",
     },
     "& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within": {
         outline: "none",

@@ -14,7 +14,9 @@ import {
   Collapse,
   styled,
   alpha,
-  Paper
+  Paper,
+  Checkbox,
+  Tooltip,
 } from "@mui/material";
 import CustomLinearProgress from "./CustomLinearProgress";
 import {
@@ -109,21 +111,49 @@ const StyledBodyRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const StyledBodyCell = styled(TableCell)(({ theme }) => ({
+const StyledBodyCell = styled(TableCell, {
+  shouldForwardProp: (prop) => prop !== "toUpperCase",
+})(({ theme, toUpperCase }) => ({
   fontSize: "0.875rem",
   color: "#334155",
   borderBottom: "none",
   padding: "12px 16px",
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down("sm")]: {
     padding: "8px 10px",
   },
   wordWrap: "break-word",
   whiteSpace: "normal",
   overflow: "hidden",
   verticalAlign: "middle",
+  textTransform: toUpperCase ? "uppercase" : "none",
 }));
 
-import { Tooltip } from "@mui/material";
+// Estilo para el botón de eliminar masivo elegante
+const MassDeleteButton = styled(IconButton)(({ theme }) => ({
+  color: "#ebebebff",
+  backgroundColor: alpha("#f85149", 0.08),
+  padding: "4px",
+  marginLeft: "8px",
+  transition: "all 0.2s ease",
+  borderRadius: "6px",
+  border: `1px solid ${alpha("#f85149", 0.2)}`,
+  "&:hover": {
+    backgroundColor: "#f85149",
+    color: "#ffffff",
+    transform: "scale(1.1)",
+    boxShadow: `0 0 10px ${alpha("#f85149", 0.3)}`,
+  },
+}));
+
+const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
+  color: "#cbd5e1",
+  "&.Mui-checked": {
+    color: "#0072CE",
+  },
+  "&:hover": {
+    backgroundColor: alpha("#0072CE", 0.04),
+  },
+}));
 
 const ActionButton = styled(Button, {
   shouldForwardProp: (prop) => prop !== "colorKey" && prop !== "isIconOnly",
@@ -182,7 +212,8 @@ const AtomTableForm = (props) => {
     selectedRows = [],
     onSelectionChange = () => { },
     onDeleteSelected,
-    loading = false
+    loading = false,
+    toUpperCase = false
   } = props;
 
   const [expandedRow, setExpandedRow] = useState(null);
@@ -248,23 +279,26 @@ const AtomTableForm = (props) => {
             <TableHead>
               <TableRow>
                 {selectable && (
-                  <StyledHeaderCell sx={{ width: "60px" }}>
-                    <input
-                      type="checkbox"
-                      checked={selectedRows.length === data.length && data.length > 0}
-                      onChange={handleSelectAll}
-                      style={{ cursor: "pointer", width: "18px", height: "18px", accentColor: "#0072CE" }}
-                    />
-                    {selectedRows.length > 0 && (
-                      <IconButton
-                        onClick={() => onDeleteSelected?.(selectedRows)}
+                  <StyledHeaderCell sx={{ width: "60px", padding: "8px 15px" }}>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <StyledCheckbox
                         size="small"
-                        color="error"
-                        sx={{ ml: 1, padding: 0 }}
-                      >
-                        <DeleteForeverIcon fontSize="small" />
-                      </IconButton>
-                    )}
+                        checked={selectedRows.length === data.length && data.length > 0}
+                        indeterminate={selectedRows.length > 0 && selectedRows.length < data.length}
+                        onChange={handleSelectAll}
+                        sx={{ padding: 0, color: "#ffffff", "&.Mui-checked": { color: "#ffffff" }, "&.MuiCheckbox-indeterminate": { color: "#ffffff" } }}
+                      />
+                      {selectedRows.length > 0 && (
+                        <Tooltip title="Eliminar seleccionados" arrow>
+                          <MassDeleteButton
+                            onClick={() => onDeleteSelected?.(selectedRows)}
+                            size="small"
+                          >
+                            <DeleteForeverIcon sx={{ fontSize: "1.1rem" }} />
+                          </MassDeleteButton>
+                        </Tooltip>
+                      )}
+                    </Box>
                   </StyledHeaderCell>
                 )}
 
@@ -313,12 +347,12 @@ const AtomTableForm = (props) => {
                     <React.Fragment key={row.id || rowIndex}>
                       <StyledBodyRow>
                         {selectable && (
-                          <StyledBodyCell padding="checkbox">
-                            <input
-                              type="checkbox"
+                          <StyledBodyCell padding="checkbox" sx={{ textAlign: "center" }}>
+                            <StyledCheckbox
+                              size="small"
                               checked={selectedRows.includes(row.id)}
                               onChange={() => handleSelectRow(row.id)}
-                              style={{ cursor: "pointer", width: "18px", height: "18px", margin: "auto", display: "block", accentColor: "#0072CE" }}
+                              sx={{ padding: 0 }}
                             />
                           </StyledBodyCell>
                         )}
@@ -343,6 +377,7 @@ const AtomTableForm = (props) => {
                           <StyledBodyCell
                             key={colIndex}
                             align={column?.align || "left"}
+                            toUpperCase={toUpperCase}
                             sx={{
                               textAlign: ["dinero", "porcentaje", "number"].includes(column?.type) ? "right" : "left",
                               maxWidth: "210px"

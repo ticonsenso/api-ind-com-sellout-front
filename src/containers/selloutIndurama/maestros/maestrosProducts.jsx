@@ -346,6 +346,9 @@ const MasterProducts = () => {
                 val = `${year}-${month}-01`;
               }
             }
+            if (field === "codeProductSic" && val) {
+              val = String(val).trim().toUpperCase();
+            }
             item[field] = val;
           }
         });
@@ -470,16 +473,17 @@ const MasterProducts = () => {
                     />
                   </Grid>
                   <Grid size={4} mt={2.8}>
-                    <Tooltip title="Buscar por distribuidor, almacén y código SIC">
+                    <Tooltip title="Buscar por distribuidor, producto centro y código SIC">
                       <AtomTextFielInputForm
                         value={search}
+                        toUpperCase={true}
                         onChange={(e) => {
                           setPage(1);
-                          setLimit(5);
-                          setSearch(e.target.value);
-                          debounceSearchAddress(e.target.value);
+                          setLimit(pageOptions[0]);
+                          setSearch(e.target.value.toUpperCase());
+                          debounceSearchAddress(e.target.value.toUpperCase());
                         }}
-                        placeholder="Buscar por distribuidor, almacén y código SIC"
+                        placeholder="Buscar por distribuidor, producto centro y código SIC"
                         color="#ffffff"
                         height="42px"
                       />
@@ -510,6 +514,7 @@ const MasterProducts = () => {
                     handleChangePage={handleChangePage}
                     handleChangeRowsPerPage={handleChangeRowsPerPage}
                     loading={loading}
+                    toUpperCase={true}
                   />
                 </>
               }
@@ -541,10 +546,11 @@ const MasterProducts = () => {
                 required={true}
                 headerTitle="Código SIC"
                 value={maestrosProducts.codeProductSic}
+                toUpperCase={true}
                 onChange={(e) => {
                   setMaestrosProducts({
                     ...maestrosProducts,
-                    codeProductSic: e.target.value,
+                    codeProductSic: e.target.value.toUpperCase(),
                   });
                 }}
                 error={errors.codeProductSic}
@@ -559,8 +565,9 @@ const MasterProducts = () => {
                 required={true}
                 headerTitle="Distribuidor"
                 value={maestrosProducts.distributor}
+                toUpperCase={true}
                 onChange={(e) => {
-                  const value = e.target.value || "";
+                  const value = e.target.value.toUpperCase() || "";
                   setMaestrosProducts({
                     ...maestrosProducts,
                     distributor: value,
@@ -580,8 +587,9 @@ const MasterProducts = () => {
                 required={true}
                 headerTitle="Producto Almacen"
                 value={maestrosProducts.productStore}
+                toUpperCase={true}
                 onChange={(e) => {
-                  const value = e.target.value || "";
+                  const value = e.target.value.toUpperCase() || "";
                   setMaestrosProducts({
                     ...maestrosProducts,
                     productStore: value,
@@ -603,8 +611,9 @@ const MasterProducts = () => {
                 required={true}
                 headerTitle="Descripción Producto Almacén"
                 value={maestrosProducts.productDistributor}
+                toUpperCase={true}
                 onChange={(e) => {
-                  const value = e.target.value || "";
+                  const value = e.target.value.toUpperCase() || "";
                   setMaestrosProducts({
                     ...maestrosProducts,
                     productDistributor: value,

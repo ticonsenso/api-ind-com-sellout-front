@@ -293,6 +293,9 @@ const MasterAlmacen = () => {
                 val = `${year}-${month}-01`;
               }
             }
+            if (field === "codeStoreSic" && val) {
+              val = String(val).trim().toUpperCase();
+            }
             item[field] = val;
           }
         });
@@ -416,11 +419,12 @@ const MasterAlmacen = () => {
                     <Tooltip title="Buscar por distribuidor, almacén y código SIC">
                       <AtomTextFielInputForm
                         value={search}
+                        toUpperCase={true}
                         onChange={(e) => {
                           setPage(1);
                           setLimit(5);
-                          setSearch(e.target.value);
-                          debounceSearchAddress(e.target.value);
+                          setSearch(e.target.value.toUpperCase());
+                          debounceSearchAddress(e.target.value.toUpperCase());
                         }}
                         placeholder="Buscar por distribuidor, almacén y código SIC"
                         color="#ffffff"
@@ -452,6 +456,7 @@ const MasterAlmacen = () => {
                     handleChangePage={handleChangePage}
                     handleChangeRowsPerPage={handleChangeRowsPerPage}
                     loading={loading}
+                    toUpperCase={true}
                   />
                 </>
               }
@@ -487,8 +492,9 @@ const MasterAlmacen = () => {
                   required={campo.required}
                   value={maestrosStores[campo.id]}
                   disabled={campo.disabled}
+                  toUpperCase={true}
                   onChange={(e) => {
-                    const nuevoValor = e.target.value;
+                    const nuevoValor = e.target.value.toUpperCase();
                     const nuevosDatos = {
                       ...maestrosStores,
                       [campo.id]: nuevoValor,

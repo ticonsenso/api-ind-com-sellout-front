@@ -28,14 +28,9 @@ import ExcelJS from "exceljs";
 import IconoFlotante from "../../../atoms/IconActionPage";
 import AtomTableInformationExtraccion from "../../../atoms/AtomTableInformationExtraccion";
 import AtomDatePicker from "../../../atoms/AtomDatePicker";
-import {
-  MoreVert as MoreVertIcon,
-  DriveFolderUploadOutlined as DriveFolderUploadOutlinedIcon,
-  SaveAlt as SaveAltIcon,
-  Add as AddIcon,
-} from "@mui/icons-material";
 import { formatDate, isMonthClosed, debounce, normalizeEncabezados, normalizeSpaces } from "../../constantes";
 import { setCalculateDate } from "../../../redux/configSelloutSlice";
+import { PERMISSIONS } from "../../../constants/permissions";
 
 const columns = [
   {
@@ -60,7 +55,7 @@ const columns = [
 
 const Matriculacion = ({ calculateDate }) => {
   const hasPermission = usePermission();
-  const namePermission = hasPermission("ACCIONES MATRICULACION SELLOUT");
+  const namePermission = hasPermission(PERMISSIONS.MATRICULACION.ACTIONS);
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
   const { showDialog } = useDialog();
@@ -278,6 +273,7 @@ const Matriculacion = ({ calculateDate }) => {
           const response = await dispatch(deleteMasivaMatriculacion({ ids, calculateDate }));
           if (response.meta.requestStatus === "fulfilled") {
             showSnackbar(response.payload.message || "Registro exitoso", { severity: "success" });
+            setSelectedIds([]);
             buscarMatriculacion(search, calculateDate);
           } else {
             showSnackbar(response.payload.message || "Ocurrió un error", { severity: "error" });

@@ -118,16 +118,18 @@ function Index() {
   };
 
   useEffect(() => {
+    // If no token in Redux, try obtaining it from URL (standard SAML flow)
     if (token === null) {
-      obtenerToken(token);
+      obtenerToken();
     }
   }, [token]);
 
   useEffect(() => {
-    if (rolSelected?.id === undefined) {
+    // Reactive fetching: if we have a token but no roles/permissions loaded, fetch them
+    if (token && rolSelected?.id === undefined) {
       obtenerRolesUsuario();
     }
-  }, []);
+  }, [token, rolSelected]);
 
   const eliminarTokenUrl = () => {
     const params = new URLSearchParams(window.location.search);

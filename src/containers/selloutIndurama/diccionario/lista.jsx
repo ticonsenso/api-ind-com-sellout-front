@@ -26,8 +26,6 @@ import { columnsListaDiccionario, variablesDiccionario } from "./constantes"
 import { debounce, validateForm } from "../../constantes";
 
 const ListaCategorias = () => {
-    const hasPermission = usePermission();
-    const namePermission = hasPermission("ACCIONES DICCIONARIO");
     const dispatch = useDispatch();
     const { showSnackbar } = useSnackbar();
     const { showDialog } = useDialog();
@@ -202,16 +200,17 @@ const ListaCategorias = () => {
                             placeholder="Buscar por nombre"
                             search={false}
                             valueSearch={search}
+                            toUpperCase={true}
                             onChange={(e) => {
-                                setSearch(e.target.value);
-                                debounceSearch(e.target.value);
+                                setSearch(e.target.value.toUpperCase());
+                                debounceSearch(e.target.value.toUpperCase());
                             }}
                             children={
                                 <>
                                     <AtomTableForm
                                         columns={columnsListaDiccionario}
                                         data={data}
-                                        actions={namePermission ? actions : []}
+                                        actions={actions}
                                         pagination={false}
                                         page={page}
                                         limit={limit}
@@ -221,6 +220,7 @@ const ListaCategorias = () => {
                                         handleChangePage={handleChangePage}
                                         handleChangeRowsPerPage={handleChangeRowsPerPage}
                                         loading={loading}
+                                        toUpperCase={true}
                                     />
                                 </>
                             }
@@ -247,10 +247,11 @@ const ListaCategorias = () => {
                                 required={true}
                                 headerTitle="Nombre de Categoría"
                                 value={matricula.name}
+                                toUpperCase={true}
                                 onChange={(e) =>
                                     setMatricula({
                                         ...matricula,
-                                        name: e.target.value,
+                                        name: e.target.value.toUpperCase(),
                                     })
                                 }
                                 error={errors.name}
@@ -265,10 +266,11 @@ const ListaCategorias = () => {
                                 required={true}
                                 headerTitle="Descripción de la Categoría"
                                 value={matricula.description}
+                                toUpperCase={true}
                                 onChange={(e) =>
                                     setMatricula({
                                         ...matricula,
-                                        description: e.target.value,
+                                        description: e.target.value.toUpperCase(),
                                     })
                                 }
                                 error={errors.description}

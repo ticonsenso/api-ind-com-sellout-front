@@ -15,10 +15,11 @@ import { useDialog } from "../../../context/DialogDeleteContext";
 import { useSnackbar } from "../../../context/SnacbarContext";
 
 import { usePermission } from "../../../context/PermisosComtext";
+import { PERMISSIONS } from "../../../constants/permissions";
 
 const ConfiguracionExtraccion = () => {
   const hasPermission = usePermission();
-  const namePermission = hasPermission("ACCIONES CONFIGURACION EXTRACCION");
+  const namePermission = hasPermission(PERMISSIONS.EXTRACCION.ACTIONS);
   const { showDialog } = useDialog();
   const { showSnackbar } = useSnackbar();
   const dispatch = useDispatch();

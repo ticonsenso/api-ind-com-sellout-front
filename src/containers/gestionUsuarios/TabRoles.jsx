@@ -48,13 +48,14 @@ import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import { usePermission } from "../../context/PermisosComtext";
 import { columnsRoles, columnsPermisos } from "./constantes";
 import AtomTextFieldInputForm from "../../atoms/AtomTextField";
+import { PERMISSIONS } from "../../constants/permissions";
 
 const TabRoles = () => {
   const { showDialog } = useDialog();
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
   const hasPermission = usePermission();
-  const namePermission = hasPermission("ACCIONES ROLES");
+  const namePermission = hasPermission(PERMISSIONS.USER_MANAGEMENT.ROLES);
   const roles = useSelector((state) => state?.users?.roles || []);
   const role = useSelector((state) => state?.users?.role || {});
   const asignarPermiso = useSelector(

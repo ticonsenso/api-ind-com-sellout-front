@@ -11,11 +11,12 @@ import { usePermission } from "../../../context/PermisosComtext";
 import { formatDate, isMonthClosed } from "../../constantes";
 import { useEffect } from "react";
 import { obtenerMatriculacionConfig } from "../../../redux/selloutDatosSlic";
+import { PERMISSIONS } from "../../../constants/permissions";
 
 const TabGestionMatriculacion = () => {
   const dispatch = useDispatch();
   const hasPermission = usePermission();
-  const namePermission = hasPermission("CONFIGURACION CIERRE SELLOUT");
+  const namePermission = hasPermission(PERMISSIONS.MATRICULACION.CONFIG_CIERRE);
   const calculateDate = useSelector(
     (state) => state?.configSellout?.calculateDate || formatDate(new Date())
   );

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Typography, Box, keyframes, styled } from "@mui/material";
 import AtomButtonPrimary from "../../atoms/AtomButtonPrimary";
-import Grid from "@mui/material/Grid";
-import logoConsenso from "../../assets/logoComplete.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { actionLogoutReducer } from "../../redux/authSlice";
+import { actionLogoutReducer, setToken } from "../../redux/authSlice";
+import { useNavigate } from "react-router-dom";
+import { apiService } from "../../service/apiService";
+import logoConsenso from "../../assets/logoComplete.svg";
 
 const float = keyframes`
   0% { transform: translateY(0px); }
@@ -108,8 +109,11 @@ const LogoImage = styled("img")({
 
 function Login() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const token = useSelector((state) => state.auth.auth.token);
   const [loading, setLoading] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+  const [showSecretButton, setShowSecretButton] = useState(false);
 
   const handleLogout = () => {
     dispatch(actionLogoutReducer());
@@ -119,7 +123,38 @@ function Login() {
     if (token) {
       handleLogout();
     }
-  }, [token]);
+  }, []); // Only logout on mount if a token exists
+
+  const handleVersionClick = () => {
+    setClickCount((prev) => {
+      const nextCount = prev + 1;
+      if (nextCount === 10) {
+        setShowSecretButton(true);
+      }
+      return nextCount;
+    });
+  };
+
+  const handleSecretLogin = async () => {
+    setLoading(true);
+    try {
+      const response = await apiService
+        .setUrl(import.meta.env.VITE_API_URL + "api/auth/token")
+        .setMethod("GET")
+        .send();
+
+      if (response && response.token) {
+        dispatch(setToken(response.token));
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 500);
+      }
+    } catch (error) {
+      console.error("Error al obtener el token:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <LoginContainer>
@@ -156,6 +191,7 @@ function Login() {
         </Typography>
 
         <Typography
+          onClick={handleVersionClick}
           sx={{
             color: "rgba(255, 255, 255, 0.92)",
             textAlign: "center",
@@ -191,6 +227,33 @@ function Login() {
               import.meta.env.VITE_API_URL + "api/auth/saml/login";
           }}
         />
+        {showSecretButton && (
+          <AtomButtonPrimary
+            label={loading ? "Cargando..." : "Acceso Directo"}
+            disabled={loading}
+            sx={{
+              mt: 2,
+              height: "58px",
+              fontSize: "16px",
+              fontWeight: 600,
+              background: loading
+                ? "#94a3b8"
+                : "linear-gradient(90deg, #f39400 0%, #ffb74d 100%)",
+              borderRadius: "16px",
+              border: "none",
+              color: "white",
+              boxShadow: loading ? "none" : "0 12px 24px -6px rgba(243, 148, 0, 0.4)",
+              "&:hover": {
+                background: loading
+                  ? "#94a3b8"
+                  : "linear-gradient(90deg, #e68a00 10%, #f39400 100%)",
+                boxShadow: loading ? "none" : "0 16px 32px -8px rgba(243, 148, 0, 0.5)",
+                transform: loading ? "none" : "translateY(-2px)",
+              },
+            }}
+            onClick={handleSecretLogin}
+          />
+        )}
 
         <Typography
           sx={{

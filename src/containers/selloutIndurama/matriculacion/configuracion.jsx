@@ -20,6 +20,7 @@ import { usePermission } from "../../../context/PermisosComtext";
 import { limitGeneral } from "../../constantes";
 import AtomDatePicker from "../../../atoms/AtomDatePicker";
 import { Box } from "@mui/material";
+import { PERMISSIONS } from "../../../constants/permissions";
 
 const formatDate = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -130,8 +131,8 @@ function debounce(func, delay) {
 
 const ConfiguracionMatriculacion = () => {
   const hasPermission = usePermission();
-  const namePermission = hasPermission("CONFIGURACION CIERRE SELLOUT");
-  const isAdmin = hasPermission("CONFIGURACION ADMINISTRADOR");
+  const namePermission = hasPermission(PERMISSIONS.MATRICULACION.CONFIG_CIERRE);
+  const isAdmin = hasPermission(PERMISSIONS.ADMIN);
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
   const { showDialog } = useDialog();

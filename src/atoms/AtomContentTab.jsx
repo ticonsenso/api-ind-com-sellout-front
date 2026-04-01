@@ -3,67 +3,44 @@ import { Box, Tab, Tabs, styled, alpha } from "@mui/material";
 
 const TabsContainer = styled(Box)(({ theme }) => ({
   position: "fixed",
-  top: 100,
+  top: 98,
   left: 0,
   right: 0,
   textAlign: "center",
-  zIndex: 9,
-  padding: "3px",
-  background: "rgba(255, 255, 255, 0.7)",
-  backdropFilter: "blur(50px)",
-  boxShadow: "0 10px 20px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0,0,0,0.05)",
-  borderRadius: "50px",
-  marginBottom: 1,
-  display: "flex",
-  justifyContent: "center",
+  zIndex: 1000,
+  padding: "4px",
+  backgroundColor: "#ffffffcc",
+  backdropFilter: "blur(12px)",
+  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+  borderRadius: "32px",
   width: "fit-content",
-  margin: "0 auto 0px auto",
-  border: "1px solid rgba(255, 255, 255, 0.6)",
+  margin: "0 auto",
+  border: "1px solid rgba(0, 114, 206, 0.12)",
   transition: "all 0.3s ease",
   "&:hover": {
-    boxShadow: "0 5px 5px rgba(0, 114, 206, 0.15)",
-    transform: "translateY(-2px)",
-    border: "1px solid rgba(0, 114, 206, 0.3)",
+    boxShadow: "0 6px 16px rgba(0, 114, 206, 0.1)",
+    backgroundColor: "#ffffffff",
   }
 }));
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   textTransform: "none",
-  borderRadius: "40px",
-  fontSize: "0.95rem",
+  borderRadius: "28px",
+  fontSize: "0.875rem",
   fontWeight: 600,
-  minHeight: "44px",
+  minHeight: "38px",
   padding: "0 20px",
-  margin: "0 4px",
-  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-  color: "#64748B",
-  position: "relative",
-  overflow: "hidden",
-  zIndex: 1,
+  margin: "0 2px",
+  transition: "all 0.2s ease-in-out",
+  color: "#64748b",
   "&.Mui-selected": {
     color: "#fff",
-    background: "linear-gradient(135deg, #0072CE 0%, #00c6ff 100%)", // Vibrant Gradient
-    boxShadow: "0 3px 3px rgba(0, 114, 206, 0.4)",
-    "&::after": {
-      opacity: 1,
-    }
+    backgroundColor: "#0072CE", // Simple solid corporate blue
+    boxShadow: "0 2px 8px rgba(0, 114, 206, 0.25)",
   },
   "&:hover:not(.Mui-selected)": {
     color: "#0072CE",
-    background: "rgba(0, 114, 206, 0.05)",
-    transform: "translateY(-1px)",
-
-  },
-  "&::after": {
-    content: '""',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    background: 'linear-gradient(rgba(255,255,255,0.2), transparent)',
-    opacity: 0,
-    transition: 'opacity 0.3s',
+    backgroundColor: "rgba(0, 114, 206, 0.05)",
   }
 }));
 
