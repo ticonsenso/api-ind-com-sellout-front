@@ -3,67 +3,61 @@ import { Box, Tab, Tabs, styled, alpha } from "@mui/material";
 
 const TabsContainer = styled(Box)(({ theme }) => ({
   position: "fixed",
-  top: 100,
-  left: 0,
-  right: 0,
-  textAlign: "center",
-  zIndex: 9,
-  padding: "3px",
-  background: "rgba(255, 255, 255, 0.7)",
-  backdropFilter: "blur(50px)",
-  boxShadow: "0 10px 20px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0,0,0,0.05)",
-  borderRadius: "50px",
-  marginBottom: 1,
+  top: 95,
+  left: "50%",
+  transform: "translateX(-50%)",
+  zIndex: 1000,
+  padding: "6px",
+  background: "rgba(255, 255, 255, 0.75)",
+  backdropFilter: "blur(20px) saturate(180%)",
+  WebkitBackdropFilter: "blur(20px) saturate(180%)", // For Safari
+  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
+  borderRadius: "100px",
+  border: "1px solid rgba(255, 255, 255, 0.3)",
   display: "flex",
-  justifyContent: "center",
-  width: "fit-content",
-  margin: "0 auto 0px auto",
-  border: "1px solid rgba(255, 255, 255, 0.6)",
-  transition: "all 0.3s ease",
+  alignItems: "center",
+  width: "max-content",
+  maxWidth: "calc(100% - 48px)",
+  transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
   "&:hover": {
-    boxShadow: "0 5px 5px rgba(0, 114, 206, 0.15)",
-    transform: "translateY(-2px)",
-    border: "1px solid rgba(0, 114, 206, 0.3)",
+    boxShadow: "0 12px 40px rgba(0, 0, 0, 0.12)",
+    transform: "translateX(-50%) translateY(-2px)",
+    background: "rgba(255, 255, 255, 0.85)",
+  },
+  [theme.breakpoints.down("sm")]: {
+    top: 85,
+    borderRadius: "24px",
+    maxWidth: "92%",
+    padding: "4px",
   }
 }));
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   textTransform: "none",
-  borderRadius: "40px",
-  fontSize: "0.95rem",
-  fontWeight: 600,
-  minHeight: "44px",
-  padding: "0 20px",
-  margin: "0 4px",
-  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-  color: "#64748B",
+  borderRadius: "100px",
+  fontSize: "0.875rem",
+  fontWeight: 500,
+  minHeight: "40px",
+  padding: "0 24px",
+  margin: "0 2px",
+  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+  color: "#475569", // Slate-600 for better elegance
   position: "relative",
-  overflow: "hidden",
-  zIndex: 1,
+  letterSpacing: "0.01em",
   "&.Mui-selected": {
-    color: "#fff",
-    background: "linear-gradient(135deg, #0072CE 0%, #00c6ff 100%)", // Vibrant Gradient
-    boxShadow: "0 3px 3px rgba(0, 114, 206, 0.4)",
-    "&::after": {
-      opacity: 1,
-    }
+    color: "#fff !important",
+    background: "#0072CE", // Solid primary
+    boxShadow: "0 4px 14px rgba(0, 114, 206, 0.35)",
+    fontWeight: 600,
   },
   "&:hover:not(.Mui-selected)": {
     color: "#0072CE",
-    background: "rgba(0, 114, 206, 0.05)",
-    transform: "translateY(-1px)",
-
+    background: "rgba(0, 114, 206, 0.06)",
   },
-  "&::after": {
-    content: '""',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    background: 'linear-gradient(rgba(255,255,255,0.2), transparent)',
-    opacity: 0,
-    transition: 'opacity 0.3s',
+  [theme.breakpoints.down("sm")]: {
+    padding: "0 16px",
+    fontSize: "0.8125rem",
+    minHeight: "36px",
   }
 }));
 
@@ -80,15 +74,34 @@ const TabGestionGeneral = ({ tabs, num = 0 }) => {
         <Tabs
           value={activeTab}
           onChange={handleChange}
-          centered
+          variant="scrollable"
+          scrollButtons="auto"
+          allowScrollButtonsMobile
           TabIndicatorProps={{
             style: { display: "none" }
           }}
           sx={{
+            minHeight: "40px",
             "& .MuiTabs-flexContainer": {
-              justifyContent: "center",
-              gap: "8px"
-            }
+              justifyContent: { xs: "flex-start", md: "center" },
+              gap: "4px"
+            },
+            "& .MuiTabs-scroller": {
+              display: "flex",
+              alignItems: "center",
+            },
+             "& .MuiTabs-scrollButtons": {
+                color: "#94a3b8", // Subtler arrow colors
+                width: 32,
+                transition: "color 0.2s",
+                "&:hover": { color: "#0072CE" },
+                "&.Mui-disabled": {
+                    opacity: 0.15
+                }
+             },
+             [({ theme }) => theme.breakpoints.down("sm")]: {
+                minHeight: "36px",
+             }
           }}
         >
           {tabs.map(({ label }, index) => (
@@ -108,11 +121,16 @@ const TabGestionGeneral = ({ tabs, num = 0 }) => {
         display: 'flex',
         flexDirection: 'column',
         minHeight: 0,
-        animation: 'fadeIn 0.5s ease-out',
+        animation: 'fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
         "@keyframes fadeIn": {
-          "0%": { opacity: 0, transform: "translateY(10px)" },
+          "0%": { opacity: 0, transform: "translateY(8px)" },
           "100%": { opacity: 1, transform: "translateY(0)" }
-        }
+        },
+        paddingTop: { xs: '145px', sm: '155px' },
+        px: { xs: 2, sm: 4 }, // Added side padding for more breathing room
+        maxWidth: "1600px", // Limit width for very large monitors
+        margin: "0 auto",
+        width: "100%",
       }}>
         {tabs[activeTab]?.component}
       </Box>

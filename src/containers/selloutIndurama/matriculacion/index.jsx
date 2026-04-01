@@ -71,7 +71,7 @@ const TabGestionMatriculacion = () => {
           />
         </Box>
       )}
-      <Box sx={{ width: "200px" }}>
+      <Box sx={{ minWidth: "100px", maxWidth: "200px" }}>
         <AtomDatePicker
           id="calculateDate"
           required={true}
