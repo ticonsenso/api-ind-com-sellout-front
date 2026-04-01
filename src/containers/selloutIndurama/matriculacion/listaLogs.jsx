@@ -188,7 +188,6 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
         try {
           const data = {
             distribuidor: row.id || null,
-            storeName: row.storeName || null,
             calculateDate: calculateDate || null,
           }
           const response = await dispatch(deleteClientesCargados(data));
