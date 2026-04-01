@@ -48,17 +48,17 @@ const IconWrapper = styled(Box)(({ theme }) => ({
 }));
 
 const Title = styled(Typography)(({ theme }) => ({
-  color: '#FFFFFF',
+  color: '#202020ff',
   fontWeight: 800,
   fontSize: '1.5rem',
   marginBottom: theme.spacing(1),
-  background: 'linear-gradient(90deg, #FFFFFF, #B2B4B4)',
+  background: 'linear-gradient(90deg, #3b3b3bff, #2b2828ff)',
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
 }));
 
 const Subtitle = styled(Typography)(({ theme }) => ({
-  color: 'rgba(255, 255, 255, 0.6)',
+  color: 'rgba(61, 61, 61, 0.6)',
   fontSize: '1rem',
   fontWeight: 400,
   maxWidth: '300px',
@@ -66,10 +66,10 @@ const Subtitle = styled(Typography)(({ theme }) => ({
 
 const NoAccessContent = ({ title = "Acceso Restringido", message = "No cuentas con los permisos necesarios para ver esta sección." }) => {
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      flex: 1, 
-      alignItems: 'center', 
+    <Box sx={{
+      display: 'flex',
+      flex: 1,
+      alignItems: 'center',
       justifyContent: 'center',
       minHeight: '400px',
       padding: 3
