@@ -14,8 +14,11 @@ export const repartirValoresNumerico = (registroOriginal, simbolo, dividirCantid
         return regex.test(valor);
     };
 
-    const codigoOriginal = registroOriginal.codeProductDistributor || "";
-    const codigoEsValido = esCodigoValido(codigoOriginal);
+    const codigoOriginal = String(registroOriginal.codeProductDistributor || "").trim();
+    const descripcionOriginal = String(registroOriginal.descriptionDistributor || "").trim();
+
+    const codigoEsValido = esCodigoValido(codigoOriginal) &&
+        (codigoOriginal.toLowerCase() !== descripcionOriginal.toLowerCase());
 
     const separadores = simbolo
         ? [simbolo.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')]
@@ -33,35 +36,34 @@ export const repartirValoresNumerico = (registroOriginal, simbolo, dividirCantid
 
 
     let cantidadOriginal = Number(registroOriginal.unitsSoldDistributor);
-    if (isNaN(cantidadOriginal) || cantidadOriginal < 1) {
+    if (isNaN(cantidadOriginal)) {
         cantidadOriginal = 1;
     }
 
+    // Calculamos si la división dio como resultado un número entero
+    const divisionExacta = cantidadOriginal / productos.length;
+    const esEntero = Number.isInteger(divisionExacta);
 
-    if (!dividirCantidad) {
-        return productos.map((prod) => ({
+    // Caso 1: Se solicitó dividir cantidad pero la división NO es exacta
+    // Requerimiento: No se debe realizar NINGUNA separación de productos si no es 1 a 1 exacta
+    if (dividirCantidad && !esEntero) {
+        return [{
             ...registroOriginal,
-            descriptionDistributor: prod,
-            codeProductDistributor: codigoEsValido ? codigoOriginal : prod,
-            unitsSoldDistributor: cantidadOriginal,
-        }));
+            _undividedWarning: `No se realizó ninguna separación ya que la cantidad (${cantidadOriginal}) no es divisible equitativamente en números enteros entre los ${productos.length} productos del detalle.`
+        }];
     }
 
-    if (cantidadOriginal === productos.length) {
-        return productos.map((prod) => ({
-            ...registroOriginal,
-            descriptionDistributor: prod,
-            codeProductDistributor: codigoEsValido ? codigoOriginal : prod,
-            unitsSoldDistributor: 1,
-        }));
-    }
+    // Cantidad para cada producto resultante
+    // Dividimos si se solicitó y es entero, de lo contrario mantenemos la original (para el caso dividirCantidad=false)
+    const cantidadIndividual = (dividirCantidad && esEntero) ? divisionExacta : cantidadOriginal;
 
+    // Generamos los registros resultantes separados
     return productos.map((prod) => ({
         ...registroOriginal,
         descriptionDistributor: prod,
         codeProductDistributor: codigoEsValido ? codigoOriginal : prod,
-        unitsSoldDistributor: cantidadOriginal,
-        _undividedWarning: true
+        unitsSoldDistributor: cantidadIndividual,
+        observation: "producto separado",
     }));
 };
 

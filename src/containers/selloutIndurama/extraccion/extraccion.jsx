@@ -289,6 +289,7 @@ const ExtraccionDatos = () => {
   ) => {
     const registrosConSeparadores = [];
     const registrosSinSeparar = [];
+    const warnings = [];
     let dateDefaulted = false;
     let totalProcesadas = 0;
 
@@ -445,14 +446,12 @@ const ExtraccionDatos = () => {
           }
         }
 
-        // Contar como fila procesada válida (pasó validación de descripción y cantidad)
         totalProcesadas++;
 
-        // Verificar si la fecha del registro coincide con el mes de cálculo
         if (mesCalculo && registro.saleDate) {
           const saleDateMes = registro.saleDate.slice(0, 7);
           if (saleDateMes !== mesCalculo) {
-            continue; // Saltar registros que no corresponden a la fecha de cálculo
+            continue;
           }
         }
 
@@ -490,7 +489,14 @@ const ExtraccionDatos = () => {
         if (tieneSeparadores(registro.descriptionDistributor, simboloConfig)) {
           registrosConSeparadores.push(registroFinal);
         } else {
-          registrosSinSeparar.push(...repartirValoresNumerico(registroFinal, simboloConfig, configuracion.dividirCantidad));
+          const splitResults = repartirValoresNumerico(registroFinal, simboloConfig, configuracion.dividirCantidad);
+          splitResults.forEach(item => {
+            if (item._undividedWarning) {
+              warnings.push(`${item.descriptionDistributor}: ${item._undividedWarning}`);
+              delete item._undividedWarning;
+            }
+          });
+          registrosSinSeparar.push(...splitResults);
         }
       }
     }
@@ -500,6 +506,7 @@ const ExtraccionDatos = () => {
       registrosConSeparadores,
       dateDefaulted,
       totalProcesadas,
+      warnings
     };
   };
 
@@ -552,7 +559,8 @@ const ExtraccionDatos = () => {
           registrosSinSeparar,
           registrosConSeparadores,
           dateDefaulted,
-          totalProcesadas
+          totalProcesadas,
+          warnings: automaticWarnings
         } = procesarExtraccionDesdeConfiguracion(
           workbook,
           configuracionId,
@@ -583,13 +591,13 @@ const ExtraccionDatos = () => {
         if (registrosConSeparadores.length > 0) {
           setPreSplitInfo(registrosConSeparadores);
           setTemporalRegistrosSinSeparar(registrosSinSeparar);
+          setConfiguracion(prev => ({ ...prev, dividirCantidad: false }));
           setIsDateDefaulted(dateDefaulted);
           setDialogSeparation(true);
           return;
         }
         setIsDateDefaulted(dateDefaulted);
 
-        // Los registros ya fueron filtrados por fecha dentro de procesarExtraccionDesdeConfiguracion
         const registrosFiltrados = registrosSinSeparar;
 
         const agrupados = registrosFiltrados.reduce((acc, item) => {
@@ -640,7 +648,7 @@ const ExtraccionDatos = () => {
         }
         setDefaultsAplicados(finalDefaults);
 
-        mostrarAvisoDefaults(finalDefaults, DEFAULT_FIELD_LABELS, warnings);
+        mostrarAvisoDefaults(finalDefaults, DEFAULT_FIELD_LABELS, automaticWarnings);
 
       } catch (error) {
         showSnackbar(`Error al procesar archivo: ${error.message}`, { severity: "error" });
@@ -896,13 +904,11 @@ const ExtraccionDatos = () => {
         }
 
         if (registrosConSeparadores.length > 0) {
-
           setPreSplitInfo(registrosConSeparadores);
           setTemporalRegistrosSinSeparar(registrosSinSeparar);
-
+          setConfiguracion(prev => ({ ...prev, dividirCantidad: false }));
           setIsDateDefaulted(dateDefaultedTotal);
           setDialogSeparation(true);
-
           return;
         }
 
@@ -1082,7 +1088,7 @@ const ExtraccionDatos = () => {
       .flatMap((item) => repartirValoresNumerico(item, configuracion.simbolo, configuracion.dividirCantidad))
       .map((item) => {
         if (item._undividedWarning) {
-          warnings.push(`${item.descriptionDistributor}`);
+          warnings.push(`${item.descriptionDistributor}: ${item._undividedWarning}`);
           delete item._undividedWarning;
         }
         return item;
@@ -1746,157 +1752,157 @@ const ExtraccionDatos = () => {
         handleCloseDialog={() => setOpenDialogDefaults(false)}
         dialogContentComponent={
           < Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                gap: 2,
-              }}
-            >
+            <Grid container spacing={2}>
               {defaultsContent.defaults.length > 0 && (
-                <Box sx={{ boxShadow: 2, borderRadius: 3, p: 2, }} >
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      mb: 1,
-                      gap: 1,
-                      backgroundColor: "#e3f2fd",
-                      p: 1.5,
-                      borderRadius: 2,
-                      borderLeft: "4px solid #2196f3",
-                    }}
-                  >
-                    <InfoOutlinedIcon color="primary" />
-                    <Typography variant="subtitle1" fontWeight="600" color="primary.main">
-                      Valores por Defecto Aplicados
+                <Grid size={(defaultsContent.warnings.length > 0 || (defaultsContent.dateWarnings && defaultsContent.dateWarnings.length > 0)) ? 6 : 12}>
+                  <Box sx={{ boxShadow: 2, borderRadius: 3, p: 2, height: '100%' }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        mb: 1,
+                        gap: 1,
+                        backgroundColor: "#e3f2fd",
+                        p: 1.5,
+                        borderRadius: 2,
+                        borderLeft: "4px solid #2196f3",
+                      }}
+                    >
+                      <InfoOutlinedIcon color="primary" />
+                      <Typography variant="subtitle1" fontWeight="600" color="primary.main">
+                        Valores por Defecto Aplicados
+                      </Typography>
+                    </Box>
+                    <Typography
+                      variant="body2"
+                      fontWeight={600}
+                      sx={{
+                        mb: 1,
+                        color: "#5f5f5fff",
+                      }}>
+                      Se han aplicado valores por defecto a los siguientes campos faltantes:
                     </Typography>
+                    <List dense>
+                      {defaultsContent.defaults.map((field, index) => (
+                        <ListItem key={`def-${index}`} sx={{ py: 0.5 }}>
+                          <ListItemIcon sx={{ minWidth: 32 }}>
+                            <LabelImportantIcon color="info" fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={field}
+                            sx={{
+                              fontWeight: 500,
+                              color: "text.secondary",
+                            }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
                   </Box>
-                  <Typography
-                    variant="body2"
-                    fontWeight={600}
-                    sx={{
-                      mb: 1,
-                      color: "#5f5f5fff",
-                    }}>
-                    Se han aplicado valores por defecto a los siguientes campos faltantes:
-                  </Typography>
-                  <List dense>
-                    {defaultsContent.defaults.map((field, index) => (
-                      <ListItem key={`def-${index}`} sx={{ py: 0.5 }}>
-                        <ListItemIcon sx={{ minWidth: 32 }}>
-                          <LabelImportantIcon color="info" fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={field}
-                          sx={{
-                            fontWeight: 500,
-                            color: "text.secondary",
-                          }}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </Box>
+                </Grid>
               )}
 
-              {defaultsContent.warnings.length > 0 && (
-                <Box sx={{ boxShadow: 2, borderRadius: 3, p: 2 }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      mb: 1,
-                      gap: 1,
-                      backgroundColor: "#fff3e0",
-                      p: 1.5,
-                      borderRadius: 2,
-                      borderLeft: "4px solid #ff9800",
-                    }}
-                  >
-                    <InfoOutlinedIcon color="warning" />
-                    <Typography variant="subtitle1" fontWeight="600" color="warning.dark">
-                      Advertencias de Cantidad
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2"
-                    fontWeight={600}
-                    sx={{
-                      mb: 1,
-                      color: "#5f5f5fff",
-                      textAlign: "center"
-                    }}>
-                    No se pudo dividir la cantidad para los siguientes productos:
-                  </Typography>
-                  <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
-                    {defaultsContent.warnings.map((msg, index) => (
-                      <ListItem key={`warn-${index}`} sx={{ py: 0.5 }}>
-                        <ListItemIcon sx={{ minWidth: 32 }}>
-                          <LabelImportantIcon color="warning" fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={msg}
+              {(defaultsContent.warnings.length > 0 || (defaultsContent.dateWarnings && defaultsContent.dateWarnings.length > 0)) && (
+                <Grid size={defaultsContent.defaults.length > 0 ? 6 : 12}>
+                  <Box sx={{ boxShadow: 2, borderRadius: 3, p: 2, height: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {defaultsContent.warnings.length > 0 && (
+                      <>
+                        <Box
                           sx={{
-                            variant: "body2",
-                            fontWeight: 400,
-                            color: "text.secondary",
+                            display: "flex",
+                            alignItems: "center",
+                            mb: 1,
+                            gap: 1,
+                            backgroundColor: "#fff3e0",
+                            p: 1.5,
+                            borderRadius: 2,
+                            borderLeft: "4px solid #ff9800",
                           }}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </Box>
-              )}
+                        >
+                          <InfoOutlinedIcon color="warning" />
+                          <Typography variant="subtitle1" fontWeight="600" color="warning.dark">
+                            Advertencias de Cantidad
+                          </Typography>
+                        </Box>
+                        <Typography variant="body2"
+                          fontWeight={600}
+                          sx={{
+                            mb: 1,
+                            color: "#5f5f5fff",
+                            textAlign: "center"
+                          }}>
+                          Avisos de cantidad:
+                        </Typography>
+                        <List dense sx={{ maxHeight: 200, overflow: 'auto', mb: 2 }}>
+                          {defaultsContent.warnings.map((msg, index) => (
+                            <ListItem key={`warn-${index}`} sx={{ py: 0.5 }}>
+                              <ListItemIcon sx={{ minWidth: 32 }}>
+                                <LabelImportantIcon color="warning" fontSize="small" />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={msg}
+                                sx={{
+                                  variant: "body2",
+                                  fontWeight: 400,
+                                  color: "text.secondary",
+                                }}
+                              />
+                            </ListItem>
+                          ))}
+                        </List>
+                      </>
+                    )}
 
-              {defaultsContent.dateWarnings && defaultsContent.dateWarnings.length > 0 && (
-                <Box sx={{ boxShadow: 2, borderRadius: 3, p: 2 }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      mb: 1,
-                      gap: 1,
-                      backgroundColor: "#fff3e0",
-                      p: 1.5,
-                      borderRadius: 2,
-                      borderLeft: "4px solid #ff9800",
-                    }}
-                  >
-                    <InfoOutlinedIcon color="warning" />
-                    <Typography variant="subtitle1" fontWeight="600" color="warning.dark">
-                      Advertencia de Fecha
-                    </Typography>
-                  </Box>
-                  <Typography
-                    variant="body2"
-                    fontWeight={600}
-                    sx={{
-                      mb: 1,
-                      color: "#5f5f5fff",
-                    }}>
-                    Se ha asignado la fecha por defecto (último día del mes) a los siguientes registros:
-                  </Typography>
-                  <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
-                    {defaultsContent.dateWarnings.map((msg, index) => (
-                      <ListItem key={`date-warn-${index}`} sx={{ py: 0.5 }}>
-                        <ListItemIcon sx={{ minWidth: 32 }}>
-                          <LabelImportantIcon color="warning" fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={msg}
+                    {defaultsContent.dateWarnings && defaultsContent.dateWarnings.length > 0 && (
+                      <>
+                        <Box
                           sx={{
-                            fontWeight: 500,
-                            color: "text.secondary",
+                            display: "flex",
+                            alignItems: "center",
+                            mb: 1,
+                            gap: 1,
+                            backgroundColor: "#fff3e0",
+                            p: 1.5,
+                            borderRadius: 2,
+                            borderLeft: "4px solid #ff9800",
                           }}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </Box>
+                        >
+                          <InfoOutlinedIcon color="warning" />
+                          <Typography variant="subtitle1" fontWeight="600" color="warning.dark">
+                            Advertencia de Fecha
+                          </Typography>
+                        </Box>
+                        <Typography
+                          variant="body2"
+                          fontWeight={600}
+                          sx={{
+                            mb: 1,
+                            color: "#5f5f5fff",
+                          }}>
+                          Se ha asignado la fecha por defecto (último día del mes) a los siguientes registros:
+                        </Typography>
+                        <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
+                          {defaultsContent.dateWarnings.map((msg, index) => (
+                            <ListItem key={`date-warn-${index}`} sx={{ py: 0.5 }}>
+                              <ListItemIcon sx={{ minWidth: 32 }}>
+                                <LabelImportantIcon color="warning" fontSize="small" />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={msg}
+                                sx={{
+                                  fontWeight: 500,
+                                  color: "text.secondary",
+                                }}
+                              />
+                            </ListItem>
+                          ))}
+                        </List>
+                      </>
+                    )}
+                  </Box>
+                </Grid>
               )}
-            </Box>
+            </Grid>
             <Typography
               variant="caption"
               color="text.secondary"
