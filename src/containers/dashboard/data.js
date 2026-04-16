@@ -85,15 +85,7 @@ const initialStateMenu = [
     menuSellout: true,
     nameInfo: "Almacenes - Productos",
   },
-  {
-    id: 4,
-    name: "SIC",
-    icon: "mui:GridView",
-    visible: true,
-    name_server: PERMISSIONS.MENU.SIC,
-    menuSellout: true,
-    nameInfo: "Almacenes - Productos SIC",
-  },
+
 
   {
     id: 6,
@@ -121,6 +113,24 @@ const initialStateMenu = [
     name_server: PERMISSIONS.MENU.LISTAS_NO_HOMOLOGADOS,
     menuSellout: false,
     nameInfo: "Listas No Homologados",
+  },
+  {
+    id: 4,
+    name: "SIC",
+    icon: "mui:GridView",
+    visible: true,
+    name_server: PERMISSIONS.MENU.SIC,
+    menuSellout: true,
+    nameInfo: "Almacenes - Productos SIC",
+  },
+  {
+    id: 11,
+    name: "Actualización DIM",
+    icon: "mui:Sync",
+    visible: true,
+    name_server: PERMISSIONS.MENU.ACTUALIZACION_DIM,
+    menuSellout: false,
+    nameInfo: "Procesos de sincronización",
   },
 ];
 

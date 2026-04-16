@@ -10,6 +10,7 @@ import TabGestionMatriculacion from "../selloutIndurama/matriculacion/index.jsx"
 import NoConsolidado from "../noConsolidado/index.jsx";
 import ConfigLineas from "../selloutIndurama/configLineas.jsx";
 import NoVisita from "../noVisita/index.jsx";
+import ActualizacionDim from "../actualizacionDim/ActualizacionDim.jsx";
 
 const componentMap = {
   //0: <HomePrincipal />,
@@ -24,6 +25,7 @@ const componentMap = {
   8: <ValoresSellout />,
   9: <NoConsolidado />,
   10: <NoVisita />,
+  11: <ActualizacionDim />,
 };
 
 export default componentMap;

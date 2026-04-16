@@ -40,12 +40,9 @@ export const repartirValoresNumerico = (registroOriginal, simbolo, dividirCantid
         cantidadOriginal = 1;
     }
 
-    // Calculamos si la división dio como resultado un número entero
     const divisionExacta = cantidadOriginal / productos.length;
     const esEntero = Number.isInteger(divisionExacta);
 
-    // Caso 1: Se solicitó dividir cantidad pero la división NO es exacta
-    // Requerimiento: No se debe realizar NINGUNA separación de productos si no es 1 a 1 exacta
     if (dividirCantidad && !esEntero) {
         return [{
             ...registroOriginal,
@@ -53,11 +50,8 @@ export const repartirValoresNumerico = (registroOriginal, simbolo, dividirCantid
         }];
     }
 
-    // Cantidad para cada producto resultante
-    // Dividimos si se solicitó y es entero, de lo contrario mantenemos la original (para el caso dividirCantidad=false)
     const cantidadIndividual = (dividirCantidad && esEntero) ? divisionExacta : cantidadOriginal;
 
-    // Generamos los registros resultantes separados
     return productos.map((prod) => ({
         ...registroOriginal,
         descriptionDistributor: prod,

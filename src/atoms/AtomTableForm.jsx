@@ -514,14 +514,16 @@ const AtomTableForm = (props) => {
         {data?.length > 0 && pagination && (
           <Box sx={{
             display: 'flex',
-            justifyContent: { xs: 'center', sm: 'flex-end' },
+            alignItems: 'center',
+            justifyContent: 'flex-end',
             px: { xs: 1, sm: 2 },
             py: 0.5,
-            backgroundColor: '#ffffffff',
-            borderRadius: '8px',
-            mt: 0.5,
+            backgroundColor: '#fff',
+            borderTop: '1px solid #f1f5f9',
+            borderBottomLeftRadius: '12px',
+            borderBottomRightRadius: '12px',
             flexShrink: 0,
-            width: '100%',
+            overflow: 'hidden'
           }}>
             <TablePagination
               component="div"
@@ -531,48 +533,75 @@ const AtomTableForm = (props) => {
               page={page - 1}
               onPageChange={(event, newPage) => handleChangePage(event, newPage + 1)}
               onRowsPerPageChange={handleChangeRowsPerPage}
-              labelRowsPerPage="Filas por página:"
-              labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
+              labelRowsPerPage="Filas:"
+              labelDisplayedRows={({ from, to, count }) => (
+                <Box component="span" sx={{ 
+                  fontWeight: 700, 
+                  color: '#0072CE',
+                  fontSize: { xs: '0.75rem', sm: '0.85rem' } 
+                }}>
+                  {from}-{to} <Box component="span" sx={{ fontWeight: 400, color: '#64748b' }}>de</Box> {count}
+                </Box>
+              )}
               sx={{
                 color: '#334155',
-                width: '100%',
-                '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
-                  fontWeight: 600,
-                  fontSize: { xs: '0.75rem', sm: '0.85rem' }
-                },
-                '& .MuiTablePagination-selectLabel': {
-                  display: { xs: 'none', sm: 'inline-block' }
-                },
                 '& .MuiTablePagination-toolbar': {
                   minHeight: '48px',
-                  justifyContent: 'center',
-                  padding: { xs: 0, sm: '0 16px' }
+                  p: 0,
+                  display: 'flex',
+                  justifyContent: 'flex-end'
+                },
+                '& .MuiTablePagination-selectLabel': {
+                  fontSize: '0.85rem',
+                  fontWeight: 500,
+                  color: '#64748b',
+                  display: { xs: 'none', sm: 'block' }
                 },
                 '& .MuiTablePagination-select': {
-                  display: { xs: 'none', sm: 'inline-block' },
-                  backgroundColor: '#F7F9FC',
-                  borderRadius: '8px',
-                  paddingTop: '6px',
-                  paddingBottom: '6px'
+                  backgroundColor: alpha('#0072CE', 0.05),
+                  borderRadius: '6px',
+                  fontWeight: 600,
+                  color: '#0072CE',
+                  paddingLeft: '12px',
+                  display: { xs: 'none', sm: 'block' },
+                  '&:focus': {
+                    borderRadius: '6px',
+                  }
+                },
+                '& .MuiTablePagination-displayedRows': {
+                  fontSize: '0.85rem',
+                  marginLeft: { xs: '8px', sm: '16px' }
                 },
                 '& .MuiTablePagination-actions': {
-                  ml: { xs: 0.5, sm: 2 }
+                  marginLeft: { xs: '4px', sm: '16px' },
+                  '& .MuiIconButton-root': {
+                    p: { xs: 0.6, sm: 1 },
+                    ml: 0.5,
+                    backgroundColor: alpha('#0072CE', 0.04),
+                    color: '#0072CE',
+                    '&:hover': {
+                      backgroundColor: '#0072CE',
+                      color: '#fff',
+                    },
+                    '&.Mui-disabled': {
+                      backgroundColor: 'transparent',
+                      color: '#cbd5e1'
+                    }
+                  }
                 }
               }}
               SelectProps={{
-                inputProps: {
-                  'aria-label': 'rows per page',
-                },
-                native: false,
                 MenuProps: {
                   container: () => document.fullscreenElement || document.body,
                   disablePortal: false,
                   PaperProps: {
-                    style: {
-                      maxHeight: 150,
-                    },
-                  },
-                },
+                    sx: {
+                      mt: 0.5,
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                      borderRadius: '8px',
+                    }
+                  }
+                }
               }}
             />
           </Box>

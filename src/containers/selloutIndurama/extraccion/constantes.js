@@ -205,18 +205,15 @@ export const isClosed = (closingDate, startDate) => {
   hoy.setHours(0, 0, 0, 0);
   cierre.setHours(0, 0, 0, 0);
 
-  const cierreMasUno = new Date(cierre);
-  cierreMasUno.setDate(cierreMasUno.getDate() + 2);
-
   if (startDate) {
     const inicio = new Date(startDate + "T00:00:00");
     inicio.setHours(0, 0, 0, 0);
-    // Para que esté abierto debe ser mayor o igual al inicio y menor al cierreMasUno
-    if (hoy < inicio || hoy >= cierreMasUno) return "Cerrado ⛔";
+    // Para que esté abierto debe ser mayor o igual al inicio y menor o igual al cierre
+    if (hoy < inicio || hoy > cierre) return "Cerrado ⛔";
     return "Abierto 🟢";
   }
 
-  return hoy >= cierreMasUno ? "Cerrado ⛔" : "Abierto 🟢";
+  return hoy > cierre ? "Cerrado ⛔" : "Abierto 🟢";
 };
 
 export const formatDate = (fechaISO) => {

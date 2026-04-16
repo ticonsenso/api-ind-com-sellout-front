@@ -183,5 +183,15 @@ export const apiConfig = {
   confLinesUrl: {
     url: ipServe + "api/conf-lines",
   },
-
+  jobsDeltaUrl: {
+    url: ipServe + "api/delta-sharing/jobs",
+  },
+  syncProductosDeltaUrl: {
+    url: ipServe + "api/delta-sharing/sync/dim_producto_s08",
+    method: "POST",
+  },
+  syncAlmacenesDeltaUrl: {
+    url: ipServe + "api/delta-sharing/sync/dim_almacenes_s08",
+    method: "POST",
+  },
 };
