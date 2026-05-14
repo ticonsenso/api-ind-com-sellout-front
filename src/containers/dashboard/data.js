@@ -3,7 +3,7 @@ import { PERMISSIONS } from "../../constants/permissions";
 export const menuSelloutPage = [
   {
     id: 2,
-    name: "Configuración de plantillas",
+    name: "Configuración",
     icon: "mui:AddToQueue",
     visible: true,
     name_server: PERMISSIONS.MENU.CONFIG_PLANTILLAS,
@@ -43,7 +43,7 @@ const initialStateMenu = [
   {
     id: 0,
     name: "Sellout Mercado",
-    icon: "mui:Timeline",
+    icon: "mui:Home",
     nameInfo: "Procesos",
     name_server: PERMISSIONS.MENU.HOME_SELLOUT,
     visible: true,
@@ -60,7 +60,7 @@ const initialStateMenu = [
 
   {
     id: 2,
-    name: "Configuración de plantillas",
+    name: "Configuración",
     icon: "mui:AddToQueue",
     visible: true,
     name_server: PERMISSIONS.MENU.CONFIG_PLANTILLAS,

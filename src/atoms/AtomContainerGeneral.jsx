@@ -34,7 +34,7 @@ const AtomContainerGeneral = ({
             height: "100%",
             display: "flex",
             flexDirection: "column",
-            overflow: "hidden",
+            overflow: "visible",
           }}
         >
           {children}

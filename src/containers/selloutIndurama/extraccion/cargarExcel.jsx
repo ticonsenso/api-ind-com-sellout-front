@@ -24,9 +24,9 @@ const BotonProcesarExcel = () => {
             <Tooltip title="Procesar Excel Bodeguitas">
                 <IconButton
                     sx={{
-                        position: "fixed",
-                        top: 88,
-                        right: 83,
+                        position: "absolute",
+                        top: 5,
+                        right: 62,
                         height: 32,
                         width: 32,
                         zIndex: 2000,

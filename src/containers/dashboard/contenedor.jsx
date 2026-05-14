@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import ButtonAppBar from "./buttonAppBar.jsx";
 import MenuIndex from "./menuPrincipal.jsx";
 import FooterGeneral from "./footer.jsx";
 import Box from "@mui/material/Box";
@@ -69,6 +68,8 @@ const GlassRoleButton = styled(Button)(({ theme }) => ({
     boxShadow: "0 4px 12px rgba(0, 114, 206, 0.2)",
   },
 }));
+
+import SideBarIcons from "./SideBarIcons.jsx";
 
 function Index() {
   const dispatch = useDispatch();
@@ -153,24 +154,26 @@ function Index() {
 
   return (
     <Box sx={styles.mainContainer}>
-      <ButtonAppBar />
-      {menuSelect.id !== 0 && (
-        <Box sx={styles.encabezado}>
-          <Encabezado
-            title={menuSelect.name}
-            nameButton={menuSelect.nameButton}
-            menuSellout={menuSelect.menuSellout}
-            nameInfo={menuSelect.nameInfo}
-          />
-        </Box>
-      )}
+      <SideBarIcons />
       <MenuIndex />
-      <Box sx={styles.contentBox}>
-        {renderComponent()}
-      </Box>
+      <Box sx={styles.contentWrapper}>
+        {menuSelect.id !== 0 && (
+          <Box sx={styles.encabezado}>
+            <Encabezado
+              title={menuSelect.name}
+              nameButton={menuSelect.nameButton}
+              menuSellout={menuSelect.menuSellout}
+              nameInfo={menuSelect.nameInfo}
+            />
+          </Box>
+        )}
+        <Box sx={styles.contentBox}>
+          {renderComponent()}
+        </Box>
 
-      <Box sx={styles.footer}>
-        <FooterGeneral />
+        <Box sx={styles.footer}>
+          <FooterGeneral />
+        </Box>
       </Box>
 
       {/* Role Selection Glass Dialog */}

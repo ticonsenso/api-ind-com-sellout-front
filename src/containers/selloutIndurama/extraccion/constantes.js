@@ -173,9 +173,9 @@ export const styles = {
     minWidth: "20%",
   },
   typography: {
-    fontWeight: 500,
+    fontWeight: 400,
     fontSize: "13px",
-    color: "#6f6f6f",
+    color: "#c0c0c0ff",
     textTransform: "uppercase",
   },
   tableCellDetail: {
@@ -186,7 +186,7 @@ export const styles = {
     wordBreak: "break-word",
   },
   title: {
-    fontWeight: 500,
+    fontWeight: 400,
     fontSize: "12px",
     color: "white",
     textAlign: "center",

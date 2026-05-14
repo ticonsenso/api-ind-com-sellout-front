@@ -19,7 +19,7 @@ const Config1 = () => {
       component: <ExtraccionDatos key="lista" />,
     },
     ...(hasPermission(PERMISSIONS.EXTRACCION.CONFIG_EXTRACCION) ? [{
-      label: "Configuración de extracción",
+      label: "Configuración específica",
       component: <ConfiguracionExtraccion key="configuracion" />,
     }] : []),
     ...(hasPermission(PERMISSIONS.EXTRACCION.DICCIONARIO) ? [{

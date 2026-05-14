@@ -10,16 +10,27 @@ const initialState = {
   currentTab: 0,
 };
 
-const handleMenuClick = (state, item) => {
-  const payload = item.payload;
+const handleMenuClick = (state, action) => {
+  const payload = action.payload;
 
   if (!payload) {
     state.state = !state.state;
     return;
   }
-  state.selectMenu = payload;
-  state.currentTab = payload.tab ?? 0;
-  if (payload.subMenu && payload.subMenu.length > 0) {
+
+  // If payload is partial (e.g., from home.jsx cards), enrich it with full menu data
+  let fullItem = payload;
+  if (payload.id !== undefined && !payload.name) {
+    const found = state.initialStateMenu.find(item => item.id === payload.id);
+    if (found) {
+      fullItem = { ...found, ...payload };
+    }
+  }
+
+  state.selectMenu = fullItem;
+  state.currentTab = fullItem.tab ?? 0;
+  
+  if (fullItem.subMenu && fullItem.subMenu.length > 0) {
     state.menuAbierto = true;
     state.state = true;
   } else {

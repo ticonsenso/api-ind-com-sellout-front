@@ -66,7 +66,7 @@ const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
 const StyledHeaderCell = styled(TableCell)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.common.white,
-  fontWeight: 700,
+  fontWeight: 500,
   fontSize: "0.85rem",
   padding: "15px",
   borderBottom: "none",
@@ -535,61 +535,14 @@ const AtomTableForm = (props) => {
               onRowsPerPageChange={handleChangeRowsPerPage}
               labelRowsPerPage="Filas:"
               labelDisplayedRows={({ from, to, count }) => (
-                <Box component="span" sx={{ 
-                  fontWeight: 700, 
+                <Box component="span" sx={{
+                  fontWeight: 700,
                   color: '#0072CE',
-                  fontSize: { xs: '0.75rem', sm: '0.85rem' } 
+                  fontSize: { xs: '0.75rem', sm: '0.85rem' }
                 }}>
                   {from}-{to} <Box component="span" sx={{ fontWeight: 400, color: '#64748b' }}>de</Box> {count}
                 </Box>
               )}
-              sx={{
-                color: '#334155',
-                '& .MuiTablePagination-toolbar': {
-                  minHeight: '48px',
-                  p: 0,
-                  display: 'flex',
-                  justifyContent: 'flex-end'
-                },
-                '& .MuiTablePagination-selectLabel': {
-                  fontSize: '0.85rem',
-                  fontWeight: 500,
-                  color: '#64748b',
-                  display: { xs: 'none', sm: 'block' }
-                },
-                '& .MuiTablePagination-select': {
-                  backgroundColor: alpha('#0072CE', 0.05),
-                  borderRadius: '6px',
-                  fontWeight: 600,
-                  color: '#0072CE',
-                  paddingLeft: '12px',
-                  display: { xs: 'none', sm: 'block' },
-                  '&:focus': {
-                    borderRadius: '6px',
-                  }
-                },
-                '& .MuiTablePagination-displayedRows': {
-                  fontSize: '0.85rem',
-                  marginLeft: { xs: '8px', sm: '16px' }
-                },
-                '& .MuiTablePagination-actions': {
-                  marginLeft: { xs: '4px', sm: '16px' },
-                  '& .MuiIconButton-root': {
-                    p: { xs: 0.6, sm: 1 },
-                    ml: 0.5,
-                    backgroundColor: alpha('#0072CE', 0.04),
-                    color: '#0072CE',
-                    '&:hover': {
-                      backgroundColor: '#0072CE',
-                      color: '#fff',
-                    },
-                    '&.Mui-disabled': {
-                      backgroundColor: 'transparent',
-                      color: '#cbd5e1'
-                    }
-                  }
-                }
-              }}
               SelectProps={{
                 MenuProps: {
                   container: () => document.fullscreenElement || document.body,

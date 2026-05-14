@@ -12,10 +12,9 @@ const IconoFlotante = ({
   color = "details.main",
   right = 28,
   id = "",
-  top = 80,
-  disabled = false,
+  top = 30,
 }) => {
-  const IconComponent = Icons[iconName] || Icons["HelpOutline"];
+  const IconComponent = Icons[iconName];
 
   if (!IconComponent) {
     console.warn(`El ícono "${iconName}" no existe en @mui/icons-material`);
@@ -24,40 +23,29 @@ const IconoFlotante = ({
   return (
     <Box
       sx={{
-        position: "fixed",
+        position: "absolute",
         top: top,
         right: right,
-        zIndex: 1000,
+        zIndex: 5,
       }}
     >
       <Tooltip title={title}>
-        <span>
-          <IconButton
-            onClick={disabled ? undefined : handleButtonClick}
-            disabled={disabled}
+        <IconButton onClick={handleButtonClick}>
+          <IconComponent
             sx={{
-              backgroundColor: disabled ? "grey.400" : "transparent",
+              color: "white",
+              height: 20,
+              width: 20,
+              backgroundColor: color,
+              borderRadius: 10,
+              padding: 1,
               "&:hover": {
-                backgroundColor: disabled ? "grey.400" : "transparent",
-              }
+                backgroundColor: color,
+                transform: "scale(1.1)",
+              },
             }}
-          >
-            <IconComponent
-              sx={{
-                color: "white",
-                backgroundColor: disabled ? "grey.500" : color,
-                borderRadius: 10,
-                padding: 0.5,
-                transition: "all 0.2s ease-in-out",
-                opacity: disabled ? 0.7 : 1,
-                "&:hover": {
-                  backgroundColor: disabled ? "grey.500" : color,
-                  transform: disabled ? "none" : "scale(1.1)",
-                },
-              }}
-            />
-          </IconButton>
-        </span>
+          />
+        </IconButton>
       </Tooltip>
 
       <input

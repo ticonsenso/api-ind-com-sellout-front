@@ -311,7 +311,8 @@ const ConfiguracionMatriculacion = () => {
           <>
             <AtomCard
               title=""
-              nameButton={namePermission ? "Crear" : ""}
+              nameButton="Crear"
+              disabled={!namePermission}
               border={true}
               onClick={handleOpenMatriculacion}
               labelBuscador="Búsqueda por descripción y mes de cálculo"

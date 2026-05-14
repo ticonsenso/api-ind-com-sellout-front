@@ -273,9 +273,9 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
               }}
               title="Actualizar lista"
               iconName="Refresh"
-              right={50}
+              right={60}
               color="#63B6FF"
-              top={95}
+              top={2}
             />
             {namePermission && (
               <IconoFlotante
@@ -284,7 +284,7 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
                 iconName="SaveAlt"
                 color="#01960eff"
                 right={10}
-                top={95}
+                top={2}
               />
             )}
             <AtomCard
@@ -340,7 +340,6 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
                                 sx={{ ...styles.tableCell, width: "35%" }}
                               >
                                 <Typography
-                                  variant="subtitle2"
                                   sx={styles.typography}
                                 >
                                   {NOMBRES_CAMPOS[key]}

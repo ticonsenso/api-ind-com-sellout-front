@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Collapse, Typography, styled, alpha } from "@mui/material";
+import { Box, Collapse, Typography, styled, alpha, Avatar } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -23,117 +23,111 @@ const iconMapping = {
 
 const GlassDrawer = styled(Drawer)(({ theme }) => ({
   "& .MuiDrawer-paper": {
-    background: "linear-gradient(180deg, #073861ff 0%, #005a9c 100%)", // Brand Primary Blue
-    backdropFilter: "blur(20px)",
-    color: "#ffffff",
-    width: "280px",
-    borderRight: "1px solid rgba(255, 255, 255, 0.1)",
-    boxShadow: "10px 0 30px rgba(0, 0, 0, 0.2)",
-    overflowX: "hidden",
-    "::-webkit-scrollbar": {
-      width: "6px",
-    },
-    "::-webkit-scrollbar-thumb": {
-      background: "rgba(255, 255, 255, 0.2)",
-      borderRadius: "3px",
-    },
+    background: "#ffffffff",
+    color: "#475569",
+    width: "320px",
+    borderRight: "1px solid rgba(0, 0, 0, 0.08)",
+    overflow: "hidden",
+    display: "flex",
+    flexDirection: "column",
   },
 }));
 
 const LogoArea = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(4, 2),
+  padding: theme.spacing(0),
+  display: "flex",
+  justifyContent: "center",
+  background: "#47556980",
+}));
+
+const UserArea = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(2, 2),
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+  gap: theme.spacing(2),
+  background: "#FFFFFF",
+  borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
+}));
+
+const UserInfo = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+});
+
+const UserName = styled(Typography)({
+  fontSize: "0.8rem",
+  fontWeight: 700,
+  color: "#0072CE",
+  textTransform: "uppercase",
+});
+
+const UserRole = styled(Typography)({
+  fontSize: "0.7rem",
+  fontWeight: 400,
+  color: "#7c7c7cff",
+});
+
+const isChildSelected = (item, selectedId) => {
+  if (!item || selectedId === undefined || selectedId === null) return false;
+  if (String(item.id) === String(selectedId)) return true;
+  if (item.subMenu) {
+    return item.subMenu.some(sub => isChildSelected(sub, selectedId));
+  }
+  return false;
+};
+
+const StyledListItemButton = styled(ListItemButton, {
+  shouldForwardProp: (prop) => prop !== 'isSelected',
+})(({ theme, isSelected }) => ({
+  margin: "4px 16px",
+  borderRadius: "12px",
+  padding: "10px 16px",
+  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+  background: isSelected ? alpha("#F39400", 0.12) : "transparent",
   position: "relative",
-  "&::after": {
+  "&::before": isSelected ? {
     content: '""',
     position: "absolute",
-    bottom: 0,
-    left: "10%",
-    width: "80%",
-    height: "1px",
-    background: "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.92), transparent)",
-  }
+    left: 0,
+    top: "50%",
+    transform: "translateY(-50%)",
+    width: "5px",
+    height: "28px",
+    backgroundColor: "#F39400",
+    borderRadius: "0 4px 4px 0",
+    boxShadow: "0 0 12px rgba(243, 148, 0, 0.6)",
+    zIndex: 10
+  } : {},
+  "&:hover": {
+    background: isSelected ? alpha("#F39400", 0.15) : "rgba(0, 114, 206, 0.04)",
+    transform: "translateX(4px)",
+  },
+  "& .MuiTypography-root": {
+    fontWeight: isSelected ? 800 : 500,
+    fontSize: "0.88rem",
+    color: isSelected ? "#F39400" : "#475569",
+  },
 }));
 
-const LogoVisual = styled("div")(({ theme }) => ({
-  position: "relative",
-  width: "180px",
-  height: "40px",
+const StyledListItemIcon = styled(ListItemIcon, {
+  shouldForwardProp: (prop) => prop !== 'isSelected',
+})(({ isSelected }) => ({
+  minWidth: "38px",
+  color: isSelected ? "#F39400" : "#0072CE",
+  transition: "all 0.3s ease",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  transition: "transform 0.5s ease",
-  "&:hover": {
-    transform: "scale(1.05)",
-    "& .glow": {
-      transform: "translate(-50%, -50%) scale(1.2)",
-    },
-    "& img": {
-      filter: "drop-shadow(0 0 12px rgba(255,255,255,0.6))",
-    }
-  },
-}));
-
-const LogoGlow = styled("div")({
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "120px",
-  height: "120px",
-  borderRadius: "50%",
-  transition: "all 0.5s ease",
-  className: "glow",
-  pointerEvents: "none",
-});
-
-const LogoImg = styled("img")({
-  width: "100%",
-  height: "auto",
-  maxHeight: "60px",
-  position: "relative",
-});
-
-const StyledListItemButton = styled(ListItemButton)(({ theme, active }) => ({
-  margin: "4px 12px",
-  borderRadius: "12px",
-  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-  borderLeft: active ? `4px solid #F39400` : "4px solid transparent", // Orange accent
-  background: active
-    ? "linear-gradient(90deg, rgba(0, 114, 206, 0.2) 0%, rgba(0, 114, 206, 0.05) 100%)" // Blue tint
-    : "transparent",
-  "&:hover": {
-    background: "rgba(255, 255, 255, 0.08)",
-    transform: "translateX(4px)",
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-    "& .MuiListItemIcon-root": {
-      color: "#F39400",
-      transform: "scale(1.1)",
-    },
-  },
-  "& .MuiTypography-root": {
-    fontWeight: active ? 600 : 400,
-    fontFamily: "'Poppins', sans-serif",
-    fontSize: "0.9rem",
-    color: active ? "#ffffff" : "#a8b2d1",
-  },
-}));
-
-const StyledListItemIcon = styled(ListItemIcon)(({ active }) => ({
-  minWidth: "40px",
-  color: active ? "#F39400" : "#8892b0",
-  transition: "all 0.3s ease",
 }));
 
 const MenuIndex = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const state = useSelector((state) => state.navigator.state);
-  const initialStateMenu = useSelector(
-    (state) => state.navigator.initialStateMenu
-  );
+  const person = useSelector((state) => state.auth.auth.person || {});
+  const rolSelected = useSelector((state) => state.auth.auth.rolSelected || {});
+  const initialStateMenu = useSelector((state) => state.navigator.initialStateMenu);
   const selectedItem = useSelector((state) => state.navigator.selectMenu);
   const userPermissions = useSelector((state) => state.auth.auth.permisos);
   const token = useSelector((state) => state.auth.auth.token);
@@ -141,30 +135,26 @@ const MenuIndex = () => {
   const cerrarSesionAutomatico = localStorage.getItem('logout');
 
   const toggleSubMenu = (name) => {
-    setExpandedMenus((prev) => ({
+    setOpenStates((prev) => ({
       ...prev,
       [name]: !prev[name],
     }));
   };
 
+  // Reusing state for submenus
+  const [openStates, setOpenStates] = useState({});
+  const toggleSubmenu = (id) => {
+    setOpenStates((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
   const filterMenuByPermissions = (menuItems) => {
     return menuItems
       .map((item) => {
-        const hasPermission = userPermissions?.some(
-          (perm) => perm.name === item.name_server
-        );
-
-        let filteredSubMenu = item.subMenu
-          ? filterMenuByPermissions(item.subMenu)
-          : [];
-
+        const hasPermission = userPermissions?.some((perm) => perm.name === item.name_server);
+        let filteredSubMenu = item.subMenu ? filterMenuByPermissions(item.subMenu) : [];
         if (hasPermission || filteredSubMenu.length > 0) {
-          return {
-            ...item,
-            subMenu: filteredSubMenu,
-          };
+          return { ...item, subMenu: filteredSubMenu };
         }
-
         return null;
       })
       .filter(Boolean);
@@ -173,11 +163,8 @@ const MenuIndex = () => {
   const filteredMenu = filterMenuByPermissions(initialStateMenu) || [];
 
   const handleLogout = () => {
-    const logoutUrl =
-      import.meta.env.VITE_API_URL + `api/auth/saml/logout?token=${token}`;
-
+    const logoutUrl = import.meta.env.VITE_API_URL + `api/auth/saml/logout?token=${token}`;
     const logoutWindow = window.open("", "_blank", "width=300,height=300");
-
     if (!logoutWindow) {
       window.location.href = logoutUrl;
       dispatch(actionLogoutReducer());
@@ -185,12 +172,8 @@ const MenuIndex = () => {
       localStorage.clear();
       return;
     }
-
     logoutWindow.document.write("<h1>Cerrando sesión...</h1>");
-    logoutWindow.document.write(
-      "<p>Por favor espere, estamos procesando su solicitud.</p>"
-    );
-
+    logoutWindow.document.write("<p>Por favor espere, estamos procesando su solicitud.</p>");
     setTimeout(() => {
       logoutWindow.location.href = logoutUrl;
       setTimeout(() => {
@@ -203,69 +186,72 @@ const MenuIndex = () => {
   };
 
   useEffect(() => {
-    if (cerrarSesionAutomatico) {
-      handleLogout();
-    }
+    if (cerrarSesionAutomatico) handleLogout();
   }, [cerrarSesionAutomatico]);
+
+  const renderIcon = (iconName, itemName, isActive) => {
+    const color = isActive ? "#F39400" : "#0072CE";
+    const filter = isActive
+      ? "invert(58%) sepia(93%) saturate(1541%) hue-rotate(1deg) brightness(102%) contrast(105%)"
+      : "invert(28%) sepia(95%) saturate(1966%) hue-rotate(193deg) brightness(91%) contrast(101%)";
+
+    if (iconName?.startsWith("mui:") && Icons[iconName.replace("mui:", "")]) {
+      return React.createElement(Icons[iconName.replace("mui:", "")], { sx: { color, fontSize: 22 } });
+    } else if (iconName?.startsWith("svg:") && iconMapping[iconName.replace("svg:", "")]) {
+      return (
+        <img
+          src={iconMapping[iconName.replace("svg:", "")]}
+          alt={itemName}
+          width={22}
+          height={22}
+          style={{ filter }}
+        />
+      );
+    }
+    return <Icons.Circle sx={{ color, fontSize: 12 }} />;
+  };
 
   const renderMenuItems = (items, level = 0) =>
     items?.map((item) => {
       const hasSubMenu = item.subMenu?.length > 0;
-      const isExpanded = expandedMenus[item.name] || false;
-      const isActive = selectedItem?.name === item.name;
+      const isOpen = openStates[item.id || item.name] || false;
+      const isActive = isChildSelected(item, selectedItem?.id);
 
       return (
         <React.Fragment key={item.id || item.name}>
           <ListItem disablePadding sx={{ display: 'block' }}>
             <StyledListItemButton
-              active={isActive ? 1 : 0}
-              sx={{ pl: level * 3 + 2 }} // Indentation for submenus
+              isSelected={isActive}
+              sx={{ pl: level * 3 + 2 }}
               onClick={() => {
                 if (hasSubMenu) {
-                  toggleSubMenu(item.name);
-                  if (item.id) {
-                    dispatch(handleMenu({ ...item, thirdMenu: true }));
-                  }
+                  toggleSubmenu(item.id || item.name);
+                  dispatch(handleMenu({ ...item, thirdMenu: true }));
                 } else {
                   dispatch(handleMenu({ ...item, thirdMenu: true }));
                   if (item.url) navigate(item.url);
                 }
               }}
             >
-              <StyledListItemIcon active={isActive ? 1 : 0}>
-                {item.icon?.startsWith("mui:") &&
-                  Icons[item.icon.replace("mui:", "")] ? (
-                  React.createElement(Icons[item.icon.replace("mui:", "")])
-                ) : item.icon?.startsWith("svg:") &&
-                  iconMapping[item.icon.replace("svg:", "")] ? (
-                  <img
-                    src={iconMapping[item.icon.replace("svg:", "")]}
-                    alt={item.name}
-                    width={22}
-                    height={22}
-                    style={{ filter: isActive ? "none" : "grayscale(100%) opacity(0.7)" }}
-                  />
-                ) : null}
+              <StyledListItemIcon isSelected={isActive}>
+                {renderIcon(item.icon, item.name, isActive)}
               </StyledListItemIcon>
-
               <ListItemText primary={item.name} />
-
               {hasSubMenu && (
                 <ArrowForwardIosIcon
                   sx={{
-                    fontSize: "12px",
-                    transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
-                    transition: "transform 0.3s",
-                    color: isActive ? "#F39400" : "#8892b0",
+                    fontSize: "10px",
+                    transform: isOpen ? "rotate(90deg)" : "none",
+                    transition: "0.3s",
+                    color: isActive ? "#F39400" : "#94A3B8"
                   }}
                 />
               )}
             </StyledListItemButton>
           </ListItem>
-
           {hasSubMenu && (
-            <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding sx={{ background: "rgba(0,0,0,0.2)" }}>
+            <Collapse in={isOpen} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
                 {renderMenuItems(item.subMenu, level + 1)}
               </List>
             </Collapse>
@@ -277,23 +263,60 @@ const MenuIndex = () => {
   const list = () => (
     <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <LogoArea>
-        <LogoVisual>
-          <LogoGlow className="glow" />
-          <LogoImg src={Logo} alt="Indurama" />
-        </LogoVisual>
+        <img src={Logo} alt="Indurama" style={{ width: '120px' }} />
       </LogoArea>
 
-      <List sx={{ flexGrow: 1, px: 1 }}>
-        {renderMenuItems(filteredMenu)}
-      </List>
+      <UserArea>
+        <Avatar
+          src={person.image}
+          alt={person.name}
+          sx={{
+            width: 44,
+            height: 44,
+            backgroundColor: "#47556980",
+            fontSize: "1.1rem"
+          }}
+        >
+          {person.name ? person.name.charAt(0).toUpperCase() : "U"}
+        </Avatar>
+        <UserInfo>
+          <UserName>{person.name}</UserName>
+          <UserRole>{rolSelected.name}</UserRole>
+        </UserInfo>
+      </UserArea>
 
-      <Box sx={{ p: 2 }}>
-        <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", mb: 2 }} />
-        <StyledListItemButton onClick={handleLogout}>
-          <StyledListItemIcon>
-            <LogoutIcon />
+      <Box sx={{
+        flexGrow: 1,
+        overflowY: "auto",
+        px: 1,
+        "::-webkit-scrollbar": { width: "5px" },
+        "::-webkit-scrollbar-thumb": { background: "rgba(0,0,0,0.05)", borderRadius: "10px" }
+      }}>
+        <List sx={{ pt: 0 }}>
+          {renderMenuItems(filteredMenu)}
+        </List>
+      </Box>
+
+      <Box sx={{ p: 2, mt: 'auto', borderTop: "1px solid rgba(0,0,0,0.05)", background: "#FFFFFF" }}>
+        <StyledListItemButton
+          onClick={handleLogout}
+          sx={{
+            margin: 0,
+            background: "rgba(239, 68, 68, 0.05)",
+            borderRadius: "12px",
+            "&:hover": {
+              background: "rgba(239, 68, 68, 0.1)",
+              transform: "translateX(5px)"
+            }
+          }}
+        >
+          <StyledListItemIcon sx={{ minWidth: "40px" }}>
+            <LogoutIcon sx={{ color: "#EF4444" }} />
           </StyledListItemIcon>
-          <ListItemText primary="Cerrar sesión" />
+          <ListItemText
+            primary="Cerrar sesión"
+            primaryTypographyProps={{ sx: { fontWeight: 700, color: "#EF4444", fontSize: "0.9rem" } }}
+          />
         </StyledListItemButton>
       </Box>
     </Box>

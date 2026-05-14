@@ -1411,13 +1411,16 @@ const ExtraccionDatos = () => {
                 title="Limpiar datos"
                 iconName="AutoFixHigh"
                 color="#b91818"
-                right={120}
+                right={140}
+                top={-3}
               />
               <IconoFlotante
                 handleButtonClick={downloadEmptyExcel}
                 title="Descargar Formato Estandar"
                 iconName="SaveAlt"
                 color="#5ab9f6"
+                right={95}
+                top={-3}
               />
               <BotonProcesarExcel />
 
@@ -1481,7 +1484,7 @@ const ExtraccionDatos = () => {
                     minHeight: "48px !important",
                     height: "48px",
                     px: 3,
-                    background: "#e4ebfdff",
+                    background: "#ffffffff",
                     borderBottom: "1px solid #e2e8f0",
                     "& .MuiAccordionSummary-content": {
                       margin: "0 !important",
@@ -1511,8 +1514,8 @@ const ExtraccionDatos = () => {
                         id="calculateDate"
                         required={true}
                         mode="month"
-                        height="45px"
-                        color="#e4ebfdff"
+                        height="40px"
+                        color="#ebebeb"
                         label="Fecha de carga"
                         value={calculateDate || null}
                         onChange={(e) => {
@@ -1533,8 +1536,8 @@ const ExtraccionDatos = () => {
                               id="matriculacionId"
                               label="Matriculación"
                               required={true}
-                              height="45px"
-                              color="#e4ebfdff"
+                              height="40px"
+                              color="#ebebebff"
                               inputValue={searchMatriculacion}
                               onInputChange={(event, newValue) => {
                                 setSearchMatriculacion(newValue);
@@ -1565,8 +1568,8 @@ const ExtraccionDatos = () => {
                             <AtomAutocompleteLabel
                               id="configuracionId"
                               required={true}
-                              height="45px"
-                              color="#e4ebfdff"
+                              height="40px"
+                              color="#ebebebff"
                               placeholder="Seleccionar..."
                               label="Configuración"
                               value={configuracionId}
@@ -1589,8 +1592,8 @@ const ExtraccionDatos = () => {
                               <AtomTextField
                                 id="distributor"
                                 disabled
-                                height="45px"
-                                color="#e4ebfdff"
+                                height="40px"
+                                color="#ebebebff"
                                 headerTitle="Distribuidor"
                                 onBlur={handleChangeDistributorData}
                                 value={configuracion?.distributor || ""}
@@ -1605,8 +1608,8 @@ const ExtraccionDatos = () => {
                             <Grid size={2.5}>
                               <AtomTextField
                                 id="codeStoreDistributor"
-                                height="45px"
-                                color="#e4ebfdff"
+                                height="40px"
+                                color="#ebebebff"
                                 headerTitle="Almacén Distribuidor"
                                 value={configuracion?.codeStoreDistributor || ""}
                                 onChange={(e) => {
@@ -1627,8 +1630,8 @@ const ExtraccionDatos = () => {
                                   type={campo.type}
                                   multiline={campo.multiline}
                                   rows={campo.rows}
-                                  height="45px"
-                                  color="#e4ebfdff"
+                                  height="40px"
+                                  color="#ebebebff"
                                   value={configuracion[campo.id] || ""}
                                   placeholder={campo.placeholder}
                                   onChange={(e) =>
@@ -1644,8 +1647,8 @@ const ExtraccionDatos = () => {
                               <AtomSwitch
                                 id="extraerTodos"
                                 title="Todas"
-                                height="45px"
-                                color="#e4ebfdff"
+                                height="40px"
+                                color="#ebebebff"
                                 tooltip="Define si se extraen todas las hojas"
                                 checked={configuracion.extraerTodos || false}
                                 onChange={(e) =>
@@ -1664,8 +1667,8 @@ const ExtraccionDatos = () => {
                               <AtomTextFielInputForm
                                 id="documento"
                                 required
-                                height="45px"
-                                color="#e4ebfdff"
+                                height="40px"
+                                color="#ebebebff"
                                 headerTitle="Seleccionar Excel"
                                 placeholder="Seleccionar"
                                 value={documento}
@@ -1684,7 +1687,7 @@ const ExtraccionDatos = () => {
                             <AtomButtonPrimary
                               onClick={handleOpenDialogoConfirmacion}
                               label="Guardar"
-                              height="43px"
+                              height="38px"
                               disabled={loading}
                             />
                           </Grid>

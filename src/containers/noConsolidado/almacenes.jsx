@@ -317,46 +317,43 @@ const AlmacenesNoHomologados = () => {
             <AtomContainerGeneral
                 children={
                     <>
-                        {matriculacionCerrada !== "abierto" && (
-                            <Box
-                                sx={{
-                                    position: "fixed",
-                                    width: "auto",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 2,
-                                    top: 104,
-                                    right: 30,
-                                    zIndex: 1000,
-                                }}
-                            >
+                        <Box sx={{
+                            width: "87%",
+                            ml: 2,
+                            display: "flex",
+                            justifyContent: "space-between",
+                        }}>
+                            <Box sx={{
+                                width: "150px",
+                                mt: 3
+                            }}>
                                 <Chip
-                                    label="Mes cerrado"
-                                    color="error"
-                                    sx={{ fontWeight: "500", height: "20px", fontSize: "0.85rem", top: 50, position: "relative", right: 0 }}
+                                    label={matriculacionCerrada !== "abierto" ? "Mes cerrado" : "Mes activo"}
+                                    color={matriculacionCerrada === "abierto" ? "success" : "error"}
+                                    sx={{ fontWeight: "500", height: "20px", fontSize: "0.8rem", }}
                                 />
                             </Box>
-                        )}
-                        <Box sx={{
-                            position: "fixed",
-                            top: 85,
-                            maxWidth: "220px",
-                            right: 100,
-                        }}>
-                            <AtomDatePicker
-                                id="calculateDate"
-                                required={true}
-                                mode="month"
-                                label="Fecha de búsqueda"
-                                color="#ffffff"
-                                height="40px"
-                                value={calculateDate}
-                                onChange={(e) => {
-                                    dispatch(setCalculateDate(e));
-                                    setResultadosActualizados([]);
-                                }}
-                            />
+                            <Box sx={{
+                                maxWidth: "250px",
+                                minWidth: "100px",
+                            }}>
+                                <AtomDatePicker
+                                    id="calculateDate"
+                                    required={true}
+                                    mode="month"
+                                    label="Fecha de búsqueda"
+                                    color="#ffffff"
+                                    height="40px"
+                                    value={calculateDate}
+                                    onChange={(e) => {
+                                        dispatch(setCalculateDate(e));
+                                        setResultadosActualizados([]);
+                                    }}
+                                />
+                            </Box>
                         </Box>
+
+
 
                         <>
                             <IconoFlotante
@@ -364,8 +361,8 @@ const AlmacenesNoHomologados = () => {
                                 title={"Descargar excel"}
                                 iconName="SaveAlt"
                                 color="#5ab9f6"
-                                right={50}
-                                top={97}
+                                right={70}
+                                top={10}
                             />
                             <IconoFlotante
                                 handleButtonClick={() =>
@@ -375,8 +372,8 @@ const AlmacenesNoHomologados = () => {
                                 title={matriculacionCerrada === "abierto" ? "Subir archivo excel almacenes" : "Mes cerrado"}
                                 id="input-excel-productos"
                                 iconName="DriveFolderUploadOutlined"
-                                top={97}
-                                right={10}
+                                top={10}
+                                right={20}
                                 disabled={matriculacionCerrada !== "abierto"}
                             />
                         </>

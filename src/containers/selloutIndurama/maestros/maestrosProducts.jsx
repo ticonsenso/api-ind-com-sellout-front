@@ -444,11 +444,13 @@ const MasterProducts = () => {
               title="Descargar lista mt productos"
               iconName="SaveAlt"
               color="#5ab9f6"
-              right={77}
+              right={70}
+              top={15}
             />
             <IconoFlotante
               id="input-excel-master-products"
-              right={28}
+              right={20}
+              top={15}
               handleChangeFile={handleFileChange}
               handleButtonClick={() =>
                 document.getElementById("input-excel-master-products").click()
@@ -489,12 +491,14 @@ const MasterProducts = () => {
                       />
                     </Tooltip>
                   </Grid>
-                  <Grid size={2} mt={2.6}>
+                  <Grid size={1.5} mt={2.6}>
                     <AtomButtonPrimary
                       label="Crear"
                       height="42px"
                       onClick={handleOpenCreateMaestrosProducts}
                     />
+                  </Grid>
+                  <Grid size={1} mt={2.6}>
                   </Grid>
                 </Grid>
               }

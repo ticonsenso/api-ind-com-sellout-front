@@ -387,7 +387,8 @@ const MasterAlmacen = () => {
               title="Descargar lista mt almacenes"
               iconName="SaveAlt"
               color="#5ab9f6"
-              right={77}
+              right={70}
+              top={15}
             />
             <IconoFlotante
               handleButtonClick={() =>
@@ -397,6 +398,8 @@ const MasterAlmacen = () => {
               title="Subir archivo excel mt almacenes"
               id="input-excel-master-almacen"
               iconName="DriveFolderUploadOutlined"
+              right={20}
+              top={15}
             />
             <AtomCard
               title=""
@@ -432,13 +435,15 @@ const MasterAlmacen = () => {
                       />
                     </Tooltip>
                   </Grid>
-                  <Grid size={2} mt={2.6}>
+                  <Grid size={1.5} mt={2.6}>
                     <AtomButtonPrimary
                       label="Crear"
                       height="42px"
                       onClick={handleOpenCreateMaestrosStores}
 
                     />
+                  </Grid>
+                  <Grid size={1} mt={2.6}>
                   </Grid>
                 </Grid>
               }

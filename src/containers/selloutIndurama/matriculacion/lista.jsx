@@ -485,9 +485,9 @@ const Matriculacion = ({ calculateDate }) => {
                 }}
                 title="Actualizar lista"
                 iconName="Refresh"
-                right={50}
+                right={240}
                 color="#63B6FF"
-                top={95}
+                top={2}
               />
               {namePermission && (
                 <>
@@ -503,8 +503,8 @@ const Matriculacion = ({ calculateDate }) => {
                     title="Crear clientes por mes"
                     iconName="Add"
                     color="#0c9200ff"
-                    right={10}
-                    top={95}
+                    right={195}
+                    top={2}
                   />
                   {/* <Menu
                     anchorEl={anchorEl}
@@ -590,7 +590,8 @@ const Matriculacion = ({ calculateDate }) => {
             </>
             <AtomCard
               title=""
-              nameButton={matriculacionCerrada === "abierto" && namePermission ? "Crear" : ""}
+              nameButton="Crear"
+              disabled={matriculacionCerrada !== "abierto" || !namePermission}
               border={true}
               onClick={handleOpenMatriculacion}
               search={true}

@@ -23,6 +23,7 @@ const AtomCard = (props) => {
     color = "#F2F4F8",
     fullScreen = false,
     handleFullScreen,
+    disabled,
     extra
   } = props;
 
@@ -167,6 +168,7 @@ const AtomCard = (props) => {
                 variant="contained"
                 startIcon={<AddIcon />}
                 onClick={onClick}
+                disabled={disabled}
                 sx={{
                   minWidth: "170px",
                   maxWidth: "300px",
@@ -174,11 +176,11 @@ const AtomCard = (props) => {
                   height: "40px",
                   width: "auto",
                   fontSize: "13px",
-                  backgroundColor: "primary.main",
+                  backgroundColor: disabled ? "grey.400" : "primary.main",
                   textTransform: "none",
                   color: "#FFFFFF",
                   "&:hover": {
-                    backgroundColor: "primary.main",
+                    backgroundColor: disabled ? "grey.400" : "primary.main",
                     color: "#FFFFFF",
                   },
                 }}

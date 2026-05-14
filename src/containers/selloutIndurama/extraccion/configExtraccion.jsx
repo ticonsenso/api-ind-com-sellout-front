@@ -113,7 +113,8 @@ const ConfiguracionExtraccion = () => {
 
   return (
     <AtomCard
-      nameButton={namePermission ? "Crear" : ""}
+      nameButton="Crear"
+      disabled={!namePermission}
       valueSearch={search}
       onChange={(e) => setSearch(e.target.value)}
       search={true}

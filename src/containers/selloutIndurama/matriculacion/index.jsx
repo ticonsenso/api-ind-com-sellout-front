@@ -39,45 +39,35 @@ const TabGestionMatriculacion = () => {
   }, [dispatch]);
 
   const DatePickerWithStatus = () => (
-    <Box
-      sx={{
-        position: "fixed",
-        width: "auto",
-        display: "flex",
-        alignItems: "center",
-        gap: 2,
-        top: 80,
-        right: 100,
-        zIndex: 1000,
-      }}
-    >
-
-      {matriculacionCerrada !== "abierto" && (
-        <Box
-          sx={{
-            position: "fixed",
-            width: "auto",
-            display: "flex",
-            alignItems: "center",
-            gap: 2,
-            top: 130,
-            right: 30,
-            zIndex: 1000,
-          }}
-        >
-          <Chip
-            label="Mes cerrado"
-            color="error"
-            sx={{ fontWeight: "500", height: "30px", fontSize: "0.85rem", top: 50, position: "relative", right: 0 }}
-          />
-        </Box>
-      )}
-      <Box sx={{ minWidth: "100px", maxWidth: "200px" }}>
+    <>
+      <Chip
+        label={matriculacionCerrada !== "abierto" ? "Mes cerrado" : "Mes activo"}
+        color={matriculacionCerrada === "abierto" ? "success" : "error"}
+        sx={{
+          position: "absolute",
+          width: "auto",
+          display: "flex",
+          alignItems: "center",
+          top: 15,
+          left: 15,
+          zIndex: 1000,
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          width: "auto",
+          display: "flex",
+          alignItems: "center",
+          top: 10,
+          left: 130,
+          zIndex: 1000,
+        }}
+      >
         <AtomDatePicker
           id="calculateDate"
-          required={true}
           mode="month"
-          label="Fecha de búsqueda"
+          label=""
           color="#ffffff"
           height="43px"
           value={calculateDate}
@@ -86,7 +76,7 @@ const TabGestionMatriculacion = () => {
           }}
         />
       </Box>
-    </Box>
+    </>
   );
 
   const tabs = [
