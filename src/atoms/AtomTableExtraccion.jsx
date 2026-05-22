@@ -15,15 +15,17 @@ import CustomLinearProgress from "./CustomLinearProgress";
 import { styled } from "@mui/material/styles";
 import { formatValueByType } from "../containers/constantes";
 
-const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
+const StyledTableContainer = styled(TableContainer)(() => ({
   backgroundColor: "transparent",
   boxShadow: "none",
   flex: 1,
+  height: "70vh",
+  maxHeight: "66vh",
   overflowY: "auto",
   overflowX: "auto",
   "& .MuiTable-root": {
     borderCollapse: "separate",
-    borderSpacing: "0 8px", // Reduced spacing for spread look
+    borderSpacing: "0 5px",
     width: "100%",
     minWidth: "1000px",
   },
@@ -53,7 +55,7 @@ const StyledHeaderCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const StyledBodyRow = styled(TableRow)(({ theme }) => ({
+const StyledBodyRow = styled(TableRow)(() => ({
   backgroundColor: "#ffffff",
   transition: "transform 0.2s ease, box-shadow 0.2s ease",
   position: "relative",
@@ -77,7 +79,7 @@ const StyledBodyRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const StyledBodyCell = styled(TableCell)(({ theme }) => ({
+const StyledBodyCell = styled(TableCell)(() => ({
   fontSize: "0.875rem",
   color: "#334155",
   borderBottom: "none",
@@ -93,10 +95,7 @@ const AtomTableExtraccion = ({
   celdas = [],
   errors = {},
   showIndex = true,
-  setData = () => { },
-  setErrores = () => { },
 }) => {
-  const [filasSeleccionadas, setFilasSeleccionadas] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
 

@@ -298,63 +298,7 @@ const ProductosNoHomologados = () => {
             <AtomContainerGeneral
                 children={
                     <>
-                        <Box sx={{
-                            width: "87%",
-                            ml: 2,
-                            display: "flex",
-                            justifyContent: "space-between",
-                        }}>
-                            <Box sx={{
-                                width: "150px",
-                                mt: 3
-                            }}>
-                                <Chip
-                                    label={matriculacionCerrada !== "abierto" ? "Mes cerrado" : "Mes activo"}
-                                    color={matriculacionCerrada === "abierto" ? "success" : "error"}
-                                    sx={{ fontWeight: "500", height: "20px", fontSize: "0.8rem", }}
-                                />
-                            </Box>
-                            <Box sx={{
-                                maxWidth: "250px",
-                                minWidth: "100px",
-                            }}>
-                                <AtomDatePicker
-                                    id="calculateDate"
-                                    required={true}
-                                    mode="month"
-                                    label="Fecha de búsqueda"
-                                    color="#ffffff"
-                                    height="40px"
-                                    value={calculateDate}
-                                    onChange={(e) => {
-                                        dispatch(setCalculateDate(e));
-                                        setResultadosActualizados([]);
-                                    }}
-                                />
-                            </Box>
-                        </Box>
-                        <>
-                            <IconoFlotante
-                                handleButtonClick={exportExcel}
-                                title={"Descargar excel"}
-                                iconName="SaveAlt"
-                                color="#5ab9f6"
-                                right={70}
-                                top={10}
-                            />
-                            <IconoFlotante
-                                handleButtonClick={() =>
-                                    document.getElementById("input-excel-productos").click()
-                                }
-                                handleChangeFile={handleFileChange}
-                                title={matriculacionCerrada === "abierto" ? "Subir archivo excel productos" : "Mes cerrado"}
-                                id="input-excel-productos"
-                                iconName="DriveFolderUploadOutlined"
-                                top={10}
-                                right={20}
-                                disabled={matriculacionCerrada !== "abierto"}
-                            />
-                        </>
+
 
                         <AtomCard
                             title=""
@@ -372,16 +316,66 @@ const ProductosNoHomologados = () => {
                             children={
                                 <>
                                     <Grid container spacing={2} justifyContent="right" sx={{ width: "100%" }}>
-                                        {resultadosActualizados.length > 0 && (
-                                            <Grid size={2} sx={{ position: "fixed", bottom: 25, right: 10, zIndex: 1000 }}>
-                                                <AtomButtonPrimary
-                                                    label="Guardar"
-                                                    height="40px"
-                                                    loading={loading}
-                                                    onClick={() => handleGuardarExcel()}
-                                                />
-                                            </Grid>
-                                        )}
+                                        <Grid size={1.2} mt={1}>
+                                            <Chip
+                                                label={matriculacionCerrada !== "abierto" ? "Mes cerrado" : "Mes activo"}
+                                                color={matriculacionCerrada === "abierto" ? "success" : "error"}
+                                                sx={{ fontWeight: "500", height: "25px", fontSize: "0.8rem", }}
+                                            />
+                                        </Grid>
+                                        <Grid size={3}>
+                                            <AtomDatePicker
+                                                id="calculateDate"
+                                                mode="month"
+                                                label=""
+                                                color="#ffffff"
+                                                height="40px"
+                                                value={calculateDate}
+                                                onChange={(e) => {
+                                                    dispatch(setCalculateDate(e));
+                                                    setResultadosActualizados([]);
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid size={1.5}>
+                                            <AtomButtonPrimary
+                                                label="Guardar"
+                                                height="40px"
+                                                disabled={resultadosActualizados.length === 0}
+                                                loading={loading}
+                                                onClick={() => handleGuardarExcel()}
+                                            />
+                                        </Grid>
+                                        <Grid size={1.2}
+                                            sx={{
+                                                mt: -0.8,
+                                                display: "flex",
+                                                flexDirection: "row",
+                                                justifyContent: "center",
+
+                                            }}
+                                        >
+                                            <IconoFlotante
+                                                handleButtonClick={exportExcel}
+                                                title={"Descargar excel"}
+                                                iconName="SaveAlt"
+                                                color="#5ab9f6"
+                                                right={70}
+                                                top={-10}
+                                            />
+                                            <IconoFlotante
+                                                handleButtonClick={() =>
+                                                    document.getElementById("input-excel-productos").click()
+                                                }
+                                                handleChangeFile={handleFileChange}
+                                                title={matriculacionCerrada === "abierto" ? "Subir archivo excel productos" : "Mes cerrado"}
+                                                id="input-excel-productos"
+                                                iconName="DriveFolderUploadOutlined"
+                                                top={-10}
+                                                right={20}
+                                                disabled={matriculacionCerrada !== "abierto"}
+                                            />
+                                        </Grid>
 
                                         <Grid size={12}>
                                             {loading && <CustomLinearProgress />}

@@ -9,7 +9,7 @@ function AtomButtonPrimary({
   return (
     <Button
       fullWidth
-      disabled={disabled || loading}
+      disabled={disabled ? disabled : loading}
       sx={{
         height: height,
         mt: mt,
@@ -21,7 +21,7 @@ function AtomButtonPrimary({
         fontWeight: 400,
         fontSize: "0.95rem",
         transition: "all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)",
-        borderRadius: "30px",
+        borderRadius: "8px",
         border: "1px solid rgba(255, 255, 255, 0.15)",
         boxShadow: "0 4px 14px 0 rgba(0, 114, 206, 0.25)",
         "&:hover": {

@@ -1121,8 +1121,8 @@ export const exportarExcelAvanced = createAsyncThunk(
       const url = window.URL.createObjectURL(blob);
 
       const a = document.createElement("a");
-      a.download = `sellout_mercado_${calculateDate}.xlsx`;
       a.href = url;
+      a.download = `sellout_mercado${calculateDate.replace(/-/g, "")}.xlsx`;
       a.click();
       window.URL.revokeObjectURL(url);
 

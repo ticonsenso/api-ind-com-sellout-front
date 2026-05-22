@@ -254,17 +254,13 @@ const TabRoles = () => {
             border={true}
             nameButton={namePermission ? "Crear" : ""}
             onClick={handleOpenRole}
-            children={
-              <Box
-                sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
-              >
-                <AtomTableForm
-                  columns={columnsRoles}
-                  data={roles}
-                  actions={namePermission ? actions : []}
-                  loading={loading}
-                />
-              </Box>
+            extra={
+              <AtomTableForm
+                columns={columnsRoles}
+                data={roles}
+                actions={namePermission ? actions : []}
+                loading={loading}
+              />
             }
           />
           <AtomDialogForm

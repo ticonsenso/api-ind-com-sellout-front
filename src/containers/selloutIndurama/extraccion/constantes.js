@@ -87,6 +87,7 @@ export const columnsMatriculacion = [
   {
     label: "Distribuidor",
     field: "distributor",
+    color: "primary.main",
   },
   {
     label: "Almacén",
@@ -102,7 +103,7 @@ export const columnsMatriculacion = [
     field: "isUploaded",
   },
   {
-    label: "Unidades Vendidas",
+    label: "Unid. Vendidas",
     field: "productCountTotal",
     type: "string"
   },
@@ -160,22 +161,21 @@ export const optionsMappingToField = [
 
 export const styles = {
   container: {
-    p: 2,
+    p: 1,
     borderRadius: 2,
   },
   table: {
     borderRadius: 3,
-    mt: 1,
   },
   tableCell: {
-    backgroundColor: "#eaeaea",
+    backgroundColor: "#e2ebff",
     borderBottom: "1px solid #ffffff",
     minWidth: "20%",
   },
   typography: {
     fontWeight: 400,
     fontSize: "13px",
-    color: "#c0c0c0ff",
+    color: "rgb(77, 77, 77)",
     textTransform: "uppercase",
   },
   tableCellDetail: {
@@ -187,8 +187,8 @@ export const styles = {
   },
   title: {
     fontWeight: 400,
-    fontSize: "12px",
-    color: "white",
+    fontSize: "14px",
+    color: "#fff",
     textAlign: "center",
     textTransform: "uppercase",
     backgroundColor: "details.main",

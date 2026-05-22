@@ -17,6 +17,7 @@ import {
   Paper,
   Checkbox,
   Tooltip,
+  useTheme,
 } from "@mui/material";
 import CustomLinearProgress from "./CustomLinearProgress";
 import {
@@ -35,28 +36,34 @@ import {
 import { pageOptions, limitGeneral, formatValueByType } from "../containers/constantes";
 
 const decimalesCantidad = 2;
-const colorSortActive = "#0072CE";
-const colorSortInactive = "#B0B0B0";
 
+const resolveThemeColor = (color, theme) => {
+  if (!color) return undefined;
+  if (typeof color !== "string") return color;
+  if (color.includes(".")) {
+    const [paletteKey, shade] = color.split(".");
+    return theme?.palette?.[paletteKey]?.[shade] || color;
+  }
+  return color;
+};
 
 const RootContainer = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(0),
   width: "100%",
   display: "flex",
   flexDirection: "column",
-  minHeight: 0,
   overflow: "hidden",
 }));
 
-const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
+const StyledTableContainer = styled(TableContainer)(() => ({
   backgroundColor: "transparent",
   boxShadow: "none",
   width: "100%",
-  maxHeight: "70vh", // Prevent the table from taking too much vertical space
+  maxHeight: "55vh", // Prevent the table from taking too much vertical space
   overflow: "auto",
   "& .MuiTable-root": {
     borderCollapse: "separate",
-    borderSpacing: "0 8px",
+    borderSpacing: "0 5px",
     width: "max-content",
     minWidth: "100%",
     tableLayout: "fixed",
@@ -64,7 +71,7 @@ const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
 }));
 
 const StyledHeaderCell = styled(TableCell)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
+  backgroundColor: theme.palette.secondary.main,
   color: theme.palette.common.white,
   fontWeight: 500,
   fontSize: "0.85rem",
@@ -87,7 +94,7 @@ const StyledHeaderCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const StyledBodyRow = styled(TableRow)(({ theme }) => ({
+const StyledBodyRow = styled(TableRow)(() => ({
   backgroundColor: "#ffffff",
   transition: "transform 0.2s ease, box-shadow 0.2s ease",
   position: "relative",
@@ -129,7 +136,7 @@ const StyledBodyCell = styled(TableCell, {
 }));
 
 // Estilo para el botón de eliminar masivo elegante
-const MassDeleteButton = styled(IconButton)(({ theme }) => ({
+const MassDeleteButton = styled(IconButton)(() => ({
   color: "#ebebebff",
   backgroundColor: alpha("#f85149", 0.08),
   padding: "4px",
@@ -145,7 +152,7 @@ const MassDeleteButton = styled(IconButton)(({ theme }) => ({
   },
 }));
 
-const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
+const StyledCheckbox = styled(Checkbox)(() => ({
   color: "#cbd5e1",
   "&.Mui-checked": {
     color: "#0072CE",
@@ -157,7 +164,7 @@ const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
 
 const ActionButton = styled(Button, {
   shouldForwardProp: (prop) => prop !== "colorKey" && prop !== "isIconOnly",
-})(({ theme, colorKey, isIconOnly }) => {
+})(({ colorKey, isIconOnly }) => {
   const colors = {
     success: { main: "#2e7d32", bg: "#e8f5e9" },
     error: { main: "#c62828", bg: "#ffebee" },
@@ -216,6 +223,7 @@ const AtomTableForm = (props) => {
     toUpperCase = false
   } = props;
 
+  const theme = useTheme();
   const [expandedRow, setExpandedRow] = useState(null);
   const [orderBy, setOrderBy] = useState(null);
   const [order, setOrder] = useState("asc");
@@ -273,7 +281,9 @@ const AtomTableForm = (props) => {
   return (
     <RootContainer>
       {loading && <CustomLinearProgress />}
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden' }}>
+      <Box sx={{
+        display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden'
+      }}>
         <StyledTableContainer component={Paper}>
           <Table stickyHeader size="small">
             <TableHead>
@@ -307,6 +317,7 @@ const AtomTableForm = (props) => {
 
                 {columns?.map((column, index) => {
                   const isActive = orderBy === column.field;
+                  const headerColor = resolveThemeColor(column?.color, theme);
                   return (
                     <StyledHeaderCell
                       key={index}
@@ -315,7 +326,11 @@ const AtomTableForm = (props) => {
                       sx={{
                         cursor: column.field ? "pointer" : "default",
                         width: column.width || "auto",
-                        maxWidth: "210px"
+                        maxWidth: "210px",
+                        ...(headerColor ? {
+                          backgroundColor: headerColor,
+                          color: "#ffffff",
+                        } : {}),
                       }}
                     >
                       <Box display="flex" alignItems="center" justifyContent={column.align === 'right' ? 'flex-end' : 'flex-start'}>
@@ -373,31 +388,35 @@ const AtomTableForm = (props) => {
                           </StyledBodyCell>
                         )}
 
-                        {columns?.map((column, colIndex) => (
-                          <StyledBodyCell
-                            key={colIndex}
-                            align={column?.align || "left"}
-                            toUpperCase={toUpperCase}
-                            sx={{
-                              textAlign: ["dinero", "porcentaje", "number"].includes(column?.type) ? "right" : "left",
-                              maxWidth: "210px"
-                            }}
-                          >
-                            {column?.render ? (
-                              column?.render(row)
-                            ) : typeof row[column?.field] === "boolean" ? (
-                              row[column?.field] ? (
-                                <CheckCircleIcon fontSize="small" sx={{ color: "#2e7d32" }} />
-                              ) : (
-                                <UnpublishedIcon fontSize="small" sx={{ color: "#d32f2f" }} />
-                              )
-                            ) : ["valor", "amount", "estimated_value"].includes(column?.field) ? (
-                              parseFloat(row[column?.field]).toFixed(decimalesCantidad)
+                        {columns?.map((column, colIndex) => {
+                          const cellValue = column?.render ? (
+                            column?.render(row)
+                          ) : typeof row[column?.field] === "boolean" ? (
+                            row[column?.field] ? (
+                              <CheckCircleIcon fontSize="small" sx={{ color: "#2e7d32" }} />
                             ) : (
-                              formatValueByType(row[column?.field], column?.type)
-                            )}
-                          </StyledBodyCell>
-                        ))}
+                              <UnpublishedIcon fontSize="small" sx={{ color: "#d32f2f" }} />
+                            )
+                          ) : ["valor", "amount", "estimated_value"].includes(column?.field) ? (
+                            parseFloat(row[column?.field]).toFixed(decimalesCantidad)
+                          ) : (
+                            formatValueByType(row[column?.field], column?.type)
+                          );
+
+                          return (
+                            <StyledBodyCell
+                              key={colIndex}
+                              align={column?.align || "left"}
+                              toUpperCase={toUpperCase}
+                              sx={{
+                                textAlign: ["dinero", "porcentaje", "number"].includes(column?.type) ? "right" : "left",
+                                maxWidth: "210px",
+                              }}
+                            >
+                              {cellValue}
+                            </StyledBodyCell>
+                          );
+                        })}
 
                         {actions?.length > 0 && (
                           <StyledBodyCell align="center">

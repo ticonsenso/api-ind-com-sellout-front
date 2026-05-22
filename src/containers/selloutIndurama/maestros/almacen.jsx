@@ -382,37 +382,18 @@ const MasterAlmacen = () => {
       <AtomContainerGeneral
         children={
           <>
-            <IconoFlotante
-              handleButtonClick={confirmarExportarExcel}
-              title="Descargar lista mt almacenes"
-              iconName="SaveAlt"
-              color="#5ab9f6"
-              right={70}
-              top={15}
-            />
-            <IconoFlotante
-              handleButtonClick={() =>
-                document.getElementById("input-excel-master-almacen").click()
-              }
-              handleChangeFile={handleFileChange}
-              title="Subir archivo excel mt almacenes"
-              id="input-excel-master-almacen"
-              iconName="DriveFolderUploadOutlined"
-              right={20}
-              top={15}
-            />
             <AtomCard
               title=""
               nameButton=""
               search={false}
               extra={
-                <Grid container spacing={2} justifyContent="flex-end" mt={-2}>
+                <Grid container spacing={2} justifyContent="right" >
                   <Grid size={3}>
                     <AtomDatePicker
                       required={true}
                       mode="month"
                       color="#ffffff"
-                      height="45px"
+                      height="40px"
                       label="Período"
                       value={calculateDate}
                       onChange={(value) => dispatch(setCalculateDate(value))}
@@ -422,28 +403,48 @@ const MasterAlmacen = () => {
                     <Tooltip title="Buscar por distribuidor, almacén y código SIC">
                       <AtomTextFielInputForm
                         value={search}
-                        toUpperCase={true}
                         onChange={(e) => {
                           setPage(1);
                           setLimit(5);
-                          setSearch(e.target.value.toUpperCase());
-                          debounceSearchAddress(e.target.value.toUpperCase());
+                          setSearch(e.target.value);
+                          debounceSearchAddress(e.target.value);
                         }}
                         placeholder="Buscar por distribuidor, almacén y código SIC"
                         color="#ffffff"
-                        height="42px"
+                        height="40px"
                       />
                     </Tooltip>
                   </Grid>
-                  <Grid size={1.5} mt={2.6}>
+                  <Grid size={1.5} mt={2.8}>
                     <AtomButtonPrimary
                       label="Crear"
-                      height="42px"
+                      height="40px"
                       onClick={handleOpenCreateMaestrosStores}
 
                     />
                   </Grid>
-                  <Grid size={1} mt={2.6}>
+                  <Grid size={1.2} mt={1.5}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center"
+                    }}>
+                    <IconoFlotante
+                      handleButtonClick={confirmarExportarExcel}
+                      title="Descargar lista mt almacenes"
+                      iconName="SaveAlt"
+                      color="#5ab9f6"
+                    />
+                    <IconoFlotante
+                      handleButtonClick={() =>
+                        document.getElementById("input-excel-master-almacen").click()
+                      }
+                      handleChangeFile={handleFileChange}
+                      title="Subir archivo excel mt almacenes"
+                      id="input-excel-master-almacen"
+                      iconName="DriveFolderUploadOutlined"
+                    />
                   </Grid>
                 </Grid>
               }

@@ -3,11 +3,13 @@ export const columnsMaestrosStores = [
     field: "distributor",
     label: "Distribuidor",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "storeDistributor",
     label: "Almacen Distribuidor",
     type: "string",
+    color: "primary.main",
   },
   // {
   //   field: "searchStore",
@@ -17,6 +19,7 @@ export const columnsMaestrosStores = [
     field: "codeStoreSic",
     label: "Cod. Almacen SIC",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "periodo",
@@ -34,15 +37,18 @@ export const columnsConfiguracion = [
   {
     field: "name",
     label: "Nombre",
+    color: "primary.main",
   },
 
   {
     field: "codeStoreDistributor",
     label: "Código Almacén Distribuidor",
+    color: "primary.main",
   },
   {
     field: "distributorCompanyName",
     label: "Nombre Distribuidor",
+    color: "primary.main",
   },
   {
     field: "sheetName",
@@ -59,21 +65,25 @@ export const columnsMaestrosProducts = [
     field: "distributor",
     label: "Distribuidor",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "productStore",
     label: "Producto Almacen",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "productDistributor",
     label: "Descripción Producto Almacen",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "codeProductSic",
     label: "Cod. Producto SIC",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "periodo",
@@ -275,22 +285,26 @@ export const columnsPlantillaStandar = [
   {
     field: "distributor",
     label: "Distribuidor",
-    type: "string"
+    type: "string",
+    color: "primary.main",
   },
   {
     field: "codeStoreDistributor",
     label: "Cod. Almacen Distribuidor",
-    type: "string"
+    type: "string",
+    color: "primary.main",
   },
   {
     field: "codeProductDistributor",
     label: "Cod. Prod. Distribuidor",
-    type: "string"
+    type: "string",
+    color: "primary.main",
   },
   {
     field: "descriptionDistributor",
     label: "Descripción Distribuidor",
-    type: "string"
+    type: "string",
+    color: "primary.main",
   },
   {
     field: "unitsSoldDistributor",
@@ -312,18 +326,24 @@ export const columnsPlantillaStandar = [
     type: "string"
   },
   {
-    field: "storeName",
-    label: "Nombre Almacen",
-    type: "string"
-  },
-  {
-    field: "productModel",
-    label: "Modelo Producto",
+    field: "prodId",
+    label: "Prod Id",
     type: "string"
   },
   {
     field: "lineaNegocio",
     label: "Linea Negocio",
+    type: "string"
+  },
+
+  {
+    field: "linea",
+    label: "Linea",
+    type: "string"
+  },
+  {
+    field: "lineaVare",
+    label: "Linea Variable",
     type: "string"
   },
   {
@@ -347,8 +367,13 @@ export const columnsPlantillaStandar = [
     type: "string"
   },
   {
-    field: "prodId",
-    label: "Prod Id",
+    field: "descSap",
+    label: "Descripción SAP",
+    type: "string"
+  },
+  {
+    field: "marca",
+    label: "Marca",
     type: "string"
   },
   {
@@ -357,13 +382,28 @@ export const columnsPlantillaStandar = [
     type: "string"
   },
   {
-    field: "grupoComercial",
-    label: "Grupo Comercial",
+    field: "distribuidorSap",
+    label: "Distribuidor SAP",
+    type: "string"
+  },
+  {
+    field: "tipoNegocio",
+    label: "Distribuidor",
+    type: "string"
+  },
+  {
+    field: "storeName",
+    label: "Nombre Almacen",
     type: "string"
   },
   {
     field: "nombreAlmacen",
     label: "Nombre Almacen",
+    type: "string"
+  },
+  {
+    field: "supervisor",
+    label: "Supervisor",
     type: "string"
   },
   {
@@ -382,8 +422,19 @@ export const columnsPlantillaStandar = [
     type: "string"
   },
   {
-    field: "supervisor",
-    label: "Supervisor",
+    field: "segmentoAlmacen",
+    label: "Regional",
+    type: "string"
+  },
+
+  {
+    field: "grupoComercial",
+    label: "Provincia",
+    type: "string"
+  },
+  {
+    field: "ciudad",
+    label: "Ciudad",
     type: "string"
   },
   {

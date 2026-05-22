@@ -1403,25 +1403,33 @@ const ExtraccionDatos = () => {
               display: "flex",
               flexDirection: "column",
               flex: 1,
+              mt: 2,
               minHeight: 0,
             }}>
             <>
-              <IconoFlotante
-                handleButtonClick={limpiarErrores}
-                title="Limpiar datos"
-                iconName="AutoFixHigh"
-                color="#b91818"
-                right={140}
-                top={-3}
-              />
-              <IconoFlotante
-                handleButtonClick={downloadEmptyExcel}
-                title="Descargar Formato Estandar"
-                iconName="SaveAlt"
-                color="#5ab9f6"
-                right={95}
-                top={-3}
-              />
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  position: "absolute",
+                  top: 10,
+                  right: 105,
+                  zIndex: 3,
+                }}>
+                <IconoFlotante
+                  handleButtonClick={limpiarErrores}
+                  title="Limpiar datos"
+                  iconName="AutoFixHigh"
+                  color="#b91818"
+                />
+                <IconoFlotante
+                  handleButtonClick={downloadEmptyExcel}
+                  title="Descargar Formato Estandar"
+                  iconName="SaveAlt"
+                  color="#5ab9f6"
+
+                />
+              </Box>
               <BotonProcesarExcel />
 
               <Menu
@@ -1525,7 +1533,7 @@ const ExtraccionDatos = () => {
                       />
                     </Grid>
                     {mostrarAlerta && mensajeAlerta ? (
-                      <Grid size={2.5}>
+                      <Grid size={6}>
                         <AtomAlert text={mensajeAlerta} severity="error" />
                       </Grid>
                     ) : (
@@ -2007,7 +2015,7 @@ const ExtraccionDatos = () => {
         buttonSubmit={loading ? false : true}
         loading={loading}
         textButtonSubmit="Confirmar"
-        maxWidth="lg"
+        maxWidth="xl"
         buttonCancel={loading ? false : true}
         handleSubmit={handleGuardar}
         handleCloseDialog={() => {

@@ -1,52 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Box, Typography, Grid, Button, Paper, alpha } from "@mui/material";
+import { Box, Typography, Grid, Button, Paper, alpha, TablePagination } from "@mui/material";
 import {
   Inventory as InventoryIcon,
   Store as StoreIcon
 } from "@mui/icons-material";
 import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import AtomCard from "../../atoms/AtomCard";
-import AtomTableForm from "../../atoms/AtomTableForm";
+import AtomProcessCard from "../../atoms/AtomProcessCard";
 import AtomDialogForm from "../../atoms/AtomDialogForm";
 import { useSnackbar } from "../../context/SnacbarContext";
 import { apiService } from "../../service/apiService";
 import { apiConfig } from "../../service/apiConfig";
 import CustomLinearProgress from "../../atoms/CustomLinearProgress";
-
-const columns = [
-  {
-    label: "Entidad",
-    field: "entityName",
-  },
-  {
-    label: "Estado",
-    field: "status",
-  },
-
-  {
-    label: "Total Registros",
-    field: "totalRecords",
-  },
-  {
-    label: "Registros Procesados",
-    field: "processedRecords",
-  },
-  {
-    label: "Inicio",
-    field: "startTime",
-    type: "date"
-  },
-  {
-    label: "Fin",
-    field: "endTime",
-    type: "date"
-  },
-  {
-    label: "Duración",
-    field: "duration",
-  }
-];
 
 const ActualizacionDim = () => {
   const { showSnackbar } = useSnackbar();
@@ -56,7 +22,7 @@ const ActualizacionDim = () => {
   const [jobs, setJobs] = useState([]);
   const [totalJobs, setTotalJobs] = useState(0);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(12);
 
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openResultDialog, setOpenResultDialog] = useState(false);
@@ -141,23 +107,62 @@ const ActualizacionDim = () => {
         nameButton="Nuevo Proceso"
         onClick={() => setOpenCreateDialog(true)}
         children={
-          <AtomTableForm
-            columns={columns}
-            data={jobs}
-            pagination={true}
-            page={page}
-            limit={limit}
-            count={totalJobs}
-            setPage={setPage}
-            setLimit={setLimit}
-            handleChangePage={(e, p) => setPage(p)}
-            handleChangeRowsPerPage={(e) => {
-              setLimit(e.target.value);
-              setPage(1);
-            }}
-            loading={loading}
-            showIcons={false}
-          />
+          <Box sx={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", overflow: "hidden" }}>
+            <Box sx={{ flex: 1, overflowY: "auto", p: 2, maxHeight: "70vh" }}>
+              {jobs.length > 0 ? (
+                <Grid container spacing={3}>
+                  {jobs.map((job) => (
+                    <Grid item size={{ xs: 12, sm: 6, lg: 4 }} key={job.id}>
+                      <AtomProcessCard job={job} />
+                    </Grid>
+                  ))}
+                </Grid>
+              ) : (
+                <Box sx={{ py: 8, display: "flex", justifyContent: "center", alignItems: "center", color: 'text.secondary', fontSize: '1.2rem', fontStyle: 'italic' }}>
+                  No existen procesos registrados.
+                </Box>
+              )}
+            </Box>
+
+            {jobs.length > 0 && (
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                px: { xs: 1, sm: 2 },
+                py: 0.5,
+                backgroundColor: '#fff',
+                borderTop: '1px solid #f1f5f9',
+                borderBottomLeftRadius: '12px',
+                borderBottomRightRadius: '12px',
+                flexShrink: 0,
+                overflow: 'hidden'
+              }}>
+                <TablePagination
+                  component="div"
+                  rowsPerPageOptions={[6, 12, 24, 48]}
+                  count={totalJobs}
+                  rowsPerPage={limit}
+                  page={page - 1}
+                  onPageChange={(event, newPage) => setPage(newPage + 1)}
+                  onRowsPerPageChange={(event) => {
+                    setLimit(parseInt(event.target.value, 10));
+                    setPage(1);
+                  }}
+                  labelRowsPerPage="Filas:"
+                  labelDisplayedRows={({ from, to, count }) => (
+                    <Box component="span" sx={{
+                      fontWeight: 700,
+                      color: '#0072CE',
+                      fontSize: { xs: '0.75rem', sm: '0.85rem' }
+                    }}>
+                      {from}-{to} <Box component="span" sx={{ fontWeight: 400, color: '#64748b' }}>de</Box> {count}
+                    </Box>
+                  )}
+                />
+              </Box>
+            )}
+          </Box>
         }
       />
 

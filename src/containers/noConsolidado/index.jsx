@@ -28,11 +28,10 @@ const NoConsolidado = () => {
         }] : []),
     ];
 
-    // Fallback if no internal permissions are assigned but they can see the module
     if (tabs.length === 0) {
-        return <NoAccessContent 
-            title="Sin acceso" 
-            message="No tiene permisos asignados para ver Almacenes o Productos No Homologados." 
+        return <NoAccessContent
+            title="Sin acceso"
+            message="No tiene permisos asignados para ver Almacenes o Productos No Homologados."
         />;
     }
 

@@ -170,36 +170,43 @@ export const columnsProductsSic = [
     field: "codigoJde",
     label: "Código JDE",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "nombreIme",
     label: "Nombre IME",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "codigoSap",
     label: "Código SAP",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "nombreSap",
     label: "Nombre SAP",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "lineaNegocioSap",
     label: "Linea de Negocio SAP",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "marModeloIm",
     label: "Modelo",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "proIdEquivalencia",
     label: "Pro Id Equivalencia",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "equivalencia",
@@ -219,21 +226,25 @@ export const columnsStoresSic = [
     field: "codAlmacen",
     label: "Código Almacén",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "nombreAlmacen",
     label: "Nombre Almacén",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "distribSap",
     label: "Distribuidor SAP",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "distribuidor",
     label: "Distribuidor",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "categoria",
@@ -244,11 +255,13 @@ export const columnsStoresSic = [
     field: "ciudad",
     label: "Subcategoria",
     type: "string",
+    color: "primary.main",
   },
   {
     field: "region",
     label: "Mar Modelo Im",
     type: "string",
+    color: "primary.main",
   },
 ];
 

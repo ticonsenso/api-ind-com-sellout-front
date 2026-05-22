@@ -306,236 +306,171 @@ const PlantillaStandar = () => {
     <>
       <AtomContainerGeneral
         children={
-          <>
-            <IconoFlotante
-              handleButtonClick={handleDownloadBasicInfo}
-              title="Descargar información básica"
-              iconName="PlayForWork"
-              color="#0262a1ff"
-              right={115}
-              disabled={loading}
-            />
-            {/* <IconoFlotante
+          <Grid container spacing={2} >
+            <Grid item size={12} mt={1}>
+              <AtomCard
+                fullScreen={fullScreen}
+                handleFullScreen={handleFullScreen}
+                title=""
+                nameButton=""
+                border={true}
+                search={false}
+                valueSearch={search}
+                onChange={(e) => {
+                  setPage(1);
+                  setLimit(limitGeneral);
+                  setSearch(e.target.value);
+                  setFiltroBusqueda(null);
+
+                }}
+
+                extra={
+                  <Grid
+                    container
+                    spacing={2}
+                    sx={{ justifyContent: "right" }}
+                  >
+                    <Grid size={2.5}>
+                      <AtomDatePicker
+                        mode="month"
+                        color="#ffffff"
+                        height="40px"
+                        label=""
+                        value={calculateDate}
+                        onChange={(value) => dispatch(setCalculateDate(value))}
+                      />
+                    </Grid>
+                    <Grid size={2.5}>
+                      <AtomSelect
+                        color="#ffffff"
+                        height="40px"
+                        headerTitle=""
+                        options={optionsFiltros}
+                        placeholder="Seleccionar..."
+                        onChange={(e) => {
+                          setFiltroBusqueda(e.target.value);
+                        }}
+                        value={filtroBusqueda}
+                      />
+                    </Grid>
+
+                    <Grid size={3} mt={0}>
+                      <Tooltip title="Buscar por distribuidor, código almacén, código producto y descripción">
+                        <TextField
+                          variant="outlined"
+                          value={search}
+                          onChange={(e) => {
+                            setPage(1);
+                            setLimit(limitGeneral);
+                            setSearch(e.target.value);
+                            debounceSearch(e.target.value);
+                          }}
+                          placeholder="Buscar por distribuidor, código almacén, código producto y descripción"
+                          slotProps={{
+                            input: {
+                              endAdornment: (
+                                <InputAdornment position="end">
+                                  <IconButton aria-label="buscar">
+                                    <SearchIcon />
+                                  </IconButton>
+                                </InputAdornment>
+                              ),
+                              style: {
+                                backgroundColor: "#ffffffff",
+                                borderRadius: "8px",
+                                fontSize: "15px",
+                                height: "40px",
+                              },
+                            },
+                          }}
+                          sx={{
+                            fontFamily:
+                              "Visby Round CF, Arial, sans-serif,bold",
+                            fontSize: "14px",
+                            width: "100%",
+                            maxWidth: "500px",
+                            minWidth: "200px",
+                            height: "40px",
+                            "& .MuiOutlinedInput-root": {
+                              "& fieldset": {
+                                borderColor: "transparent",
+                              },
+                              "&:hover fieldset": {
+                                borderColor: "gray",
+                              },
+                            },
+                            "& .MuiInputLabel-root": {
+                              color: "#757575",
+                            },
+                          }}
+                        />
+                      </Tooltip>
+                    </Grid>
+                    <Grid size={1.5} mt={0.1}>
+                      <AtomButtonPrimary
+                        label="Sincronizar"
+                        height="40px"
+                        icon={<SyncIcon />}
+                        onClick={handleOpenDialogoSincronizar}
+                      />
+                    </Grid>
+                    <Grid size={1.8} mt={-1}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center"
+                      }}>
+                      <IconoFlotante
+                        handleButtonClick={handleDownloadBasicInfo}
+                        title="Descargar información básica"
+                        iconName="PlayForWork"
+                        color="#0262a1ff"
+                        disabled={loading}
+                      />
+                      {/* <IconoFlotante
               handleButtonClick={handleOpenCreateProducts}
               title="Nuevo registro plantilla stdr"
               iconName="Add"
               color="green"
               right={115}
             /> */}
-            <IconoFlotante
-              handleButtonClick={exportExcel}
-              title="Descargar consolidado"
-              iconName="SaveAlt"
-              color="#5ab9f6"
-              right={70}
-              disabled={loading}
-            />
-
-            <IconoFlotante
-              handleButtonClick={clearFilters}
-              title="Limpiar filtros"
-              iconName="AutoFixHigh"
-              color="#da161e"
-            />
-            {/* <Box mb={1} mt={-1}>
-              {dataConsolidatedAlert &&
-                !isAlertVacia(dataConsolidatedAlert) && (
-                  <AtomAlert
-                    severity="warning"
-                    text={
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "row",
-                          gap: 1,
-                        }}
-                      >
-                        <Typography sx={{ fontWeight: 600, fontSize: "13px" }}>
-                          Requiere correcciones:
-                        </Typography>
-                        <Box sx={stylesPlantillaStandar.box}>
-                          {[
-                            {
-                              key: "codeProduct",
-                              label: "Productos sin código",
-                            },
-                            {
-                              key: "codeStore",
-                              label: "Almacenes sin código",
-                            },
-                          ].map(({ key, label }) => {
-                            const value = dataConsolidatedAlert[key];
-                            if (value > 0) {
-                              const handleClick = () => {
-                                if (label.toLowerCase().includes("producto")) {
-                                  handleOpenDialogProductNull();
-                                } else {
-                                  handleOpenDialogStoreNull();
-                                }
-                              };
-
-                              return (
-                                <Box
-                                  key={key}
-                                  onClick={handleClick}
-                                  sx={{ cursor: "pointer" }}
-                                >
-                                  <Tooltip title={`Editar ${label}`}>
-                                    <Typography
-                                      sx={{
-                                        ...stylesPlantillaStandar.alert,
-                                        color: "details.main",
-                                        textDecoration: "none",
-                                        "&:hover": {
-                                          textDecoration: "underline",
-                                        },
-                                      }}
-                                    >
-                                      <span style={stylesPlantillaStandar.bold}>
-                                        {label}:
-                                      </span>{" "}
-                                      {value}
-                                    </Typography>
-                                  </Tooltip>
-                                </Box>
-                              );
-                            }
-                            return null;
-                          })}
-                        </Box>
-                      </Box>
-                    }
-                  />
-                )}
-            </Box> */}
-
-            <AtomCard
-              fullScreen={fullScreen}
-              handleFullScreen={handleFullScreen}
-              title=""
-              nameButton=""
-              border={true}
-              search={false}
-              valueSearch={search}
-              onChange={(e) => {
-                setPage(1);
-                setLimit(limitGeneral);
-                setSearch(e.target.value);
-                setFiltroBusqueda(null);
-
-              }}
-              extra={
-                <Grid
-                  container
-                  spacing={2}
-                  sx={{ justifyContent: "center", mt: -6 }}
-                >
-                  <Grid size={2.5}>
-                    <AtomDatePicker
-                      required={true}
-                      mode="month"
-                      color="#ffffff"
-                      height="45px"
-                      label="Fecha de carga"
-                      value={calculateDate}
-                      onChange={(value) => dispatch(setCalculateDate(value))}
-                    />
-                  </Grid>
-                  <Grid size={2.5}>
-                    <AtomSelect
-                      color="#ffffff"
-                      height="45px"
-                      headerTitle="Seleccionar filtro"
-                      options={optionsFiltros}
-                      placeholder="Seleccionar..."
-                      onChange={(e) => {
-                        setFiltroBusqueda(e.target.value);
-                      }}
-                      value={filtroBusqueda}
-                    />
-                  </Grid>
-
-                  <Grid size={3} mt={2.8}>
-                    <Tooltip title="Buscar por distribuidor, código almacén, código producto y descripción">
-                      <TextField
-                        variant="outlined"
-                        value={search}
-                        onChange={(e) => {
-                          setPage(1);
-                          setLimit(limitGeneral);
-                          setSearch(e.target.value);
-                          debounceSearch(e.target.value);
-                        }}
-                        placeholder="Buscar..."
-                        slotProps={{
-                          input: {
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton aria-label="buscar">
-                                  <SearchIcon />
-                                </IconButton>
-                              </InputAdornment>
-                            ),
-                            style: {
-                              backgroundColor: "#ffffffff",
-                              borderRadius: "8px",
-                              fontSize: "15px",
-                              height: "45px",
-                            },
-                          },
-                        }}
-                        sx={{
-                          fontFamily:
-                            "Visby Round CF, Arial, sans-serif,bold",
-                          fontSize: "14px",
-                          width: "100%",
-                          maxWidth: "500px",
-                          minWidth: "200px",
-                          height: "40px",
-                          "& .MuiOutlinedInput-root": {
-                            "& fieldset": {
-                              borderColor: "transparent",
-                            },
-                            "&:hover fieldset": {
-                              borderColor: "gray",
-                            },
-                          },
-                          "& .MuiInputLabel-root": {
-                            color: "#757575",
-                          },
-                        }}
+                      <IconoFlotante
+                        handleButtonClick={exportExcel}
+                        title="Descargar consolidado"
+                        iconName="SaveAlt"
+                        color="#5ab9f6"
+                        disabled={loading}
                       />
-                    </Tooltip>
+
+                      <IconoFlotante
+                        handleButtonClick={clearFilters}
+                        title="Limpiar filtros"
+                        iconName="AutoFixHigh"
+                        color="#da161e"
+                      />
+                    </Grid>
                   </Grid>
-                  <Grid size={1.8} mt={2.8}>
-                    <AtomButtonPrimary
-                      label="Sincronizar"
-                      height="45px"
-                      icon={<SyncIcon />}
-                      onClick={handleOpenDialogoSincronizar}
+                }
+                children={
+                  <>
+                    <AtomTableForm
+                      columns={columnsPlantillaStandar}
+                      data={dataConsolidatedSellout}
+                      showIcons={true}
+                      actions={[]}
+                      pagination={true}
+                      page={page}
+                      limit={limit}
+                      count={totalConsolidatedSellout}
+                      handleChangePage={handleChangePage}
+                      handleChangeRowsPerPage={handleChangeRowsPerPage}
+                      loading={loading}
                     />
-                  </Grid>
-                </Grid>
-              }
-              children={
-                <>
-                  <AtomTableForm
-                    columns={columnsPlantillaStandar}
-                    data={dataConsolidatedSellout}
-                    showIcons={true}
-                    actions={[]}
-                    pagination={true}
-                    page={page}
-                    limit={limit}
-                    count={totalConsolidatedSellout}
-                    handleChangePage={handleChangePage}
-                    handleChangeRowsPerPage={handleChangeRowsPerPage}
-                    loading={loading}
-                  />
-                </>
-              }
-            />
-          </>
+                  </>
+                }
+              />
+            </Grid>
+          </Grid>
         }
       />
       <AtomDialogForm

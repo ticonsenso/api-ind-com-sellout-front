@@ -36,10 +36,12 @@ const columns = [
   {
     label: "Distribuidor",
     field: "distributor",
+    color: "primary.main",
   },
   {
     label: "Almacen",
     field: "storeName",
+    color: "primary.main",
   },
   {
     label: "Fecha Matriculación",
@@ -477,107 +479,53 @@ const Matriculacion = ({ calculateDate }) => {
     <>
       <AtomContainerGeneral
         children={
-          <>
-            <>
-              <IconoFlotante
-                handleButtonClick={() => {
-                  buscarMatriculacion(search, calculateDate);
-                }}
-                title="Actualizar lista"
-                iconName="Refresh"
-                right={240}
-                color="#63B6FF"
-                top={2}
-              />
-              {namePermission && (
-                <>
-                  {/* <IconoFlotante
-                    handleButtonClick={handleMenuOpen}
-                    title="Mas opciones"
-                    iconName="MoreVert"
-                    right={20}
-                    top={95}
-                  /> */}
+
+          <AtomCard
+            title=""
+            nameButton="Crear"
+            disabled={matriculacionCerrada !== "abierto" || !namePermission}
+            border={true}
+            onClick={handleOpenMatriculacion}
+            search={true}
+            labelBuscador="Búsqueda por distribuidor o almacén"
+            valueSearch={search}
+            placeholder="Buscar por distribuidor o almacén"
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+              debounceSearchMatriculacion(e.target.value);
+            }}
+            extra={
+              <Grid container spacing={1} justifyContent="flex-end" mb={1}>
+
+                <Grid item size={2} sx={{
+                  mt: -6,
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                }
+                }>
+                  <IconoFlotante
+                    handleButtonClick={() => {
+                      buscarMatriculacion(search, calculateDate);
+                    }}
+                    title="Actualizar lista"
+                    iconName="Refresh"
+                    right={240}
+                    color="#63B6FF"
+                    top={-5}
+                  />
+
                   <IconoFlotante
                     handleButtonClick={() => setOpenCreateMatriculacionBeforeMonth(true)}
                     title="Crear clientes por mes"
                     iconName="Add"
                     color="#0c9200ff"
                     right={195}
-                    top={2}
+                    tooltip="Crear clientes por mes"
+                    top={-5}
+                    disabled={matriculacionCerrada !== "abierto" || !namePermission}
                   />
-                  {/* <Menu
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleMenuClose}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                    transformOrigin={{ vertical: "top", horizontal: "right" }}
-                  > */}
-                  {/* <MenuItem
-                      sx={{
-                        gap: 1,
-                      }}
-                      onClick={() =>
-                        document
-                          .getElementById("input-excel-matriculacion")
-                          .click()
-                      }
-                    >
-                      <ListItemIcon>
-                        <DriveFolderUploadOutlinedIcon
-                          sx={{
-                            color: "white",
-                            backgroundColor: "details.main",
-                            borderRadius: "50%",
-                            padding: "3px",
-                          }}
-                        />
-                      </ListItemIcon>
-                      <Typography variant="inherit">
-                        Subir Excel matriculaciones
-                      </Typography>
-                    </MenuItem> */}
-                  {/* <MenuItem
-                    sx={{
-                      gap: 1,
-                    }}
-                    onClick={confirmarExportarExcel}
-                  >
-                    <ListItemIcon>
-                      <SaveAltIcon
-                        sx={{
-                          color: "white",
-                          backgroundColor: "#5ab9f6",
-                          borderRadius: "50%",
-                          padding: "3px",
-                        }}
-                      />
-                    </ListItemIcon>
-                    <Typography variant="inherit">
-                      Descargar lista matriculaciones
-                    </Typography>
-                  </MenuItem> */}
-                  {/* <MenuItem
-                      sx={{
-                        gap: 1,
-                      }}
-                      onClick={() => setOpenCreateMatriculacionBeforeMonth(true)}
-                    >
-                      <ListItemIcon>
-                        <AddIcon
-                          sx={{
-                            color: "white",
-                            backgroundColor: "success.main",
-                            borderRadius: "50%",
-                            padding: "3px",
-                          }}
-                        />
-                      </ListItemIcon>
-                      <Typography variant="inherit">
-                        Crear matriculaciones por mes
-                      </Typography>
-                    </MenuItem>
-                  </Menu> */}
                   <input
                     id="input-excel-matriculacion"
                     type="file"
@@ -585,51 +533,39 @@ const Matriculacion = ({ calculateDate }) => {
                     onChange={handleFileChange}
                     style={{ display: "none" }}
                   />
-                </>
-              )}
-            </>
-            <AtomCard
-              title=""
-              nameButton="Crear"
-              disabled={matriculacionCerrada !== "abierto" || !namePermission}
-              border={true}
-              onClick={handleOpenMatriculacion}
-              search={true}
-              labelBuscador="Búsqueda por distribuidor o almacén"
-              valueSearch={search}
-              placeholder="Buscar por distribuidor o almacén"
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-                debounceSearchMatriculacion(e.target.value);
-              }}
-              children={
-                <>
-                  <AtomTableForm
-                    columns={columns}
-                    data={dataMatriculacion}
-                    showIcons={true}
-                    actions={[]}
-                    pagination={true}
-                    page={page}
-                    limit={limit}
-                    count={totalMatriculacion}
-                    selectable={matriculacionCerrada === "abierto" ? true : false}
-                    selectedRows={selectedIds}
-                    onSelectionChange={(ids) => {
-                      setSelectedIds(ids);
-                    }}
-                    onDeleteSelected={handleDeleteSelected}
-                    setPage={setPage}
-                    setLimit={setLimit}
-                    handleChangePage={handleChangePage}
-                    handleChangeRowsPerPage={handleChangeRowsPerPage}
-                    loading={loading}
-                  />
-                </>
-              }
-            />
-          </>
+                </Grid>
+                <Grid item size={1.5}>
+
+                </Grid>
+              </Grid>
+            }
+            children={
+              <>
+                <AtomTableForm
+                  columns={columns}
+                  data={dataMatriculacion}
+                  showIcons={true}
+                  actions={[]}
+                  pagination={true}
+                  page={page}
+                  limit={limit}
+                  count={totalMatriculacion}
+                  selectable={matriculacionCerrada === "abierto" ? true : false}
+                  selectedRows={selectedIds}
+                  onSelectionChange={(ids) => {
+                    setSelectedIds(ids);
+                  }}
+                  onDeleteSelected={handleDeleteSelected}
+                  setPage={setPage}
+                  setLimit={setLimit}
+                  handleChangePage={handleChangePage}
+                  handleChangeRowsPerPage={handleChangeRowsPerPage}
+                  loading={loading}
+                />
+              </>
+            }
+          />
+
         }
       />
       <AtomDialogForm

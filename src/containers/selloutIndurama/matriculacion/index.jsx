@@ -48,7 +48,7 @@ const TabGestionMatriculacion = () => {
           width: "auto",
           display: "flex",
           alignItems: "center",
-          top: 15,
+          top: 10,
           left: 15,
           zIndex: 1000,
         }}
@@ -59,8 +59,9 @@ const TabGestionMatriculacion = () => {
           width: "auto",
           display: "flex",
           alignItems: "center",
-          top: 10,
-          left: 130,
+          top: 5,
+          left: 125,
+          maxWidth: "230px",
           zIndex: 1000,
         }}
       >
@@ -69,7 +70,7 @@ const TabGestionMatriculacion = () => {
           mode="month"
           label=""
           color="#ffffff"
-          height="43px"
+          height="40px"
           value={calculateDate}
           onChange={(e) => {
             dispatch(setCalculateDate(e));
@@ -109,13 +110,9 @@ const TabGestionMatriculacion = () => {
   ];
 
   return (
-    <AtomContainerGeneral
-      children={
-        <>
-          <TabGestionGeneral tabs={tabs} num={currentTab} />
-        </>
-      }
-    />
+    <Box sx={{ mt: 2 }}>
+      <TabGestionGeneral tabs={tabs} num={currentTab} />
+    </Box>
   );
 };
 

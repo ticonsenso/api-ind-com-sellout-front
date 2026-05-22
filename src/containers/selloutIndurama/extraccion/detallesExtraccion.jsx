@@ -98,38 +98,36 @@ const DetallesExtraccion = ({ data, detallesData }) => {
             {listaDetalles.length > 0 && (
                 <Grid size={12}>
                     <Box sx={styles.container}>
-                        <Typography
-                            variant="subtitle2"
-                            color="primary"
-                            gutterBottom
-                        >
-                            Detalles de la extracción
-                        </Typography>
 
                         <TableContainer
                             component={Paper}
                             elevation={0}
-                            sx={styles.table}
+                            sx={{
+                                ...styles.table,
+                                height: "40vh",
+                                maxHeight: "40vh",
+                                overflowY: "auto",
+                            }}
                         >
-                            <Table size="small">
+                            <Table size="small" stickyHeader>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell sx={styles.tableCell}>
+                                        <TableCell sx={{ ...styles.tableCell, position: 'sticky', top: 0, zIndex: 2, }}>
                                             <Typography sx={styles.typography}>
                                                 Distribuidor
                                             </Typography>
                                         </TableCell>
-                                        <TableCell sx={styles.tableCell}>
+                                        <TableCell sx={{ ...styles.tableCell, position: 'sticky', top: 0, zIndex: 2, }}>
                                             <Typography sx={styles.typography}>
                                                 Almacén
                                             </Typography>
                                         </TableCell>
-                                        <TableCell sx={styles.tableCell}>
+                                        <TableCell sx={{ ...styles.tableCell, position: 'sticky', top: 0, zIndex: 2, }}>
                                             <Typography sx={styles.typography}>
                                                 Filas / Registros
                                             </Typography>
                                         </TableCell>
-                                        <TableCell sx={styles.tableCell}>
+                                        <TableCell sx={{ ...styles.tableCell, position: 'sticky', top: 0, zIndex: 2, }}>
                                             <Typography sx={styles.typography}>
                                                 Unidades Vendidas
                                             </Typography>

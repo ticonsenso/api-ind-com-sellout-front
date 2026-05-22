@@ -23,21 +23,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { Typography, Tooltip, Box } from "@mui/material";
 import { useDialog } from "../../../context/DialogDeleteContext";
 import AtomSwitch from "../../../atoms/AtomSwitch";
-import { limitGeneral, normalizeEncabezados, formatDate, cleanString } from "../../constantes";
+import { limitGeneral, normalizeEncabezados, formatDate } from "../../constantes";
 import AtomTableInformationExtraccion from "../../../atoms/AtomTableInformationExtraccion";
 import { useCallback } from "react";
 import IconoFlotante from "../../../atoms/IconActionPage";
 import AtomDatePicker from "../../../atoms/AtomDatePicker";
 import AtomTextFielInputForm from "../../../atoms/AtomTextField";
 import AtomButtonPrimary from "../../../atoms/AtomButtonPrimary";
-
-function debounce(func, delay) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => func(...args), delay);
-  };
-}
 
 const MasterProducts = () => {
   const dispatch = useDispatch();
@@ -133,24 +125,37 @@ const MasterProducts = () => {
   };
 
   const debounceSearchAddress = useCallback(
-    debounce((value) => {
-      buscarMaestrosProducts(value, page, limit);
-    }, 1000),
+    (value) => {
+      // Debounced search - actualiza el estado que dispara el useEffect
+      setPage(1);
+      setSearch(value);
+    },
     []
   );
 
-  const buscarMaestrosProducts = async (value, page, limit) => {
-    setLoading(true);
-    try {
-      await dispatch(obtenerMaestrosProducts({ search: value, page, limit, periodo: calculateDate }));
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Crear un timer para el debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // La búsqueda se triggerea por cambios en 'search' del useEffect
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const buscarMaestrosProducts = useCallback(
+    async (value, page, limit) => {
+      setLoading(true);
+      try {
+        await dispatch(obtenerMaestrosProducts({ search: value, page, limit, periodo: calculateDate }));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [dispatch, calculateDate]
+  );
 
   useEffect(() => {
     buscarMaestrosProducts(search, page, limit);
-  }, [page, limit, calculateDate]);
+  }, [page, limit, buscarMaestrosProducts, search]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -195,7 +200,8 @@ const MasterProducts = () => {
         showSnackbar(msg, { severity: "error" });
 
         if (response.meta?.requestStatus === "fulfilled") {
-          buscarMaestrosProducts();
+          setPage(1);
+          buscarMaestrosProducts(search, 1, limit);
         }
       },
     });
@@ -234,7 +240,10 @@ const MasterProducts = () => {
       handleGuardarEntidad({
         data: cleanedData,
         dispatchFunction: updateMaestrosProducts,
-        onSuccessCallback: () => buscarMaestrosProducts(),
+        onSuccessCallback: () => {
+          setPage(1);
+          buscarMaestrosProducts(search, 1, limit);
+        },
         onResetForm: handleCloseCreateMaestrosProducts,
       });
     } else {
@@ -244,13 +253,16 @@ const MasterProducts = () => {
           periodo: calculateDate,
         },
         dispatchFunction: createMaestrosProducts,
-        onSuccessCallback: () => buscarMaestrosProducts(),
+        onSuccessCallback: () => {
+          setPage(1);
+          buscarMaestrosProducts(search, 1, limit);
+        },
         onResetForm: handleCloseCreateMaestrosProducts,
       });
     }
   };
 
-  const styles = {
+  const STYLES = {
     title: {
       fontSize: 18,
       fontWeight: 600,
@@ -336,7 +348,6 @@ const MasterProducts = () => {
             const colIndex = headers.indexOf(normalizeEncabezados(label));
 
             let val = colIndex !== -1 ? rowValues[colIndex] ?? "" : "";
-            val = (val);
 
             if (field === "periodo" && val) {
               const date = new Date(val);
@@ -393,7 +404,8 @@ const MasterProducts = () => {
         setOpenDuplicatesDialog(true);
       }
       handleCloseUploadExcel();
-      buscarMaestrosProducts();
+      setPage(1);
+      buscarMaestrosProducts(search, 1, limit);
     } catch (error) {
       showSnackbar(error.message || "Error al subir el archivo", { severity: "error" });
     } finally {
@@ -439,36 +451,18 @@ const MasterProducts = () => {
       <AtomContainerGeneral
         children={
           <>
-            <IconoFlotante
-              handleButtonClick={confirmarExportarExcel}
-              title="Descargar lista mt productos"
-              iconName="SaveAlt"
-              color="#5ab9f6"
-              right={70}
-              top={15}
-            />
-            <IconoFlotante
-              id="input-excel-master-products"
-              right={20}
-              top={15}
-              handleChangeFile={handleFileChange}
-              handleButtonClick={() =>
-                document.getElementById("input-excel-master-products").click()
-              }
-              title="Subir archivo excel mt productos"
-            />
             <AtomCard
               title=""
               nameButton=""
               search={false}
               extra={
-                <Grid container spacing={2} justifyContent="flex-end" mt={-2}>
+                <Grid container spacing={2} justifyContent="flex-end" >
                   <Grid size={3}>
                     <AtomDatePicker
                       required={true}
                       mode="month"
                       color="#ffffff"
-                      height="45px"
+                      height="40px"
                       label="Período"
                       value={calculateDate}
                       onChange={(value) => dispatch(setCalculateDate(value))}
@@ -478,27 +472,48 @@ const MasterProducts = () => {
                     <Tooltip title="Buscar por distribuidor, producto centro y código SIC">
                       <AtomTextFielInputForm
                         value={search}
-                        toUpperCase={true}
                         onChange={(e) => {
-                          setPage(1);
-                          setLimit(pageOptions[0]);
-                          setSearch(e.target.value.toUpperCase());
-                          debounceSearchAddress(e.target.value.toUpperCase());
+                          setSearch(e.target.value);
+                          debounceSearchAddress(e.target.value);
                         }}
                         placeholder="Buscar por distribuidor, producto centro y código SIC"
                         color="#ffffff"
-                        height="42px"
+                        height="40px"
                       />
                     </Tooltip>
                   </Grid>
-                  <Grid size={1.5} mt={2.6}>
+                  <Grid size={1.5} mt={2.8}>
                     <AtomButtonPrimary
                       label="Crear"
-                      height="42px"
+                      height="40px"
                       onClick={handleOpenCreateMaestrosProducts}
                     />
                   </Grid>
-                  <Grid size={1} mt={2.6}>
+                  <Grid size={1.2} mt={1.5}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center"
+                    }}>
+                    <IconoFlotante
+                      handleButtonClick={confirmarExportarExcel}
+                      title="Descargar lista mt productos"
+                      iconName="SaveAlt"
+                      color="#5ab9f6"
+                      right={70}
+                      top={0}
+                    />
+                    <IconoFlotante
+                      id="input-excel-master-products"
+                      right={20}
+                      top={0}
+                      handleChangeFile={handleFileChange}
+                      handleButtonClick={() =>
+                        document.getElementById("input-excel-master-products").click()
+                      }
+                      title="Subir archivo excel mt productos"
+                    />
                   </Grid>
                 </Grid>
               }

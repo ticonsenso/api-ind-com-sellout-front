@@ -1,17 +1,18 @@
 import React, { useState } from "react";
-import { Box, Tab, Tabs, styled, alpha, useTheme } from "@mui/material";
+import { Box, Tab, Tabs, styled, alpha } from "@mui/material";
 
 const TabsContainer = styled(Box)(({ theme }) => ({
   position: "fixed",
-  top: "34px",
+  top: "14px",
   right: "40px",
   zIndex: 1000,
   display: "flex",
   justifyContent: "flex-end",
   pointerEvents: "none",
+  marginBottom: theme.spacing(2),
 }));
 
-const TabsWrapper = styled(Box)(({ theme }) => ({
+const TabsWrapper = styled(Box)(() => ({
   background: "rgba(255, 255, 255, 0.01)",
   backdropFilter: "blur(12px)",
   padding: "4px",
@@ -48,14 +49,13 @@ const StyledTab = styled(Tab)(({ theme }) => ({
 
 const TabGestionGeneral = ({ tabs, num = 0 }) => {
   const [activeTab, setActiveTab] = useState(num);
-  const theme = useTheme();
 
   const handleChange = (event, newValue) => {
     setActiveTab(newValue);
   };
 
   return (
-    <Box sx={{ position: "relative", width: "100%" }}>
+    <Box sx={{ position: "relative" }}>
       <TabsContainer>
         <TabsWrapper>
           <Tabs
@@ -67,11 +67,11 @@ const TabGestionGeneral = ({ tabs, num = 0 }) => {
             sx={{
               minHeight: "38px",
               "& .MuiTabs-flexContainer": {
-                gap: "4px"
+                gap: "2px"
               }
             }}
           >
-            {tabs.map(({ label }, index) => (
+            {tabs.map(({ label },) => (
               <StyledTab
                 key={label}
                 label={label}

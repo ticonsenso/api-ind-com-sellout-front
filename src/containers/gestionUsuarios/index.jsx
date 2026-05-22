@@ -12,7 +12,7 @@ const TabGestionUsers = () => {
     { label: "Permisos", component: <TabPermisos key="permisos" /> },
   ];
 
-  return <AtomContainerGeneral children={<TabGestionGeneral tabs={tabs} />} />;
+  return <TabGestionGeneral tabs={tabs} />;
 };
 
 export default TabGestionUsers;

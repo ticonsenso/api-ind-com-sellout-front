@@ -31,7 +31,10 @@ const styles = {
     backgroundColor: "transparent",
     flexShrink: 0,
     height: "70px",
-    m: 2,
+    ml: 1,
+    mt: 2,
+    mb: 2
+
   },
   contentBox: {
     flex: 1,
@@ -40,9 +43,7 @@ const styles = {
     width: "100%",
     borderRadius: 4,
     backgroundColor: "transparent",
-    overflow: "auto", // Changed to auto for scrollable content
-    minHeight: 0,
-    mb: 0
+    overflow: "auto",
   },
   header: {
     justifyContent: "center",
@@ -53,8 +54,6 @@ const styles = {
   footer: {
     display: "flex",
     height: "40px",
-    background: "linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)",
-    borderTop: "1px solid #e2e8f0",
     justifyContent: "flex-end",
     alignItems: "center",
     flexShrink: 0,

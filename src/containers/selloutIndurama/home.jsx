@@ -1,52 +1,63 @@
 import { useEffect } from "react";
-import { Box, Typography, styled, Container, Grid, alpha } from "@mui/material";
+import { Box, Typography, styled, Container, Grid, alpha, Tooltip } from "@mui/material";
 import {
-  Public as PublicIcon,
-  EmojiObjects as EmojiObjectsIcon,
-  Settings as SettingsIcon,
-  MenuBook as MenuBookIcon,
+  FreeCancellation as FreeCancellationIcon,
+  TableView as TableViewIcon,
+  FormatListBulleted as FormatListBulletedIcon,
+  EventRepeat as EventRepeatIcon,
+  GridOff as GridOffIcon,
   Search as SearchIcon,
-  AddToQueue as AddToQueueIcon,
-  CalendarMonth as CalendarIcon,
+  ViewSidebar as ViewSidebarIcon,
+  Settings as SettingsIcon,
+  AutoStories as AutoStoriesIcon,
+  Ballot as BallotIcon,
+  Checklist as ChecklistIcon,
+  ReportProblem as ReportProblemIcon,
+  CheckCircle as CheckCircleIcon,
+  Public as PublicIcon,
+  AppsOutage as AppsOutageIcon,
+  Storage as StorageIcon,
+  ArrowRightAlt as ArrowRightAltIcon,
+  SettingsSuggest as SettingsSuggestIcon,
+  CloudSync as CloudSyncIcon,
+  FactCheck as FactCheckIcon,
+  EditNote as EditNoteIcon,
 } from "@mui/icons-material";
+
 import { useDispatch } from "react-redux";
 import { handleMenu } from "../../redux/navigatorSlice";
 import { usePermission } from "../../context/PermisosComtext";
 import { setCalculateDate } from "../../redux/configSelloutSlice";
 import { getPreviousMonthStart } from "../constantes";
-import bannerImg from "../../assets/banner.svg";
+import bannerImg from "../../assets/banner1.svg";
+import { PERMISSIONS } from "../../constants/permissions";
 
-const Canvas = styled(Box)(({ theme }) => ({
-  padding: "40px 0 100px 0",
+const Canvas = styled(Box)(() => ({
+  padding: "20px 0 80px 0",
   background: "#f8fafc",
   position: "relative",
   overflowX: "hidden",
+  height: "100vh",
   "&::before": {
     content: '""',
     position: "fixed",
     top: 0, left: 0, right: 0, bottom: 0,
     background: `
-      radial-gradient(circle at 10% 10%, ${alpha("#3b82f6", 0.05)} 0%, transparent 50%),
-      radial-gradient(circle at 90% 10%, ${alpha("#ec4899", 0.05)} 0%, transparent 50%),
-      radial-gradient(circle at 50% 90%, ${alpha("#10b981", 0.05)} 0%, transparent 50%)
+      radial-gradient(circle at 10% 10%, ${alpha("#3b82f6", 0.05)} 0%, transparent 100%),
+      radial-gradient(circle at 90% 10%, ${alpha("#ec4899", 0.05)} 0%, transparent 100%),
+      radial-gradient(circle at 50% 90%, ${alpha("#10b981", 0.05)} 0%, transparent 100%)
     `,
     zIndex: 0,
-  },
-  animation: "fadeInCanvas 0.8s ease-out",
-  "@keyframes fadeInCanvas": {
-    from: { opacity: 0 },
-    to: { opacity: 1 }
   }
 }));
 
-const BannerWrapper = styled(Box)(({ theme }) => ({
+const BannerWrapper = styled(Box)(() => ({
   width: "100%",
-  height: "220px",
-  borderRadius: "40px",
+  height: "110px",
+  borderRadius: "10px",
   overflow: "hidden",
   position: "relative",
   background: "#fff",
-  marginBottom: "48px",
   boxShadow: "0 20px 50px rgba(0,0,0,0.08)",
   border: "1px solid rgba(255,255,255,0.8)",
   "& img": {
@@ -57,197 +68,196 @@ const BannerWrapper = styled(Box)(({ theme }) => ({
   },
   "&:hover img": {
     transform: "scale(1.05)",
-  },
-  animation: "slideDown 1s cubic-bezier(0.4, 0, 0.2, 1)",
-  "@keyframes slideDown": {
-    from: { transform: "translateY(-30px)", opacity: 0 },
-    to: { transform: "translateY(0)", opacity: 1 }
   }
 }));
-
-const PhaseBlock = styled(Box)(({ shadowcolor, delay }) => ({
+const PhaseBlock = styled(Box)(() => ({
   position: "relative",
-  padding: "35px 25px",
-  background: "rgba(255, 255, 255, 0.7)",
-  backdropFilter: "blur(30px) saturate(160%)",
-  borderRadius: "36px",
-  height: "100%",
+  background: "rgba(255, 255, 255, 0.75)",
+  backdropFilter: "blur(20px)",
+  WebkitBackdropFilter: "blur(20px)",
+  borderRadius: "24px",
   display: "flex",
   flexDirection: "column",
-  border: "1px solid rgba(255, 255, 255, 0.8)",
-  transition: "all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
-  boxShadow: `
-    0 10px 30px rgba(0,0,0,0.02),
-    0 30px 60px ${alpha(shadowcolor, 0.05)},
-    inset 0 0 0 1px rgba(255,255,255,0.4)
-  `,
-  animation: "slideUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards",
-  animationDelay: delay || "0s",
-  opacity: 0,
-  "@keyframes slideUp": {
-    from: { transform: "translateY(50px)", opacity: 0 },
-    to: { transform: "translateY(0)", opacity: 1 }
-  },
+  border: "1px solid rgba(255, 255, 255, 0.6)",
+  boxShadow: `0 8px 32px 0 rgba(15, 23, 42, 0.03), inset 0 0 0 1px rgba(255, 255, 255, 0.5)`,
+  overflow: "hidden",
+  transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
   "&:hover": {
-    transform: "translateY(-12px) scale(1.01)",
-    background: "rgba(255, 255, 255, 0.9)",
-    boxShadow: `
-      0 20px 40px rgba(0,0,0,0.04),
-      0 50px 100px ${alpha(shadowcolor, 0.12)},
-      inset 0 0 0 1px rgba(255,255,255,0.8)
-    `,
-    "& .watermark": {
-      transform: "scale(1.15) rotate(-5deg)",
-      opacity: 0.08,
-      filter: "blur(2px)"
-    }
+    transform: "translateY(-6px)",
+    boxShadow: `0 16px 48px 0 rgba(15, 23, 42, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.6)`,
+    background: "rgba(255, 255, 255, 0.85)",
   }
 }));
 
 const Watermark = styled(Typography)(({ color }) => ({
   position: "absolute",
-  right: "-20px",
-  bottom: "-20px",
-  fontSize: "220px",
+  right: "-15px",
+  bottom: "-15px",
+  fontSize: "180px",
   fontWeight: 900,
-  color: alpha(color, 0.06),
+  color: alpha(color, 0.08),
   lineHeight: 0.7,
   pointerEvents: "none",
   fontFamily: "'Outfit', sans-serif",
-  zIndex: 0,
+  zIndex: 2,
   userSelect: "none",
   transition: "all 1s cubic-bezier(0.34, 1.56, 0.64, 1)",
   filter: "blur(0px)"
 }));
 
+const StepSvgIcon = ({ type }) => {
+  const iconProps = {
+    fontSize: "medium",
+    sx: { color: "currentColor", fontSize: 28 },
+  };
+
+  const icons = {
+    calendar: <FreeCancellationIcon {...iconProps} />,
+    spreadsheet: <TableViewIcon {...iconProps} />,
+    search: <EventRepeatIcon  {...iconProps} />,
+    funnel: <GridOffIcon   {...iconProps} />,
+    cog: <SettingsSuggestIcon  {...iconProps} />,
+    book: <AutoStoriesIcon {...iconProps} />,
+    users: <EditNoteIcon  {...iconProps} />,
+    alert: <AppsOutageIcon {...iconProps} />,
+    globe: <CloudSyncIcon  {...iconProps} />,
+    database: <FactCheckIcon  {...iconProps} />,
+  };
+
+  return icons[type] || icons.list;
+};
+
 const PhaseBadge = styled(Box)(({ gradient, shadowcolor }) => ({
-  background: gradient,
+  background: gradient || "#333",
   color: "#fff",
-  padding: "8px 20px",
-  borderRadius: "14px",
-  fontWeight: "800",
-  letterSpacing: "1.2px",
+  padding: "6px 14px",
+  borderRadius: "30px",
+  fontWeight: "700",
+  letterSpacing: "1px",
   textTransform: "uppercase",
-  fontSize: "0.7rem",
+  fontSize: "0.75rem",
   display: "inline-flex",
   alignItems: "center",
-  marginBottom: "16px",
-  boxShadow: `0 12px 25px ${alpha(shadowcolor, 0.3)}`,
+  boxShadow: `0 6px 15px ${alpha(shadowcolor || "#000", 0.22)}`,
   position: "relative",
   overflow: "hidden",
   "&::before": {
     content: '""',
     position: "absolute",
     top: "-50%", left: "-50%", width: "200%", height: "200%",
-    background: "linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent)",
+    background: "linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.08), transparent)",
     transform: "rotate(45deg)",
-    animation: "shine 3s infinite",
-  },
-  "@keyframes shine": {
-    "0%": { left: "-100%" },
-    "100%": { left: "100%" }
   }
 }));
 
-const VerticalTimeline = styled(Box)({
+const VerticalTimeline = styled(Box)(({ timelinecolor }) => ({
+  display: "flex",
+  flexDirection: "column",
   position: "relative",
-  marginTop: "20px",
-  zIndex: 2,
-});
-
-const VerticalStep = styled(Box)(({ stepcolor }) => ({
-  position: "relative",
-  padding: "16px 16px 16px 75px",
-  marginBottom: "12px",
-  borderRadius: "24px",
-  cursor: "pointer",
-  transition: "all 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
-  background: "transparent",
-  border: "1px solid transparent",
-  "& .step-icon-wrapper": {
+  padding: "16px 10px 16px 26px",
+  boxSizing: "border-box",
+  "&::before": {
+    content: '""',
     position: "absolute",
-    left: "12px",
-    top: "50%",
-    transform: "translateY(-50%)",
-    width: "50px",
-    height: "50px",
-    borderRadius: "16px",
-    background: "#fff",
-    boxShadow: `0 8px 20px ${alpha(stepcolor, 0.1)}`,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    color: stepcolor,
-    transition: "all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
-    "& svg": {
-      fontSize: "26px",
-      transition: "transform 0.5s ease",
+    left: "51px",
+    top: "15px",
+    bottom: "15px",
+    width: "2px",
+    background: alpha(timelinecolor || "#ccc", 0.18),
+    zIndex: 1,
+  }
+}));
+
+const VerticalStep = styled(Box)(({ stepcolor, disabled, secondary, indent }) => ({
+  position: "relative",
+  display: "flex",
+  alignItems: "center",
+  width: "100%",
+  paddingLeft: secondary ? "52px" : "76px",
+  marginLeft: indent ? "32px" : 0,
+  boxSizing: "border-box",
+  cursor: disabled ? "not-allowed" : "pointer",
+  opacity: disabled ? 0.65 : 1,
+  "&:hover": {
+    "& .step-card": {
+      transform: disabled ? "none" : (secondary ? "translateX(4px)" : "translateX(6px)"),
+      boxShadow: disabled
+        ? "0 2px 4px rgba(0,0,0,0.02)"
+        : `0 8px 25px ${alpha(stepcolor, 0.08)}, 0 4px 10px rgba(0,0,0,0.03)`,
+      borderColor: disabled ? "rgba(0, 0, 0, 0.08)" : alpha(stepcolor, 0.4),
+    },
+    "& .step-icon-box": {
+      transform: disabled ? "translateY(-50%)" : "translateY(-50%) scale(1.1)",
+      boxShadow: disabled ? "none" : `0 0 20px ${alpha(stepcolor, 0.55)}`,
+      background: disabled
+        ? alpha(stepcolor, 0.1)
+        : `linear-gradient(135deg, ${stepcolor} 0%, ${alpha(stepcolor, 0.9)} 100%)`,
     }
   },
-  "&:hover": {
-    background: "rgba(255, 255, 255, 0.8)",
-    borderColor: alpha(stepcolor, 0.15),
-    boxShadow: `0 12px 28px ${alpha(stepcolor, 0.08)}`,
-    transform: "translateX(8px)",
-    "& .step-icon-wrapper": {
-      background: stepcolor,
-      color: "#fff",
-      boxShadow: `0 12px 25px ${alpha(stepcolor, 0.3)}`,
-      transform: "translateY(-50%) scale(1.1) rotate(5deg)",
-      "& svg": { transform: "scale(1.1)" }
-    },
-    "& .step-title": { color: stepcolor }
-  }
-}));
-
-const HorizontalTimeline = styled(Box)(({ theme }) => ({
-  display: "grid",
-  gridTemplateColumns: "repeat(3, 1fr)",
-  gap: "30px",
-  marginTop: "40px",
-  [theme.breakpoints.down("lg")]: {
-    gridTemplateColumns: "repeat(2, 1fr)",
-  },
-  [theme.breakpoints.down("sm")]: {
-    gridTemplateColumns: "1fr",
-  }
-}));
-
-const HorizontalStep = styled(Box)(({ stepcolor }) => ({
-  position: "relative",
-  padding: "24px",
-  borderRadius: "32px",
-  background: alpha(stepcolor, 0.03),
-  border: "1px solid transparent",
-  cursor: "pointer",
-  transition: "all 0.4s ease",
-  "& .step-icon-wrapper": {
-    width: "56px",
-    height: "56px",
-    borderRadius: "18px",
-    background: alpha(stepcolor, 0.08),
+  "& .step-icon-box": {
+    position: "absolute",
+    left: 0,
+    top: "50%",
+    transform: "translateY(-50%)",
+    width: secondary ? "32px" : "50px",
+    height: secondary ? "32px" : "50px",
+    borderRadius: "50%",
+    background: disabled
+      ? alpha(stepcolor, 0.1)
+      : `linear-gradient(135deg, ${stepcolor} 0%, ${alpha(stepcolor, 0.85)} 100%)`,
+    color: disabled ? stepcolor : "#ffffff",
     display: "flex",
-    justifyContent: "center",
     alignItems: "center",
-    color: stepcolor,
-    marginBottom: "16px",
-    transition: "all 0.4s ease",
-    "& svg": { fontSize: "28px" }
+    justifyContent: "center",
+    flexShrink: 0,
+    zIndex: 2,
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    border: "none",
+    boxShadow: disabled ? "none" : `0 0 14px ${alpha(stepcolor, 0.3)}`,
+    "& svg": {
+      width: secondary ? 18 : 30,
+      height: secondary ? 18 : 30,
+    }
   },
-  "&:hover": {
-    background: "#ffffff",
-    borderColor: alpha(stepcolor, 0.1),
-    boxShadow: `0 10px 25px ${alpha(stepcolor, 0.05)}`,
-    transform: "translateY(-5px)",
-    "& .step-icon-wrapper": {
-      background: stepcolor,
-      color: "#fff",
-      transform: "scale(1.1)",
-    },
-    "& .step-title": { color: stepcolor }
+  "& .step-card": {
+    flexGrow: 1,
+    background: disabled
+      ? "#f8fafc"
+      : secondary
+        ? "rgba(248, 250, 252, 0.95)"
+        : "rgba(255, 255, 255, 0.65)",
+    border: secondary
+      ? "none"
+      : "1px solid rgba(255, 255, 255, 0.5)",
+    borderRadius: secondary ? "12px" : "18px",
+    padding: secondary ? "6px 12px" : "12px 14px",
+    display: "flex",
+    flexDirection: "column",
+    gap: secondary ? "2px" : "6px",
+    boxShadow: secondary
+      ? "none"
+      : "0 4px 20px rgba(15, 23, 42, 0.015)",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    minWidth: 0,
+  },
+  "& .step-title": {
+    fontSize: secondary ? "0.76rem" : "1rem",
+    fontWeight: secondary ? 500 : 700,
+    color: secondary ? "#475569" : "#2d447c",
+    lineHeight: 1.3,
+    whiteSpace: "normal",
+    overflow: "visible",
+    textOverflow: "unset",
+  },
+  "& .step-desc": {
+    fontSize: secondary ? "0.7rem" : "0.82rem",
+    color: secondary ? "#64748b" : "#475569",
+    lineHeight: 1.35,
+    whiteSpace: "normal",
+    overflow: "visible",
+    textOverflow: "unset",
   }
 }));
-
 const SelloutIndurama = () => {
   const dispatch = useDispatch();
   const namePermission = usePermission();
@@ -257,152 +267,248 @@ const SelloutIndurama = () => {
     dispatch(setCalculateDate(calculateDate));
   }, [dispatch]);
 
-  const palette = {
-    blue: { main: "#3b82f6", grad: "linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)" },
-    purple: { main: "#8b5cf6", grad: "linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%)" },
-    pink: { main: "#ec4899", grad: "linear-gradient(135deg, #f472b6 0%, #db2777 100%)" },
-    green: { main: "#10b981", grad: "linear-gradient(135deg, #34d399 0%, #059669 100%)" },
-    orange: { main: "#f59e0b", grad: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)" },
-    cyan: { main: "#06b6d4", grad: "linear-gradient(135deg, #22d3ee 0%, #0891b2 100%)" },
+  const stepColors = {
+    c1: "#3b82f6",
+    c2: "#8b5cf6",
+    c3: "#ec4899",
+    c4: "#10b981",
+    c5: "#f59e0b",
+    c6: "#06b6d4",
+    c7: "#f97316",
+    c8: "#14b8a6",
+    c9: "#0ea5e9",
+    c10: "#f43f5e",
   };
 
   const phases = [
     {
       id: "p1",
       name: "Configuración",
-      badge: "Infraestructura",
-      color: palette.blue.main,
-      gradient: palette.blue.grad,
+      badge: "Fase 1",
+      color: stepColors.c1,
+      gradient: "linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)",
       steps: [
-        { num: "1", id: 2, tab: 0, permiso: "MATRICULACION SELLOUT", title: "Configuración de Mes", desc: "Define el mes activo y fechas de cierre.", Icon: SettingsIcon, color: palette.cyan.main },
-        { num: "2", id: 2, tab: 1, permiso: "MATRICULACION SELLOUT", title: "Matriculación de plantillas", desc: "Vincula formatos Excel a cada cliente.", Icon: AddToQueueIcon, color: palette.blue.main },
-        { num: "3", id: 2, tab: 2, permiso: "MATRICULACION SELLOUT", title: "Resumen de Carga", desc: "Monitorea el avance y las recepciones.", Icon: SearchIcon, color: palette.purple.main },
+        { num: "1", id: 2, tab: 0, permiso: PERMISSIONS.MENU.CONFIG_PLANTILLAS, title: "Configuración mes", desc: "Activa periodos de carga.", icon: "calendar", color: stepColors.c1 },
+        { num: "2", id: 2, tab: 1, permiso: PERMISSIONS.MENU.CONFIG_PLANTILLAS, title: "Matriculación Plantillas", desc: "Listado de clientes a cargar.", icon: "spreadsheet", color: stepColors.c2 },
+        { num: "3", id: 2, tab: 2, permiso: PERMISSIONS.MENU.CONFIG_PLANTILLAS, title: "Seguimiento Carga", desc: "Monitorea avance de registros.", icon: "search", color: stepColors.c3 },
       ]
     },
     {
       id: "p2",
-      name: "Carga de plantillas",
-      badge: "Procesamiento",
-      color: palette.purple.main,
-      gradient: palette.purple.grad,
+      name: "Procesamiento",
+      badge: "Fase 2",
+      color: stepColors.c2,
+      gradient: "linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%)",
       steps: [
-        { num: "4", id: 5, tab: 0, permiso: "EXTRACCION SELLOUT", title: "Extracción de Datos", desc: "Procesamiento masivo de archivos Excel.", Icon: EmojiObjectsIcon, color: palette.orange.main },
-        { num: "5", id: 5, tab: 1, permiso: "EXTRACCION SELLOUT", title: "Configuración Plantilla", desc: "Aplica reglas de negocio por cliente.", Icon: SettingsIcon, color: palette.purple.main },
-        { num: "6", id: 5, tab: 2, permiso: "EXTRACCION SELLOUT", title: "Diccionario", desc: "Homologación automática de términos.", Icon: MenuBookIcon, color: palette.pink.main },
+        { num: "4", id: 5, tab: 0, permiso: PERMISSIONS.MENU.CARGA_PLANTILLAS, title: "Extracción de datos", desc: "Carga de plantillas de clientes.", icon: "funnel", color: stepColors.c4 },
+        { num: "4.1", id: 5, tab: 1, permiso: PERMISSIONS.EXTRACCION.CONFIG_EXTRACCION, title: "Configuración Plantilla Específica", desc: "Campos específicos por cliente.", icon: "cog", color: stepColors.c5, secondary: true, indent: true },
+        { num: "4.2", id: 5, tab: 2, permiso: PERMISSIONS.EXTRACCION.DICCIONARIO, title: "Diccionario", desc: "Homologa términos.", icon: "book", color: stepColors.c6, secondary: true, indent: true },
       ]
     }
   ];
 
   const phase3 = {
     name: "Validación",
-    badge: "Consolidación",
-    color: palette.green.main,
-    gradient: palette.green.grad,
+    badge: "Fase 3",
+    color: stepColors.c4,
+    gradient: "linear-gradient(135deg, #34d399 0%, #059669 100%)",
     steps: [
-      { num: "7", id: 3, tab: 0, permiso: "MAESTROS SELLOUT", title: "Maestros", desc: "Gestión oficial de Almacenes y Productos.", Icon: MenuBookIcon, color: palette.blue.main },
-      { num: "8", id: 4, tab: 0, permiso: "SIC SELLOUT", title: "SIC", desc: "Valida con sistema central.", Icon: PublicIcon, color: palette.green.main },
-      { num: "9", id: 6, tab: 0, permiso: "PLANTILLA CONSOLIDADO SELLOUT", title: "Base Consolidada", desc: "Borrador unificado listo.", Icon: AddToQueueIcon, color: palette.pink.main },
-      { num: "10", id: 9, tab: 0, permiso: "MAESTROS SELLOUT", title: "No Homologados", desc: "Módulo para excepciones.", Icon: EmojiObjectsIcon, color: palette.orange.main },
-      { num: "11", id: 3, tab: 0, permiso: "MAESTROS SELLOUT", title: "Maestros", desc: "Revisión final catálogos.", Icon: MenuBookIcon, color: palette.cyan.main },
-      { num: "12", id: 6, tab: 0, permiso: "PLANTILLA CONSOLIDADO SELLOUT", title: "Base Consolidada Validada", desc: "Datos finales limpios.", Icon: SearchIcon, color: palette.green.main },
+      { num: "5", id: 9, tab: 0, permiso: PERMISSIONS.MENU.LISTAS_NO_HOMOLOGADOS, title: "No homologados", desc: "Almacenes y productos no homologados.", icon: "alert", color: stepColors.c7 },
+      { num: "6", id: 3, tab: 0, permiso: PERMISSIONS.MENU.MAESTROS, title: "Gestionar Maestros", desc: "Almacenes y productos para homologar.", icon: "users", color: stepColors.c8 },
+      { num: "6.1", id: 11, tab: 0, permiso: PERMISSIONS.MENU.SIC, title: "Sincronización DIM", desc: "Datos sistema comercial.", icon: "globe", color: stepColors.c9, secondary: true, indent: true },
+      { num: "7", id: 6, tab: 0, permiso: PERMISSIONS.MENU.BASE_CONSOLIDADA, title: "Base Consolidada", desc: "Información sell out homologada.", icon: "database", color: stepColors.c10 },
     ]
   };
 
-  return (
-    <Canvas>
-      <Container maxWidth={false} sx={{ px: { xs: 2, md: 4, lg: 6 }, zIndex: 1, position: "relative" }}>
+  const styles = {
+    phaseTitle: {
+      fontWeight: 900,
+      fontSize: "20px",
+      color: "#005aa3ff",
+    },
+    phaseHeader: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      paddingTop: "12px",
+      paddingLeft: "15px",
+      paddingRight: "15px",
+    }
+  };
 
-        <BannerWrapper>
+  return (
+    <Canvas sx={{ padding: "6px 0" }}>
+      <Container maxWidth={false} disableGutters sx={{ px: 2, zIndex: 1, position: "relative" }}>
+
+        <BannerWrapper sx={{ mb: 1 }}>
           <img src={bannerImg} alt="Sellout Banner" />
         </BannerWrapper>
 
-        <Grid container spacing={2} display={"flex"} justifyContent={"center"}>
-          {/* Phase 1: Configuración2Operativa */}
-          <Grid item xs={12} md={4}>
-            <PhaseBlock shadowcolor={phases[0].color} delay="0s">
+        <Box sx={{
+          display: "flex",
+          flexDirection: { xs: "column", lg: "row" },
+          gap: "12px",
+          width: "100%",
+          height: { lg: "calc(100vh - 175px)", xs: "auto" },
+          minHeight: 0
+        }}>
+          {/* Columna Phase 1: Configuración */}
+          <Box sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", height: "100%" }}>
+            <PhaseBlock shadowcolor={phases[0].color} delay="0s" sx={{ height: "100%", flexGrow: 1 }}>
               <Watermark color={phases[0].color}>{1}</Watermark>
-              <Box sx={{ position: "relative", zIndex: 2 }}>
-                <PhaseBadge gradient={phases[0].gradient} shadowcolor={phases[0].color}>{phases[0].badge}</PhaseBadge>
-                <Typography variant="h4" fontWeight={900} sx={{ fontFamily: "'Outfit', sans-serif", color: "#1e293b", letterSpacing: "-0.02em", mb: 3 }}>
+              <Box sx={styles.phaseHeader}>
+                <PhaseBadge gradient={phases[0].gradient} shadowcolor={phases[0].color}>
+                  {phases[0].badge}
+                </PhaseBadge>
+                <Typography fontWeight={700} sx={styles.phaseTitle}>
                   {phases[0].name}
                 </Typography>
               </Box>
 
-              <VerticalTimeline>
-                {phases[0].steps.filter(s => namePermission(s.permiso) || true).map((step) => (
-                  <VerticalStep key={step.num} stepcolor={step.color} onClick={() => dispatch(handleMenu({ id: step.id, tab: step.tab }))}>
-                    <Box className="step-icon-wrapper">
-                      <step.Icon />
-                    </Box>
-                    <Box className="step-content">
-                      <Typography variant="caption" fontWeight={800} sx={{ color: step.color, textTransform: "uppercase", letterSpacing: "1.2px", display: "block", mb: 0.3 }}>Paso {step.num}</Typography>
-                      <Typography variant="h6" className="step-title" fontWeight={800} sx={{ color: "#1e293b", fontFamily: "'Outfit', sans-serif", mb: 0.3, lineHeight: 1.3 }}>{step.title}</Typography>
-                      <Typography variant="body2" sx={{ color: "#64748b", fontWeight: 500, lineHeight: 1.4 }}>{step.desc}</Typography>
-                    </Box>
-                  </VerticalStep>
-                ))}
+              <VerticalTimeline timelinecolor={phases[0].color} sx={{ gap: "25px", justifyContent: "flex-start" }}>
+                {phases[0].steps.map((step) => {
+                  const hasPermission = namePermission(step.permiso);
+                  const stepContent = (
+                    <VerticalStep
+                      key={step.num}
+                      stepcolor={step.color}
+                      secondary={step.secondary}
+                      indent={step.indent}
+                      disabled={!hasPermission}
+                      onClick={() => {
+                        if (hasPermission) {
+                          dispatch(handleMenu({ id: step.id, tab: step.tab }));
+                        }
+                      }}
+                    >
+                      <Box className="step-icon-box">
+                        <StepSvgIcon type={step.icon} color={step.color} />
+                      </Box>
+                      <Box className="step-card">
+                        <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          {step.indent && <ArrowRightAltIcon sx={{ fontSize: "1rem", color: "#94a3b8" }} />}
+                          <Typography className="step-title" title={step.title}>{step.title}</Typography>
+                        </Box>
+                        <Typography className="step-desc" title={step.desc}>{step.desc}</Typography>
+                      </Box>
+                    </VerticalStep>
+                  );
+                  return hasPermission ? stepContent : (
+                    <Tooltip title="No tiene permiso para acceder" arrow key={step.num}>
+                      <Box sx={{ width: "100%" }}>{stepContent}</Box>
+                    </Tooltip>
+                  );
+                })}
               </VerticalTimeline>
             </PhaseBlock>
-          </Grid>
+          </Box>
 
-          {/* Phase 2: Motor de Carga */}
-          <Grid item xs={12} md={4}>
-            <PhaseBlock shadowcolor={phases[1].color} delay="0.2s">
+          {/* Columna Phase 2: Carga de plantillas */}
+          <Box sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", height: "100%" }}>
+            <PhaseBlock shadowcolor={phases[1].color} delay="0.2s" sx={{ height: "100%", flexGrow: 1 }}>
               <Watermark color={phases[1].color}>{2}</Watermark>
-              <Box sx={{ position: "relative", zIndex: 2 }}>
-                <PhaseBadge gradient={phases[1].gradient} shadowcolor={phases[1].color}>{phases[1].badge}</PhaseBadge>
-                <Typography variant="h4" fontWeight={900} sx={{ fontFamily: "'Outfit', sans-serif", color: "#1e293b", letterSpacing: "-0.02em", mb: 3 }}>
+              <Box sx={styles.phaseHeader}>
+                <PhaseBadge gradient={phases[1].gradient} shadowcolor={phases[1].color}>
+                  {phases[1].badge}
+                </PhaseBadge>
+                <Typography fontWeight={700} sx={styles.phaseTitle}>
                   {phases[1].name}
                 </Typography>
               </Box>
 
-              <VerticalTimeline>
-                {phases[1].steps.filter(s => namePermission(s.permiso) || true).map((step) => (
-                  <VerticalStep key={step.num} stepcolor={step.color} onClick={() => dispatch(handleMenu({ id: step.id, tab: step.tab }))}>
-                    <Box className="step-icon-wrapper">
-                      <step.Icon />
-                    </Box>
-                    <Box className="step-content">
-                      <Typography variant="caption" fontWeight={800} sx={{ color: step.color, textTransform: "uppercase", letterSpacing: "1.2px", display: "block", mb: 0.3 }}>Paso {step.num}</Typography>
-                      <Typography variant="h6" className="step-title" fontWeight={800} sx={{ color: "#1e293b", fontFamily: "'Outfit', sans-serif", mb: 0.3, lineHeight: 1.3 }}>{step.title}</Typography>
-                      <Typography variant="body2" sx={{ color: "#64748b", fontWeight: 500, lineHeight: 1.4 }}>{step.desc}</Typography>
-                    </Box>
-                  </VerticalStep>
-                ))}
+              <VerticalTimeline timelinecolor={phases[1].color} sx={{ gap: "25px", justifyContent: "flex-start" }}>
+                {phases[1].steps.map((step) => {
+                  const hasPermission = namePermission(step.permiso);
+                  const stepContent = (
+                    <VerticalStep
+                      key={step.num}
+                      stepcolor={step.color}
+                      secondary={step.secondary}
+                      indent={step.indent}
+                      disabled={!hasPermission}
+                      onClick={() => {
+                        if (hasPermission) {
+                          dispatch(handleMenu({ id: step.id, tab: step.tab }));
+                        }
+                      }}
+                    >
+                      <Box className="step-icon-box">
+                        <StepSvgIcon type={step.icon} color={step.color} />
+                      </Box>
+                      <Box className="step-card">
+                        <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          {step.indent && <ArrowRightAltIcon sx={{ fontSize: "1rem", color: "#94a3b8" }} />}
+                          <Typography className="step-title" title={step.title}>{step.title}</Typography>
+                        </Box>
+                        <Typography className="step-desc" title={step.desc}>{step.desc}</Typography>
+                      </Box>
+                    </VerticalStep>
+                  );
+                  return hasPermission ? stepContent : (
+                    <Tooltip title="No tiene acceso o permiso" arrow key={step.num}>
+                      <Box sx={{ width: "100%" }}>{stepContent}</Box>
+                    </Tooltip>
+                  );
+                })}
               </VerticalTimeline>
             </PhaseBlock>
-          </Grid>
+          </Box>
 
-          {/* Phase 3: Validación Final */}
-          <Grid item xs={12} md={4}>
-            <PhaseBlock shadowcolor={phase3.color} delay="0.4s">
+          {/* Columna Phase 3: Validación */}
+          <Box sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", height: "100%" }}>
+            <PhaseBlock shadowcolor={phase3.color} delay="0.4s" sx={{ height: "100%", flexGrow: 1 }}>
               <Watermark color={phase3.color}>{3}</Watermark>
-              <Box sx={{ position: "relative", zIndex: 2 }}>
-                <PhaseBadge gradient={phase3.gradient} shadowcolor={phase3.color}>{phase3.badge}</PhaseBadge>
-                <Typography variant="h4" fontWeight={900} sx={{ fontFamily: "'Outfit', sans-serif", color: "#1e293b", letterSpacing: "-0.02em", mb: 3 }}>
+              <Box sx={styles.phaseHeader}>
+                <PhaseBadge gradient={phase3.gradient} shadowcolor={phase3.color}>
+                  {phase3.badge}
+                </PhaseBadge>
+                <Typography fontWeight={700} sx={styles.phaseTitle}>
                   {phase3.name}
                 </Typography>
               </Box>
 
-              <VerticalTimeline>
-                {phase3.steps.filter(s => namePermission(s.permiso) || true).map((step) => (
-                  <VerticalStep key={step.num} stepcolor={step.color} onClick={() => dispatch(handleMenu({ id: step.id, tab: step.tab }))}>
-                    <Box className="step-icon-wrapper">
-                      <step.Icon />
-                    </Box>
-                    <Box className="step-content">
-                      <Typography variant="caption" fontWeight={800} sx={{ color: step.color, textTransform: "uppercase", letterSpacing: "1.2px", display: "block", mb: 0.3 }}>Paso {step.num}</Typography>
-                      <Typography variant="h6" className="step-title" fontWeight={800} sx={{ color: "#1e293b", fontFamily: "'Outfit', sans-serif", mb: 0.3, lineHeight: 1.3 }}>{step.title}</Typography>
-                      <Typography variant="body2" sx={{ color: "#64748b", fontWeight: 500, lineHeight: 1.4 }}>{step.desc}</Typography>
-                    </Box>
-                  </VerticalStep>
-                ))}
+              <VerticalTimeline timelinecolor={phase3.color} sx={{ flexGrow: 1, height: "100%", justifyContent: "space-between", minHeight: 0 }}>
+                {phase3.steps.map((step) => {
+                  const hasPermission = namePermission(step.permiso);
+                  const stepContent = (
+                    <VerticalStep
+                      key={step.num}
+                      stepcolor={step.color}
+                      secondary={step.secondary}
+                      indent={step.indent}
+                      disabled={!hasPermission}
+                      onClick={() => {
+                        if (hasPermission) {
+                          dispatch(handleMenu({ id: step.id, tab: step.tab }));
+                        }
+                      }}
+                    >
+                      <Box className="step-icon-box">
+                        <StepSvgIcon type={step.icon} color={step.color} />
+                      </Box>
+                      <Box className="step-card">
+                        <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          {step.indent && <ArrowRightAltIcon sx={{ fontSize: "1rem", color: "#94a3b8" }} />}
+                          <Typography className="step-title" title={step.title}>{step.title}</Typography>
+                        </Box>
+                        <Typography className="step-desc" title={step.desc}>{step.desc}</Typography>
+                      </Box>
+                    </VerticalStep>
+                  );
+                  return hasPermission ? stepContent : (
+                    <Tooltip title="No tiene acceso o permiso" arrow key={step.num}>
+                      <Box sx={{ width: "100%" }}>{stepContent}</Box>
+                    </Tooltip>
+                  );
+                })}
               </VerticalTimeline>
             </PhaseBlock>
-          </Grid>
-        </Grid>
-      </Container>
-    </Canvas>
+          </Box>
+        </Box>
+      </Container >
+    </Canvas >
   );
 };
 

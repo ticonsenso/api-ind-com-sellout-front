@@ -4,6 +4,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useDispatch, useSelector } from "react-redux";
 import { handleMenu } from "../../redux/navigatorSlice.js";
 import MenuIcon from "@mui/icons-material/Menu";
+import { usePermission } from "../../context/PermisosComtext";
 import * as Icons from "@mui/icons-material";
 import styles from "./styles";
 
@@ -32,7 +33,7 @@ const isChildSelected = (item, selectedId) => {
   return false;
 };
 
-const StyledMenu = ({ anchorEl, open, onClose, items, renderIcon, onItemClick, theme, activeItem, onBack, selectedItem }) => {
+const StyledMenu = ({ anchorEl, open, onClose, items, renderIcon, onItemClick, theme, activeItem, onBack, selectedItem, namePermission }) => {
   const isNested = activeItem?.isNested;
 
   return (
@@ -96,6 +97,10 @@ const StyledMenu = ({ anchorEl, open, onClose, items, renderIcon, onItemClick, t
       )}
       {items?.map((subItem) => {
         const isSubItemActive = isChildSelected(subItem, selectedItem?.id);
+        const hasPermission = subItem.name_server ? namePermission(subItem.name_server) : true;
+        
+        if (!hasPermission) return null;
+
         return (
           <MenuItem
             key={subItem.name}
@@ -106,6 +111,7 @@ const StyledMenu = ({ anchorEl, open, onClose, items, renderIcon, onItemClick, t
               py: 1.2,
               px: 1.5,
               backgroundColor: isSubItemActive ? "rgba(0, 0, 0, 0.04)" : "transparent",
+              cursor: "pointer",
               "&:hover": {
                 backgroundColor: isSubItemActive ? "rgba(0, 0, 0, 0.06)" : "rgba(0, 0, 0, 0.03)",
                 "& .MUI-icon": {
@@ -156,6 +162,7 @@ const SideBarIcons = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
+  const namePermission = usePermission();
   const menuItems = useSelector((state) => state.navigator.initialStateMenu);
   const token = useSelector((state) => state.auth.auth.token);
 
@@ -294,6 +301,10 @@ const SideBarIcons = () => {
       }}>
         {menuItems?.map((item) => {
           const isActive = isChildSelected(item, selectedItem?.id);
+          const hasPermission = item.name_server ? namePermission(item.name_server) : true;
+
+          if (!hasPermission) return null;
+
           return (
             <Tooltip key={item.name} title={item.name} placement="right">
               <IconButton
@@ -353,6 +364,7 @@ const SideBarIcons = () => {
         activeItem={activeItem}
         selectedItem={selectedItem}
         theme={theme}
+        namePermission={namePermission}
       />
 
       <Tooltip title="Cerrar sesión" placement="right">

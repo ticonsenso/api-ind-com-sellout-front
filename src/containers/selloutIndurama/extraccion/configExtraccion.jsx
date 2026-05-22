@@ -116,6 +116,7 @@ const ConfiguracionExtraccion = () => {
       nameButton="Crear"
       disabled={!namePermission}
       valueSearch={search}
+      placeholder="Buscar por nombre, cod. almacén distribuidor y nombre distribuidor"
       onChange={(e) => setSearch(e.target.value)}
       search={true}
       onClick={() => setOpenDialogCrear(true)}

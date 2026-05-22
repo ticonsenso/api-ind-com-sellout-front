@@ -34,7 +34,7 @@ import {
   CheckCircle as CheckCircleIcon,
   Cancel as CancelIcon,
 } from "@mui/icons-material";
-import { formatDate, isMonthClosed, debounce, timeSearch, cleanString } from "../../constantes";
+import { formatDate, isMonthClosed, debounce, timeSearch, cleanString, formatValueByType } from "../../constantes";
 import { deleteClientesCargados } from "../../../redux/extraccionSlice"
 import {
   obtenerMatriculacionConfig,
@@ -267,26 +267,6 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
       <AtomContainerGeneral
         children={
           <>
-            <IconoFlotante
-              handleButtonClick={() => {
-                buscarMatriculacionRegistrados();
-              }}
-              title="Actualizar lista"
-              iconName="Refresh"
-              right={60}
-              color="#63B6FF"
-              top={2}
-            />
-            {namePermission && (
-              <IconoFlotante
-                handleButtonClick={confirmarExportarExcel}
-                title="Descargar lista matriculaciones por mes"
-                iconName="SaveAlt"
-                color="#01960eff"
-                right={10}
-                top={2}
-              />
-            )}
             <AtomCard
               title=""
               nameButton={""}
@@ -297,6 +277,39 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
                 setSearch(e.target.value);
                 debounceSearch(e.target.value);
               }}
+              extra={
+                <Grid container spacing={1} justifyContent="flex-end" mb={1}>
+                  <Grid item size={1.2}
+                    sx={{
+                      mt: -6,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <IconoFlotante
+                      handleButtonClick={() => {
+                        buscarMatriculacionRegistrados();
+                      }}
+                      title="Actualizar lista"
+                      iconName="Refresh"
+                      right={60}
+                      color="#63B6FF"
+                      top={-5}
+                    />
+                    {namePermission && (
+                      <IconoFlotante
+                        handleButtonClick={confirmarExportarExcel}
+                        title="Descargar lista matriculaciones por mes"
+                        iconName="SaveAlt"
+                        color="#01960eff"
+                        right={10}
+                        top={-5}
+                      />
+                    )}
+                  </Grid>
+                </Grid>
+              }
               children={
                 <>
                   <AtomTableForm
@@ -304,12 +317,62 @@ const ListaLogsMatriculacion = ({ calculateDate }) => {
                     data={dataMatriculacionRegistrados || []}
                     pagination={false}
                     actions={actions}
+                    showIcons={true}
                     page={page}
                     limit={limit}
                     handleChangePage={handleChangePage}
                     handleChangeRowsPerPage={handleChangeRowsPerPage}
                     loading={loading}
                   />
+                  {dataMatriculacionRegistrados?.length > 0 && (
+                    <Box
+                      sx={{
+                        m: 0,
+                        ml: "auto",
+                        width: "fit-content",
+                        background: "linear-gradient(135deg, #0072CE 0%, #00569d 100%)",
+                        borderRadius: "16px",
+                        padding: "10px 18px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        boxShadow: "0 10px 15px -5px rgba(0, 114, 206, 0.4)",
+                        color: "white",
+                        transform: "translateY(0)",
+                        transition: "transform 0.3s ease",
+                        mt: 1,
+                        "&:hover": {
+                          transform: "translateY(-3px)",
+                        }
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontWeight: 400,
+                          fontSize: "0.8rem",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Total Unidades Vendidas
+                      </span>
+                      <Box sx={{ width: "1px", height: "20px", backgroundColor: "rgba(255,255,255,0.3)" }} />
+                      <span
+                        style={{
+                          fontWeight: 400,
+                          fontSize: "1rem",
+                          letterSpacing: "-0.5px"
+                        }}
+                      >
+                        {formatValueByType(
+                          dataMatriculacionRegistrados.reduce(
+                            (sum, item) => sum + (parseInt(item.productCountTotal) || 0),
+                            0
+                          ),
+                          "number"
+                        )}
+                      </span>
+                    </Box>
+                  )}
                 </>
               }
             />

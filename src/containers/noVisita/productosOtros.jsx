@@ -168,7 +168,7 @@ const ProductosOtros = () => {
                                 <Grid
                                     container
                                     spacing={2}
-                                    sx={{ justifyContent: "center", mt: -5 }}
+                                    sx={{ justifyContent: "center", mt: -3 }}
                                 >
                                     <Grid size={2.5}>
                                         <AtomDatePicker

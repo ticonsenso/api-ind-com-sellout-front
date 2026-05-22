@@ -10,7 +10,7 @@ const TabGestionSic = () => {
     { label: "Productos", component: <ProductsSic key="productos" /> },
   ];
 
-  return <AtomContainerGeneral children={<TabGestionGeneral tabs={tabs} />} />;
+  return <TabGestionGeneral tabs={tabs} />;
 };
 
 export default TabGestionSic;

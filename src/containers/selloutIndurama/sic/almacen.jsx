@@ -392,6 +392,7 @@ const AlmacenSic = () => {
             <AtomCard
               title=""
               nameButton=""
+              placeholder="Buscar por codigo o nombre, sap, distribuidor, categoría, subcategoría o modelo"
               border={true}
               onClick={handleOpenCreateStoresSic}
               search={true}

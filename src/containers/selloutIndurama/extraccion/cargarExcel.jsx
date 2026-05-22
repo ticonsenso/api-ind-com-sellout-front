@@ -25,10 +25,10 @@ const BotonProcesarExcel = () => {
                 <IconButton
                     sx={{
                         position: "absolute",
-                        top: 5,
-                        right: 62,
-                        height: 32,
-                        width: 32,
+                        top: 18,
+                        right: 63,
+                        height: 35,
+                        width: 35,
                         zIndex: 2000,
                         backgroundColor: "#01810bff",
                         color: "white",

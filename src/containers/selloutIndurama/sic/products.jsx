@@ -344,6 +344,7 @@ const ProductsSic = () => {
             <AtomCard
               title=""
               nameButton=""
+              placeholder="Buscar por codigo, nombre, sap, línea sap, pro id o modelo"
               border={true}
               onClick={handleOpenCreateProductsSic}
               search={true}

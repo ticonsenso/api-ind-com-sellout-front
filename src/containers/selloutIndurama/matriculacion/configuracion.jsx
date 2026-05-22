@@ -100,6 +100,7 @@ const columns = [
   {
     label: "Mes calculo",
     field: "monthFormatted",
+    color: "primary.main",
   },
   {
     label: "Fecha de inicio",
@@ -316,7 +317,7 @@ const ConfiguracionMatriculacion = () => {
               border={true}
               onClick={handleOpenMatriculacion}
               labelBuscador="Búsqueda por descripción y mes de cálculo"
-              placeholder="Buscar por descripción y mes de cálculo"
+              placeholder="Buscar mes de cálculo(01,02,03)"
               search={true}
               valueSearch={search}
               onChange={(e) => {
@@ -325,22 +326,24 @@ const ConfiguracionMatriculacion = () => {
                 debounceSearchMatriculacion(e.target.value);
               }}
               children={
-                <>
-                  <AtomTableForm
-                    columns={columns}
-                    data={dataMatriculacionConfig}
-                    actions={namePermission ? actions : []}
-                    pagination={true}
-                    page={page}
-                    limit={limit}
-                    count={totalMatriculacionConfig}
-                    setPage={setPage}
-                    setLimit={setLimit}
-                    handleChangePage={handleChangePage}
-                    handleChangeRowsPerPage={handleChangeRowsPerPage}
-                    loading={loading}
-                  />
-                </>
+                <Grid container spacing={2} >
+                  <Grid item size={12} mt={1}>
+                    <AtomTableForm
+                      columns={columns}
+                      data={dataMatriculacionConfig}
+                      actions={namePermission ? actions : []}
+                      pagination={true}
+                      page={page}
+                      limit={limit}
+                      count={totalMatriculacionConfig}
+                      setPage={setPage}
+                      setLimit={setLimit}
+                      handleChangePage={handleChangePage}
+                      handleChangeRowsPerPage={handleChangeRowsPerPage}
+                      loading={loading}
+                    />
+                  </Grid>
+                </Grid>
               }
             />
           </>

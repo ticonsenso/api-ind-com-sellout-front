@@ -10,9 +10,10 @@ const IconoFlotante = ({
   handleChangeFile,
   ref,
   color = "details.main",
-  right = 28,
+  right = 0,
   id = "",
-  top = 30,
+  top = 0,
+  disabled = false,
 }) => {
   const IconComponent = Icons[iconName];
 
@@ -21,31 +22,27 @@ const IconoFlotante = ({
   }
 
   return (
-    <Box
-      sx={{
-        position: "absolute",
-        top: top,
-        right: right,
-        zIndex: 5,
-      }}
-    >
-      <Tooltip title={title}>
-        <IconButton onClick={handleButtonClick}>
-          <IconComponent
-            sx={{
-              color: "white",
-              height: 20,
-              width: 20,
-              backgroundColor: color,
-              borderRadius: 10,
-              padding: 1,
-              "&:hover": {
-                backgroundColor: color,
-                transform: "scale(1.1)",
-              },
-            }}
-          />
-        </IconButton>
+    <Box>
+      <Tooltip title={disabled ? "Deshabilitado" : title}>
+        <span>
+          <IconButton onClick={handleButtonClick} disabled={disabled}>
+            <IconComponent
+              sx={{
+                color: disabled ? "#94a3b8" : "white",
+                height: 20,
+                width: 20,
+                backgroundColor: disabled ? "#e2e8f0" : color,
+                borderRadius: 10,
+                padding: 1,
+                cursor: disabled ? "not-allowed" : "pointer",
+                "&:hover": {
+                  backgroundColor: disabled ? "#e2e8f0" : color,
+                  transform: disabled ? "none" : "scale(1.1)",
+                },
+              }}
+            />
+          </IconButton>
+        </span>
       </Tooltip>
 
       <input

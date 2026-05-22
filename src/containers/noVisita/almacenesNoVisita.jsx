@@ -121,15 +121,14 @@ const AlmacenNoVisita = () => {
                                 <Grid
                                     container
                                     spacing={2}
-                                    sx={{ justifyContent: "center", mt: -5 }}
+                                    sx={{ justifyContent: "center" }}
                                 >
                                     <Grid size={2.5}>
                                         <AtomDatePicker
-                                            required={true}
                                             mode="month"
                                             color="#ffffff"
-                                            height="45px"
-                                            label="Fecha de carga"
+                                            height="40px"
+                                            label=""
                                             value={calculateDate}
                                             onChange={(value) => dispatch(setCalculateDate(value))}
                                         />
@@ -137,8 +136,8 @@ const AlmacenNoVisita = () => {
                                     <Grid size={3}>
                                         <AtomSelect
                                             color="#ffffff"
-                                            height="45px"
-                                            headerTitle="Seleccionar filtro"
+                                            height="40px"
+                                            headerTitle=""
                                             options={optionsFiltros}
                                             placeholder="Seleccionar..."
                                             onChange={(e) => {
@@ -148,11 +147,11 @@ const AlmacenNoVisita = () => {
                                         />
                                     </Grid>
 
-                                    <Grid size={4} mt={2.8}>
+                                    <Grid size={4}>
                                         <Tooltip title="Buscar por distribuidor, código almacén, código producto y descripción">
                                             <AtomTextFielInputForm
                                                 value={search}
-                                                height="43px"
+                                                height="40px"
                                                 color="#ffffff"
                                                 onChange={(e) => {
                                                     setPage(1);
@@ -160,7 +159,7 @@ const AlmacenNoVisita = () => {
                                                     setSearch(e.target.value);
                                                     debounceSearchAddress(e.target.value);
                                                 }}
-                                                placeholder="Buscar..."
+                                                placeholder="Buscar por distribuidor, código almacén, código producto y descripción"
                                             />
                                         </Tooltip>
                                     </Grid>

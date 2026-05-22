@@ -81,7 +81,6 @@ const AtomCard = (props) => {
             alignItems: "center",
             flexDirection: "row",
             width: "100%",
-            p: 1,
             justifyContent: "right",
           }}
         >
@@ -100,7 +99,17 @@ const AtomCard = (props) => {
               </Typography>
               {handleFullScreen && (
                 <Tooltip title="Pantalla completa">
-                  <IconButton onClick={handleToggleFullscreen} size="small">
+                  <IconButton
+                    sx={{
+                      top: 10,
+                      right: 10,
+                      position: "absolute",
+                      borderRadius: "8px",
+                      fontSize: "15px",
+                      color: "primary.main",
+                      height: "40px",
+                    }}
+                    onClick={handleToggleFullscreen} size="small">
                     <FullscreenIcon />
                   </IconButton>
                 </Tooltip>
@@ -109,7 +118,7 @@ const AtomCard = (props) => {
           </Grid>
           <Grid size={4}>
             {search && (
-              <Tooltip title={labelBuscador}>
+              <Tooltip title={placeholder}>
                 <Box sx={{ width: "100%" }}>
                   <TextField
                     variant="outlined"
@@ -129,7 +138,7 @@ const AtomCard = (props) => {
                           backgroundColor: "#ffffffff",
                           borderRadius: "8px",
                           fontSize: "15px",
-                          height: "42px",
+                          height: "40px",
                         },
                       },
                     }}
@@ -164,29 +173,34 @@ const AtomCard = (props) => {
             }}
           >
             {nameButton && (
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={onClick}
-                disabled={disabled}
-                sx={{
-                  minWidth: "170px",
-                  maxWidth: "300px",
-                  fontWeight: 300,
-                  height: "40px",
-                  width: "auto",
-                  fontSize: "13px",
-                  backgroundColor: disabled ? "grey.400" : "primary.main",
-                  textTransform: "none",
-                  color: "#FFFFFF",
-                  "&:hover": {
-                    backgroundColor: disabled ? "grey.400" : "primary.main",
-                    color: "#FFFFFF",
-                  },
-                }}
-              >
-                {nameButton}
-              </Button>
+              <Tooltip title={disabled ? "Deshabilitado" : "Crear"}>
+                <span>
+                  <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={onClick}
+                    disabled={disabled}
+                    sx={{
+                      minWidth: "160px",
+                      maxWidth: "300px",
+                      fontWeight: 300,
+                      height: "40px",
+                      mr: 2,
+                      width: "auto",
+                      fontSize: "13px",
+                      backgroundColor: disabled ? "grey.400" : "primary.main",
+                      textTransform: "none",
+                      color: "#FFFFFF",
+                      "&:hover": {
+                        backgroundColor: disabled ? "grey.400" : "primary.main",
+                        color: "#FFFFFF",
+                      },
+                    }}
+                  >
+                    {nameButton}
+                  </Button>
+                </span>
+              </Tooltip>
             )}
           </Grid>
         </Grid>
@@ -224,7 +238,7 @@ const AtomCard = (props) => {
           }}
         >
           {fullScreen && (
-            <Box sx={{ width: "100%", display: "flex", justifyContent: "flex-end", mb: 1, flexShrink: 0 }}>
+            <Box sx={{ width: "100%", display: "flex", justifyContent: "flex-end", flexShrink: 0, }}>
               <Tooltip title="Salir de pantalla completa">
                 <IconButton onClick={handleToggleFullscreen} color="primary">
                   <FullscreenExitIcon />
@@ -232,7 +246,7 @@ const AtomCard = (props) => {
               </Tooltip>
             </Box>
           )}
-          <Box sx={{ flex: 1, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+          <Box sx={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
             {children}
           </Box>
         </Grid>
