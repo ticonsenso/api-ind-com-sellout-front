@@ -284,7 +284,7 @@ export const DAYS = Array.from({ length: 31 }, (_, index) => {
 export const columnsPlantillaStandar = [
   {
     field: "distributor",
-    label: "Distribuidor",
+    label: "Distribuidor SellOut",
     type: "string",
     color: "primary.main",
   },
@@ -384,6 +384,11 @@ export const columnsPlantillaStandar = [
   {
     field: "distribuidorSap",
     label: "Distribuidor SAP",
+    type: "string"
+  },
+  {
+    field: "distribuidorSap",
+    label: "Distribuidor",
     type: "string"
   },
   {

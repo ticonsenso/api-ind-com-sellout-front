@@ -1122,7 +1122,7 @@ export const exportarExcelAvanced = createAsyncThunk(
 
       const a = document.createElement("a");
       a.href = url;
-      a.download = `sellout_mercado${calculateDate.replace(/-/g, "")}.xlsx`;
+      a.download = `sellout_mercado_completo_${calculateDate.replace(/-/g, "")}.xlsx`;
       a.click();
       window.URL.revokeObjectURL(url);
 
@@ -1200,7 +1200,7 @@ export const exportarExcelBasicInfo = createAsyncThunk(
       const url = window.URL.createObjectURL(blob);
 
       const a = document.createElement("a");
-      a.download = `sellout_mercado.xlsx`;
+      a.download = `sellout_mercado_${calculateDate.replace(/-/g, "")}.xlsx`;
       a.href = url;
       a.click();
       window.URL.revokeObjectURL(url);
