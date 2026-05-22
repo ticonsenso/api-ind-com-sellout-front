@@ -342,7 +342,7 @@ export const columnsPlantillaStandar = [
     type: "string"
   },
   {
-    field: "lineaVare",
+    field: "lineaVariable",
     label: "Linea Variable",
     type: "string"
   },
@@ -367,7 +367,7 @@ export const columnsPlantillaStandar = [
     type: "string"
   },
   {
-    field: "descSap",
+    field: "productModel",
     label: "Descripción SAP",
     type: "string"
   },
@@ -382,12 +382,12 @@ export const columnsPlantillaStandar = [
     type: "string"
   },
   {
-    field: "distribuidorSap",
+    field: "grupoComercial",
     label: "Distribuidor SAP",
     type: "string"
   },
   {
-    field: "distribuidorSap",
+    field: "distribuidor2",
     label: "Distribuidor",
     type: "string"
   },
@@ -408,7 +408,7 @@ export const columnsPlantillaStandar = [
   },
   {
     field: "supervisor",
-    label: "Supervisor",
+    label: "Supervisión",
     type: "string"
   },
   {
@@ -427,24 +427,18 @@ export const columnsPlantillaStandar = [
     type: "string"
   },
   {
-    field: "segmentoAlmacen",
+    field: "regional",
     label: "Regional",
     type: "string"
   },
-
   {
-    field: "grupoComercial",
+    field: "provincia",
     label: "Provincia",
     type: "string"
   },
   {
     field: "ciudad",
     label: "Ciudad",
-    type: "string"
-  },
-  {
-    field: "observation",
-    label: "Observación",
     type: "string"
   },
 ];
