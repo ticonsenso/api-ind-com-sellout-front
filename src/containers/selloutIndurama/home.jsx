@@ -53,21 +53,22 @@ const Canvas = styled(Box)(() => ({
 
 const BannerWrapper = styled(Box)(() => ({
   width: "100%",
-  height: "110px",
-  borderRadius: "10px",
+  height: "clamp(100px, 18vh, 300px)",
+  borderRadius: "clamp(6px, 1vw, 16px)",
   overflow: "hidden",
   position: "relative",
   background: "#fff",
-  boxShadow: "0 20px 50px rgba(0,0,0,0.08)",
+  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
   border: "1px solid rgba(255,255,255,0.8)",
   "& img": {
     width: "100%",
     height: "100%",
     objectFit: "cover",
+    objectPosition: "center center",
     transition: "transform 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
   },
   "&:hover img": {
-    transform: "scale(1.05)",
+    transform: "scale(1.03)",
   }
 }));
 const PhaseBlock = styled(Box)(() => ({
@@ -91,9 +92,9 @@ const PhaseBlock = styled(Box)(() => ({
 
 const Watermark = styled(Typography)(({ color }) => ({
   position: "absolute",
-  right: "-15px",
-  bottom: "-15px",
-  fontSize: "180px",
+  right: "-2vw",
+  bottom: "-2vh",
+  fontSize: "clamp(120px, 20vw, 400px)",
   fontWeight: 900,
   color: alpha(color, 0.08),
   lineHeight: 0.7,
@@ -130,12 +131,12 @@ const StepSvgIcon = ({ type }) => {
 const PhaseBadge = styled(Box)(({ gradient, shadowcolor }) => ({
   background: gradient || "#333",
   color: "#fff",
-  padding: "6px 14px",
+  padding: "clamp(4px, 0.8vh, 12px) clamp(10px, 1.5vw, 24px)",
   borderRadius: "30px",
   fontWeight: "700",
   letterSpacing: "1px",
   textTransform: "uppercase",
-  fontSize: "0.75rem",
+  fontSize: "clamp(0.65rem, 0.9vw, 1.3rem)",
   display: "inline-flex",
   alignItems: "center",
   boxShadow: `0 6px 15px ${alpha(shadowcolor || "#000", 0.22)}`,
@@ -154,14 +155,16 @@ const VerticalTimeline = styled(Box)(({ timelinecolor }) => ({
   display: "flex",
   flexDirection: "column",
   position: "relative",
-  padding: "16px 10px 16px 26px",
+  padding: "clamp(12px, 2vh, 32px) clamp(5px, 1vw, 20px) clamp(12px, 2vh, 32px) 2vw",
   boxSizing: "border-box",
+  justifyContent: "flex-start",
+  gap: "clamp(14px, 2.2vh, 35px)",
   "&::before": {
     content: '""',
     position: "absolute",
-    left: "51px",
-    top: "15px",
-    bottom: "15px",
+    left: "calc(2vw + clamp(36px, 4vw, 80px) / 2)",
+    top: "5%",
+    bottom: "5%",
     width: "2px",
     background: alpha(timelinecolor || "#ccc", 0.18),
     zIndex: 1,
@@ -173,14 +176,14 @@ const VerticalStep = styled(Box)(({ stepcolor, disabled, secondary, indent }) =>
   display: "flex",
   alignItems: "center",
   width: "100%",
-  paddingLeft: secondary ? "52px" : "76px",
-  marginLeft: indent ? "32px" : 0,
+  paddingLeft: secondary ? "calc(clamp(24px, 2.8vw, 60px) + 1.5vw)" : "calc(clamp(36px, 4vw, 80px) + 1.5vw)",
+  marginLeft: indent ? "clamp(20px, 3vw, 60px)" : 0,
   boxSizing: "border-box",
   cursor: disabled ? "not-allowed" : "pointer",
   opacity: disabled ? 0.65 : 1,
   "&:hover": {
     "& .step-card": {
-      transform: disabled ? "none" : (secondary ? "translateX(4px)" : "translateX(6px)"),
+      transform: disabled ? "none" : (secondary ? "translateX(2px)" : "translateX(4px)"),
       boxShadow: disabled
         ? "0 2px 4px rgba(0,0,0,0.02)"
         : `0 8px 25px ${alpha(stepcolor, 0.08)}, 0 4px 10px rgba(0,0,0,0.03)`,
@@ -199,8 +202,8 @@ const VerticalStep = styled(Box)(({ stepcolor, disabled, secondary, indent }) =>
     left: 0,
     top: "50%",
     transform: "translateY(-50%)",
-    width: secondary ? "32px" : "50px",
-    height: secondary ? "32px" : "50px",
+    width: secondary ? "clamp(24px, 2.8vw, 60px)" : "clamp(36px, 4vw, 80px)",
+    height: secondary ? "clamp(24px, 2.8vw, 60px)" : "clamp(36px, 4vw, 80px)",
     borderRadius: "50%",
     background: disabled
       ? alpha(stepcolor, 0.1)
@@ -215,8 +218,8 @@ const VerticalStep = styled(Box)(({ stepcolor, disabled, secondary, indent }) =>
     border: "none",
     boxShadow: disabled ? "none" : `0 0 14px ${alpha(stepcolor, 0.3)}`,
     "& svg": {
-      width: secondary ? 18 : 30,
-      height: secondary ? 18 : 30,
+      width: secondary ? "clamp(14px, 1.6vw, 36px)" : "clamp(20px, 2.4vw, 48px)",
+      height: secondary ? "clamp(14px, 1.6vw, 36px)" : "clamp(20px, 2.4vw, 48px)",
     }
   },
   "& .step-card": {
@@ -229,11 +232,11 @@ const VerticalStep = styled(Box)(({ stepcolor, disabled, secondary, indent }) =>
     border: secondary
       ? "none"
       : "1px solid rgba(255, 255, 255, 0.5)",
-    borderRadius: secondary ? "12px" : "18px",
-    padding: secondary ? "6px 12px" : "12px 14px",
+    borderRadius: secondary ? "clamp(8px, 1vw, 20px)" : "clamp(12px, 1.5vw, 26px)",
+    padding: secondary ? "clamp(4px, 0.8vh, 16px) clamp(8px, 1vw, 24px)" : "clamp(8px, 1.5vh, 24px) clamp(12px, 1.5vw, 32px)",
     display: "flex",
     flexDirection: "column",
-    gap: secondary ? "2px" : "6px",
+    gap: secondary ? "clamp(1px, 0.3vh, 4px)" : "clamp(2px, 0.8vh, 10px)",
     boxShadow: secondary
       ? "none"
       : "0 4px 20px rgba(15, 23, 42, 0.015)",
@@ -241,7 +244,7 @@ const VerticalStep = styled(Box)(({ stepcolor, disabled, secondary, indent }) =>
     minWidth: 0,
   },
   "& .step-title": {
-    fontSize: secondary ? "0.76rem" : "1rem",
+    fontSize: secondary ? "clamp(0.7rem, 1vw, 1.5rem)" : "clamp(0.85rem, 1.2vw, 2rem)",
     fontWeight: secondary ? 500 : 700,
     color: secondary ? "#475569" : "#2d447c",
     lineHeight: 1.3,
@@ -250,7 +253,7 @@ const VerticalStep = styled(Box)(({ stepcolor, disabled, secondary, indent }) =>
     textOverflow: "unset",
   },
   "& .step-desc": {
-    fontSize: secondary ? "0.7rem" : "0.82rem",
+    fontSize: secondary ? "clamp(0.6rem, 0.8vw, 1.3rem)" : "clamp(0.7rem, 0.95vw, 1.6rem)",
     color: secondary ? "#64748b" : "#475569",
     lineHeight: 1.35,
     whiteSpace: "normal",
@@ -323,7 +326,7 @@ const SelloutIndurama = () => {
   const styles = {
     phaseTitle: {
       fontWeight: 900,
-      fontSize: "20px",
+      fontSize: "clamp(1.1rem, 1.5vw, 2.5rem)",
       color: "#005aa3ff",
     },
     phaseHeader: {
@@ -332,26 +335,24 @@ const SelloutIndurama = () => {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "flex-start",
-      paddingTop: "12px",
-      paddingLeft: "15px",
-      paddingRight: "15px",
+      padding: "clamp(8px, 1.5vh, 24px) clamp(10px, 1.5vw, 30px)",
     }
   };
 
   return (
-    <Canvas sx={{ padding: "6px 0" }}>
-      <Container maxWidth={false} disableGutters sx={{ px: 2, zIndex: 1, position: "relative" }}>
+    <Canvas sx={{ padding: "1.5vh 1vw", height: "100vh", display: "flex", flexDirection: "column", boxSizing: "border-box", overflow: "hidden" }}>
+      <Container maxWidth={false} disableGutters sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, position: "relative", zIndex: 1 }}>
 
-        <BannerWrapper sx={{ mb: 1 }}>
+        <BannerWrapper sx={{ mb: "1.5vh", flexShrink: 0 }}>
           <img src={bannerImg} alt="Sellout Banner" />
         </BannerWrapper>
 
         <Box sx={{
           display: "flex",
           flexDirection: { xs: "column", lg: "row" },
-          gap: "12px",
+          gap: "1.5vw",
           width: "100%",
-          height: { lg: "calc(100vh - 175px)", xs: "auto" },
+          flexGrow: 1,
           minHeight: 0
         }}>
           {/* Columna Phase 1: Configuración */}
@@ -367,7 +368,7 @@ const SelloutIndurama = () => {
                 </Typography>
               </Box>
 
-              <VerticalTimeline timelinecolor={phases[0].color} sx={{ gap: "25px", justifyContent: "flex-start" }}>
+              <VerticalTimeline timelinecolor={phases[0].color}>
                 {phases[0].steps.map((step) => {
                   const hasPermission = namePermission(step.permiso);
                   const stepContent = (
@@ -418,7 +419,7 @@ const SelloutIndurama = () => {
                 </Typography>
               </Box>
 
-              <VerticalTimeline timelinecolor={phases[1].color} sx={{ gap: "25px", justifyContent: "flex-start" }}>
+              <VerticalTimeline timelinecolor={phases[1].color}>
                 {phases[1].steps.map((step) => {
                   const hasPermission = namePermission(step.permiso);
                   const stepContent = (
@@ -469,7 +470,7 @@ const SelloutIndurama = () => {
                 </Typography>
               </Box>
 
-              <VerticalTimeline timelinecolor={phase3.color} sx={{ gap: "25px", justifyContent: "flex-start" }}>
+              <VerticalTimeline timelinecolor={phase3.color}>
                 {phase3.steps.map((step) => {
                   const hasPermission = namePermission(step.permiso);
                   const stepContent = (
