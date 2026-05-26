@@ -469,7 +469,7 @@ const SelloutIndurama = () => {
                 </Typography>
               </Box>
 
-              <VerticalTimeline timelinecolor={phase3.color} sx={{ flexGrow: 1, height: "100%", justifyContent: "space-between", minHeight: 0 }}>
+              <VerticalTimeline timelinecolor={phase3.color} sx={{ gap: "25px", justifyContent: "flex-start" }}>
                 {phase3.steps.map((step) => {
                   const hasPermission = namePermission(step.permiso);
                   const stepContent = (
