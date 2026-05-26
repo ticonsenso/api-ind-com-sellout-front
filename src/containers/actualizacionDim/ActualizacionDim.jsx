@@ -1,18 +1,71 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Box, Typography, Grid, Button, Paper, alpha, TablePagination } from "@mui/material";
+import { Box, Typography, Grid, Button, Paper, alpha, Chip, LinearProgress, Tooltip, IconButton } from "@mui/material";
 import {
   Inventory as InventoryIcon,
-  Store as StoreIcon
+  Store as StoreIcon,
+  ContentCopy as ContentCopyIcon,
+  ErrorOutline as ErrorIcon,
 } from "@mui/icons-material";
 import AtomContainerGeneral from "../../atoms/AtomContainerGeneral";
 import AtomCard from "../../atoms/AtomCard";
-import AtomProcessCard from "../../atoms/AtomProcessCard";
+import AtomTableForm from "../../atoms/AtomTableForm";
 import AtomDialogForm from "../../atoms/AtomDialogForm";
 import { useSnackbar } from "../../context/SnacbarContext";
 import { apiService } from "../../service/apiService";
 import { apiConfig } from "../../service/apiConfig";
 import CustomLinearProgress from "../../atoms/CustomLinearProgress";
+
+const getStatusConfig = (statusStr) => {
+  const s = String(statusStr).toUpperCase();
+  if (s === "COMPLETADO" || s === "SUCCESS" || s === "FINALIZADO") {
+    return {
+      color: "#2e7d32",
+      bgColor: "#e8f5e9",
+      borderColor: "#c8e6c9",
+      label: "Completado",
+      progressColor: "success",
+    };
+  }
+  if (s === "ERROR" || s === "FALLIDO" || s === "FAILED") {
+    return {
+      color: "#d32f2f",
+      bgColor: "#ffebee",
+      borderColor: "#ffcdd2",
+      label: "Error",
+      progressColor: "error",
+    };
+  }
+  if (s === "PROCESANDO" || s === "RUNNING" || s === "EJECUTANDO") {
+    return {
+      color: "#0288d1",
+      bgColor: "#e1f5fe",
+      borderColor: "#b3e5fc",
+      label: "En Proceso",
+      progressColor: "primary",
+    };
+  }
+  return {
+    color: "#757575",
+    bgColor: "#f5f5f5",
+    borderColor: "#e0e0e0",
+    label: statusStr || "Pendiente",
+    progressColor: "inherit",
+  };
+};
+
+const formatDate = (dateString) => {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+  return date.toLocaleString("es-ES", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+};
 
 const ActualizacionDim = () => {
   const { showSnackbar } = useSnackbar();
@@ -22,7 +75,7 @@ const ActualizacionDim = () => {
   const [jobs, setJobs] = useState([]);
   const [totalJobs, setTotalJobs] = useState(0);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(12);
+  const [limit, setLimit] = useState(10);
 
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openResultDialog, setOpenResultDialog] = useState(false);
@@ -100,6 +153,125 @@ const ActualizacionDim = () => {
     }
   ];
 
+  const columns = [
+    {
+      field: "jobId",
+      label: "ID de Proceso",
+      width: "120px",
+      render: (row) => (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+          <Typography variant="body2" sx={{ fontFamily: "monospace", fontSize: "0.8rem" }}>
+            {row.jobId ? `${row.jobId.substring(0, 8)}...` : "-"}
+          </Typography>
+          {row.jobId && (
+            <Tooltip title="Copiar ID" arrow>
+              <IconButton
+                size="small"
+                onClick={() => {
+                  navigator.clipboard.writeText(row.jobId);
+                  showSnackbar("ID copiado", { severity: "success" });
+                }}
+                sx={{ p: 0.25, color: "#94a3b8" }}
+              >
+                <ContentCopyIcon sx={{ fontSize: 14 }} />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
+      ),
+    },
+    {
+      field: "entityName",
+      label: "Entidad",
+      width: "120px",
+      render: (row) => {
+        const isAlmacenes = row.entityName === "ALMACENES";
+        const color = isAlmacenes ? "#F39400" : "#0072CE";
+        return (
+          <Box display="flex" alignItems="center" gap={1}>
+            <Chip
+              label={row.entityName}
+              size="small"
+              sx={{
+                backgroundColor: color,
+                color: "#fff",
+                borderWidth: "1px",
+                borderStyle: "solid",
+                fontWeight: 400,
+                fontSize: "0.8rem",
+                height: "24px",
+              }}
+            />
+          </Box>
+        );
+      }
+    },
+    {
+      field: "startTime",
+      label: "Fecha de Inicio",
+      width: "160px",
+      render: (row) => formatDate(row.startTime),
+    },
+    {
+      field: "endTime",
+      label: "Fecha de Fin",
+      width: "160px",
+      render: (row) => formatDate(row.endTime),
+    },
+    {
+      field: "duration",
+      label: "Duración",
+      width: "110px",
+    },
+    {
+      field: "processedRecords",
+      label: "Registros Procesados",
+      width: "130px",
+    },
+    {
+      field: "status",
+      label: "Estado",
+      width: "150px",
+      render: (row) => {
+        const statusConfig = getStatusConfig(row.status);
+        return (
+          <Box display="flex" alignItems="center" gap={1}>
+            <Chip
+              label={statusConfig.label}
+              size="small"
+              sx={{
+                backgroundColor: statusConfig.bgColor,
+                color: statusConfig.color,
+                borderColor: statusConfig.borderColor,
+                borderWidth: "1px",
+                borderStyle: "solid",
+                fontWeight: 600,
+                fontSize: "0.725rem",
+                height: "22px",
+              }}
+            />
+            {row.errorMessage && (
+              <Tooltip title={row.errorMessage} arrow>
+                <IconButton size="small" sx={{ color: "#d32f2f", p: 0.25 }}>
+                  <ErrorIcon sx={{ fontSize: 16 }} />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Box>
+        );
+      }
+    }
+  ];
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setLimit(parseInt(event.target.value, 10));
+    setPage(1);
+  };
+
   return (
     <AtomContainerGeneral>
       <AtomCard
@@ -107,62 +279,17 @@ const ActualizacionDim = () => {
         nameButton="Nuevo Proceso"
         onClick={() => setOpenCreateDialog(true)}
         children={
-          <Box sx={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", overflow: "hidden" }}>
-            <Box sx={{ flex: 1, overflowY: "auto", p: 2, maxHeight: "70vh" }}>
-              {jobs.length > 0 ? (
-                <Grid container spacing={3}>
-                  {jobs.map((job) => (
-                    <Grid item size={{ xs: 12, sm: 6, lg: 4 }} key={job.id}>
-                      <AtomProcessCard job={job} />
-                    </Grid>
-                  ))}
-                </Grid>
-              ) : (
-                <Box sx={{ py: 8, display: "flex", justifyContent: "center", alignItems: "center", color: 'text.secondary', fontSize: '1.2rem', fontStyle: 'italic' }}>
-                  No existen procesos registrados.
-                </Box>
-              )}
-            </Box>
-
-            {jobs.length > 0 && (
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-end',
-                px: { xs: 1, sm: 2 },
-                py: 0.5,
-                backgroundColor: '#fff',
-                borderTop: '1px solid #f1f5f9',
-                borderBottomLeftRadius: '12px',
-                borderBottomRightRadius: '12px',
-                flexShrink: 0,
-                overflow: 'hidden'
-              }}>
-                <TablePagination
-                  component="div"
-                  rowsPerPageOptions={[6, 12, 24, 48]}
-                  count={totalJobs}
-                  rowsPerPage={limit}
-                  page={page - 1}
-                  onPageChange={(event, newPage) => setPage(newPage + 1)}
-                  onRowsPerPageChange={(event) => {
-                    setLimit(parseInt(event.target.value, 10));
-                    setPage(1);
-                  }}
-                  labelRowsPerPage="Filas:"
-                  labelDisplayedRows={({ from, to, count }) => (
-                    <Box component="span" sx={{
-                      fontWeight: 700,
-                      color: '#0072CE',
-                      fontSize: { xs: '0.75rem', sm: '0.85rem' }
-                    }}>
-                      {from}-{to} <Box component="span" sx={{ fontWeight: 400, color: '#64748b' }}>de</Box> {count}
-                    </Box>
-                  )}
-                />
-              </Box>
-            )}
-          </Box>
+          <AtomTableForm
+            columns={columns}
+            data={jobs}
+            pagination={true}
+            page={page}
+            limit={limit}
+            count={totalJobs}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
+            loading={loading}
+          />
         }
       />
 

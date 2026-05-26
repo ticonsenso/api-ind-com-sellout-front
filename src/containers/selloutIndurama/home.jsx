@@ -52,14 +52,10 @@ const Canvas = styled(Box)(() => ({
 }));
 
 const BannerWrapper = styled(Box)(() => ({
-  width: "100%",
-  height: "clamp(100px, 18vh, 300px)",
+  height: "clamp(150px, 18vh, 350px)",
   borderRadius: "clamp(6px, 1vw, 16px)",
   overflow: "hidden",
   position: "relative",
-  background: "#fff",
-  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-  border: "1px solid rgba(255,255,255,0.8)",
   "& img": {
     width: "100%",
     height: "100%",
@@ -68,7 +64,7 @@ const BannerWrapper = styled(Box)(() => ({
     transition: "transform 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
   },
   "&:hover img": {
-    transform: "scale(1.03)",
+    transform: "scale(1.02)",
   }
 }));
 const PhaseBlock = styled(Box)(() => ({
