@@ -186,10 +186,10 @@ export const formatIsoToDate = (isoString) => {
 export const normalizeEncabezados = (str) => {
   return str
     .toString()
-    .normalize("NFD")                         // separa tildes
-    .replace(/[\u0300-\u036f]/g, "")         // elimina tildes
-    .replace(/\s+/g, "")                     // elimina espacios
-    .toLowerCase();                          // ignora may/min
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "")
+    .toLowerCase();
 };
 
 
@@ -198,7 +198,6 @@ export const formatIsoToDateTabla = (isoString) => {
 
   const date = new Date(isoString);
 
-  // Se obtiene año, mes y día reales de la fecha en UTC
   const year = date.getUTCFullYear();
   const month = String(date.getUTCMonth() + 1).padStart(2, "0");
   const day = String(date.getUTCDate()).padStart(2, "0");
