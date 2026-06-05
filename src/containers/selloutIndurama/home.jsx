@@ -314,7 +314,7 @@ const SelloutIndurama = () => {
     steps: [
       { num: "5", id: 9, tab: 0, permiso: PERMISSIONS.MENU.LISTAS_NO_HOMOLOGADOS, title: "No homologados", desc: "Almacenes y productos no homologados.", icon: "alert", color: stepColors.c7 },
       { num: "6", id: 3, tab: 0, permiso: PERMISSIONS.MENU.MAESTROS, title: "Gestionar Maestros", desc: "Almacenes y productos para homologar.", icon: "users", color: stepColors.c8 },
-      { num: "6.1", id: 11, tab: 0, permiso: PERMISSIONS.MENU.SIC, title: "Sincronización DIM", desc: "Datos sistema comercial.", icon: "globe", color: stepColors.c9, secondary: true, indent: true },
+      { num: "6.1", id: 11, tab: 0, permiso: PERMISSIONS.MENU.ACTUALIZACION_DIM, title: "Sincronización DIM", desc: "Datos sistema comercial.", icon: "globe", color: stepColors.c9, secondary: true, indent: true },
       { num: "7", id: 6, tab: 0, permiso: PERMISSIONS.MENU.BASE_CONSOLIDADA, title: "Base Consolidada", desc: "Información sell out homologada.", icon: "database", color: stepColors.c10 },
     ]
   };
