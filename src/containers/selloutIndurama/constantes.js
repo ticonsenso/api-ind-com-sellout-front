@@ -284,7 +284,7 @@ export const DAYS = Array.from({ length: 31 }, (_, index) => {
 export const columnsPlantillaStandar = [
   {
     field: "distributor",
-    label: "Distribuidor SellOut",
+    label: "Distribuidor",
     type: "string",
     color: "primary.main",
   },
@@ -308,17 +308,7 @@ export const columnsPlantillaStandar = [
   },
   {
     field: "unitsSoldDistributor",
-    label: "Unidades Venta",
-  },
-  {
-    field: "saleDate",
-    label: "Fecha Venta",
-    type: "date"
-  },
-  {
-    field: "codeStore",
-    label: "Cod. Almacen",
-    type: "string"
+    label: "Unidades Venta distribuidor",
   },
   {
     field: "codeProduct",
@@ -326,24 +316,23 @@ export const columnsPlantillaStandar = [
     type: "string"
   },
   {
-    field: "prodId",
-    label: "Prod Id",
+    field: "codeStore",
+    label: "Cod. Almacen",
     type: "string"
+  },
+  {
+    field: "saleDate",
+    label: "Fecha Venta",
+    type: "date"
+  },
+  {
+    field: "calculateDate",
+    label: "Fecha Calculo",
+    type: "date"
   },
   {
     field: "lineaNegocio",
     label: "Linea Negocio",
-    type: "string"
-  },
-
-  {
-    field: "linea",
-    label: "Linea",
-    type: "string"
-  },
-  {
-    field: "lineaVariable",
-    label: "Linea Variable",
     type: "string"
   },
   {
@@ -367,8 +356,8 @@ export const columnsPlantillaStandar = [
     type: "string"
   },
   {
-    field: "productModel",
-    label: "Descripción SAP",
+    field: "prodId",
+    label: "Prod Id",
     type: "string"
   },
   {
@@ -383,32 +372,12 @@ export const columnsPlantillaStandar = [
   },
   {
     field: "grupoComercial",
-    label: "Distribuidor SAP",
-    type: "string"
-  },
-  {
-    field: "distribuidor2",
-    label: "Distribuidor",
-    type: "string"
-  },
-  {
-    field: "tipoNegocio",
-    label: "Distribuidor",
+    label: "Grupo Comercial",
     type: "string"
   },
   {
     field: "storeName",
     label: "Nombre Almacen",
-    type: "string"
-  },
-  {
-    field: "nombreAlmacen",
-    label: "Nombre Almacen",
-    type: "string"
-  },
-  {
-    field: "supervisor",
-    label: "Supervisión",
     type: "string"
   },
   {
@@ -427,18 +396,8 @@ export const columnsPlantillaStandar = [
     type: "string"
   },
   {
-    field: "regional",
-    label: "Regional",
-    type: "string"
-  },
-  {
-    field: "provincia",
-    label: "Provincia",
-    type: "string"
-  },
-  {
-    field: "ciudad",
-    label: "Ciudad",
+    field: "supervisor",
+    label: "Supervisión",
     type: "string"
   },
 ];
