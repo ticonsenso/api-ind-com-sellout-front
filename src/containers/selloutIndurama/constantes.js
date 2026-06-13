@@ -331,6 +331,11 @@ export const columnsPlantillaStandar = [
     type: "date"
   },
   {
+    field: "observation",
+    label: "Observación",
+    type: "string"
+  },
+  {
     field: "lineaNegocio",
     label: "Linea Negocio",
     type: "string"
